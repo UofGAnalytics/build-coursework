@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es5",
+    "types": ["node", "jest"]
+  },
+  "exclude": [
+    "node_modules",
+    "coverage",
+    // Prevent Chai types overriding Jest types
+    // IDEs will still type-check open Cypress files, but
+    // `yarn types` will not catch type errors from Cypress files
+    // https://github.com/nrwl/nx/issues/816#issuecomment-506678206
+    "cypress"
+  ]
+}
