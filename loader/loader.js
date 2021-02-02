@@ -1,14 +1,23 @@
-const { getOptions } = require('loader-utils')
-const { stringify } = require('javascript-stringify')
+const path = require('path')
 const yaml = require('js-yaml')
+const loaderUtils = require('loader-utils')
+const { buildCoursework } = require('coursework')
 
-module.exports = function yamlLoader(src) {
+module.exports = async function courseworkLoader() {
+  // const callback = this.async();
 
-  console.log(src)
+  console.log(this.context)
 
-  const doc = yaml.load(src)
+  this.addContextDependency(this.context);
 
-  console.log(doc)
+  const html = await buildCoursework(this.context)
+  console.log(html)
 
-  return `export default ${JSON.stringify(doc)};`
+  this.emitFile('index.html', html)
+  return false
+
+  // buildCoursework(this.context).then((html) => {
+  //   console.log(html)
+  //   callback(null, html, map, meta);
+  // })
 }

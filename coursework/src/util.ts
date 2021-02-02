@@ -1,14 +1,11 @@
 import fs from 'fs';
-import path from 'path';
 
 export function readFile(filePath: string) {
-  const absPath = path.join(process.cwd(), filePath);
-  return fs.promises.readFile(absPath, 'utf-8');
+  return fs.promises.readFile(filePath, 'utf-8');
 }
 
 export function writeFile(filePath: string, contents: string) {
-  const absPath = path.join(process.cwd(), filePath);
-  return fs.promises.writeFile(absPath, contents);
+  return fs.promises.writeFile(filePath, contents);
 }
 
 export function mkdir(dirPath: string) {

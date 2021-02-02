@@ -13,7 +13,7 @@
     "build-coursework": "bin/cli.js"
   },
   "scripts": {
-    "dev": "babel-node --root-mode upward -x .ts src/index.ts",
+    "dev": "NODE_ENV=development babel-node --root-mode upward -x .ts src/index.ts",
     "build": "NODE_ENV=production webpack",
     "start": "node build/index.js"
   },

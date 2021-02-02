@@ -2,21 +2,19 @@ import path from 'path';
 import yaml from 'js-yaml';
 import * as yup from 'yup';
 import { readFile } from '../util';
-import { renderHtml } from '../markdown-parser';
 
-export type CourseWork = {
+export type Unit = UnitYaml & {
+  markdown: string[];
+};
+
+export type Course = {
   title: string;
-  units: Array<
-    UnitYaml & {
-      markdown: string[];
-      html: string[];
-    }
-  >;
+  units: Unit[];
 };
 
 export async function courseworkCompiler(
   dirPath: string
-): Promise<CourseWork> {
+): Promise<Course> {
   const course = await loadCourseYaml(dirPath);
   const units = await Promise.all(
     course.units.map(async (unit) => compileUnit(dirPath, unit))
@@ -31,8 +29,7 @@ async function compileUnit(dirPath: string, unit: { src: string }) {
       readFile(path.join(dirPath, unit.src, '..', c.src))
     )
   );
-  const html = markdown.map(renderHtml);
-  return { ...yaml, markdown, html };
+  return { ...yaml, markdown };
 }
 
 type CourseYaml = {

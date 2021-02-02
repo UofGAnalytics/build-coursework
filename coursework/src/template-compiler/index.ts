@@ -1,15 +1,45 @@
-import { templateSettings } from 'lodash';
+import path from 'path';
 import pretty from 'pretty';
-import { CourseWork } from '../coursework-compiler';
+import { Course } from '../coursework-compiler';
+import { readFile } from '../util';
+import { renderHtml } from '../markdown-parser';
 
-templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+export async function compileTemplate(course: Course, unitIdx: number) {
+  if (process.env.NODE_ENV === 'development') {
+    return compileContent(course, unitIdx);
+  } else {
+    return compileWholeHtmlDoc(course, unitIdx);
+  }
+}
 
-export async function compileTemplate(coursework: CourseWork) {
-  const [unit] = coursework.units;
+function compileContent(course: Course, unitIdx: number) {
+  const unit = course.units[unitIdx];
+  const html = unit.markdown.map(renderHtml).join('\n');
 
   return pretty(`
     <h1>${unit.title}</h1>
-    <div class="subtitle">${coursework.title}: ${unit.name}</div>
-    <main>${unit.html.join('\n')}</main>
+    <h4>${course.title}: Unit ${unitIdx + 1}</h4>
+    <main>${html}</main>
+  `);
+}
+
+async function compileWholeHtmlDoc(course: Course, unitIdx: number) {
+  const css = await readFile(path.join(__dirname, 'template/main.css'));
+  const js = await readFile(path.join(__dirname, 'template/main.js'));
+  const content = compileContent(course, unitIdx);
+
+  return pretty(`
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <title>University of Glasgow</title>
+        <style>${css}</style>
+      </head>
+      <body>
+        <div class="wrapper">${content}</div>
+        <script>${js}</script>
+      </body>
+    </html>
   `);
 }
