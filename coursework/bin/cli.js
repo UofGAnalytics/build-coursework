@@ -2,8 +2,8 @@
 
 const { buildCoursework } = require('../build')
 
-const [, , ...args] = process.argv
+// const [, , ...args] = process.argv
 
-console.log(process.cwd(), args)
+// console.log(process.cwd(), args)
 
 buildCoursework('.')
