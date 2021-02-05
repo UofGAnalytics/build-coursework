@@ -6,7 +6,7 @@ Lorem ipsum.
 a <- c(1, 4, 2)
 a
 ```
-###[task]Loan example revisited
+### Loan example revisited
 In the video we have considered the example of taking out a loan of £9,000 for 20 years with an annual interest rate of 15%. The yearly repayment can be shown to be
 $$
 P=L\cdot \frac{1-v}{v-v^(n+1)}.

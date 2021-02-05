@@ -16,19 +16,40 @@ html {
   padding: 2rem;
 }
 
-pre {
-  color: #abb2bf;
-  background: #1c1d21;
-  font-family: monospace;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1em;
-}
-
 h1, h2, h3, h4, h5, h6 {
   padding: 1em 0 0.5em;
 }
 
 p {
-  padding-bottom: 1em;
+  padding-bottom: 1rem;
+}
+
+.code-wrapper {
+  background: #1c1d21;
+  color: #abb2bf;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.code-wrapper  pre {
+  font-family: monospace;
+  padding: 2rem;
+}
+
+.code-wrapper .out {
+  background: #fff3;
+  padding: 2rem;
+}
+
+.out h3 {
+  color: white;
+  margin-top: -0.1rem;
+  padding: 0 0 1rem;
+}
+
+.out svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }

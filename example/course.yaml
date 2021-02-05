@@ -1,11 +1,16 @@
 title: R Programming
 type: course
-public: true
-moodleid: 0
+public: true # ??
+moodleid: 0 # ??
+
+# for front cover
 catalog: STATS5078
 authors: Craig Alexander and Ludger Evers
 academic_year: 2020-21
+
+# automatically make coursework available on this date
 start_date: 30/09/2020
+
 units:
   - src: week1/week1.yaml
   # - src: week2/week2.yaml

@@ -22,11 +22,3 @@ export function executeCode(
 
   return out;
 }
-
-function readCache(code: string) {
-  return null;
-}
-
-function writeCache(out: string) {
-  return null;
-}

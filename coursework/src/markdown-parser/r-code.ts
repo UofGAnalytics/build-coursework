@@ -2,21 +2,19 @@ import { execSync } from 'child_process';
 import { executeCode } from '../execute-code';
 
 import { CodeParams } from './parse-code-params';
-import { renderCodeBlock } from './util';
+import { renderCodeBlock, renderCodeBlockWithOutput } from './util';
 
 export function renderRCodeBlock(
   dirPath: string,
   code: string,
   options: CodeParams['options']
 ) {
-  let result = renderCodeBlock('r', code);
-
   if (options.echo === true) {
     const out = executeCode(dirPath, code, executeRCode);
-    result += `<div class="out">${out}</div>\n`;
+    return renderCodeBlockWithOutput('r', code, out);
   }
 
-  return result;
+  return renderCodeBlock('r', code);
 }
 
 function executeRCode(code: string) {

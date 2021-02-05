@@ -1,6 +1,9 @@
 name: 'Week 1'
 title: 'Automated reporting using knitr and R Markdown'
+
+# automatically make coursework available on this date
 golive: '+9w'
+
 content:
   - type: text
     src: test.Rmd

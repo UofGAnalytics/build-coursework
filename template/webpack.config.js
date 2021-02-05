@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -48,8 +49,19 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     }),
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: path.join(__dirname, '../example/build/week-1.html')
+    }),
   ],
   optimization: {
     minimize: false
+  },
+  devServer: {
+    contentBase: path.join(__dirname, '../example/build'),
+    port: 3000,
+    stats: 'minimal',
+    clientLogLevel: 'silent',
+    hot: true
   }
 };
