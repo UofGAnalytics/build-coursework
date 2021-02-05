@@ -12,6 +12,18 @@ export function mkdir(dirPath: string) {
   return fs.promises.mkdir(dirPath, { recursive: true });
 }
 
+export function rmdir(dirPath: string) {
+  return fs.promises.rmdir(dirPath, { recursive: true });
+}
+
+export function getBuildDir(dirPath: string) {
+  return `${dirPath}/build`;
+}
+
+export function getCacheDir(dirPath: string) {
+  return `${dirPath}/build/.cache`;
+}
+
 export function log(out: any) {
   if (Object(out) !== out) {
     console.log(out);

@@ -1,4 +1,11 @@
-export function parseCodeParams(params: string | undefined = '') {
+export type CodeParams = {
+  language: string;
+  options: Record<string, any>;
+};
+
+export function parseCodeParams(
+  params: string | undefined = ''
+): CodeParams {
   return {
     language: parseLanguage(params),
     options: parseOptions(params),
@@ -24,7 +31,7 @@ function parseOptions(options: string) {
     .slice(1, -1)
     .split(',')
     .slice(1)
-    .reduce((acc: Record<string, any>, str) => {
+    .reduce((acc: CodeParams['options'], str) => {
       const [key, value] = str.split('=');
       acc[key] = parseOptionValue(value);
       return acc;

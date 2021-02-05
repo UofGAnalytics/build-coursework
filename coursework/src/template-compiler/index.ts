@@ -6,13 +6,13 @@ import { renderHtml } from '../markdown-parser';
 
 export async function compileTemplate(course: Course, unitIdx: number) {
   if (process.env.NODE_ENV === 'development') {
-    return compileContent(course, unitIdx);
+    return compileHtmlContent(course, unitIdx);
   } else {
-    return compileWholeHtmlDoc(course, unitIdx);
+    return compileHtmlDoc(course, unitIdx);
   }
 }
 
-function compileContent(course: Course, unitIdx: number) {
+function compileHtmlContent(course: Course, unitIdx: number) {
   const unit = course.units[unitIdx];
   const html = unit.markdown.map(renderHtml).join('\n');
 
@@ -23,10 +23,10 @@ function compileContent(course: Course, unitIdx: number) {
   `);
 }
 
-async function compileWholeHtmlDoc(course: Course, unitIdx: number) {
+async function compileHtmlDoc(course: Course, unitIdx: number) {
   const css = await readFile(path.join(__dirname, 'template/main.css'));
   const js = await readFile(path.join(__dirname, 'template/main.js'));
-  const content = compileContent(course, unitIdx);
+  const content = compileHtmlContent(course, unitIdx);
 
   return pretty(`
     <!doctype html>
