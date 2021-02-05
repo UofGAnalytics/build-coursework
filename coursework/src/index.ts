@@ -1,19 +1,22 @@
+import { kebabCase } from 'lodash';
 import { courseworkCompiler } from './coursework-compiler';
+import { renderHtml } from './markdown-parser';
 import { compileTemplate } from './template-compiler';
-import { writeFile, mkdir, rmdir, getBuildDir, getCacheDir } from './util';
+import { getBuildDir, mkdir, writeFile } from './util';
 
 export async function buildCoursework(dirPath: string) {
   const course = await courseworkCompiler(dirPath);
   const buildDir = getBuildDir(dirPath);
-  const cacheDir = getCacheDir(dirPath);
-  await mkdir(cacheDir);
+  await mkdir(buildDir);
 
-  for (let idx = 0; idx < course.units.length; ++idx) {
-    const template = await compileTemplate(course, idx);
-    await writeFile(`${buildDir}/unit-${idx + 1}.html`, template);
+  for (const unit of course.units) {
+    const html = unit.markdown
+      .map((markdown) => renderHtml(dirPath, markdown))
+      .join('\n');
+    const template = await compileTemplate(course, unit, html);
+    const fileName = kebabCase(unit.name);
+    await writeFile(`${buildDir}/${fileName}.html`, template);
   }
-
-  await rmdir(cacheDir);
 }
 
 buildCoursework('../example');

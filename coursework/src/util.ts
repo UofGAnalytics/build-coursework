@@ -21,7 +21,7 @@ export function getBuildDir(dirPath: string) {
 }
 
 export function getCacheDir(dirPath: string) {
-  return `${dirPath}/build/.cache`;
+  return `${dirPath}/cache`;
 }
 
 export function log(out: any) {

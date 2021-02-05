@@ -1,32 +1,24 @@
 import path from 'path';
 import pretty from 'pretty';
-import { Course } from '../coursework-compiler';
+import { Course, Unit } from '../coursework-compiler';
 import { readFile } from '../util';
-import { renderHtml } from '../markdown-parser';
 
-export async function compileTemplate(course: Course, unitIdx: number) {
+export async function compileTemplate(
+  course: Course,
+  unit: Unit,
+  html: string
+) {
   if (process.env.NODE_ENV === 'development') {
-    return compileHtmlContent(course, unitIdx);
+    return compileHtmlContent(course, unit, html);
   } else {
-    return compileHtmlDoc(course, unitIdx);
+    return compileHtmlDoc(course, unit, html);
   }
 }
 
-function compileHtmlContent(course: Course, unitIdx: number) {
-  const unit = course.units[unitIdx];
-  const html = unit.markdown.map(renderHtml).join('\n');
-
-  return pretty(`
-    <h1>${unit.title}</h1>
-    <h4>${course.title}: Unit ${unitIdx + 1}</h4>
-    <main>${html}</main>
-  `);
-}
-
-async function compileHtmlDoc(course: Course, unitIdx: number) {
+async function compileHtmlDoc(course: Course, unit: Unit, html: string) {
   const css = await readFile(path.join(__dirname, 'template/main.css'));
   const js = await readFile(path.join(__dirname, 'template/main.js'));
-  const content = compileHtmlContent(course, unitIdx);
+  const content = compileHtmlContent(course, unit, html);
 
   return pretty(`
     <!doctype html>
@@ -44,5 +36,13 @@ async function compileHtmlDoc(course: Course, unitIdx: number) {
         </script>
       </body>
     </html>
+  `);
+}
+
+function compileHtmlContent(course: Course, unit: Unit, html: string) {
+  return pretty(`
+    <h1>${unit.title}</h1>
+    <h4>${course.title}: ${unit.name}</h4>
+    <main>${html}</main>
   `);
 }
