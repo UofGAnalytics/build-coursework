@@ -37,18 +37,18 @@ p {
   padding: 2rem;
 }
 
-.code-wrapper .out {
+.code-wrapper .output {
   background: #fff3;
   padding: 2rem;
 }
 
-.out h3 {
+.code-wrapper .output h3 {
   color: white;
   margin-top: -0.1rem;
   padding: 0 0 1rem;
 }
 
-.out svg {
+.code-wrapper .output svg {
   display: block;
   width: 100%;
   height: auto;

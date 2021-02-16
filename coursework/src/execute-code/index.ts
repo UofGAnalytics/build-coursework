@@ -3,10 +3,10 @@ import path from 'path';
 import hashSum from 'hash-sum';
 import { getCacheDir } from '../util';
 
-export function executeCode(
+export async function executeCode(
   dirPath: string,
   code: string,
-  execFn: (code: string) => string
+  execFn: (code: string) => Promise<string>
 ) {
   const cacheDir = getCacheDir(dirPath);
   const filePath = `${hashSum(code)}.txt`;
@@ -16,7 +16,7 @@ export function executeCode(
     return fs.readFileSync(cachedFilePath, 'utf-8');
   }
 
-  const out = execFn(code);
+  const out = await execFn(code);
   fs.mkdirSync(cacheDir, { recursive: true });
   fs.writeFileSync(cachedFilePath, out);
 

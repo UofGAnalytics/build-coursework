@@ -1,24 +1,7 @@
 import { execSync } from 'child_process';
-import { executeCode } from '../execute-code';
 
-import { CodeParams } from './parse-code-params';
-import { renderCodeBlock, renderCodeBlockWithOutput } from './util';
-
-export function renderRCodeBlock(
-  dirPath: string,
-  code: string,
-  options: CodeParams['options']
-) {
-  if (options.echo === true) {
-    const out = executeCode(dirPath, code, executeRCode);
-    return renderCodeBlockWithOutput('r', code, out);
-  }
-
-  return renderCodeBlock('r', code);
-}
-
-function executeRCode(code: string) {
-  // I found this hack to allow R graphs to be written to stdout as SVG
+export async function executeRCode(code: string) {
+  // I found this code to allow R graphs to be written to stdout as SVG
   // https://stackoverflow.com/questions/54309405#54310307
   const wrappedCode = `
     dev_stdout = function () {

@@ -1,8 +1,0 @@
-## Overview
-
-Lorem ipsum.
-
-```r
-a <- c(1, 4, 2)
-a
-```

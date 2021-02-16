@@ -32,7 +32,7 @@ function parseOptions(options: string) {
     .split(',')
     .slice(1)
     .reduce((acc: CodeParams['options'], str) => {
-      const [key, value] = str.split('=');
+      const [key, value] = str.split('=').map((s) => s.trim());
       acc[key] = parseOptionValue(value);
       return acc;
     }, {});
