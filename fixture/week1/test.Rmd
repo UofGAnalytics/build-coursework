@@ -28,4 +28,11 @@ for(i in 1:n) {
 tail(log_x)
 ```
 
-###[video, videoid="Gib3Wk2FFi8", duration="6m58s"] R as a calculator
+![image of something](./test.jpg)
+
+```{r, echo=TRUE}
+x <- "Hello World!"
+x/2
+```
+
+::video{id=AClLyj_Oczc title=Hello}

@@ -18,8 +18,6 @@ async function transformer(tree: Node) {
 }
 
 async function customMath(node: Node) {
-  node.type = 'math-output';
-
   if (!node.data) {
     node.data = {};
   }

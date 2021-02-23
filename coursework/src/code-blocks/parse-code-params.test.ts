@@ -1,6 +1,6 @@
 import { parseCodeParams } from './parse-code-params';
 
-it('should correct parse code params', async () => {
+it('should parse code params', async () => {
   expect(parseCodeParams()).toStrictEqual({
     language: '',
     options: {},

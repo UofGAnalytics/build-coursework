@@ -15,7 +15,10 @@ export function parseCodeParams(
 function parseLanguage(options: string) {
   const trimmed = options.trim();
   if (trimmed[0] === '{') {
-    return trimmed.slice(1, -1).split(',')[0];
+    return trimmed
+      .slice(1, -1)
+      .split(',')
+      .map((s) => s.trim())[0];
   }
   return trimmed;
 }
@@ -38,8 +41,8 @@ function parseOptions(options: string) {
     }, {});
 }
 
-function parseOptionValue(mixed: string) {
-  if (mixed === 'TRUE') {
+function parseOptionValue(mixed: string | undefined) {
+  if (mixed === 'TRUE' || mixed === undefined) {
     return true;
   }
   if (mixed === 'FALSE') {

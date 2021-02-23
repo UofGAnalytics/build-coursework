@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { exec, ExecException } from 'child_process';
 
 export async function executeRCode(code: string) {
   // I found this code to allow R graphs to be written to stdout as SVG
@@ -23,8 +23,34 @@ export async function executeRCode(code: string) {
     dev_stdout_off(tmp_dev)
   `;
 
-  const out = execSync(`Rscript -e '${wrappedCode}'`).toString().trim();
+  const execString = `Rscript -e '${wrappedCode}'`;
 
+  return new Promise<string>((resolve, reject) => {
+    exec(execString, (err, response) => {
+      // console.log('ERROR', err);
+      // console.log('RESPONSE', response);
+      if (err) {
+        reject(formatError(err, execString, code));
+      } else {
+        resolve(formatResponse(response));
+      }
+    });
+  });
+}
+
+function formatError(
+  err: ExecException,
+  wrappedCode: string,
+  code: string
+) {
+  err.message = err.message
+    .replace(wrappedCode, `\n\n${code}\n`)
+    .replace('Execution halted', '')
+    .trim();
+  return err;
+}
+
+function formatResponse(out: string) {
   // If output is text it will print an empty SVG after, so remove it
   if (out.startsWith('[1]')) {
     return out.slice(0, out.indexOf('<?xml') - 1);

@@ -1,4 +1,8 @@
 import fs from 'fs';
+import unified from 'unified';
+import rehype from 'rehype-parse';
+
+export const rehypeParser = unified().use(rehype, { fragment: true });
 
 export function readFile(filePath: string) {
   return fs.promises.readFile(filePath, 'utf-8');
@@ -24,10 +28,10 @@ export function getCacheDir(dirPath: string) {
   return `${dirPath}/cache`;
 }
 
-export function log(out: any) {
-  if (Object(out) !== out) {
-    console.log(out);
-  } else {
-    console.log(JSON.stringify(out, null, 2));
-  }
+export function getTemplateCss() {
+  return fs.promises.readFile('../template/build/main.css');
+}
+
+export function getTemplateJs() {
+  return fs.promises.readFile('../template/build/main.js');
 }

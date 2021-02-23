@@ -10,3 +10,7 @@ https://github.com/dimerapp/markdown
 ### Executing R
 
 https://github.com/joshkatz/r-script
+
+### Latex parser
+
+https://github.com/tamuratak/latex-utensils
