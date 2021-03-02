@@ -2,6 +2,7 @@ import { Node } from 'hast';
 import unified from 'unified';
 import remark2rehype from 'remark-rehype';
 import doc from 'rehype-document';
+import visit from 'unist-util-visit';
 import stringify from 'rehype-stringify';
 
 // @ts-expect-error
@@ -9,6 +10,7 @@ import format from 'rehype-format';
 
 import { getTemplateCss, getTemplateJs } from '../util';
 import { addWrapper } from './add-wrapper';
+// import { taskAnswer } from '../parse-markdown/task-answer';
 
 type Options = {
   courseTitle: string;
@@ -23,9 +25,10 @@ export async function compileHtml(files: Node[], opts: Options) {
   };
 
   const processor = unified()
+    .use(moveAnswersToEnd)
     .use(remark2rehype)
+    // .use(taskAnswer)
     .use(addWrapper, opts)
-    // .use(inspect())
     .use(doc, options)
     .use(format)
     .use(stringify);
@@ -39,12 +42,26 @@ export async function compileHtml(files: Node[], opts: Options) {
 }
 
 // function inspect() {
-//   return () => (tree: Node) => {
-//     console.dir(obj, { depth: null });
-//     // visit(tree, 'code', (node) => {
+//   return (tree: Node) => {
+//     console.dir(tree, { depth: null });
+//     // visit(tree, 'containerDirective', (node, index, parent) => {
 //     //   console.log('---------------------');
-//     //   console.dir(obj, { depth: null });
+//     //   console.dir(node, { depth: null });
 //     // });
 //     return tree;
 //   };
 // }
+
+function moveAnswersToEnd() {
+  return (tree: Node) => {
+    visit(tree, 'containerDirective', (node, index, parent) => {
+      if (node.name === 'answer') {
+        const parentChildren = parent?.children || ([] as Node[]);
+        parentChildren.splice(index, 1);
+        const treeChildren = tree.children as Node[];
+        treeChildren.push(node);
+      }
+    });
+    return tree;
+  };
+}

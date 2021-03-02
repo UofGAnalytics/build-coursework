@@ -2,7 +2,7 @@ import path from 'path';
 import { loadCourseYaml } from './load-course';
 import { loadUnitYaml } from './load-unit';
 import { FileRef } from './types';
-import { Course } from '../_coursework-compiler';
+import { Course } from '../collect-coursework/types';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';

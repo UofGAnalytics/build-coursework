@@ -27,7 +27,7 @@ const remarkProcessor = unified()
 
 const retextProcessor = unified().use(
   remark2retext,
-  unified().use(english).use(spell, dictionary)
+  unified().use(english).use(spell, dictionary) //.use(inspect)
 );
 
 export async function linter(hasts: Node[], files: VFile[]) {

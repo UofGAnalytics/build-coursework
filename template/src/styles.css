@@ -68,3 +68,29 @@ img {
   height: auto;
 }
 
+.boxout {
+  padding: 2rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background-color: #d7dce1;
+  color: #002f55;
+}
+
+/* .boxout.weblink {
+  background-color: #DCE0E5;
+  color: #003865;
+}
+.boxout.example {
+  background-color: #003865;
+}
+.boxout.background {
+  background-color: #003865;
+} */
+.boxout.supplement {
+  background-color: #dfdfdf;
+  color: #464646;
+}
+.boxout.task {
+  background-color: #e7d9e3;
+  color: #831262
+}

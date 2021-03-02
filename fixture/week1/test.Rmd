@@ -35,4 +35,27 @@ x <- "Hello World!"
 x/2
 ```
 
-::video{id=AClLyj_Oczc title=Hello}
+::video[Hello]{id=AClLyj_Oczc}
+
+:::weblink[Weblink title]{icon="book"}
+test
+:::
+
+:::example[Example title]
+test
+:::
+
+:::supplement[Supplement title]
+test
+:::
+
+:::background[Background title]
+test
+:::
+
+::::task[Task Title]
+Question?
+:::answer
+Answer
+:::
+::::

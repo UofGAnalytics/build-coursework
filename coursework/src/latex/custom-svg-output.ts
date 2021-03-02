@@ -1,9 +1,11 @@
 import { rehypeParser } from '../util';
 
-export function customSvgOutput(input: string) {
-  const tree = rehypeParser.parse(input);
+type LooseNode = Node & Record<string, any>;
 
-  const svg = tree.children[0].children[0] as unknown;
+export function customSvgOutput(input: string) {
+  const tree = (rehypeParser.parse(input) as unknown) as LooseNode;
+
+  const svg = tree.children[0].children[0] as LooseNode;
 
   svg.properties = {
     viewBox: svg.properties.viewBox,

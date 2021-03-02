@@ -1,27 +1,36 @@
 import { VFile } from 'vfile';
 import { Node, Position } from 'unist';
-import visit from 'unist-util-visit';
 import fetch from 'node-fetch';
 import * as yup from 'yup';
+import visit from 'unist-util-visit';
 import { cacheToFile } from '../cache-to-file';
 
-export function youtubeVideo(dirPath: string) {
+export function video(dirPath: string) {
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
 
     visit(tree, 'leafDirective', (node) => {
       if (node.name === 'video') {
-        transformations.push(video(node, file, dirPath));
+        transformations.push(template(node, file, dirPath));
       }
     });
 
     await Promise.all(transformations);
-
     return tree;
   };
 }
 
-async function video(node: Node, file: VFile, dirPath: string) {
+type Attributes = {
+  id: string;
+  title: string;
+};
+
+const attributesSchema = yup.object().shape({
+  id: yup.string().required(),
+  title: yup.string(),
+});
+
+async function template(node: Node, file: VFile, dirPath: string) {
   if (!node.data) {
     node.data = {};
   }
@@ -73,16 +82,6 @@ async function video(node: Node, file: VFile, dirPath: string) {
     file.message(err.message, node.position);
   }
 }
-
-type Attributes = {
-  id: string;
-  title: string;
-};
-
-const attributesSchema = yup.object().shape({
-  id: yup.string().required(),
-  title: yup.string(),
-});
 
 function getAttributes(attributes: any, file: VFile, position: Position) {
   if (!attributes.title) {

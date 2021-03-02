@@ -3,10 +3,12 @@ import unified from 'unified';
 import markdown from 'remark-parse';
 import math from 'remark-math';
 import directive from 'remark-directive';
+import { video } from './youtube-video';
+import { boxout } from './boxout';
+// import { taskAnswer } from './task-answer';
 
 // @ts-expect-error
 import embedImages from 'remark-embed-images';
-import { youtubeVideo } from './youtube-video';
 
 export async function parseMarkdown(file: VFile, dirPath: string) {
   const processor = unified()
@@ -15,7 +17,9 @@ export async function parseMarkdown(file: VFile, dirPath: string) {
     .use(directive)
     // .use(inspect)
     .use(math)
-    .use(youtubeVideo, dirPath);
+    .use(boxout)
+    .use(video, dirPath);
+  // .use(taskAnswer);
 
   const parsed = processor.parse(file);
   return processor.run(parsed, file);

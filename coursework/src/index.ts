@@ -1,4 +1,5 @@
 import { kebabCase } from 'lodash';
+import pdf from 'html-pdf';
 
 import { collectCoursework } from './collect-coursework';
 import { Course, Unit } from './collect-coursework/types';
@@ -49,13 +50,30 @@ export async function buildUnit(
     unitTitle: unit.title,
   });
 
-  writeHtml(dirPath, unit, html);
+  const filePath = getFilePath(dirPath, unit.name);
+  await writeFile(`${filePath}.html`, html);
+  console.log('html file written to:', `${filePath}.html`);
+
+  // await writePdf(`${filePath}.pdf`, html);
+  // console.log('pdf file written to:', `${filePath}.pdf`);
 }
 
-async function writeHtml(dirPath: string, unit: Unit, html: string) {
+function getFilePath(dirPath: string, unitName: string) {
   const buildDir = getBuildDir(dirPath);
-  const fileName = kebabCase(unit.name);
-  const targetPath = `${buildDir}/${fileName}.html`;
-  await writeFile(targetPath, html);
-  console.log('file written to:', targetPath);
+  const fileName = kebabCase(unitName);
+  return `${buildDir}/${fileName}`;
 }
+
+// async function writePdf(filePath: string, html: string) {
+//   return new Promise<void>((resolve, reject) => {
+//     console.log(html);
+//     pdf.create(html).toFile(filePath, (err, res) => {
+//       // console.log('err:', err)
+//       // console.log('res:', res)
+//       if (err) {
+//         reject(err);
+//       }
+//       resolve();
+//     });
+//   });
+// }
