@@ -71,6 +71,7 @@ function getImageSrc(node: Node) {
 async function embedTexPdfSvg(imgNode: Node) {
   const src = getImageSrc(imgNode);
   const svgNode = await texPdfToSvg(src);
+  console.log(svgNode);
   const properties = {
     ...(svgNode.properties as Record<string, any>),
     ...(imgNode.properties as Record<string, any>),

@@ -24,7 +24,7 @@ p {
   padding-bottom: 1rem;
 }
 
-img, svg {
+img {
   display: block;
   width: 100%;
   height: auto;
@@ -94,4 +94,14 @@ img, svg {
 .boxout.task {
   background-color: #e7d9e3;
   color: #831262
+}
+
+.math svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.math-inline svg {
+  vertical-align: middle;
 }

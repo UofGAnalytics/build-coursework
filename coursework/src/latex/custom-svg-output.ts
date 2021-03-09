@@ -8,6 +8,8 @@ export function customSvgOutput(input: string) {
   const svg = tree.children[0].children[0] as LooseNode;
 
   svg.properties = {
+    width: svg.properties.width,
+    height: svg.properties.height,
     viewBox: svg.properties.viewBox,
     role: 'img',
   };

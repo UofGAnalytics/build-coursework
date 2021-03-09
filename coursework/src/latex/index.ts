@@ -1,6 +1,6 @@
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
-import { convertLatex } from './convert-latex';
+import { mmlToSpeech, mmlToSvg, texToMml } from './convert-latex';
 import { customSvgOutput } from './custom-svg-output';
 
 export function accessibleLatex() {
@@ -15,12 +15,21 @@ function customMath(node: Node) {
     node.data = {};
   }
 
-  node.data.hName = 'div';
-  node.data.hProperties = {
-    className: 'math-wrapper',
-  };
+  if (node.type === 'math') {
+    node.data.hName = 'div';
+    node.data.hProperties = {
+      className: 'math',
+    };
+  } else {
+    node.data.hName = 'span';
+    node.data.hProperties = {
+      className: 'math-inline',
+    };
+  }
 
-  const { svg, label } = convertLatex((node.value as string) || '');
+  const mml = texToMml((node.value || '') as string);
+  const svg = mmlToSvg(mml);
+  const label = mmlToSpeech(mml);
   const responsiveSvg = customSvgOutput(svg);
   const uniqueId = `math-${Math.random().toString(16).slice(2)}`;
 
