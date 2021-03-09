@@ -2,7 +2,7 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { VFile } from 'vfile';
 import visit from 'unist-util-visit';
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 import mimes from 'mime/lite';
 import { readFile, checkFileExists } from '../util';
 import { cacheToFile } from '../cache-to-file';
@@ -36,7 +36,7 @@ export function embedAssetUrl() {
 }
 
 export function embedAssets(dirPath: string) {
-  async function embed(node: Node) {
+  async function embed(node: Node, parent: Parent | undefined) {
     const src = getImageSrc(node);
     const parsed = path.parse(src);
     switch (parsed.ext) {
@@ -45,15 +45,15 @@ export function embedAssets(dirPath: string) {
       case '.gif':
         return embedImage(node, dirPath);
       case '.pdf':
-        return embedTexPdfSvg(node);
+        return embedTexPdfSvg(node, parent);
     }
     throw new Error(`unhandled file extension: ${parsed.ext}`);
   }
   return async (tree: Node) => {
     const transformations: Promise<void>[] = [];
-    visit(tree, 'element', (node) => {
+    visit(tree, 'element', (node, index, parent) => {
       if (node.tagName === 'img') {
-        transformations.push(embed(node));
+        transformations.push(embed(node, parent));
       }
     });
     await Promise.all(transformations);
@@ -68,16 +68,15 @@ function getImageSrc(node: Node) {
   return properties.src;
 }
 
-async function embedTexPdfSvg(imgNode: Node) {
+async function embedTexPdfSvg(imgNode: Node, parent: Parent | undefined) {
   const src = getImageSrc(imgNode);
   const svgNode = await texPdfToSvg(src);
-  console.log(svgNode);
   const properties = {
     ...(svgNode.properties as Record<string, any>),
     ...(imgNode.properties as Record<string, any>),
   };
   delete properties.src;
-  Object.assign(imgNode, svgNode, { properties });
+  Object.assign(parent, svgNode, { properties });
 }
 
 async function embedImage(node: Node, dirPath: string) {

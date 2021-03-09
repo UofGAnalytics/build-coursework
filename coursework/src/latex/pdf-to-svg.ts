@@ -51,19 +51,17 @@ async function formatSvg(str: string) {
 }
 
 export function addWrapper() {
-  return (tree: Node) => {
-    return {
-      type: 'root',
-      children: [
-        {
-          type: 'element',
-          tagName: 'div',
-          properties: {
-            className: 'math',
-          },
-          children: tree.children as Node[],
+  return (tree: Node) => ({
+    type: 'root',
+    children: [
+      {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: 'math',
         },
-      ],
-    };
-  };
+        children: tree.children as Node[],
+      },
+    ],
+  });
 }
