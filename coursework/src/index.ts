@@ -1,27 +1,30 @@
-import { kebabCase } from 'lodash';
-import pdf from 'html-pdf';
-
+import chalk from 'chalk';
 import { collectCoursework } from './collect-coursework';
 import { Course, Unit } from './collect-coursework/types';
-import { compileHtml } from './compile-html';
-import { latex } from './latex';
-import { codeBlocks } from './code-blocks';
-import { linter } from './linter';
+// import { codeBlocks } from './code-blocks';
 import { parseMarkdown } from './parse-markdown';
-import { getBuildDir, mkdir, writeFile } from './util';
+import { combineMdastTrees, getBuildDir, mkdir } from './util';
+import { getUnitTitles } from './unit-titles';
+import { writeHtml } from './write-files';
+import { compileHtml } from './compile-html';
+// import { report } from './report';
 
 if (process.env.NODE_ENV === 'development') {
   buildCourse('../fixture');
 }
 
 export async function buildCourse(dirPath: string) {
-  const course = await collectCoursework(dirPath);
+  try {
+    const course = await collectCoursework(dirPath);
 
-  const buildDir = getBuildDir(dirPath);
-  await mkdir(buildDir);
+    const buildDir = getBuildDir(dirPath);
+    await mkdir(buildDir);
 
-  for (const unit of course.units) {
-    await buildUnit(dirPath, course, unit);
+    for (const unit of course.units) {
+      await buildUnit(dirPath, course, unit);
+    }
+  } catch (err) {
+    console.error(chalk.red(err.message));
   }
 }
 
@@ -32,48 +35,18 @@ export async function buildUnit(
 ) {
   const files = unit.markdown;
 
-  const hasts = await Promise.all(
-    files.map((file) => parseMarkdown(file, dirPath))
-  );
+  const mdasts = await Promise.all(files.map(parseMarkdown));
+  // report(files);
 
-  await Promise.all(hasts.map((hast, idx) => latex(hast, files[idx])));
+  // codeBlocks executes R and lints via RScript stderr inline
+  // await codeBlocks(mdasts, files, dirPath);
 
-  await Promise.all(
-    hasts.map((hast, idx) => codeBlocks(hast, files[idx], dirPath))
-  );
+  const combined = combineMdastTrees(mdasts);
+  const titles = getUnitTitles(course, unit);
 
-  // TODO: find a way to lint R code and move linter up
-  await linter(hasts, files);
+  const html = await compileHtml(combined, titles, dirPath);
+  await writeHtml(titles.unitName, html, dirPath);
 
-  const html = await compileHtml(hasts, {
-    courseTitle: `${course.title}: ${unit.name}`,
-    unitTitle: unit.title,
-  });
-
-  const filePath = getFilePath(dirPath, unit.name);
-  await writeFile(`${filePath}.html`, html);
-  console.log('html file written to:', `${filePath}.html`);
-
-  // await writePdf(`${filePath}.pdf`, html);
-  // console.log('pdf file written to:', `${filePath}.pdf`);
+  // const pdfHtml = await compilePdfHtml(combined, titles, dirPath);
+  // await writePdf(titles.unitName, pdfHtml, dirPath);
 }
-
-function getFilePath(dirPath: string, unitName: string) {
-  const buildDir = getBuildDir(dirPath);
-  const fileName = kebabCase(unitName);
-  return `${buildDir}/${fileName}`;
-}
-
-// async function writePdf(filePath: string, html: string) {
-//   return new Promise<void>((resolve, reject) => {
-//     console.log(html);
-//     pdf.create(html).toFile(filePath, (err, res) => {
-//       // console.log('err:', err)
-//       // console.log('res:', res)
-//       if (err) {
-//         reject(err);
-//       }
-//       resolve();
-//     });
-//   });
-// }

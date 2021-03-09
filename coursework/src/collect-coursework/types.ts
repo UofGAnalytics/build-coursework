@@ -1,9 +1,5 @@
 import { VFile } from 'vfile';
 
-export type FileRef = {
-  src: string;
-};
-
 export type CourseYaml = {
   title: string;
   units: FileRef[];
@@ -22,4 +18,8 @@ export type Unit = UnitYaml & {
 export type Course = {
   title: string;
   units: Unit[];
+};
+
+export type FileRef = {
+  src: string;
 };

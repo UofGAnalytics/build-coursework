@@ -2,7 +2,7 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import toHast from 'mdast-util-to-hast';
 
-export function boxout() {
+export function boxouts() {
   return async (tree: Node) => {
     const transformations: Promise<void>[] = [];
 
@@ -14,7 +14,6 @@ export function boxout() {
         case 'weblink':
         case 'task':
           transformations.push(template(node));
-          break;
       }
     });
 
@@ -25,22 +24,8 @@ export function boxout() {
 
 async function template(node: Node) {
   const name = node.name as string;
-
-  node.data = {
-    hName: 'div',
-    hProperties: {
-      className: ['boxout', name],
-    },
-  };
-
-  const attributes = node.attributes as Record<string, string>;
-
-  if (attributes.icon) {
-    node.data.hProperties.className.push(`${attributes.icon}-icon`);
-  }
-
   const children = node.children as Node[];
-
+  const attributes = node.attributes as Record<string, string>;
   const newChildren: Node[] = [];
 
   if (children[0]?.data?.directiveLabel) {
@@ -58,5 +43,17 @@ async function template(node: Node) {
       .map((child) => toHast(child))
   );
 
-  node.data.hChildren = newChildren;
+  const data = {
+    hName: 'div',
+    hProperties: {
+      className: ['boxout', name],
+    },
+    hChildren: newChildren,
+  };
+
+  if (attributes.icon) {
+    data.hProperties.className.push(`${attributes.icon}-icon`);
+  }
+
+  node.data = data;
 }

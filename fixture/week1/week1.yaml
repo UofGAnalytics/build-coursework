@@ -7,3 +7,5 @@ golive: '+9w'
 content:
   - type: text
     src: test.Rmd
+  # - type: text
+  #   src: latex.Rmd

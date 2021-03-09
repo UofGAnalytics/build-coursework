@@ -1,61 +1,7 @@
-## Overview
+Thus in the above example `2/3*2` computes $\frac{2}{3}\cdot 2$.
 
-Lorem ipsum.
-
-```{r,echo=TRUE}
-a <- c(1, 4, 2)
-a
-```
-### Loan example revisited
-In the video we have considered the example of taking out a loan of £9,000 for 20 years with an annual interest rate of 15%. The yearly repayment can be shown to be
 $$
-P=L\cdot \frac{1-v}{v-v^(n+1)}
+P=L\cdot \frac{1-v}{v-v^(n+1)}.
 $$
-We have used the following R code to calculate the yearly payment
 
-```{r,echo=TRUE}
-x <- rnorm(100)
-hist(x)
-```
-
-```{r,echo=TRUE}
-n <- 10000000
-x <- runif(n)
-log_x <- NULL
-for(i in 1:n) {
-  log_x[i] <- log(x[i])
-}
-tail(log_x)
-```
-
-![image of something](./test.jpg)
-
-```{r, echo=TRUE}
-x <- "Hello World!"
-x/2
-```
-
-::video[Hello]{id=AClLyj_Oczc}
-
-:::weblink[Weblink title]{icon="book"}
-test
-:::
-
-:::example[Example title]
-test
-:::
-
-:::supplement[Supplement title]
-test
-:::
-
-:::background[Background title]
-test
-:::
-
-::::task[Task Title]
-Question?
-:::answer
-Answer
-:::
-::::
+![image of something](./figure1.pdf)

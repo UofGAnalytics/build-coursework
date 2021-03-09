@@ -5,7 +5,7 @@ type Options = {
   unitTitle: string;
 };
 
-export function addWrapper(opts: Options) {
+export function htmlWrapper(opts: Options) {
   return (tree: Node) => {
     const children = tree.children as Node[];
     return {

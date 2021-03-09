@@ -24,9 +24,10 @@ p {
   padding-bottom: 1rem;
 }
 
-img {
+img, svg {
   display: block;
   width: 100%;
+  height: auto;
 }
 
 .code-wrapper {

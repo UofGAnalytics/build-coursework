@@ -3,7 +3,6 @@ import { Node, Position } from 'unist';
 import { VFile } from 'vfile';
 import { exec } from 'child_process';
 import { reject } from 'lodash';
-// import escapeLatex from 'escape-latex';
 
 export function lintLatex() {
   return async (tree: Node, file: VFile) => {
@@ -14,7 +13,6 @@ export function lintLatex() {
     });
 
     await Promise.all(transformations);
-
     return tree;
   };
 }
@@ -49,6 +47,11 @@ function formatResponse(response: string) {
   if (response.trim() === '') {
     return [];
   }
+
+  function formatMessage(message: string) {
+    return message.replace(/'/g, '').replace(/`/g, '');
+  }
+
   return response
     .split(/Warning \d+ in stdin line /)
     .filter(Boolean)
@@ -59,7 +62,7 @@ function formatResponse(response: string) {
 
       const match = trimmed.match(/(.*)\n(.*)\n(\s*)\^/m);
       if (Array.isArray(match)) {
-        const message = match[1].replace(/'/g, '').replace(/`/g, '');
+        const message = formatMessage(match[1]);
         acc.push({
           line,
           column: match[3].length,
@@ -69,7 +72,7 @@ function formatResponse(response: string) {
         acc.push({
           line,
           column: 0,
-          message: trimmed.replace(/'/g, '').replace(/`/g, ''),
+          message: formatMessage(trimmed),
         });
       }
 

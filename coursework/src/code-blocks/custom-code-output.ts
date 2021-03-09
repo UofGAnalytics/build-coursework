@@ -1,15 +1,15 @@
 import { Node } from 'unist';
 import { VFile } from 'vfile';
 import visit from 'unist-util-visit';
+import { rehypeParser } from '../util';
+import { cacheToFile } from '../cache-to-file';
 import { executeRCode } from './exec-r';
+import { parseCodeParams } from './parse-code-params';
+
 // @ts-expect-error
 import { highlight } from 'lowlight';
 // @ts-expect-error
 import report from 'vfile-reporter-pretty';
-
-import { parseCodeParams } from './parse-code-params';
-import { rehypeParser } from '../util';
-import { cacheToFile } from '../cache-to-file';
 
 export function customCodeOutput(dirPath: string) {
   return async (tree: Node, file: VFile) => {

@@ -4,11 +4,13 @@ import unified from 'unified';
 import { customCodeOutput } from './custom-code-output';
 
 export async function codeBlocks(
-  hast: Node,
-  file: VFile,
+  mdasts: Node[],
+  files: VFile[],
   dirPath: string
 ) {
   const processor = unified().use(customCodeOutput, dirPath);
 
-  return processor.run(hast, file);
+  await Promise.all(
+    mdasts.map((mdast, idx) => processor.run(mdast, files[idx]))
+  );
 }

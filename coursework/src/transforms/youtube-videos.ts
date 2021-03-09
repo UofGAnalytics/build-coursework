@@ -1,17 +1,17 @@
 import { VFile } from 'vfile';
 import { Node, Position } from 'unist';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 import * as yup from 'yup';
 import visit from 'unist-util-visit';
-import { cacheToFile } from '../cache-to-file';
+// import { cacheToFile } from '../cache-to-file';
 
-export function video(dirPath: string) {
+export function youtubeVideos() {
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
 
     visit(tree, 'leafDirective', (node) => {
       if (node.name === 'video') {
-        transformations.push(template(node, file, dirPath));
+        transformations.push(template(node, file));
       }
     });
 
@@ -20,17 +20,7 @@ export function video(dirPath: string) {
   };
 }
 
-type Attributes = {
-  id: string;
-  title: string;
-};
-
-const attributesSchema = yup.object().shape({
-  id: yup.string().required(),
-  title: yup.string(),
-});
-
-async function template(node: Node, file: VFile, dirPath: string) {
+async function template(node: Node, file: VFile) {
   if (!node.data) {
     node.data = {};
   }
@@ -47,20 +37,13 @@ async function template(node: Node, file: VFile, dirPath: string) {
       node.position as Position
     );
 
-    const imageData = await cacheToFile({
-      dirPath,
-      prefix: 'youtube',
-      key: attributes.id,
-      execFn: getImageData,
-    });
-
     const children: Node[] = [
       {
         type: 'element',
         tagName: 'a',
         properties: {
-          href: `https://youtu.be/${attributes.id}`,
-          title: attributes.title,
+          href: getYoutubeUrl(attributes.id),
+          title: attributes.title || null,
           target: '_blank',
         },
         children: [
@@ -68,7 +51,8 @@ async function template(node: Node, file: VFile, dirPath: string) {
             type: 'element',
             tagName: 'img',
             properties: {
-              src: `data:image/jpg;base64,${imageData}`,
+              src: getYoutubeThumbnailUrl(attributes.id),
+              // src: `data:image/jpg;base64,${imageData}`,
               alt: '',
             },
             children: [],
@@ -83,6 +67,16 @@ async function template(node: Node, file: VFile, dirPath: string) {
   }
 }
 
+type Attributes = {
+  id: string;
+  title: string;
+};
+
+const attributesSchema = yup.object().shape({
+  id: yup.string().required(),
+  title: yup.string(),
+});
+
 function getAttributes(attributes: any, file: VFile, position: Position) {
   if (!attributes.title) {
     file.message('Videos should include title attributes', position);
@@ -90,9 +84,17 @@ function getAttributes(attributes: any, file: VFile, position: Position) {
   return attributesSchema.validateSync(attributes) as Attributes;
 }
 
-async function getImageData(id: string) {
-  const url = `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
-  const response = await fetch(url);
-  const buffer = await response.buffer();
-  return buffer.toString('base64');
+function getYoutubeUrl(id: string) {
+  return `https://youtu.be/${id}`;
 }
+
+function getYoutubeThumbnailUrl(id: string) {
+  return `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+}
+
+// async function getImageData(id: string) {
+//   const url = getYoutubeThumbnailUrl(id);
+//   const response = await fetch(url);
+//   const buffer = await response.buffer();
+//   return buffer.toString('base64');
+// }
