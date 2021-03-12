@@ -1,30 +1,30 @@
 import chalk from 'chalk';
 import { collectCoursework } from './collect-coursework';
 import { Course, Unit } from './collect-coursework/types';
-// import { codeBlocks } from './code-blocks';
-import { parseMarkdown } from './parse-markdown';
 import { combineMdastTrees, getBuildDir, mkdir } from './util';
 import { getUnitTitles } from './unit-titles';
 import { writeHtml } from './write-files';
-import { compileHtml } from './compile-html';
-// import { report } from './report';
+import { printReport, reportHasFatalErrors } from './report';
+import {
+  markdownParser,
+  customTransforms,
+  linter,
+  customCombinedTransforms,
+  htmlCompiler,
+} from './processors';
 
 if (process.env.NODE_ENV === 'development') {
   buildCourse('../fixture');
 }
 
 export async function buildCourse(dirPath: string) {
-  try {
-    const course = await collectCoursework(dirPath);
+  const course = await collectCoursework(dirPath);
 
-    const buildDir = getBuildDir(dirPath);
-    await mkdir(buildDir);
+  const buildDir = getBuildDir(dirPath);
+  await mkdir(buildDir);
 
-    for (const unit of course.units) {
-      await buildUnit(dirPath, course, unit);
-    }
-  } catch (err) {
-    console.error(chalk.red(err.message));
+  for (const unit of course.units) {
+    await buildUnit(dirPath, course, unit);
   }
 }
 
@@ -33,20 +33,40 @@ export async function buildUnit(
   course: Course,
   unit: Unit
 ) {
-  const files = unit.markdown;
+  try {
+    const files = unit.markdown;
 
-  const mdasts = await Promise.all(files.map(parseMarkdown));
-  // report(files);
+    // parse markdown
+    const mdasts = await Promise.all(files.map(markdownParser));
 
-  // codeBlocks executes R and lints via RScript stderr inline
-  // await codeBlocks(mdasts, files, dirPath);
+    // transforms with reports back to original files
+    await Promise.all(
+      mdasts.map((mdast, idx) => customTransforms(mdast, files[idx]))
+    );
 
-  const combined = combineMdastTrees(mdasts);
-  const titles = getUnitTitles(course, unit);
+    // linter
+    await Promise.all(
+      mdasts.map((mdast, idx) => linter(mdast, files[idx]))
+    );
+    printReport(files);
+    if (reportHasFatalErrors(files)) {
+      return;
+    }
 
-  const html = await compileHtml(combined, titles, dirPath);
-  await writeHtml(titles.unitName, html, dirPath);
+    // combine mdast trees
+    const combined = combineMdastTrees(mdasts);
 
-  // const pdfHtml = await compilePdfHtml(combined, titles, dirPath);
-  // await writePdf(titles.unitName, pdfHtml, dirPath);
+    // transforms on combined tree
+    await customCombinedTransforms(combined, dirPath);
+
+    // compile html
+    const titles = getUnitTitles(course, unit);
+    const html = await htmlCompiler(combined, dirPath, titles);
+    await writeHtml(titles.unitName, html, dirPath);
+
+    // const pdfHtml = await pdfHtmlCompiler(combined, titles, dirPath);
+    // await writePdf(titles.unitName, pdfHtml, dirPath);
+  } catch (err) {
+    console.error(chalk.red(err.message));
+  }
 }

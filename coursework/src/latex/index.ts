@@ -29,7 +29,8 @@ function customMath(node: Node) {
 
   const mml = texToMml((node.value || '') as string);
   const svg = mmlToSvg(mml);
-  const label = mmlToSpeech(mml);
+
+  const label = '';
   const responsiveSvg = customSvgOutput(svg);
   const uniqueId = `math-${Math.random().toString(16).slice(2)}`;
 

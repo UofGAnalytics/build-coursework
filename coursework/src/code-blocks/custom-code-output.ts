@@ -11,7 +11,7 @@ import { highlight } from 'lowlight';
 // @ts-expect-error
 import report from 'vfile-reporter-pretty';
 
-export function customCodeOutput(dirPath: string) {
+export function customCodeOutput(dirPath: string | null) {
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
 
@@ -24,7 +24,11 @@ export function customCodeOutput(dirPath: string) {
   };
 }
 
-async function customCode(node: Node, dirPath: string, file: VFile) {
+async function customCode(
+  node: Node,
+  dirPath: string | null,
+  file: VFile
+) {
   if (!node.data) {
     node.data = {};
   }
@@ -61,12 +65,16 @@ async function customCode(node: Node, dirPath: string, file: VFile) {
     let output = '';
     const classNames = ['output'];
     try {
-      output = await cacheToFile({
-        dirPath,
-        prefix: 'r',
-        key: value,
-        execFn: executeRCode,
-      });
+      if (dirPath === null) {
+        output = await executeRCode(value);
+      } else {
+        output = await cacheToFile({
+          dirPath,
+          prefix: 'r',
+          key: value,
+          execFn: executeRCode,
+        });
+      }
     } catch (err) {
       output = `<code>${err.message}</code>`;
       classNames.push('error');

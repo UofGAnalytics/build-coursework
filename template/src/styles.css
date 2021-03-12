@@ -96,7 +96,7 @@ img {
   color: #831262
 }
 
-.math svg {
+svg.pdftex {
   display: block;
   width: 100%;
   height: auto;

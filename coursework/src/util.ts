@@ -51,7 +51,8 @@ export function combineMdastTrees(mdasts: Node[]): Node {
 
 export function inspect() {
   return (tree: Node) => {
-    console.dir(tree, { depth: null });
+    console.log(JSON.stringify(tree, null, 2));
+    // console.dir(tree, { depth: null });
     // visit(tree, 'leafDirective', (node) => {
     //   console.log('---------------------');
     //   console.dir(node, { depth: null });

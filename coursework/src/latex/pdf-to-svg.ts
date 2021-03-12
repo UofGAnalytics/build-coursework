@@ -1,15 +1,20 @@
-import { Node } from 'hast';
+import { Node as HastNode } from 'hast';
 import unified from 'unified';
 import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
 import SandboxedModule from 'sandboxed-module';
+import visit from 'unist-util-visit';
 
-// @ts-expect-error
-import { document, Image } from 'pdfjs-dist/lib/examples/node/domstubs';
+import {
+  document,
+  Image,
+  Element,
+  // @ts-expect-error
+} from './domstubs';
 
 // inject globals into pdf.js in a non-leaky way
 const pdfjsLib = SandboxedModule.require('pdfjs-dist/es5/build/pdf', {
-  globals: { document, Image, console, process },
+  globals: { document, Image, Element, console, process },
 });
 
 export async function texPdfToSvg(filePath: string) {
@@ -51,17 +56,31 @@ async function formatSvg(str: string) {
 }
 
 export function addWrapper() {
-  return (tree: Node) => ({
-    type: 'root',
-    children: [
-      {
-        type: 'element',
-        tagName: 'div',
-        properties: {
-          className: 'math',
-        },
-        children: tree.children as Node[],
-      },
-    ],
-  });
+  return (tree: HastNode) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName === 'svg') {
+        const properties = node.properties as Record<string, any>;
+        node.properties = {
+          width: properties.width,
+          height: properties.height,
+          viewBox: properties.viewBox,
+          className: 'pdftex',
+        };
+      }
+    });
+    // console.log(tree);
+    // return {
+    //   type: 'root',
+    //   children: [
+    //     {
+    //       type: 'element',
+    //       tagName: 'div',
+    //       properties: {
+    //         className: 'math',
+    //       },
+    //       children: tree.children as HastNode[],
+    //     },
+    //   ],
+    // };
+  };
 }

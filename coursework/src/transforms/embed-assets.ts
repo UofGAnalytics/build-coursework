@@ -13,7 +13,9 @@ export function embedAssetUrl() {
   async function getAssetUrl(node: Node, file: VFile) {
     const url = (node.url || '') as string;
     if (!file.dirname) {
-      throw new Error('VFile dirname undefined');
+      // TODO: switch to VFile reporting
+      // throw new Error('VFile dirname undefined');
+      return;
     }
     if (/^\.{1,2}\//.test(url)) {
       const fullPath = path.join(file.cwd, file.dirname, url);
@@ -35,8 +37,8 @@ export function embedAssetUrl() {
   };
 }
 
-export function embedAssets(dirPath: string) {
-  async function embed(node: Node, parent: Parent | undefined) {
+export function embedAssets(dirPath: string | null) {
+  async function embed(node: Node) {
     const src = getImageSrc(node);
     const parsed = path.parse(src);
     switch (parsed.ext) {
@@ -45,15 +47,16 @@ export function embedAssets(dirPath: string) {
       case '.gif':
         return embedImage(node, dirPath);
       case '.pdf':
-        return embedTexPdfSvg(node, parent);
+        return embedTexPdfSvg(node);
     }
+    // TODO: switch to VFile reporting
     throw new Error(`unhandled file extension: ${parsed.ext}`);
   }
   return async (tree: Node) => {
     const transformations: Promise<void>[] = [];
-    visit(tree, 'element', (node, index, parent) => {
+    visit(tree, 'element', (node) => {
       if (node.tagName === 'img') {
-        transformations.push(embed(node, parent));
+        transformations.push(embed(node));
       }
     });
     await Promise.all(transformations);
@@ -63,12 +66,13 @@ export function embedAssets(dirPath: string) {
 function getImageSrc(node: Node) {
   const properties = (node.properties || {}) as { src: string };
   if (!properties.src) {
+    // TODO: switch to VFile reporting
     throw new Error('Image has no src');
   }
   return properties.src;
 }
 
-async function embedTexPdfSvg(imgNode: Node, parent: Parent | undefined) {
+async function embedTexPdfSvg(imgNode: Node) {
   const src = getImageSrc(imgNode);
   const svgNode = await texPdfToSvg(src);
   const properties = {
@@ -76,10 +80,10 @@ async function embedTexPdfSvg(imgNode: Node, parent: Parent | undefined) {
     ...(imgNode.properties as Record<string, any>),
   };
   delete properties.src;
-  Object.assign(parent, svgNode, { properties });
+  Object.assign(imgNode, svgNode, { properties });
 }
 
-async function embedImage(node: Node, dirPath: string) {
+async function embedImage(node: Node, dirPath: string | null) {
   const properties = (node.properties || {}) as { src: string };
   const src = getImageSrc(node);
   node.properties = {
@@ -88,20 +92,24 @@ async function embedImage(node: Node, dirPath: string) {
   };
 }
 
-async function getImageData(src: string, dirPath: string) {
+async function getImageData(src: string, dirPath: string | null) {
   const mime = mimes.getType(path.extname(src));
   const image = await getImage(src, dirPath);
   return `data:${mime};base64,${image}`;
 }
 
-async function getImage(src: string, dirPath: string) {
+async function getImage(src: string, dirPath: string | null) {
   if (src.startsWith('http')) {
-    return cacheToFile({
-      dirPath,
-      prefix: 'youtube',
-      key: src,
-      execFn: getImageDataFromWeb,
-    });
+    if (dirPath === null) {
+      return getImageDataFromWeb(src);
+    } else {
+      return cacheToFile({
+        dirPath,
+        prefix: 'youtube',
+        key: src,
+        execFn: getImageDataFromWeb,
+      });
+    }
   } else {
     return readFile(src, 'base64');
   }
