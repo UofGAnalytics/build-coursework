@@ -1,43 +1,42 @@
-import { VFile } from 'vfile';
-import { Node } from 'unist';
-import unified from 'unified';
-import markdown from 'remark-parse';
-import directive from 'remark-directive';
-import math from 'remark-math';
-import remark2rehype from 'remark-rehype';
-import doc from 'rehype-document';
-import stringify from 'rehype-stringify';
-
-import { embedAssetUrl, embedAssets } from './transforms/embed-assets';
-import { youtubeVideos } from './transforms/youtube-videos';
-import {
-  assertTaskAnswerStructure,
-  moveAnswersToEnd,
-} from './transforms/task-answer';
-import { boxouts } from './transforms/boxouts';
-import { customCodeOutput } from './code-blocks/custom-code-output';
-import { lintLatex } from './transforms/lint-latex';
-import { incrementTitles } from './transforms/increment-titles';
-import { accessibleLatex } from './latex';
-import { UnitTitles } from './unit-titles';
-import { htmlWrapper } from './transforms/html-wrapper';
-import { getTemplateCss, getTemplateJs } from './env';
-// import { inspect } from './util';
-
-// @ts-expect-error
-import english from 'retext-english';
-// @ts-expect-error
-import spell from 'retext-spell';
-// @ts-expect-error
-import dictionary from 'dictionary-en-gb';
 // @ts-expect-error
 import lintAltText from '@double-great/remark-lint-alt-text';
 // @ts-expect-error
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
-import remark2retext from 'remark-retext';
+import dictionary from 'dictionary-en-gb';
+import doc from 'rehype-document';
 // @ts-expect-error
 import format from 'rehype-format';
+import stringify from 'rehype-stringify';
+import directive from 'remark-directive';
+import math from 'remark-math';
+import markdown from 'remark-parse';
+import remark2rehype from 'remark-rehype';
+// @ts-expect-error
+import remark2retext from 'remark-retext';
+// @ts-expect-error
+import english from 'retext-english';
+// @ts-expect-error
+import spell from 'retext-spell';
+import unified from 'unified';
+import { Node } from 'unist';
+import { VFile } from 'vfile';
+
+import { UnitTitles } from './course/types';
+import { getTemplateCss, getTemplateJs } from './env';
+import { assertTaskAnswerStructure } from './linters/assert-task-answer';
+import { lintLatex } from './linters/lint-latex';
+import { embedAssets } from './transforms-hast/embed-assets';
+import { htmlWrapper } from './transforms-hast/html-wrapper';
+import { accessibleTex } from './transforms-mdast/accessible-tex';
+import { boxouts } from './transforms-mdast/boxouts';
+import { codeBlocks } from './transforms-mdast/code-blocks';
+import { embedAssetUrl } from './transforms-mdast/embed-asset-urls';
+import { incrementTitles } from './transforms-mdast/increment-titles';
+import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
+import { youtubeVideos } from './transforms-mdast/youtube-videos';
+
+// import { inspect } from './utils/utils';
 
 export async function markdownParser(file: VFile) {
   const processor = unified().use(markdown).use(directive).use(math);
@@ -74,8 +73,8 @@ export async function customCombinedTransforms(
     .use(incrementTitles)
     .use(moveAnswersToEnd)
     // .use(inspect)
-    .use(accessibleLatex)
-    .use(customCodeOutput, dirPath);
+    .use(accessibleTex)
+    .use(codeBlocks, dirPath);
 
   return processor.run(mdast);
 }

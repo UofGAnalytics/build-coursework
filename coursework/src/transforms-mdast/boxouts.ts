@@ -1,11 +1,9 @@
+import toHast from 'mdast-util-to-hast';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
-import toHast from 'mdast-util-to-hast';
 
 export function boxouts() {
   return async (tree: Node) => {
-    const transformations: Promise<void>[] = [];
-
     visit(tree, 'containerDirective', (node) => {
       switch (node.name) {
         case 'example':
@@ -13,22 +11,19 @@ export function boxouts() {
         case 'background':
         case 'weblink':
         case 'task':
-          transformations.push(template(node));
+          template(node);
       }
     });
-
-    await Promise.all(transformations);
-    return tree;
   };
 }
 
-async function template(node: Node) {
+function template(node: Node) {
   const name = node.name as string;
   const children = node.children as Node[];
-  const attributes = node.attributes as Record<string, string>;
   const newChildren: Node[] = [];
 
-  if (children[0]?.data?.directiveLabel) {
+  const child = children[0] || {};
+  if (child.type === 'paragraph' && child.data?.directiveLabel) {
     const label = children.shift() as Node;
     newChildren.push({
       type: 'element',
@@ -39,7 +34,7 @@ async function template(node: Node) {
 
   newChildren.push(
     ...children
-      .filter((o) => o.name !== 'answer')
+      .filter((o) => o.name !== 'answer') // TODO: move this to task-answer
       .map((child) => toHast(child))
   );
 
@@ -51,6 +46,7 @@ async function template(node: Node) {
     hChildren: newChildren,
   };
 
+  const attributes = node.attributes as Record<string, string>;
   if (attributes.icon) {
     data.hProperties.className.push(`${attributes.icon}-icon`);
   }

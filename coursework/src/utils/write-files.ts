@@ -1,7 +1,9 @@
 import path from 'path';
-import { kebabCase } from 'lodash';
+
 import pdf from 'html-pdf';
-import { getBuildDir, writeFile } from './util';
+import { kebabCase } from 'lodash';
+
+import { getBuildDir, writeFile } from './utils';
 
 export async function writeHtml(
   fileName: string,

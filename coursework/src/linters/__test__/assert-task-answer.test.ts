@@ -1,4 +1,5 @@
-import { testProcessor, createHtml, hasFailingMessage } from './helpers';
+import { hasFailingMessage } from '../../test-utils/has-message';
+import { testProcessor } from '../../test-utils/test-processor';
 
 describe('assertTaskAnswerStructure', () => {
   it('should fail on task with no answer', async () => {
@@ -36,30 +37,5 @@ describe('assertTaskAnswerStructure', () => {
     expect(
       hasFailingMessage(file, 'Answer must be nested inside task')
     ).toBe(true);
-  });
-});
-
-describe('moveAnswersToEnd', () => {
-  it('should move answers to end', async () => {
-    const { html } = await testProcessor(`
-      ::::task[Task title]
-      Hmm, this is the *task* content?
-      :::answer
-      My answer!
-      :::
-      ::::
-    `);
-
-    const expected = createHtml(`
-      <div class="boxout task">
-        <h3>Task title</h3>
-        <p>Hmm, this is the <em>task</em> content?</p>
-      </div>
-      <div>
-        <p>Answer 1</p>
-      </div>
-    `);
-
-    expect(html).toBe(expected);
   });
 });

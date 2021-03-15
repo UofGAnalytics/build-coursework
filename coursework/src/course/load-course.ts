@@ -1,6 +1,7 @@
-import * as yup from 'yup';
 import yaml from 'js-yaml';
-import { readFile } from '../util';
+import * as yup from 'yup';
+
+import { readFile } from '../utils/utils';
 import { CourseYaml } from './types';
 
 const courseSchema = yup.object().shape({

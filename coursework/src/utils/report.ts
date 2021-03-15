@@ -1,7 +1,9 @@
 import path from 'path';
-import { VFile } from 'vfile';
+
 import chalk from 'chalk';
 import figures from 'figures';
+import { VFile } from 'vfile';
+
 import { MessageStatus } from './message';
 
 export type Report = {

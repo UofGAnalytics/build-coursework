@@ -1,17 +1,17 @@
 import chalk from 'chalk';
-import { collectCoursework } from './collect-coursework';
-import { Course, Unit } from './collect-coursework/types';
-import { combineMdastTrees, getBuildDir, mkdir } from './util';
-import { getUnitTitles } from './unit-titles';
-import { writeHtml } from './write-files';
-import { printReport, reportHasFatalErrors } from './report';
+
+import { collectCoursework, getUnitTitles } from './course';
+import { Course, Unit } from './course/types';
 import {
-  markdownParser,
-  customTransforms,
-  linter,
   customCombinedTransforms,
+  customTransforms,
   htmlCompiler,
+  linter,
+  markdownParser,
 } from './processors';
+import { printReport, reportHasFatalErrors } from './utils/report';
+import { combineMdastTrees, getBuildDir, mkdir } from './utils/utils';
+import { writeHtml } from './utils/write-files';
 
 if (process.env.NODE_ENV === 'development') {
   buildCourse('../fixture');

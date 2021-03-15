@@ -1,4 +1,4 @@
-import { parseCodeParams } from './parse-code-params';
+import { parseCodeParams } from '../parse-code-params';
 
 it('should parse code params', async () => {
   expect(parseCodeParams()).toStrictEqual({

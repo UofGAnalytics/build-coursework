@@ -1,11 +1,12 @@
 import path from 'path';
-import { loadCourseYaml } from './load-course';
-import { loadUnitYaml } from './load-unit';
-import { FileRef } from './types';
-import { Course } from '../collect-coursework/types';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
+
+import { loadCourseYaml } from './load-course';
+import { loadUnitYaml } from './load-unit';
+import { Course, Unit, UnitTitles } from './types';
+import { FileRef } from './types';
 
 export async function collectCoursework(dirPath: string): Promise<Course> {
   const course = await loadCourseYaml(dirPath);
@@ -23,4 +24,12 @@ async function collectUnitContents(dirPath: string, unit: FileRef) {
     )
   );
   return { ...yaml, markdown };
+}
+
+export function getUnitTitles(course: Course, unit: Unit): UnitTitles {
+  const courseTitle = `${course.title}: ${unit.name}`;
+  const unitTitle = unit.title;
+  const unitName = unit.name;
+  const docTitle = `${unitTitle} | ${courseTitle}`;
+  return { courseTitle, unitTitle, unitName, docTitle };
 }

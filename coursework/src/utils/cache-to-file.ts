@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+
 import hashSum from 'hash-sum';
-import { getCacheDir } from './util';
+
+import { getCacheDir } from './utils';
 
 type Options = {
-  dirPath: string;
+  dirPath: string | null;
   prefix: string;
   key: string;
   execFn: (code: string) => Promise<string>;
@@ -16,6 +18,10 @@ export async function cacheToFile({
   key,
   execFn,
 }: Options) {
+  if (dirPath === null) {
+    return execFn(key);
+  }
+
   const cacheDir = getCacheDir(dirPath);
   const filePath = `${prefix}-${hashSum(key)}.txt`;
   const cachedFilePath = path.join(cacheDir, filePath);

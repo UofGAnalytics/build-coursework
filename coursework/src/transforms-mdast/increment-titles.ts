@@ -1,32 +1,22 @@
-import { Node } from 'hast';
-import visit from 'unist-util-visit';
 import { startCase } from 'lodash';
+import { Node, Parent } from 'unist';
+import visit from 'unist-util-visit';
 
 export function incrementTitles() {
   const counter = createCounter();
 
   async function template(node: Node) {
-    const children = node.children as Node[];
-    let title = '';
-
     const name = node.name as string;
     const subject = startCase(name);
     const count = counter.increment(name);
-    title += `${subject} ${count}`;
+    const data = node.data as { hChildren: Node[] };
+    const parent = data.hChildren[0] as Parent;
+    const child = parent.children[0];
 
-    const childChildren = children[0].children as Node[];
-
-    // if the directive has a label, append in brackets
-    // TODO: need to append mdast tree not string
-    if (children[0]?.data?.directiveLabel) {
-      const label = childChildren[0].value;
-      title += ` (${label})`;
-    }
-
-    childChildren[0].value = title;
+    child.value = `${subject} ${count} (${child.value})`;
   }
 
-  return async (tree: Node) => {
+  return (tree: Node) => {
     visit(tree, 'containerDirective', (node) => {
       switch (node.name) {
         case 'example':
@@ -35,7 +25,6 @@ export function incrementTitles() {
           template(node);
       }
     });
-    return tree;
   };
 }
 

@@ -23,3 +23,10 @@ export type Course = {
 export type FileRef = {
   src: string;
 };
+
+export type UnitTitles = {
+  courseTitle: string;
+  unitTitle: string;
+  unitName: string;
+  docTitle: string;
+};

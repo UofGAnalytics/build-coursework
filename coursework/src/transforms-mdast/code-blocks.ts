@@ -1,24 +1,23 @@
-import { Node } from 'unist';
-import { VFile } from 'vfile';
-import visit from 'unist-util-visit';
-import { rehypeParser } from '../util';
-import { cacheToFile } from '../cache-to-file';
-import { executeRCode } from './exec-r';
-import { parseCodeParams } from './parse-code-params';
-
 // @ts-expect-error
 import { highlight } from 'lowlight';
+import { Node } from 'unist';
+import visit from 'unist-util-visit';
+import { VFile } from 'vfile';
 // @ts-expect-error
 import report from 'vfile-reporter-pretty';
 
-export function customCodeOutput(dirPath: string | null) {
+import { executeRCode } from '../r-markdown/exec-r';
+import { parseCodeParams } from '../r-markdown/parse-code-params';
+import { cacheToFile } from '../utils/cache-to-file';
+import { failMessage } from '../utils/message';
+import { rehypeParser } from '../utils/utils';
+
+export function codeBlocks(dirPath: string | null) {
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
-
     visit(tree, 'code', (node) => {
       transformations.push(customCode(node, dirPath, file));
     });
-
     await Promise.all(transformations);
     return tree;
   };
@@ -65,20 +64,14 @@ async function customCode(
     let output = '';
     const classNames = ['output'];
     try {
-      if (dirPath === null) {
-        output = await executeRCode(value);
-      } else {
-        output = await cacheToFile({
-          dirPath,
-          prefix: 'r',
-          key: value,
-          execFn: executeRCode,
-        });
-      }
+      output = await cacheToFile({
+        dirPath,
+        prefix: 'r',
+        key: value,
+        execFn: executeRCode,
+      });
     } catch (err) {
-      output = `<code>${err.message}</code>`;
-      classNames.push('error');
-      file.message(err.message, node.position);
+      failMessage(file, err.message, node.position);
     }
 
     const ast = rehypeParser.parse(output).children;

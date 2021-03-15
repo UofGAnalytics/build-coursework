@@ -1,21 +1,18 @@
-import unified from 'unified';
-import remark2rehype from 'remark-rehype';
-import stringify from 'rehype-stringify';
-import { VFile } from 'vfile';
-
-import { reportHasFatalErrors } from '../report';
-import { MessageStatus } from '../message';
-import {
-  markdownParser,
-  linter,
-  customTransforms,
-  customCombinedTransforms,
-} from '../processors';
-
 // @ts-expect-error
 import format from 'rehype-format';
+import stringify from 'rehype-stringify';
+import remark2rehype from 'remark-rehype';
 // @ts-expect-error
 import toVFile from 'to-vfile';
+import unified from 'unified';
+import { VFile } from 'vfile';
+
+import {
+  customCombinedTransforms,
+  customTransforms,
+  linter,
+  markdownParser,
+} from '../processors';
 
 export async function testProcessor(md: string) {
   const contents = unindentString(md);
@@ -42,22 +39,9 @@ export function createHtml(str: string) {
 
 function unindentString(str: string) {
   const arr = str.split('\n');
-  const indent = arr.reduce((acc, line) => {
+  const indentIdx = arr.reduce((acc, line) => {
     const idx = line.search(/[^\s]/);
     return idx > -1 && idx < acc ? idx : acc;
   }, 100);
-  return arr.map((s) => s.slice(indent)).join('\n');
-}
-
-export function hasFailingMessage(file: VFile, reason: string) {
-  const errors = file.messages.filter((o) => o.reason === reason);
-  if (errors.length !== 1) {
-    console.log('Message not found in these messages:');
-    console.log(file.messages);
-    return false;
-  }
-  if (errors[0].status !== MessageStatus.fail) {
-    return false;
-  }
-  return reportHasFatalErrors([file]);
+  return arr.map((s) => s.slice(indentIdx)).join('\n');
 }
