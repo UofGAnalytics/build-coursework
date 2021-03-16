@@ -4,6 +4,12 @@ import visit from 'unist-util-visit';
 export function moveAnswersToEnd() {
   return (tree: Node) => {
     visit(tree, 'containerDirective', (node, index, parent) => {
+      // remove answer from task rehype
+      if (node.name === 'task' && node.data) {
+        const children = (node.data.hChildren || []) as Node[];
+        node.data.hChildren = children.filter((o) => o.name !== 'answer');
+      }
+
       if (node.name === 'answer') {
         // these nodes have already been moved to the end
         if (node.movedToEnd) {

@@ -6,8 +6,8 @@ import {
 describe('moveAnswersToEnd', () => {
   it('should move answers to end', async () => {
     const { html } = await testProcessor(`
-      ::::task[Task title]
-      Hmm, this is the *task* content?
+      ::::task[My task title]
+      This is the *task* content
       :::answer
       My answer!
       :::
@@ -15,15 +15,22 @@ describe('moveAnswersToEnd', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout task">
-        <h3>Task title</h3>
-        <p>Hmm, this is the <em>task</em> content?</p>
+      <div class="boxout task" id="task-1">
+        <h3>Task 1 (My task title)</h3>
+        <p>This is the <em>task</em> content</p>
       </div>
-      <div>
-        <p>Answer 1</p>
+      <div class="boxout answer" id="answer-1">
+        <h3>Answer 1</h3>
+        <p>My answer!</p>
       </div>
     `);
 
     expect(html).toBe(expected);
   });
+
+  // it.only('test', async () => {
+  //   const { html } = await testProcessor(`
+  //     ::hr{.red}
+  //   `);
+  // });
 });

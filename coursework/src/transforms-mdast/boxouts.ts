@@ -1,8 +1,34 @@
+import { startCase } from 'lodash';
 import toHast from 'mdast-util-to-hast';
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
 export function boxouts() {
+  const counter = createCounter();
+
+  function template(node: Node) {
+    const name = node.name as string;
+    const children = node.children as Node[];
+    const count = counter.increment(name);
+    const title = getTitle(node, count);
+    const id = `${name}-${count}`;
+
+    const className = ['boxout', name];
+    const attributes = node.attributes as Record<string, string>;
+    if (attributes.icon) {
+      className.push(`${attributes.icon}-icon`);
+    }
+
+    const newChildren = children
+      .filter((o) => !o.data?.directiveLabel)
+      .map((o) => ({ ...toHast(o), name: o.name }));
+
+    node.data = {
+      hProperties: { className, id },
+      hChildren: [title, ...newChildren],
+    };
+  }
+
   return async (tree: Node) => {
     visit(tree, 'containerDirective', (node) => {
       switch (node.name) {
@@ -11,45 +37,47 @@ export function boxouts() {
         case 'background':
         case 'weblink':
         case 'task':
+        case 'answer':
           template(node);
       }
     });
   };
 }
 
-function template(node: Node) {
-  const name = node.name as string;
-  const children = node.children as Node[];
-  const newChildren: Node[] = [];
-
-  const child = children[0] || {};
-  if (child.type === 'paragraph' && child.data?.directiveLabel) {
-    const label = children.shift() as Node;
-    newChildren.push({
-      type: 'element',
-      tagName: 'h3',
-      children: label.children,
-    });
-  }
-
-  newChildren.push(
-    ...children
-      .filter((o) => o.name !== 'answer') // TODO: move this to task-answer
-      .map((child) => toHast(child))
-  );
-
-  const data = {
-    hName: 'div',
-    hProperties: {
-      className: ['boxout', name],
-    },
-    hChildren: newChildren,
+function getTitle(node: Node, count: number): Node {
+  return {
+    type: 'element',
+    tagName: 'h3',
+    children: [
+      {
+        type: 'text',
+        value: getTitleValue(node, count),
+      },
+    ],
   };
+}
 
-  const attributes = node.attributes as Record<string, string>;
-  if (attributes.icon) {
-    data.hProperties.className.push(`${attributes.icon}-icon`);
+function getTitleValue(node: Node, count: number) {
+  const subject = startCase(node.name as string);
+  const children = (node.children || []) as Node[];
+  const firstChild = (children[0] || {}) as Parent;
+  const oldValue = (firstChild.children[0]?.value || '') as string;
+
+  let newValue = `${subject} ${count}`;
+
+  if (firstChild.data?.directiveLabel && oldValue !== '') {
+    newValue += ` (${oldValue})`;
   }
 
-  node.data = data;
+  return newValue;
+}
+
+function createCounter() {
+  const store: Record<string, number> = {};
+  return {
+    increment(key: string) {
+      store[key] = (store[key] || 0) + 1;
+      return store[key];
+    },
+  };
 }

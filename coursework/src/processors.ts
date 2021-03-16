@@ -45,10 +45,7 @@ export async function markdownParser(file: VFile) {
 }
 
 export async function customTransforms(mdast: Node, file: VFile) {
-  const processor = unified()
-    .use(embedAssetUrl)
-    .use(boxouts)
-    .use(youtubeVideos);
+  const processor = unified().use(embedAssetUrl).use(youtubeVideos);
 
   return processor.run(mdast, file);
 }
@@ -70,7 +67,7 @@ export async function customCombinedTransforms(
   dirPath: string | null
 ) {
   const processor = unified()
-    .use(incrementTitles)
+    .use(boxouts)
     .use(moveAnswersToEnd)
     // .use(inspect)
     .use(accessibleTex)
