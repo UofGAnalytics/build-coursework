@@ -77,23 +77,45 @@ img {
   color: #002f55;
 }
 
-/* .boxout.weblink {
-  background-color: #DCE0E5;
-  color: #003865;
+.boxout h3::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 0.5rem;
 }
-.boxout.example {
-  background-color: #003865;
+
+.boxout.task h3::before {
+  background-image: url(./icons/task-icon.svg);
 }
-.boxout.background {
-  background-color: #003865;
-} */
+
+.boxout.example h3::before {
+  background-image: url(./icons/example-icon.svg);
+}
+
+.boxout.supplement h3::before {
+  background-image: url(./icons/supplement-icon.svg);
+}
+
+.boxout.background h3::before {
+  background-image: url(./icons/background-icon.svg);
+}
+
+.boxout.weblink h3::before {
+  background-image: url(./icons/link-icon.svg);
+}
+
+.boxout.task {
+  background-color: #e7d9e3;
+  color: #831262;
+}
+
 .boxout.supplement {
   background-color: #dfdfdf;
   color: #464646;
-}
-.boxout.task {
-  background-color: #e7d9e3;
-  color: #831262
 }
 
 svg.pdftex {

@@ -17,21 +17,26 @@ if (process.env.NODE_ENV === 'development') {
   buildCourse('../fixture');
 }
 
-export async function buildCourse(dirPath: string) {
+export type Options = {
+  noDoc?: boolean;
+};
+
+export async function buildCourse(dirPath: string, options: Options = {}) {
   const course = await collectCoursework(dirPath);
 
   const buildDir = getBuildDir(dirPath);
   await mkdir(buildDir);
 
   for (const unit of course.units) {
-    await buildUnit(dirPath, course, unit);
+    await buildUnit(dirPath, course, unit, options);
   }
 }
 
 export async function buildUnit(
   dirPath: string,
   course: Course,
-  unit: Unit
+  unit: Unit,
+  options: Options
 ) {
   try {
     const files = unit.markdown;
@@ -61,7 +66,7 @@ export async function buildUnit(
 
     // compile html
     const titles = getUnitTitles(course, unit);
-    const html = await htmlCompiler(combined, dirPath, titles);
+    const html = await htmlCompiler(combined, dirPath, titles, options);
     await writeHtml(titles.unitName, html, dirPath);
 
     // const pdfHtml = await pdfHtmlCompiler(combined, titles, dirPath);

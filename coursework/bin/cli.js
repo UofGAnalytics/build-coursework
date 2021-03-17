@@ -1,9 +1,9 @@
 #! /usr/bin/env node
 
-const { buildCoursework } = require('../build')
+const { buildCourse } = require('../build')
 
-// const [, , ...args] = process.argv
+const [, , dirPath, ...args] = process.argv
 
-// console.log(process.cwd(), args)
+const noDoc = args.includes('--no-doc')
 
-buildCoursework('.')
+buildCourse(dirPath, { noDoc })

@@ -36,10 +36,8 @@ export async function texPdfToSvg(filePath: string) {
   return formatSvg(svg.toString());
 }
 
-function isPdfTexDocument(_info: Object = {}) {
-  const info = _info as { Producer?: string };
-  const producer = info['Producer'] || '';
-  return producer.startsWith('pdfTeX');
+function isPdfTexDocument(info: Record<string, string>) {
+  return info.Producer?.startsWith('pdfTeX');
 }
 
 async function formatSvg(str: string) {

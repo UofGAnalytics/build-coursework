@@ -27,10 +27,4 @@ describe('moveAnswersToEnd', () => {
 
     expect(html).toBe(expected);
   });
-
-  // it.only('test', async () => {
-  //   const { html } = await testProcessor(`
-  //     ::hr{.red}
-  //   `);
-  // });
 });

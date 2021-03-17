@@ -24,6 +24,7 @@ import { VFile } from 'vfile';
 
 import { UnitTitles } from './course/types';
 import { getTemplateCss, getTemplateJs } from './env';
+import type { Options } from './index';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
@@ -32,7 +33,6 @@ import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-urls';
-import { incrementTitles } from './transforms-mdast/increment-titles';
 import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 
@@ -79,21 +79,23 @@ export async function customCombinedTransforms(
 export async function htmlCompiler(
   mdast: Node,
   dirPath: string | null,
-  titles: UnitTitles
+  titles: UnitTitles,
+  options: Options
 ) {
-  const style = await getTemplateCss();
-  const script = await getTemplateJs();
   const processor = unified()
     .use(remark2rehype)
     .use(embedAssets, dirPath) // TODO: try to get this inside custom transforms
     .use(htmlWrapper, titles)
-    .use(doc, {
-      title: titles.docTitle,
-      style: `\n${style}\n`,
-      script: `\n${script}\n`,
-    })
     .use(format)
     .use(stringify);
+
+  if (!options.noDoc) {
+    processor.use(doc, {
+      title: titles.docTitle,
+      style: `\n${await getTemplateCss()}\n`,
+      script: `\n${await getTemplateJs()}\n`,
+    });
+  }
 
   const transformed = await processor.run(mdast);
   return processor.stringify(transformed);
@@ -102,8 +104,9 @@ export async function htmlCompiler(
 export async function pdfHtmlCompiler(
   mdast: Node,
   dirPath: string | null,
-  titles: UnitTitles
+  titles: UnitTitles,
+  options: Options
 ) {
   // TODO: pdf cover
-  return htmlCompiler(mdast, dirPath, titles);
+  return htmlCompiler(mdast, dirPath, titles, options);
 }

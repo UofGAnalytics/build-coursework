@@ -5,3 +5,35 @@ P=L\cdot \frac{1-v}{v-v^(n+1)}.
 $$
 
 ![image of something](./figure1.pdf)
+
+::::task[My task title]
+This is the *task* content
+:::answer
+My answer!
+:::
+::::
+
+
+:::example
+An example of *this*!
+:::
+
+:::example[My Example]
+An example of *this*!
+:::
+
+:::example[My Example]{icon=hello}
+An example of *this*!
+:::
+
+:::supplement
+A supplement of *this*!
+:::
+
+:::background
+A background of *this*!
+:::
+
+:::weblink
+A weblink of *this*!
+:::
