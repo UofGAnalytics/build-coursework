@@ -1,6 +1,6 @@
+import { Position } from 'unist';
 import { VFile } from 'vfile';
 import { VFileMessage } from 'vfile-message';
-import { Position } from 'unist';
 
 export type VFileWithStatus = Omit<VFile, 'messages'> & {
   messages: MessageWithStatus[];
@@ -49,6 +49,7 @@ function messageWithStatus(
   position: Position | undefined,
   status: MessageStatus
 ) {
+  console.log(message);
   const msg = file.message(message, position);
   msg.status = status;
   return msg;

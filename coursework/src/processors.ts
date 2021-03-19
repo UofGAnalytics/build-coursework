@@ -9,6 +9,7 @@ import doc from 'rehype-document';
 import format from 'rehype-format';
 import stringify from 'rehype-stringify';
 import directive from 'remark-directive';
+import gfm from 'remark-gfm';
 import math from 'remark-math';
 import markdown from 'remark-parse';
 import remark2rehype from 'remark-rehype';
@@ -22,6 +23,7 @@ import unified from 'unified';
 import { Node } from 'unist';
 import { VFile } from 'vfile';
 
+import { codeMod } from './code-mod';
 import { UnitTitles } from './course/types';
 import { getTemplateCss, getTemplateJs } from './env';
 import type { Options } from './index';
@@ -39,14 +41,18 @@ import { youtubeVideos } from './transforms-mdast/youtube-videos';
 // import { inspect } from './utils/utils';
 
 export async function markdownParser(file: VFile) {
-  const processor = unified().use(markdown).use(directive).use(math);
+  file.contents = codeMod(file.contents as string);
+  const processor = unified()
+    .use(markdown)
+    .use(directive)
+    .use(math)
+    .use(gfm);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
 
 export async function customTransforms(mdast: Node, file: VFile) {
   const processor = unified().use(embedAssetUrl).use(youtubeVideos);
-
   return processor.run(mdast, file);
 }
 

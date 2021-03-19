@@ -1,0 +1,5 @@
+{
+  "exec": "babel-node --root-mode upward --extensions .ts --only src",
+  "watch": ["src", "../fixture/week1"],
+  "ext": "ts, Rmd, pdf, jpg, svg, yaml"
+}

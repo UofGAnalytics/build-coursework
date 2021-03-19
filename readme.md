@@ -11,6 +11,10 @@ https://github.com/dimerapp/markdown
 
 https://github.com/joshkatz/r-script
 
-### Latex parser
+### LaTeX parser
 
 https://github.com/tamuratak/latex-utensils
+
+### Markdown to LaTeX compiler
+
+https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rebber

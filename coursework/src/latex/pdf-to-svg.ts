@@ -36,7 +36,7 @@ export async function texPdfToSvg(filePath: string) {
   return formatSvg(svg.toString());
 }
 
-function isPdfTexDocument(info: Record<string, string>) {
+function isPdfTexDocument(info: Record<string, string> = {}) {
   return info.Producer?.startsWith('pdfTeX');
 }
 

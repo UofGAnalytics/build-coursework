@@ -9,6 +9,9 @@
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
   "license": "MIT",
   "scripts": {
+    "dev": "concurrently yarn:coursework yarn:template -c green,cyan",
+    "coursework": "yarn workspace coursework dev",
+    "template": "yarn workspace template dev",
     "test": "jest --verbose"
   },
   "dependencies": {},
@@ -20,6 +23,7 @@
     "@babel/preset-typescript": "^7.12.7",
     "@types/jest": "^26.0.20",
     "@typescript-eslint/parser": "^4.14.1",
+    "concurrently": "^6.0.0",
     "eslint": "^7.18.0",
     "eslint-plugin-jest": "^24.1.3",
     "import-sort-style-module": "^6.0.0",

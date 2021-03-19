@@ -6,12 +6,9 @@
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn coursework && yarn serve",
-    "serve": "webpack serve",
+    "dev": "webpack serve",
     "build": "NODE_ENV=production webpack",
-    "start": "node build/index.js",
-    "svgo": "svgo",
-    "coursework": "build-coursework ../fixture --no-doc"
+    "svgo": "svgo"
   },
   "dependencies": {
     "highlight.js": "^10.5.0"

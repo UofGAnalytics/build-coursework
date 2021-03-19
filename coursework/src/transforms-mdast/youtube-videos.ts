@@ -1,26 +1,21 @@
-import { VFile } from 'vfile';
 import { Node, Position } from 'unist';
-// import fetch from 'node-fetch';
-import * as yup from 'yup';
 import visit from 'unist-util-visit';
-// import { cacheToFile } from '../cache-to-file';
+import { VFile } from 'vfile';
+import * as yup from 'yup';
+
+import { failMessage, warnMessage } from '../utils/message';
 
 export function youtubeVideos() {
   return async (tree: Node, file: VFile) => {
-    const transformations: Promise<void>[] = [];
-
     visit(tree, 'leafDirective', (node) => {
       if (node.name === 'video') {
-        transformations.push(template(node, file));
+        template(node, file);
       }
     });
-
-    await Promise.all(transformations);
-    return tree;
   };
 }
 
-async function template(node: Node, file: VFile) {
+function template(node: Node, file: VFile) {
   if (!node.data) {
     node.data = {};
   }
@@ -52,7 +47,6 @@ async function template(node: Node, file: VFile) {
             tagName: 'img',
             properties: {
               src: getYoutubeThumbnailUrl(attributes.id),
-              // src: `data:image/jpg;base64,${imageData}`,
               alt: '',
             },
             children: [],
@@ -63,7 +57,7 @@ async function template(node: Node, file: VFile) {
 
     node.data.hChildren = children;
   } catch (err) {
-    file.message(err.message, node.position);
+    failMessage(file, err.message, node.position);
   }
 }
 
@@ -79,7 +73,7 @@ const attributesSchema = yup.object().shape({
 
 function getAttributes(attributes: any, file: VFile, position: Position) {
   if (!attributes.title) {
-    file.message('Videos should include title attributes', position);
+    warnMessage(file, 'Videos should include title attributes', position);
   }
   return attributesSchema.validateSync(attributes) as Attributes;
 }
@@ -91,10 +85,3 @@ function getYoutubeUrl(id: string) {
 function getYoutubeThumbnailUrl(id: string) {
   return `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 }
-
-// async function getImageData(id: string) {
-//   const url = getYoutubeThumbnailUrl(id);
-//   const response = await fetch(url);
-//   const buffer = await response.buffer();
-//   return buffer.toString('base64');
-// }

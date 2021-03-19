@@ -3,14 +3,17 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const CopyPlugin = require('copy-webpack-plugin');
 
+const isProd = process.env.NODE_ENV === 'production'
+
 module.exports = {
   entry: path.join(__dirname, 'src/index.ts'),
+  mode: isProd ? 'production' : 'development',
   target: 'node',
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'index.js',
     publicPath: '',
-    libraryTarget: 'commonjs',
+    libraryTarget: 'commonjs'
   },
   resolve: {
     extensions: ['.ts', '.js']
