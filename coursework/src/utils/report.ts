@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import figures from 'figures';
 import { VFile } from 'vfile';
 
+import { Context } from '../types';
 import { MessageStatus } from './message';
 
 export type Report = {
@@ -22,7 +23,7 @@ type ReportMessage = {
   reason: string;
 };
 
-export function printReport(files: VFile[]) {
+export function printReport(files: VFile[], ctx: Context) {
   for (const file of files) {
     console.log(`\n${getFilePath(file.path as string)}`);
     for (const message of file.messages) {
@@ -34,7 +35,7 @@ export function printReport(files: VFile[]) {
   }
 }
 
-export function reportHasFatalErrors(files: VFile[]) {
+export function reportHasFatalErrors(files: VFile[], ctx: Context) {
   const passed = files.every((file) =>
     file.messages.every((message) => message.status !== MessageStatus.fail)
   );

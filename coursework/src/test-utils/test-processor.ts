@@ -1,36 +1,65 @@
 // @ts-expect-error
-import format from 'rehype-format';
-import stringify from 'rehype-stringify';
-import remark2rehype from 'remark-rehype';
-// @ts-expect-error
 import toVFile from 'to-vfile';
-import unified from 'unified';
+import { Parent } from 'unist';
 import { VFile } from 'vfile';
 
-import {
-  customCombinedTransforms,
-  customTransforms,
-  linter,
-  markdownParser,
-} from '../processors';
+import { getUnitTitles } from '../course';
+import { htmlCompiler } from '../processors';
+import { Options } from '../types';
+import { buildUnit } from '..';
 
-export async function testProcessor(md: string) {
-  const contents = unindentString(md);
+type TestOptions = Options & {
+  noCompile?: boolean;
+};
 
-  const file = toVFile({ contents }) as VFile;
-  const mdast = await markdownParser(file);
-  await linter(mdast, file);
-  await customTransforms(mdast, file);
-  await customCombinedTransforms(mdast, null);
+export async function testProcessor(
+  md: string,
+  options: TestOptions = {}
+) {
+  const contents = createHtml(md);
 
-  const processor = unified()
-    .use(remark2rehype)
-    .use(format)
-    .use(stringify);
+  const file = toVFile({
+    path: 'test',
+    contents,
+  }) as VFile;
 
-  const transformed = await processor.run(mdast, file);
-  const html = processor.stringify(transformed, file);
-  return { file, html };
+  const course = {
+    title: 'Test Course',
+    units: [{ src: 'test' }],
+  };
+
+  const unit = {
+    name: 'Week Test',
+    title: 'Test Unit',
+    content: [{ src: contents }],
+    markdown: [file],
+  };
+
+  const titles = getUnitTitles(course, unit);
+
+  const ctx = {
+    cacheDir: null,
+    buildDir: null,
+    course: {
+      ...course,
+      units: [{ ...unit, titles }],
+    },
+    options: {
+      noDoc: true,
+      noSyntaxHighlight: true,
+      noReport: true,
+      ...options,
+    },
+  };
+
+  const mdast = (await buildUnit(ctx, 0)) as Parent;
+
+  if (options.noCompile) {
+    return { file, mdast, html: '' };
+  }
+
+  const html = await htmlCompiler(mdast, ctx, 0);
+  return { file, html, mdast };
 }
 
 export function createHtml(str: string) {

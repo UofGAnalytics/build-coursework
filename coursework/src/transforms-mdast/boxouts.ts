@@ -61,15 +61,24 @@ function getTitleValue(node: Node, count: number) {
   const subject = startCase(node.name as string);
   const children = (node.children || []) as Node[];
   const firstChild = (children[0] || {}) as Parent;
-  const oldValue = (firstChild.children[0]?.value || '') as string;
+  const oldValue = getCurrentValue(firstChild);
 
   let newValue = `${subject} ${count}`;
 
-  if (firstChild.data?.directiveLabel && oldValue !== '') {
+  if (oldValue !== null) {
     newValue += ` (${oldValue})`;
   }
 
   return newValue;
+}
+
+function getCurrentValue(parent: Parent) {
+  if (!parent.data?.directiveLabel) {
+    return null;
+  }
+  const children = (parent.children || []) as Node[];
+  const firstChild = (children[0] || {}) as Parent;
+  return String(firstChild.value);
 }
 
 function createCounter() {

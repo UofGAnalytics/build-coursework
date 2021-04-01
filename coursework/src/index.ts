@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 
-import { collectCoursework, getUnitTitles } from './course';
-import { Course, Unit } from './course/types';
+import { collectCoursework } from './course';
 import {
   customCombinedTransforms,
   customTransforms,
@@ -9,69 +8,72 @@ import {
   linter,
   markdownParser,
 } from './processors';
+import { Context, Options } from './types';
 import { printReport, reportHasFatalErrors } from './utils/report';
-import { combineMdastTrees, getBuildDir, mkdir } from './utils/utils';
+import {
+  combineMdastTrees,
+  getBuildDir,
+  getCacheDir,
+  mkdir,
+} from './utils/utils';
 import { writeHtml } from './utils/write-files';
-
-if (process.env.NODE_ENV === 'development') {
-  buildCourse('../fixture');
-}
-
-export type Options = {
-  noDoc?: boolean;
-};
 
 export async function buildCourse(dirPath: string, options: Options = {}) {
   const course = await collectCoursework(dirPath);
 
-  const buildDir = getBuildDir(dirPath);
-  await mkdir(buildDir);
+  const ctx: Context = {
+    buildDir: getBuildDir(dirPath),
+    cacheDir: getCacheDir(dirPath),
+    course,
+    options,
+  };
 
-  for (const unit of course.units) {
-    await buildUnit(dirPath, course, unit, options);
+  if (ctx.buildDir) {
+    await mkdir(ctx.buildDir);
+  }
+
+  for (let idx = 0; idx < course.units.length; idx++) {
+    const unit = course.units[idx];
+
+    try {
+      const mdast = await buildUnit(ctx, idx);
+      if (ctx.buildDir) {
+        const html = await htmlCompiler(mdast, ctx, idx);
+        await writeHtml(unit.titles.unitName, html, dirPath);
+        // await writePdf(titles.unitName, pdfHtml, dirPath);
+      }
+    } catch (err) {
+      console.error(chalk.red(err.message));
+      return;
+    }
   }
 }
 
-export async function buildUnit(
-  dirPath: string,
-  course: Course,
-  unit: Unit,
-  options: Options
-) {
-  try {
-    const files = unit.markdown;
+export async function buildUnit(ctx: Context, unitIdx: number) {
+  const files = ctx.course.units[unitIdx].markdown;
+  const mdasts = await Promise.all(files.map(markdownParser));
 
-    // parse markdown
-    const mdasts = await Promise.all(files.map(markdownParser));
+  // transforms in parallel with reports back to original files
+  await Promise.all(
+    mdasts.map((mdast, idx) => customTransforms(mdast, ctx, files[idx]))
+  );
 
-    // transforms with reports back to original files
-    await Promise.all(
-      mdasts.map((mdast, idx) => customTransforms(mdast, files[idx]))
-    );
-
-    // linter
-    await Promise.all(
-      mdasts.map((mdast, idx) => linter(mdast, files[idx]))
-    );
-    printReport(files);
-    if (reportHasFatalErrors(files)) {
-      return;
-    }
-
-    // combine mdast trees
-    const combined = combineMdastTrees(mdasts);
-
-    // transforms on combined tree
-    await customCombinedTransforms(combined, dirPath);
-
-    // compile html
-    const titles = getUnitTitles(course, unit);
-    const html = await htmlCompiler(combined, dirPath, titles, options);
-    await writeHtml(titles.unitName, html, dirPath);
-
-    // const pdfHtml = await pdfHtmlCompiler(combined, titles, dirPath);
-    // await writePdf(titles.unitName, pdfHtml, dirPath);
-  } catch (err) {
-    console.error(chalk.red(err.message));
+  // linter in parallel
+  await Promise.all(
+    mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
+  );
+  if (!ctx.options.noReport) {
+    printReport(files, ctx);
   }
+  if (reportHasFatalErrors(files, ctx)) {
+    throw new Error('Validation failed');
+  }
+
+  // combine mdast trees
+  const combined = combineMdastTrees(mdasts);
+
+  // transforms on the combined tree
+  await customCombinedTransforms(combined, ctx);
+
+  return combined;
 }

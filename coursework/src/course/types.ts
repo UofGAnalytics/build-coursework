@@ -13,6 +13,7 @@ export type UnitYaml = {
 
 export type Unit = UnitYaml & {
   markdown: VFile[];
+  titles: UnitTitles;
 };
 
 export type Course = {

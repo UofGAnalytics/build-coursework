@@ -1,7 +1,9 @@
 import fs from 'fs';
+
+import rehype from 'rehype-parse';
 import unified from 'unified';
 import { Node } from 'unist';
-import rehype from 'rehype-parse';
+
 // import visit from 'unist-util-visit';
 
 export const rehypeParser = unified().use(rehype, { fragment: true });

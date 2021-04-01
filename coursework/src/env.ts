@@ -7,3 +7,7 @@ export function getTemplateCss() {
 export function getTemplateJs() {
   return readFile('../template/build/main.js');
 }
+
+export function getAsset(assetName: string) {
+  return readFile(`./assets/${assetName}`);
+}

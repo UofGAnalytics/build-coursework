@@ -3,35 +3,29 @@ import path from 'path';
 
 import hashSum from 'hash-sum';
 
-import { getCacheDir } from './utils';
+import { Context } from '../types';
 
 type Options = {
-  dirPath: string | null;
+  ctx: Context;
   prefix: string;
   key: string;
   execFn: (code: string) => Promise<string>;
 };
 
-export async function cacheToFile({
-  dirPath,
-  prefix,
-  key,
-  execFn,
-}: Options) {
-  if (dirPath === null) {
+export async function cacheToFile({ ctx, prefix, key, execFn }: Options) {
+  if (ctx.cacheDir === null) {
     return execFn(key);
   }
 
-  const cacheDir = getCacheDir(dirPath);
   const filePath = `${prefix}-${hashSum(key)}.txt`;
-  const cachedFilePath = path.join(cacheDir, filePath);
+  const cachedFilePath = path.join(ctx.cacheDir, filePath);
 
   if (fs.existsSync(cachedFilePath)) {
     return fs.readFileSync(cachedFilePath, 'utf-8');
   }
 
   const out = await execFn(key);
-  fs.mkdirSync(cacheDir, { recursive: true });
+  fs.mkdirSync(ctx.cacheDir, { recursive: true });
   fs.writeFileSync(cachedFilePath, out);
   return out;
 }

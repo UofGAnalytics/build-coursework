@@ -24,9 +24,7 @@ import { Node } from 'unist';
 import { VFile } from 'vfile';
 
 import { codeMod } from './code-mod';
-import { UnitTitles } from './course/types';
 import { getTemplateCss, getTemplateJs } from './env';
-import type { Options } from './index';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
@@ -37,6 +35,7 @@ import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-urls';
 import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
+import { Context } from './types';
 
 // import { inspect } from './utils/utils';
 
@@ -51,12 +50,16 @@ export async function markdownParser(file: VFile) {
   return processor.run(parsed, file);
 }
 
-export async function customTransforms(mdast: Node, file: VFile) {
+export async function customTransforms(
+  mdast: Node,
+  ctx: Context,
+  file: VFile
+) {
   const processor = unified().use(embedAssetUrl).use(youtubeVideos);
   return processor.run(mdast, file);
 }
 
-export async function linter(mdast: Node, file: VFile) {
+export async function linter(mdast: Node, ctx: Context, file: VFile) {
   const retextProcessor = unified().use(english).use(spell, dictionary);
   const processor = unified()
     .use(assertTaskAnswerStructure)
@@ -68,39 +71,37 @@ export async function linter(mdast: Node, file: VFile) {
   return processor.run(mdast, file);
 }
 
-export async function customCombinedTransforms(
-  mdast: Node,
-  dirPath: string | null
-) {
+export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   const processor = unified()
-    .use(boxouts)
-    .use(moveAnswersToEnd)
-    // .use(inspect)
     .use(accessibleTex)
-    .use(codeBlocks, dirPath);
+    .use(codeBlocks, ctx)
+    // .use(inspect)
+    .use(boxouts)
+    .use(moveAnswersToEnd);
 
   return processor.run(mdast);
 }
 
 export async function htmlCompiler(
   mdast: Node,
-  dirPath: string | null,
-  titles: UnitTitles,
-  options: Options
+  ctx: Context,
+  unitIdx: number
 ) {
+  const { titles } = ctx.course.units[unitIdx];
   const processor = unified()
     .use(remark2rehype)
-    .use(embedAssets, dirPath) // TODO: try to get this inside custom transforms
-    .use(htmlWrapper, titles)
+    .use(embedAssets, ctx) // TODO: try to get this inside custom transforms
     .use(format)
     .use(stringify);
 
-  if (!options.noDoc) {
-    processor.use(doc, {
-      title: titles.docTitle,
-      style: `\n${await getTemplateCss()}\n`,
-      script: `\n${await getTemplateJs()}\n`,
-    });
+  if (!ctx.options.noDoc) {
+    processor
+      .use(doc, {
+        title: titles.docTitle,
+        style: `\n${await getTemplateCss()}\n`,
+        script: `\n${await getTemplateJs()}\n`,
+      })
+      .use(htmlWrapper, titles);
   }
 
   const transformed = await processor.run(mdast);
@@ -109,10 +110,8 @@ export async function htmlCompiler(
 
 export async function pdfHtmlCompiler(
   mdast: Node,
-  dirPath: string | null,
-  titles: UnitTitles,
-  options: Options
+  ctx: Context,
+  unitIdx: number
 ) {
   // TODO: pdf cover
-  return htmlCompiler(mdast, dirPath, titles, options);
 }

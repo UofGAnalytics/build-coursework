@@ -7,11 +7,12 @@ import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { texPdfToSvg } from '../latex/pdf-to-svg';
+import { Context } from '../types';
 import { cacheToFile } from '../utils/cache-to-file';
 import { failMessage } from '../utils/message';
 import { readFile } from '../utils/utils';
 
-export function embedAssets(dirPath: string | null) {
+export function embedAssets(ctx: Context) {
   async function embed(node: Node, file: VFile) {
     const src = getImageSrc(node);
     const parsed = path.parse(src);
@@ -20,11 +21,11 @@ export function embedAssets(dirPath: string | null) {
         case '.png':
         case '.jpg':
         case '.gif':
-          return embedImage(node, dirPath);
+          return embedImage(node, ctx);
         case '.pdf':
-          return embedTexPdfSvg(node);
+          return embedTexPdfSvg(node, ctx, file);
         default:
-          throw new Error(`unhandled file extension: ${parsed.ext}`);
+          throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (err) {
       failMessage(file, err.message, node.position);
@@ -41,11 +42,11 @@ export function embedAssets(dirPath: string | null) {
   };
 }
 
-async function embedImage(node: Node, dirPath: string | null) {
+async function embedImage(node: Node, ctx: Context) {
   const properties = (node.properties || {}) as { src: string };
   const src = getImageSrc(node);
   const mime = mimes.getType(path.extname(src));
-  const image = await getImage(src, dirPath);
+  const image = await getImage(src, ctx);
   node.properties = {
     ...properties,
     src: `data:${mime};base64,${image}`,
@@ -60,10 +61,10 @@ function getImageSrc(node: Node) {
   return properties.src;
 }
 
-async function getImage(src: string, dirPath: string | null) {
+async function getImage(src: string, ctx: Context) {
   if (src.startsWith('http')) {
     return cacheToFile({
-      dirPath,
+      ctx,
       prefix: 'youtube',
       key: src,
       execFn: getImageDataFromWeb,
@@ -79,13 +80,12 @@ async function getImageDataFromWeb(src: string) {
   return buffer.toString('base64');
 }
 
-async function embedTexPdfSvg(imgNode: Node) {
+async function embedTexPdfSvg(imgNode: Node, ctx: Context, file: VFile) {
   const src = getImageSrc(imgNode);
-  const svgNode = await texPdfToSvg(src);
-  const properties = {
-    ...(svgNode.properties as Record<string, string>),
-    ...(imgNode.properties as Record<string, string>),
-  };
+  const svgNode = await texPdfToSvg(src, ctx, file);
+  const svgProps = svgNode.properties as Record<string, string>;
+  const imgProps = imgNode.properties as Record<string, string>;
+  const properties = { ...svgProps, ...imgProps };
   delete properties.src;
   Object.assign(imgNode, svgNode, { properties });
 }

@@ -8,6 +8,7 @@ export function codeMod(contents: string) {
       }
       return line;
     })
+    .filter((s) => s.trim() !== '\\newpage')
     .join('\n');
 }
 
@@ -18,7 +19,7 @@ type Container = {
 };
 
 function parseCustomContainer(line: string): Container | null {
-  const match = line.match(/^#{3,4}\[(.+)](.*)/);
+  const match = line.match(/^#{1,6}\[(.+)](.*)/);
   if (!Array.isArray(match)) {
     return null;
   }

@@ -1,4 +1,10 @@
-import { Node } from 'unist';
+// @ts-expect-error
+import toVFile from 'to-vfile';
+import { Node, Parent } from 'unist';
+import { VFile } from 'vfile';
+
+import { getAsset } from '../env';
+import { rehypeParser } from '../utils/utils';
 
 type Options = {
   courseTitle: string;
@@ -6,11 +12,21 @@ type Options = {
 };
 
 export function htmlWrapper(opts: Options) {
-  return (tree: Node) => {
+  return async (tree: Node) => {
     const children = tree.children as Node[];
+    const crest = await getAssetHast('crest.svg');
+    const uofg = await getAssetHast('uofg.svg');
     return {
       type: 'root',
       children: [
+        {
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            className: 'logo',
+          },
+          children: [crest, uofg],
+        },
         {
           type: 'element',
           tagName: 'div',
@@ -20,21 +36,24 @@ export function htmlWrapper(opts: Options) {
           children: [
             {
               type: 'element',
-              tagName: 'h4',
+              tagName: 'h1',
               children: [
                 {
                   type: 'text',
                   value: opts.courseTitle,
                 },
-              ],
-            },
-            {
-              type: 'element',
-              tagName: 'h1',
-              children: [
                 {
-                  type: 'text',
-                  value: opts.unitTitle,
+                  type: 'element',
+                  tagName: 'span',
+                  properties: {
+                    className: 'unit',
+                  },
+                  children: [
+                    {
+                      type: 'text',
+                      value: opts.unitTitle,
+                    },
+                  ],
                 },
               ],
             },
@@ -44,4 +63,11 @@ export function htmlWrapper(opts: Options) {
       ],
     };
   };
+}
+
+async function getAssetHast(name: string) {
+  const contents = await getAsset(name);
+  const vfile = toVFile({ contents }) as VFile;
+  const parsed = rehypeParser().parse(vfile) as Parent;
+  return parsed.children[0];
 }

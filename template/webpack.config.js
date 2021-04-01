@@ -1,9 +1,13 @@
 const path = require('path');
+const fs = require('fs')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { template } = require('lodash')
 
 const isProd = process.env.NODE_ENV === 'production';
+
+const html = fs.readFileSync('./public/index.html', 'utf-8')
 
 const entry = [
   path.join(__dirname, 'src/index.ts'),
@@ -31,7 +35,12 @@ if (!isProd) {
   plugins.push(
     new HtmlWebpackPlugin({
       inject: false,
-      template: path.join(__dirname, 'public/index.html'),
+      templateContent: ({ htmlWebpackPlugin }) => {
+        const props = {
+          //
+        }
+        return template(html)({ ...props, htmlWebpackPlugin })
+      },
     }),
   )
 }
@@ -75,13 +84,12 @@ module.exports = {
       // for inlining SVG icons in CSS files
       {
         test: /\.svg$/,
-        include: [/\/icons\//],
         loader: 'url-loader'
       },
       // for importing sample coursework in dev mode
       {
         test: /\.html$/,
-        include: [/\/fixture\/build/],
+        include: [/\/fixture\//],
         loader: 'raw-loader'
       }
     ]

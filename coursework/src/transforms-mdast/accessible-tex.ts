@@ -18,7 +18,7 @@ function customMath(node: Node) {
   const svg = customSvgOutput(mathjaxSvg, label);
 
   node.data = {
-    hName: 'div',
+    hName: node.type === 'inlineMath' ? 'span' : 'div',
     hProperties: { className },
     hChildren: [svg],
   };

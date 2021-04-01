@@ -1,3 +1,2 @@
 import './styles.css';
-
-console.log('hey!');
+import './html-font-size';
