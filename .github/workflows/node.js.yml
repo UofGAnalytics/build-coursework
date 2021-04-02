@@ -32,6 +32,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - run: yarn --prefer-offline
+      - run: yarn --frozen-lockfile --prefer-offline
       - run: yarn check-types
       - run: yarn test
