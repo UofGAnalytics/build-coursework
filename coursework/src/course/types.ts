@@ -31,3 +31,9 @@ export type UnitTitles = {
   unitName: string;
   docTitle: string;
 };
+
+export type UnitTitlesInput = {
+  courseTitle: string;
+  unitTitle: string;
+  unitName: string;
+};
