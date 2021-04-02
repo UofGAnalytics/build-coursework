@@ -18,6 +18,8 @@ import {
 } from './utils/utils';
 import { writeHtml } from './utils/write-files';
 
+// test
+
 export async function buildCourse(dirPath: string, options: Options = {}) {
   const course = await collectCoursework(dirPath);
 
