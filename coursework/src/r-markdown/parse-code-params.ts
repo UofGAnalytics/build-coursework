@@ -1,15 +1,20 @@
+import { Node } from 'unist';
+
 export type CodeParams = {
   language: string;
   options: Record<string, any>;
+  value: string;
 };
 
-export function parseCodeParams(
-  params: string | undefined = ''
-): CodeParams {
-  return {
-    language: parseLanguage(params),
-    options: parseOptions(params),
-  };
+export function parseCodeParams(node: Node): CodeParams {
+  const combined = `${node.lang || ''}${node.meta || ''}`;
+  const language = parseLanguage(combined);
+
+  // TODO: yup validate options?
+  const options = parseOptions(combined);
+  const value = String(node.value || '');
+
+  return { language, options, value };
 }
 
 function parseLanguage(options: string) {

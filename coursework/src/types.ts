@@ -4,6 +4,7 @@ export type Options = {
   noDoc?: boolean;
   noSyntaxHighlight?: boolean;
   noReport?: boolean;
+  noEmbedAssets?: boolean;
 };
 
 export type Context = {

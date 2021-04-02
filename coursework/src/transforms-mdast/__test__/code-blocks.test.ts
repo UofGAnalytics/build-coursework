@@ -4,8 +4,7 @@ import { testProcessor } from '../../test-utils/test-processor';
 
 describe('codeBlocks', () => {
   it('should share state with other codeblocks', async () => {
-    const { mdast } = await testProcessor(
-      `
+    const { mdast } = await testProcessor(`
       \`\`\`{r}
       a <- c(1, 4, 2)
       a
@@ -37,9 +36,7 @@ describe('codeBlocks', () => {
       \`\`\`{r}
       a["third"]
       \`\`\`
-    `,
-      { noCompile: true }
-    );
+    `);
 
     expect(getOutputAtIdx(mdast, 0)?.value).toBe('[1] 1 4 2\n');
     expect(getOutputAtIdx(mdast, 1)?.value).toBe(
@@ -56,34 +53,26 @@ describe('codeBlocks', () => {
     expect(getOutputAtIdx(mdast, 6)?.value).toBe('third \n   10 \n');
   });
 
-  it('should not show output of none is given', async () => {
-    const { mdast } = await testProcessor(
-      `
+  it('should not show output if none is given', async () => {
+    const { mdast } = await testProcessor(`
       \`\`\`{r}
       a <- c(first=1, second=4, third=2)
       \`\`\`
-    `,
-      { noCompile: true }
-    );
+    `);
 
     expect(getOutputAtIdx(mdast, 0)).toBe(null);
   });
 
   it('should output a graph as svg', async () => {
-    const { mdast } = await testProcessor(
-      `
+    const { mdast } = await testProcessor(`
       \`\`\`{r}
       x <- rnorm(100)
       hist(x)
       \`\`\`
-    `,
-      { noCompile: true }
-    );
+    `);
 
-    const properties = (getOutputAtIdx(mdast, 0)?.properties ||
-      {}) as Record<string, string>;
-
-    expect(properties.viewBox).toBe('0 0 504 504');
+    const node = getOutputAtIdx(mdast, 0) as Parent;
+    expect(node.children.length > 2).toBe(true);
   });
 
   it('should ignore tab whitespace', async () => {

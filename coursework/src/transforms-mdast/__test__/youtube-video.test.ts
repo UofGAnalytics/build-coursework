@@ -6,7 +6,7 @@ import {
 describe('youtubeVideos', () => {
   it('should render youtube videos', async () => {
     const { html } = await testProcessor(`
-      :::video{id=AClLyj_Oczc}
+      ::video{id=AClLyj_Oczc}
     `);
 
     const expected = createHtml(`

@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import rehype from 'rehype-parse';
 import unified from 'unified';
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 
 // import visit from 'unist-util-visit';
 
@@ -44,11 +44,11 @@ export function getCacheDir(dirPath: string) {
   return `${dirPath}/cache`;
 }
 
-export function combineMdastTrees(mdasts: Node[]): Node {
-  return {
-    type: 'root',
-    children: mdasts.flatMap((mdast) => mdast.children || []),
-  };
+export function combineMdastTrees(mdasts: Node[]): Parent {
+  const children = mdasts.flatMap(
+    (mdast) => mdast.children || []
+  ) as Node[];
+  return { type: 'root', children };
 }
 
 export function inspect() {

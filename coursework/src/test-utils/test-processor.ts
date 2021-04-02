@@ -1,6 +1,5 @@
 // @ts-expect-error
 import toVFile from 'to-vfile';
-import { Parent } from 'unist';
 import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';
@@ -8,14 +7,7 @@ import { htmlCompiler } from '../processors';
 import { Options } from '../types';
 import { buildUnit } from '..';
 
-type TestOptions = Options & {
-  noCompile?: boolean;
-};
-
-export async function testProcessor(
-  md: string,
-  options: TestOptions = {}
-) {
+export async function testProcessor(md: string, options: Options = {}) {
   const contents = createHtml(md);
 
   const file = toVFile({
@@ -48,17 +40,16 @@ export async function testProcessor(
       noDoc: true,
       noSyntaxHighlight: true,
       noReport: true,
+      noEmbedAssets: true,
       ...options,
     },
   };
 
-  const mdast = (await buildUnit(ctx, 0)) as Parent;
-
-  if (options.noCompile) {
-    return { file, mdast, html: '' };
+  const mdast = await buildUnit(ctx, 0);
+  let html = '';
+  if (mdast !== null) {
+    html = await htmlCompiler(mdast, ctx, 0);
   }
-
-  const html = await htmlCompiler(mdast, ctx, 0);
   return { file, html, mdast };
 }
 

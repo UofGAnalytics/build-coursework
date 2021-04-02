@@ -78,6 +78,9 @@ function getCurrentValue(parent: Parent) {
   }
   const children = (parent.children || []) as Node[];
   const firstChild = (children[0] || {}) as Parent;
+  if (typeof firstChild.value !== 'string') {
+    return null;
+  }
   return String(firstChild.value);
 }
 

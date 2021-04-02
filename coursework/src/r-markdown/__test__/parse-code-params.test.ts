@@ -1,56 +1,58 @@
+import { Node } from 'unist';
+
 import { parseCodeParams } from '../parse-code-params';
 
 it('should parse code params', async () => {
-  expect(parseCodeParams()).toStrictEqual({
+  expect(createNode('')).toStrictEqual({
     language: '',
     options: {},
   });
 
-  expect(parseCodeParams('r')).toStrictEqual({
+  expect(createNode('r')).toStrictEqual({
     language: 'r',
     options: {},
   });
 
-  expect(parseCodeParams('{r}')).toStrictEqual({
+  expect(createNode('{r}')).toStrictEqual({
     language: 'r',
     options: {},
   });
 
-  expect(parseCodeParams(' r')).toStrictEqual({
+  expect(createNode(' r')).toStrictEqual({
     language: 'r',
     options: {},
   });
 
-  expect(parseCodeParams(' {r}')).toStrictEqual({
+  expect(createNode(' {r}')).toStrictEqual({
     language: 'r',
     options: {},
   });
 
-  expect(parseCodeParams(' r ')).toStrictEqual({
+  expect(createNode(' r ')).toStrictEqual({
     language: 'r',
     options: {},
   });
 
-  expect(parseCodeParams(' {r} ')).toStrictEqual({
+  expect(createNode(' {r} ')).toStrictEqual({
     language: 'r',
     options: {},
   });
 
-  expect(parseCodeParams('{r,echo=FALSE}')).toStrictEqual({
+  expect(createNode('{r,echo=FALSE}')).toStrictEqual({
     language: 'r',
     options: {
       echo: false,
     },
   });
 
-  expect(parseCodeParams('{r, echo=TRUE}')).toStrictEqual({
+  expect(createNode('{r, echo=TRUE}')).toStrictEqual({
     language: 'r',
     options: {
       echo: true,
     },
   });
 
-  expect(parseCodeParams('{r,a=1,b=2, c=3}')).toStrictEqual({
+  expect(createNode('{r,a=1,b=2, c=3}')).toStrictEqual({
     language: 'r',
     options: {
       a: 1,
@@ -59,7 +61,7 @@ it('should parse code params', async () => {
     },
   });
 
-  expect(parseCodeParams('{r, 1=a,2=b,3=c}')).toStrictEqual({
+  expect(createNode('{r, 1=a,2=b,3=c}')).toStrictEqual({
     language: 'r',
     options: {
       '1': 'a',
@@ -68,3 +70,23 @@ it('should parse code params', async () => {
     },
   });
 });
+
+function createNode(params: string) {
+  const spaceIdx = params.indexOf(' ');
+  let lang = params;
+  let meta = '';
+  if (spaceIdx !== -1) {
+    lang = params.slice(0, spaceIdx);
+    meta = params.slice(spaceIdx);
+  }
+  const node: Node = {
+    type: 'code',
+    lang,
+    meta,
+    value: 'test',
+  };
+
+  const { language, options } = parseCodeParams(node);
+
+  return { language, options };
+}

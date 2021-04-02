@@ -24,10 +24,7 @@ export function codeBlocks(ctx: Context) {
 }
 
 async function customCode(node: Node, ctx: Context, file: VFile) {
-  // parse custom Markdown syntax, ie. ```{r,echo=TRUE}
-  const combined = `${node.lang || ''}${node.meta || ''}`;
-  const { language, options } = parseCodeParams(combined);
-  const value = String(node.value || '');
+  const { language, options, value } = parseCodeParams(node);
 
   node.data = {
     hName: 'div',

@@ -90,18 +90,19 @@ export async function htmlCompiler(
   const { titles } = ctx.course.units[unitIdx];
   const processor = unified()
     .use(remark2rehype)
-    .use(embedAssets, ctx) // TODO: try to get this inside custom transforms
     .use(format)
     .use(stringify);
 
+  if (!ctx.options.noEmbedAssets) {
+    processor.use(embedAssets, ctx); // TODO: try to get this inside custom transforms
+  }
+
   if (!ctx.options.noDoc) {
-    processor
-      .use(doc, {
-        title: titles.docTitle,
-        style: `\n${await getTemplateCss()}\n`,
-        script: `\n${await getTemplateJs()}\n`,
-      })
-      .use(htmlWrapper, titles);
+    processor.use(htmlWrapper, titles).use(doc, {
+      title: titles.docTitle,
+      style: `\n${await getTemplateCss()}\n`,
+      script: `\n${await getTemplateJs()}\n`,
+    });
   }
 
   const transformed = await processor.run(mdast);

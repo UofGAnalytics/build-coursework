@@ -37,7 +37,7 @@ export async function buildCourse(dirPath: string, options: Options = {}) {
 
     try {
       const mdast = await buildUnit(ctx, idx);
-      if (ctx.buildDir) {
+      if (mdast !== null && ctx.buildDir) {
         const html = await htmlCompiler(mdast, ctx, idx);
         await writeHtml(unit.titles.unitName, html, dirPath);
         // await writePdf(titles.unitName, pdfHtml, dirPath);
@@ -66,7 +66,7 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
     printReport(files, ctx);
   }
   if (reportHasFatalErrors(files, ctx)) {
-    throw new Error('Validation failed');
+    return null;
   }
 
   // combine mdast trees

@@ -49,7 +49,7 @@ function messageWithStatus(
   position: Position | undefined,
   status: MessageStatus
 ) {
-  console.log(message);
+  // console.log(message);
   const msg = file.message(message, position);
   msg.status = status;
   return msg;
