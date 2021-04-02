@@ -39,5 +39,4 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile --prefer-offline
 
-      - run: yarn check-types
       - run: yarn test

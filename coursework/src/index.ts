@@ -36,8 +36,9 @@ export async function buildCourse(dirPath: string, options: Options = {}) {
     const unit = course.units[idx];
 
     try {
-      const { html } = await buildUnit(ctx, idx);
-      if (ctx.buildDir) {
+      const mdast = await buildUnit(ctx, idx);
+      if (mdast !== null && ctx.buildDir) {
+        const html = await htmlCompiler(mdast, ctx, idx);
         await writeHtml(unit.titles.unitName, html, dirPath);
         // await writePdf(titles.unitName, pdfHtml, dirPath);
       }
@@ -65,17 +66,14 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
     printReport(files, ctx);
   }
   if (reportHasFatalErrors(files, ctx)) {
-    throw new Error('Validation failed');
+    return null;
   }
 
   // combine mdast trees
-  const mdast = combineMdastTrees(mdasts);
+  const combined = combineMdastTrees(mdasts);
 
   // transforms on the combined tree
-  await customCombinedTransforms(mdast, ctx);
+  await customCombinedTransforms(combined, ctx);
 
-  // compile to html
-  const html = await htmlCompiler(mdast, ctx, unitIdx);
-
-  return { html, mdast };
+  return combined;
 }
