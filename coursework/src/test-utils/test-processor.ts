@@ -1,18 +1,17 @@
 // @ts-expect-error
 import toVFile from 'to-vfile';
+import { Parent } from 'unist';
 import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';
-import { htmlCompiler } from '../processors';
 import { Options } from '../types';
+import { createHasFailingMessage } from './has-message';
 import { buildUnit } from '..';
 
 export async function testProcessor(md: string, options: Options = {}) {
-  const contents = createHtml(md);
-
   const file = toVFile({
-    path: 'test',
-    contents,
+    path: 'fake-path/fake.md',
+    contents: createHtml(md),
   }) as VFile;
 
   const course = {
@@ -23,11 +22,15 @@ export async function testProcessor(md: string, options: Options = {}) {
   const unit = {
     name: 'Week Test',
     title: 'Test Unit',
-    content: [{ src: contents }],
+    content: [{ src: '' }],
     markdown: [file],
   };
 
-  const titles = getUnitTitles(course, unit);
+  const titles = getUnitTitles({
+    courseTitle: course.title,
+    unitName: unit.name,
+    unitTitle: unit.title,
+  });
 
   const ctx = {
     cacheDir: null,
@@ -45,12 +48,14 @@ export async function testProcessor(md: string, options: Options = {}) {
     },
   };
 
-  const mdast = await buildUnit(ctx, 0);
-  let html = '';
-  if (mdast !== null) {
-    html = await htmlCompiler(mdast, ctx, 0);
+  const hasFailingMessage = createHasFailingMessage(ctx);
+
+  try {
+    const { mdast, html } = await buildUnit(ctx, 0);
+    return { hasFailingMessage, file, html, mdast };
+  } catch (err) {
+    return { hasFailingMessage, file, html: '', mdast: {} as Parent };
   }
-  return { file, html, mdast };
 }
 
 export function createHtml(str: string) {

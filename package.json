@@ -12,7 +12,8 @@
     "dev": "concurrently yarn:coursework yarn:template -c green,cyan",
     "coursework": "yarn workspace coursework dev",
     "template": "yarn workspace template dev",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "check-types": "tsc"
   },
   "dependencies": {},
   "devDependencies": {
