@@ -1,4 +1,5 @@
 module.exports = {
+  testTimeout: 30000,
   roots: [
     '<rootDir>/coursework/src',
     '<rootDir>/template/src',
