@@ -89,7 +89,7 @@ module.exports = {
       // for importing sample coursework in dev mode
       {
         test: /\.html$/,
-        include: [/\/fixture\//],
+        include: [/\/fixtures\//],
         loader: 'raw-loader'
       }
     ]

@@ -14,6 +14,7 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development nodemon src/index.ts",
+    "cli": "babel-node --root-mode upward --extensions .ts bin/cli.ts",
     "build": "NODE_ENV=production webpack"
   },
   "dependencies": {
@@ -58,6 +59,7 @@
     "unist-util-visit": "^2.0.3",
     "vfile-reporter": "^6.0.2",
     "vfile-reporter-pretty": "^5.0.0",
+    "yargs": "^16.2.0",
     "yup": "^0.32.8"
   },
   "devDependencies": {

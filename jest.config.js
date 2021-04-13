@@ -3,13 +3,13 @@ module.exports = {
   roots: [
     '<rootDir>/coursework/src',
     '<rootDir>/template/src',
-    '<rootDir>/fixture',
+    '<rootDir>/fixtures',
   ],
   watchPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/coursework/build/',
     '<rootDir>/template/build/',
-    '<rootDir>/fixture/build/',
+    '<rootDir>/fixtures/**/build/',
   ],
   moduleFileExtensions: ['ts', 'js'],
   projects: [

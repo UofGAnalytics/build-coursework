@@ -14,7 +14,6 @@ buildCourse(dirPath, options)
 // watch
 const chokidar = require('chokidar');
 const unitDir = path.join(dirPath, 'week1')
-
 if (options.watch) {
   chokidar.watch(unitDir).on('change', () => {
     buildCourse(dirPath, options)

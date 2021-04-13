@@ -26,6 +26,10 @@ export function codeBlocks(ctx: Context) {
 async function customCode(node: Node, ctx: Context, file: VFile) {
   const { language, options, value } = parseCodeParams(node);
 
+  if (language === '') {
+    console.log(node);
+  }
+
   node.data = {
     hName: 'div',
     hProperties: {
@@ -61,36 +65,40 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
     return;
   }
 
-  const output = await executeRCode(value as string);
+  try {
+    const output = await executeRCode(value as string);
 
-  if (output.trim() === '') {
-    return;
+    if (output.trim() === '') {
+      return;
+    }
+
+    children.push({
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        className: ['output'],
+      },
+      children: [
+        {
+          type: 'element',
+          tagName: 'h3',
+          children: [
+            {
+              type: 'text',
+              value: 'Output',
+            },
+          ],
+        },
+        {
+          type: 'element',
+          tagName: 'code',
+          children: rehypeParser.parse(output).children,
+        },
+      ],
+    });
+  } catch (err) {
+    // TODO: not sure this is a great idea but it's current functionality
   }
-
-  children.push({
-    type: 'element',
-    tagName: 'div',
-    properties: {
-      className: ['output'],
-    },
-    children: [
-      {
-        type: 'element',
-        tagName: 'h3',
-        children: [
-          {
-            type: 'text',
-            value: 'Output',
-          },
-        ],
-      },
-      {
-        type: 'element',
-        tagName: 'code',
-        children: rehypeParser.parse(output).children,
-      },
-    ],
-  });
 
   node.data.hChildren = children;
 }

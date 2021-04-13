@@ -5,6 +5,7 @@ export type Options = {
   noSyntaxHighlight?: boolean;
   noReport?: boolean;
   noEmbedAssets?: boolean;
+  week?: number;
 };
 
 export type Context = {
