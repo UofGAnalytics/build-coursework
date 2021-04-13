@@ -1,0 +1,176 @@
+## Reshaping data using tidyr
+
+<!--
+also cover separate, unite
+
+
+-->
+
+### There is more than one way of laying out data
+
+In this section we will continue to work with the Vélib' data. However we will restrict ourselves to the data between 1pm and 1.15pm and also only four stations: Dupleix, Bourse, Jussieu and Montparnasse.
+
+```{r, echo=FALSE}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/velib.RData"))
+library(dplyr)
+```
+```{r}
+station.names <- c("DUPLEIX", "BOURSE", "JUSSIEU", "MONTPARNASSE")
+bikes.sm <- bikes %>%                 
+              filter(name %in% station.names & time<=13.25) %>%
+                                          # Subset the stations
+              select(name, time, available_bikes, available_bike_stands)
+                                          # Reorder columns
+bikes.sm
+```
+
+In the data set `bikes` we have for every time point and for every bike station  two variables: the number of bikes available and the number of stands available. There is one row for every combination of time and bike station.
+
+The data is arranged in a way which Hadley Wickham would call "tidy". For a data set to be "tidy" it needs to be arranged such that:
+
+- each column corresponds to exactly one variable (in the sense of a measurement of the *same* underlying attribute (like weights, price, or the  number of available bikes) across units/cases.
+- each row corresponds to exactly one observational unit  or "case" 
+
+####[weblink, target="http://www.jstatsoft.org/v59/i10/paper"]Tidy data
+Wickham, H. (2014). Tidy Data. Journal of Statistical Software. Volume 59, Issue 10.
+
+This paper explains some of the theory behind arranging data in a "tidy" way.
+####[/weblink]
+
+This "tidy" format is ideal when visualising the data set using [ggplot2](http://ggplot2.org/) (we will cover `ggplot2` in a fortnight)
+```{r}
+library(ggplot2)
+bikes.sm %>%
+  ggplot(aes(time, available_bikes, colour=name)) +
+    geom_line() + ylab("Number of available bikes")
+```
+
+There are many good reasons to store data in "tidy" format. However not all data we work with will be "tidy".
+
+- When data is extracted from external sources we will not necessarily get hold of the data in "tidy" format, though data from relational databases is often already in a "tidy" format. 
+- Not every R function or modelling strategy expects data in this "tidy" format. Sometimes it is necessary to lay out the data in a different way. We will see that, for example, if we want to plot the data using the standard R plotting functions we need the data to be in a "non-tidy" format. (There is a [nice (but slightly more protracted) blog post by Jeff Leek making the case that not all data are usefully tidy](https://simplystatistics.org/2016/02/17/non-tidy-data/)).
+
+We can store the bicycle data in many other alternative formats, which however would all be "untidy". 
+
+> Happy families are all alike; every unhappy family is unhappy in its own way (Leo Tolstoy)
+
+> Tidy data sets are all alike, but every messy data set is messy in its own way (Hadley Wickham)
+
+Stored the "tidy" way, the number of available bikes is a single long column. This column is "indexed" by two other columns: the station name and the time: only together with these the number of available bikes makes sense. Given that the number of available bikes depends on two inputs (the station name and the time) we could arrange the data in a matrix, such that rows correspond to times and columns correspond to bike stations. This way of storing the data makes it "wider" and less "long". (We can create a second matrix which contains the numbers of available bike stands.)
+
+```{r, echo=FALSE}
+library(tidyr)
+bikes.mat <- bikes.sm %>%
+               select(name, time, available_bikes) %>%
+               spread(name, available_bikes)
+```
+```{r}
+bikes.mat
+```
+
+This way of arranging the data is not "tidy": all the columns except for `time` contain measurements of the same type (the number of bikes available) and the column names are actually data. This way of arranging the data also means that the number of columns changes if new bike stations are added. This would however not be the case in our original layout, where it would just add additional rows. 
+
+However this matrix-style format is for example the format required when creating a plot of the number of available bikes using the standard R function `matplot` (we will look at this function in more detail next week).
+```{r}
+matplot(bikes.mat%>%select(time), bikes.mat%>%select(-time),
+        xlab="Time", ylab="Number of bikes available", type="l")
+legend("topright", col=1:4, lty=1:4, unique(colnames(bikes.mat)[-1]))
+```
+
+Yet another alternative format of storing the data would be to store the number of bikes available and the number of bike stands available in alternate rows.
+```{r, echo=FALSE}
+bikes.alt <- bikes.sm %>%
+  gather(what, bikes, -time, -name) %>%
+  arrange(time, name)
+```
+```{r}
+bikes.alt
+```
+This way of storing the data is not "tidy" either. The third column does not contain data, but the description of the type of variable recorded and the fourth column contains measurements of different attributes (available bikes and available stands). This data set is "longer" than the original `bikes.sm` data. 
+
+### Converting between different data layouts
+
+It is often necessary to convert data between different ("tidy" and "non-tidy" layouts). The functions from `tidyr` help this these transformations.
+
+#### Making data "longer" and less "wide" ("matrix to column")
+The function `gather` from `tidyr` reads the data from multiple columns and organises them as key-value pairs, making the data "longer" (more rows) and less "wide" (fewer columns). Consider the bicycle stored in wide matrix format:
+```{r}
+bikes.mat
+```
+
+The data containing the number of available bikes is spread across the four columns, which are named after the stations.
+
+If we want to reorganise the data and store the name of bike station in one column and the number of available bikes in another column we can use the function `gather`:
+```{r}
+bikes.mat %>%
+  gather(station_name, available_bikes, -time)
+```
+When used in a pipeline, the first argument to `gather` is the name of the new column containing the names of the columns to be gathered ("keys" -- in our case the name of the bike station). The second argument is the name of the new column containing the data ("values" -- in our case the number of available bikes). `gather` will by default gather the data from all columns, unless we tell it not to. In our case, the column `time` is not a number of available bikes, so we have to tell R to leave it alone: we can do this by putting it as an additional argument, but with a minus sign ("`-`") in front of it.
+
+
+#### Making data less "long" and "wider" ("column to matrix")
+We sometimes also have to go in the opposite direction and spread data stored in one column across several columns.
+
+We can use the function `spread` for this. In our case (and in many other cases) it is  easiest to first reduce the data to three columns: the future row identifiers (`time` in our case), the future column identifiers (`name` in our case) and the future content of the matrix (`available_bikes`)
+```{r}
+bikes.sm %>%
+  select(time, name, available_bikes) %>%
+  spread(name, available_bikes)
+```
+When used in a pipeline the first argument to `spread` is the column that contains the future column names ("keys") and the second argument is the column that contains the data to be spread out in matrix form ("values"). This is shown visually in Figure 2. 
+
+#### Overview
+The figure gives a pictorial representation of both the "tidy" narrow and long format as well as the "non-tidy" "wide" and "short" matrix-format. It also related this to the syntax of `gather` and `spread`.
+
+
+
+
+####[task]
+The R example data set `Orange` contains records of the growth of five orange trees. Each row corresponds to one combination of age (in days since it was planted) and tree.
+```{r}
+Orange <- as.data.frame(Orange)     # Convert to standard data frame
+head(Orange, n=12)
+```
+Use `spread` to arrange the data as matrix, such that rows correspond to ages and columns correspond to trees. Your data should be laid out similar to what is shown below (don't worry about the order of the columns).
+```{r, echo=FALSE}
+spread(Orange, Tree, circumference, sep=" ") %>%     # Spread data
+  select(sort(colnames(.)))                          # Order columns alphabetically
+```
+Can you also revert the data to the original format using `gather`?
+#####[answer]
+We can spread the content across columns using
+```{r}
+OrangeSpread <- Orange %>% spread(Tree, circumference, sep=" ")
+OrangeSpread
+```
+Setting `sep` adds the variable name ("Tree") to the names of the new columns using `sep` as a separator.
+
+For some reason (which I do not know) the factor levels of the column `Tree` in the data frame `Orange` have been set up as ordered (using the strange ordering `3 < 1 < 5 < 2 < 4` -- might be related to where the trees were located). This causes the columns to be in a funny order. We can sort the columns alphabetically using
+```{r}
+OrangeSpread <- OrangeSpread %>% select(sort(colnames(.)))
+OrangeSpread
+```
+
+We can use `gather` to go back to the original format:
+```{r}
+OrangeSpread %>% gather("Tree", "circumference", -age)
+```
+#####[/answer]
+####[/task]
+
+<!--[if PDF]>
+\newpage
+<![endif]-->
+
+![Illustration of the different ways of arranging data ("wide and short" or "fat" vs. "narrow and long" or "skinny")](tidyr_figure.pdf)
+
+###[weblink, target="https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf"]Data Import Cheat Sheet
+Rstudio's cheat sheet for data import also covers `tidyr`.
+###[/weblink]
+
+
+###[weblink, target="http://r4ds.had.co.nz/tidy-data.html", icon="book"]Background reading: Chapter 12 of R for Data Science
+Chapter 12 of *R for Data Science* discusses the philosophy of "tidy" data (though in less detail than the paper linked above). It also covers functions in `tidyr` not discussed above.
+###[/weblink]
+
+\newpage

@@ -1,0 +1,243 @@
+## R as a calculator
+
+### Basic arithmetic operators
+
+###[video, videoid="Gib3Wk2FFi8", duration="6m58s"] R as a calculator
+
+This section gives an overview over the basic arithmetic operators and functions in R. The following table contains the basic arithmetic operators available in R.
+
+|Operator | Meaning | Example | Result |
+|---------|---------|---------|--------|
+`+` | Addition | `3+2`| `5` |
+`-` | Subtraction | `3-2` | `1`|
+`*` | Scalar multiplication | `3*2` | `6` |
+`/` | Division | `5/2` | `2.5`|
+`%/%` | Integer division | `5%/%2` | `2` |
+`%%`  |Remainder after integer division | `5%%2` | `1`|
+`^` or `**` | Power | `5^2` | `25` |
+
+If an R expression contains more than one operator, we need to know in which order R evaluates the expression. This is known as *operator precedence* in Computer Science. For example, does
+```r
+2 / 3 * 2
+```
+compute $\displaystyle \frac{2}{3\cdot 2}=\frac{1}{3}$ or $\displaystyle \frac{2}{3}\cdot 2=\frac{4}{3}$?
+
+R uses the following rules:
+
+- R first evaluates `^` and `**`, then the sign `-` (*not* difference), then `%/%` or `%%`, then `*` or `/`, and finally `+` or `-` (difference, *not* sign).
+- In case of ties (operators of same precedence) the expressions are evaluated from the left to the right.
+
+
+Thus in the above example `2/3*2` computes $\displaystyle \frac{2}{3}\cdot 2$.
+
+
+Use parentheses to get R to perform calculations in a different order. For example, in order to calculate $\displaystyle \frac{2}{3\cdot 2}$, you have to use 
+```r
+2 / (3 * 2)
+```
+
+####[example]
+To compute $\displaystyle \left(\frac{2}{3}\right)^{\frac{1}{4}}$ we have to use
+```{r}
+(2/3)^(1/4)
+```
+If we omit the parentheses and enter
+```{r}
+2/3^1/4
+```
+R computes $\frac{\frac{2}{3^1}}{4}=\frac{1}{6}$.
+####[/example]
+
+### Mathematical functions and constants
+
+A large choice of mathematical functions is available in R, such as `abs`, `sign`, `sqrt`, `exp`, `log`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `gamma`, `beta`, etc.
+
+The variable `pi` contains the value of $\pi$. You can generate the constant $e$ using `exp(1)`.
+
+###[task]
+Use R to compute  $\displaystyle 3+\frac{4}{5}$, $\displaystyle \frac{3+4}{5}$,  and  $\displaystyle 27^{1/3}$.
+
+####[answer]
+You can use the following code.
+```{r}
+3 + 4 / 5                 # No parentheses necessary
+(3 + 4) / 5               # Parentheses needed
+27^(1/3)                  # Parentheses needed
+```
+####[/answer]
+###[/task]
+
+
+### IEEE 754 special values
+R supports the IEEE 754 special values `Inf`, `-Inf`, and `NaN`, so you can carry out very limited computations on $\mathbb{R}\cup\{-\infty,+\infty\}$.  These special values allow for mitigating some of the problems caused by numerical underflow (number rounded to zero) and overflow (number larger than the largest number which can represented by the computer).
+
+```{r}
+1 / 0 
+```
+for example gives \texttt{Inf}, whereas
+```{r}
+1 / Inf
+```
+gives \texttt{0}. If you ask R to compute
+```{r}
+Inf / Inf
+```
+it will return `NaN` (not a number): it cannot tell what the result is. Expressions like
+```{r}
+sqrt(-1)
+```
+give a warning and the result is `NaN`. R can handle complex numbers, just use
+```{r}
+sqrt(-1+0i)
+```
+if you really want to perform arithmetic using complex numbers.
+
+Note that a `NaN` (not a number) is *not* the same as `NA` (missing value, `not available').
+
+####[example]
+`log(0)` returns `-Inf`, as $\lim_{x\searrow 0}\log(x)=-\infty$. 
+
+`Inf-10` returns `Inf`, as $\lim_{x\rightarrow +\infty}x-10=+\infty$. 
+
+However `Inf - Inf` is `NaN`, as the limit is ambiguous. Similarly, `sqrt(Inf) / Inf` is `NaN`. R evaluates `sqrt(Inf)` first, which is `Inf`. `Inf/Inf` is `NaN`.
+####[/example]
+
+
+### Variables and assignments
+
+In all the above examples R simply returned a value. If we want to reuse the value, we need to assign the value to a variable. Variables are a little bit like the memory function of your calculator, except that you can use as many different variables as you like. The default assignment operator in R is `<-`. To store the result of `2/3 * 2` in a variable called `a`, we would use:
+```{r}
+a <- 2/3 * 2
+```
+You can also use the more common assignent operator `=` instead of `<-` in most (but not all) circumstances. Assignments can be made in both directions, so you could also use
+```{r}
+2/3 * 2 -> a
+```
+to store the number $\frac{4}{3}$ in the variable \texttt{a}. Assignments can be also made using the function `assign`. It offers a few additional options, type `?assign` to read the corresponding help page.}
+
+####[supplement] Differences between the assignment operators
+`<-` and `=` do not always behave the same way. Inside a function call, `=` is used to provide named arguments, whereas `<-` is always an assignment. So, for instance, `a = c(b = 3, 4)`  is not the same as `a <- c(b <- 3, 4)`. For former create a vector `a` with the entries 3 and 4 and the first entry having the name `b`. The latter create a variable `b` containing the number 3 and a vector containing the numbers 3 and 4 (without any labels).
+####[/supplement]
+
+Variable names are case-sensitive, i.e. you can define both `a` and `A`, and `a` and `A` can hold different values. Historically, most R users only use lowercase letters and separate words using dots, e.g. `two.words`, though underscores have become increasingly popular in variable and function names, so has so-called `camelCase` (e.g. `twoWords`).
+
+####[supplement] Variable names with reserved characters
+If you want to use a variable name that contains a reserved chracter like a space or a mathematical operator, you need to enclose it in "backticks".
+```{r}
+`cat + mouse` <- 1
+`cat + mouse` + 1
+```
+####[/supplement]
+
+If we want to print the value of the variable \texttt{a}, we just enter its name:
+```{r}
+a
+```
+This is equivalent to
+```{r}
+print(a)
+```
+which is what needs to be used inside control structures and functions (we will come back to this later).
+
+You can define new variables using the values stored in other variables, as in
+```{r}
+b <- a / 5
+```
+Note that changing `a` to something else will not automatically change `b`, so in the above example
+```{r}
+a <- 10
+b <- a / 5
+a <- 40
+b
+```
+`b` will stay `2`, even though `a` will be `40`. In this sense R is different to Microsoft Excel, where cells will update their values automatically based on the formula entered.
+
+In case you forgot to use a variable, the last expression you computed is stored in `.Last.value`.
+
+The use of variables is an important tool in programming. Variables ensure that even code performing complex operations remains legible.
+
+You can list all variables in the current workspace using
+```{r}
+ls()
+```
+
+Alternatively, local objects are shwon in the *Enrivonment* tab of RStudio.
+
+###[task]Loan example revisited
+In the video we have considered the example of taking out a loan of £9,000 for 20 years with an annual interest rate of 15%. The yearly repayment can be shown to be
+$$
+P=L\cdot \frac{1-v}{v-v^(n+1)}.
+$$
+We have used the following R code to calculate the yearly payment
+```{r}
+n <- 20                                # term of the loan
+loan <- 9000                           # amount
+interest.rate <- 0.15                  # effective annual interest rate
+v <- 1 / (1+interest.rate)             # effective annual discount factor
+payment <- loan * (1-v) / (v*(1-v^n))  # yearly payments
+payment
+```
+
+Of your yearly payments of \textsterling 1437.86, how much is interest and how much is used for paying back the loan? The interest you pay in the first year is $L\cdot i$. The remainder of the first payment ($P-L\cdot i$) is thus used for paying back the loan. In more general, one can show that the payment in year $k$ can be decomposed into
+$$P=  \underbrace{P\cdot \alpha_k}_{\textrm{capital repayment}} + \underbrace{P\cdot (1-\alpha_k)}_{\textrm{interest}}$$
+with $\alpha_k=v^{n+1-k}$.
+
+Compute how much of the 10th payment is used for paying back the loan ($P\cdot \alpha_{10}$) and how much is interest ($P\cdot (1-\alpha_{10})$).
+
+
+####[answer]
+To compute how the payment is split in year 10 we can use the code below.
+```{r}
+n <- 20                                # term of the loan
+loan <- 9000                           # amount
+interest.rate <- 0.15                  # effective annual interest rate
+v <- 1 / (1+interest.rate)             # effective annual discount factor
+payment <- loan * (1-v) / (v*(1-v^n))  # yearly payments
+k <- 10                                # set k to 10 years
+alpha10 <- v^(n+1-k)                   # split factor
+capital10 <- payment * alpha10         # capital repaymment
+capital10
+interest10 <- payment * (1-alpha10)    # interest part
+interest10
+```
+So even after ten years the largest part of the repayment is interest!
+
+We can also create a graph illustrating how the payments are split and how fast the loan is being repaid (you will learn later on in this course how to make sense of the code below).
+```{r}
+k <- 1:n                               # create vector with all possible k
+alpha <- v^(n+1-k)                     # split factors
+capital <- alpha * payment             # capital repayments
+interest <- (1-alpha) * payment        # interest part
+data <- data.frame(Year=1:20, rbind(data.frame(Type="Capital repayment",
+      	                                       Payment=capital),
+                                    data.frame(Type="Interest",
+                                               Payment=interest)))
+library(ggplot2)
+ggplot(data=data) + geom_col(aes(Year, Payment, fill=Type))
+```
+####[/answer]
+###[/task]
+
+
+### Functions
+
+We will look at functions later on in this course in more detail, but we will take a quick look at them now. If we want to repeatedly perform the same calculation, we shouldn't be copying and pasting code. In this case we are better off defining a function. The example below illustrates how to define a function.
+
+###[example]Loan example as a function
+Let's look again at the loan example from the video and the previous task. Suppose we want to calculate the repayments for different interest rates. Rather than setting `interest.rate` to each of the values and then repatedly submitting the code for the calculation, we are better off defining a function. We do this by wrapping the code into a function definition. Rather than setting the information we need to know to perform the calculation, we take it in as function arguments.
+```{r}
+repayment <- function(n, loan, interest.rate) { 
+    v <- 1 / (1+interest.rate)             # effective annual discount factor
+    payment <- loan * (1-v) / (v*(1-v^n))  # yearly payments
+    return(payment)                        # Return the answer
+}
+```
+
+We can then calculate the repayment for different interest rates just using
+```{r}
+repayment(n=20, loan=9000, interest.rate=0.05)
+repayment(n=20, loan=9000, interest.rate=0.10)
+repayment(n=20, loan=9000, interest.rate=0.15)
+```
+
+###[/example]

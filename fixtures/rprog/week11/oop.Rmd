@@ -1,0 +1,78 @@
+##  A brief introduction to object-oriented programming
+
+###[video, videoid="zXMZilqO_4o"]Object-oriented programming
+
+### What you have seen so far
+You have almost certainly already used aspects of object orientation in R, possibly without even realising it. The functions `summary` and `plot` appear to magically do the "right thing" for different types for arguments.
+
+For a linear regression model `summary` shows different output ...
+```{r}
+model <- lm(dist~speed, data=cars)
+summary(model)
+```
+... than for a data frame ...
+```{r}
+summary(iris)
+```
+Even when we fit a support vector machine, a method you will learn more about in *Data Mining and Machine Learning I*, `summary` knows what to do.
+```{r}
+library(e1071)
+model <- svm(Species~., data=iris)
+summary(model)
+```
+With what we have seen so far, the only way how we could make this work would be to have a huge number of `if` statements inside the function `summary` so that the correct output is shown. This however would be a bad idea. The code implementing `summary` would be a complex mess and making `summary` work for third-party packages like `e1071`, which we have just used to fit a support vector machine, would be a challenge. 
+
+The answer as to why `summary` (almost) always appears to do the right things is down to object orientation.
+
+### What is object-oriented programming (OOP) about?
+
+So far we have thought of programming in terms of functions. A function takes one or more inputs, manipulates them or calculates something and then returns something.
+
+In object-oriented programming we think primarily of types of (interacting) objects. An object has properties (which we can store in fields), but, and this is the difference, the object also has methods. Methods are functions that are specific to a certain type of object.
+
+Think of a car as an example. It has properties like the colour, registration number etc. But you can also do something with it. You can for example start or stop the engine, load something into the boot or sound the horn. These would thus be examples of methods. 
+
+Most paradigms for object-oriented programming use classes: a class defines the behaviour of a given type of object. Objects are then instances of classes. 
+
+Using object orientation has many advantages. First of all, it makes it easier to structure complex projects, which will help with maintenance of the code in the future. Most importantly it allows for better "encapsulation": the user of a class or object does not need to know the details of the implementation, they don't even need to know of what exact class an object is. Take the `summary`, `plot` and `predict` methods as an example: most objects created when fitting a model support these methods. We don't need to know how predictions are calculated for say linear regression or support vector machines, all we need to remember is to use the `predict` method, which is used in pretty much the same way for different types of models.
+
+
+### Do we really need this?
+You might (rightly) be wondering what the benefits of OOP are for data analytics. Clearly, we benefit from R's object orientation when we use `summary` or `predict`. But does this also mean that we should code up a data analysis in terms of objects?
+
+It makes little sense to cast a simple data analytics workflow into an OOP context. If you can store your data in a small number of data frames, then manipulating these data frames using functions (and also exploiting R's functional programming techniques) is perfectly adequate.
+
+Sometimes however you can think of the problem you are working on in terms of a small number of types of interacting objects with very specific behaviour. These types of objects can then be represented using classes in an OOP context. Such scenarios typically occur when you use R to retrieve data from other business systems or public or private APIs or when you write user interfaces or systems that automatically generate reports or data sets. Essentially, the more your code is concerned with managing something rather than just calculating or plotting something, the stronger will be the case for OOP.
+
+Finally, if you code up a model or algorithm in R, it is always a good idea to use objects. This makes standard methods like `summary`, `plot` or `predict` work for your method as well.
+
+R has different systems for object orientation. The default S3 system, which we will look at first is very well suited for handling the latter, whereas the more powerful R6 system, which we will look at as well, is better suited for "generic OOP". S3 is rather different from how other programming languages go about OOP: it is very light-touch and ad-hoc. R6 is much more similar to how objects and classes are handled in programming languages like Python, Java, C#  or C++.
+
+### Key terms and concepts from OOP
+ 
+This section gives an overview over key terms in object-oriented programming.
+
+###### Class
+A class defines the data structures behind a given type of object. You can think of it as a blueprint. It also defines the methods, i.e the functions associated with the class. R's S3 system is a slight exception to this. In S3, classes do not define the data structures, they are only concerned with methods.
+
+###### Objects
+An object is an instance of a class. 
+
+###### Fields
+A field (sometimes also called member) is a variable that is stored within an object (just like we can store the content of a variable in a list).
+
+###### Method
+A method is a function that is specific to a class, or in other words, an action an object of that class can perform (like producing a plot or computing predictions).
+
+###### Inheritance
+In real life there is a hierarchy of types of objects. For example, SUVs and sports cars are a special type of car. Such hierarchical relationships between types of objects are represented using what is called "inheritance" in OOP.
+
+Let's go back to the example of cars. We would model the classes `SUV` or `SportsCar` as subclasses of the class `Car`, as they are specific types of cars. This way we can code up generic functionality of cars only once, without having to repeat it for different types of cars. We can then however also implement functionality that is specific to SUVs (like controlling the differential lock or 4WD) in the subclass `SUV`. (We will then say `Car` is a superclass of `SUV`.) `SUV` will inherit the fields and methods from `Car`, i.e. these will be also available for `SUV`s.
+
+###[weblink, target="http://adv-r.had.co.nz/OO-essentials.html"]OO field guide of of Advanced R
+This chapter gives a systematic and more detailed overview of object-oriented programming in R.
+###[/weblink]
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

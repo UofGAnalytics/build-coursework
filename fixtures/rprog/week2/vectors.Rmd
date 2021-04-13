@@ -1,0 +1,325 @@
+## Vectors in R
+
+####[video, videoid="m8ER5bkuRJI", duration="6m20s"]Vectors
+
+So far we have only looked at scalar variables, i.e. variables containing only one value. In most programming languages such scalar variables are the basic data types. R however does not have scalar variables, all variables are vectors. A variable storing a number is for example just a numeric vector of length 1.
+
+### Defining vectors
+The simplest way to create vectors in R is to use the function `c`:
+```{r}
+a <- c(1, 4, 2)
+a
+```
+
+We can use the function `c` as well to concatenate ("stick together") two vectors:
+```{r}
+a <- c(1, 4, 2)
+b <- c(5, 9, 13)
+c <- c(a, b)
+c
+```
+
+####[task]
+Create a vector `x` that contains the values $\mathbf{x}=(1, 3, 2, 5)$ and a vector `y` which contains the values $\mathbf{y}=(1, 0)$. Finally, concatenate `x` and `y` and store the result as `z`. Print `z`.
+
+#####[answer]
+We can use the following R code.
+```{r}
+x <- c(1, 3, 2, 5)
+y <- c(1, 0)
+z <- c(x, y)
+z
+```
+#####[/answer]
+####[/task]
+
+### Naming entries
+
+If the entries of the vectors correspond to quantities with natural names it is a good idea to associate names with the entries of the vector. This can be done using
+```{r}
+names(a) <- c("first", "second", "third")
+a
+```
+Alternatively we can set the names when creating the vector using `c`
+```{r}
+a <- c(first=1, second=4, third=2)
+```
+
+### Accessing elements
+You can use square brackets to access a single element of a vector. `x[i]`
+ returns the `i`-th element of the vector `x`. Using the vector `a` from above,
+```{r}
+a[3]
+```
+You can use the same notation to change elements of a vector:
+```{r}
+a[3] <- 10
+a
+```
+
+If the element you want to change is beyond the last element of the vector, the vector will be extended, such that the `i`-th element is the last element.
+```{r}
+a[7] <- 99
+a
+```
+
+If the entries of the vector are named, you can also use the names for accessing elements.
+```{r}
+a["third"]
+```
+### Subsetting vectors
+
+You can use square brackets not only to access a single element of a vector, but also to subset a vector. There are three ways of specifying subsets of vectors:
+
+You can use a vector specifying the indices to be returned:
+```{r}
+a <- c(1, 4, 9, 16)
+a[c(1,2,3)]
+```
+You can use a vector specifying the indices to be removed (as negative numbers):
+```{r}
+a[-4]
+```
+You can use a logical vector specifying the elements to be returned:
+```{r}
+a[c(TRUE, TRUE, TRUE, FALSE)]
+```
+
+We can exploit the latter when we  want to subset a vector based on its values. Suppose you want to keep all elements in `a` that are divisible by 2:
+```{r}
+a[a%%2==0]
+```
+Why does this work? `a\%\%2==0` returns a logical vector of length 4, indicating which elements of `a` are divisible by 2. These elements are then selected from `a`.
+
+####[task]
+Consider the vector `x` defined as
+```{r}
+x <- c(1, 5, 9, 3, 8)
+```
+Use all three of the above methods to extract the first, third and fifth entry.
+#####[answer]
+We can use the following R code (there are many other equally good answers).
+```{r,echo=FALSE, results='hide'}
+x <- c(1, 5, 9, 3, 8)
+```
+```{r}
+x[c(1,3,5)]
+x[-c(2,4)]
+x[c(TRUE,FALSE,TRUE,FALSE,TRUE)]
+```
+#####[/answer]
+####[/task]
+
+<!--[if PDF]>
+\newpage
+<![endif]-->
+
+
+
+### Vectorised calculations
+####[video, videoid="dILiux93ueA", duration="4m51s"]Vectorisation
+
+Vectors can be used in arithmetic expressions using the arithmetic operators and the mathematical and statistical functions we have seen when we used R as a calculator. In this case the computations are carried out element-wise.
+
+For example,
+```{r}
+a <- c(1, 2, 3, 4)
+b <- c(2, 0, 1, 3)
+c <- 2 * a + b
+c
+```
+The third entry of the result, 7, is obtained by taking twice the third entry of the vector `a` and adding it to third entry of the vector `b`, i.e. $c_3=2\times a_3+b_3=2\times 3+1=7$.
+
+### Recycling rules
+If vectors of different length are used in an arithmetic expression, the shorter vector(s) are repeated ("recycled") until they match the length of the longest vector.  
+```{r}
+a <- c(1, 2, 3, 4)
+b <- c(2, 0)
+a * b
+```
+R has thus "recycled" the vector `b` once. 
+
+If the length of the longest vectors is not a multiple of the length of the shorter vector(s), R will produce a warning. For example, 
+```{r}
+a <- c(1, 2, 3, 4)
+b <- c(2, 0, 1)
+a * b
+```
+
+The vector `b` is shorter than the vector `a`. However, if `b` is recycled once, it would have 6 elements, making it longer than `a`. Thus R produces a warning. Such a warning is almost always a sign that you have made a mistake.
+
+####[task]
+Consider the following two vectors `x` and  `y` and their sum
+```{r}
+x <- c(1, 2, 9, 4, 5, 6)
+y <- c(0, 2)
+x+y
+```
+Explain how R has calculated the result.
+#####[answer]
+The recycling rules mean that R treats `x+y` as `x+yyy` with
+```{r, echo=FALSE, results='hide'}
+x <- c(1, 2, 9, 4, 5, 6)
+```
+```{r}
+yyy <- c(0, 2, 0, 2, 0, 2)
+x+yyy
+```
+#####[/answer]
+####[/task]
+
+### Sequences and patterned vectors
+#### Sequences
+R has built-in functions to create simple sequences and patterned vectors:
+
+The operator `:` can be used for creating basic sequences.
+```{r}
+2:5
+```
+If the first argument is larger then the second argument, then the sequence will be decreasing.
+```{r}
+1:0
+```
+
+`seq(from, to, by)` creates a sequence from `from` to `to` using `by` as increment.
+```{r}
+seq(1, 2, by=0.2) 
+```
+
+`seq(from, to, length.out=n)` creates a sequence of total length `n`  with initial value `from` and ending value `to`.
+```{r}
+seq(3, 5, length.out=5) 
+```
+
+#### Repeats 
+`rep(x, times=n)` repeats the vector `x` `n` times. 
+```{r}
+rep(1:3, times=3)
+```
+
+`rep(x, each=n)` repeats each element of the vector `x` `n` times. 
+```{r}
+rep(1:3, each=3)
+```
+
+####[task]
+Create each of the following vectors using `:`. `seq` and `rep`.
+```
+2 3 4 5 6
+2 4 6
+1.00 1.25 1.50 1.75 2.00 
+3 3 4 4 5 5
+2 3 4 2 3 4
+```
+#####[answer]
+We can use the following R code (there are many other equally good answers).
+```{r}
+2:6
+seq(2, 4, by=2)
+seq(1, 2, length.out=5)
+rep(3:5, each=2)
+rep(2:4, 2)
+```
+#####[/answer]
+####[/task]
+
+#### Useful functions for vectors
+`numeric(n)` creates a numeric vector of length `n` (containing 0's).
+
+`length(x)` returns the length (number of elements) of the vector `x`.
+
+`unique(x)` returns the unique elements of `x`.
+
+`rev(x)` reverses the vector `x`, i.e. returns $(x_n.\ldots,x_1)$
+
+#### Sorting
+The function `sort(x)` sorts the vector `x`.  The function `order(x)` returns the permutation required to sort the vector `x`
+Consider the vector
+```{r}
+x <- c(11, 7, 3, 9, 4)
+```
+We can sort `x` using
+```{r}
+sort(x)
+```
+So what does the function order do?
+```{r}
+p <- order(x)
+p
+```
+The first entry of the result `p` is 3. The third entry of `x` is the smallest: if we want to sort `x` we have to put the third entry first, or, in other words, the first entry of the sorted vector would be the third entry of `x`. The second entry of `p` is 5, because the second smallest entry of `x` is its fifth entry.
+
+We can obtain the sorted vector by applying the permutation obtained from `order` to `x`
+```{r}
+x[p]
+```
+This trick can be used to sort an entire dataset by one column.
+
+If we want to sort the vector is descending order, we have to append the argument `decreasing=TRUE`.
+```{r}
+sort(x, decreasing=TRUE)
+```
+
+### Scalar summary functions
+R has a large selection of functions that compute a scalar function of a vector. Their names are self-explanatory:
+`min`, `max`, `sum`, `prod`, `mean`, `median`, `sd`, `var`, ...
+
+####[task]
+Use R to calculate the sums
+$\displaystyle \sum_{i=1}^{10} i$ and $\displaystyle \sum_{i=1}^{100} i^2$.
+
+#####[answer]
+We can calculate $\displaystyle \sum_{i=1}^{10} i$ using
+```{r}
+sum(1:10)
+```
+We can calculate $\displaystyle \sum_{i=1}^{100} i^2$ using
+```{r}
+sum((1:100)^2)   # correct
+```
+Note that we need to put the power of 2 inside parenthesis. If we had used
+```{r}
+sum(1:100)^2     # NOT correct
+```
+we would have calculated $\displaystyle \left(\sum_{i=1}^{100} i\right)^2$.
+
+We also have to put `1:100` inside parentheses. If we had used
+```{r}
+sum(1:100^2)     # NOT correct
+```
+we would have calculated $\displaystyle \sum_{i=1}^{100^2} i$.
+#####[/answer]
+
+####[/task]
+
+####[example] A simple Monte Carlo experiment
+Suppose we want to know the probability
+$$
+\mathbb{P}(X>1)
+$$
+if $X$ has a standard normal distribution ("$X\sim\textsf{N}(0,1)$").
+
+We could try to answer this problem using a simulation ("Monte Carlo") as follows.
+
+- We first generate a large number of realisations from the standard normal distribution. This can be done using the built-in function `rnorm`.
+
+- We then count the proportion of values which are greater than 1. This is an estimate of the probability we are looking for.
+
+```{r}
+n <- 1e7       # Set sample size (the bigger the better, within reason)
+x <- rnorm(n)  # Draw a sample of size n from the standard normal distribution
+sum(x>1)/n     # Our estimate of the probability 
+```
+How does this work? `x>1` returns a logical vector of the same length as `x`. Its $i$-th entry is `TRUE` if $x_i>1$, otherwise it is `FALSE`. The number of `TRUE`s  in `x>1` is thus the number of times $x_i$ is greater than 1. Summing over a logical vector counts the number of `TRUE` as R views `TRUE` as 1 and `FALSE` as 0.
+
+We could have of course used the cumulative distribution function of the standard normal distribution, which gives an exact result.
+```{r}
+pnorm(1, lower.tail=FALSE)
+```
+You will soon learn more cumulative distribution functions in the Probability and Stochastic Models course or in the Probability and Sampling Fundamentals course.
+####[/example]
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

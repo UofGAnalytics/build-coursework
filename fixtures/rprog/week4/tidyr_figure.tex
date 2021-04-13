@@ -1,0 +1,79 @@
+\documentclass[border={6pt 6pt 6pt 6pt}]{standalone}
+\usepackage[default]{lato}
+\usepackage{tikz,xcolor,times}
+\usetikzlibrary{shapes,arrows,calc,shadows.blur,arrows.meta}
+\definecolor{uogblue}{HTML}{003865}
+\definecolor{uogsky}{HTML}{005398}
+\definecolor{uogcobalt}{HTML}{0075B0}
+\definecolor{uogturquoise}{HTML}{00B5D1}
+\definecolor{uogslate}{HTML}{4F5961}
+\definecolor{uogleaf}{HTML}{00843D}
+\definecolor{uogmoss}{HTML}{385A4F}
+\definecolor{uogsandstone}{HTML}{7A6855}
+\definecolor{uogmocha}{HTML}{AA8066}
+\definecolor{uogburgundy}{HTML}{7D2239}
+\definecolor{uogpillarbox}{HTML}{B30C00}
+\definecolor{uoglavender}{HTML}{5B4D94}
+\definecolor{uogthistle}{HTML}{951272}
+\definecolor{uogrose}{HTML}{B06C96}
+\definecolor{uogrust}{HTML}{BE4D00}
+\definecolor{uogpumpkin}{HTML}{FFB948}
+\definecolor{uogsunshine}{HTML}{FFDC36}
+\begin{document}
+\tikzstyle{block} = [rectangle, fill=uogblue, blur shadow, text=white,
+  text width=2em,
+  minimum height=2em, inner sep=5pt,]
+\tikzstyle{rowidx} = [rectangle, fill=uogthistle, blur shadow, text=white,
+  text width=2em,
+  minimum height=2em, inner sep=5pt,]
+\tikzstyle{colidx} = [rectangle, fill=uoglavender, blur shadow, text=white,
+  text width=2em,
+  minimum height=2em, inner sep=5pt,]
+\tikzstyle{nx} = [rectangle, fill=black!25, blur shadow, text=white,
+  text width=2em,
+  minimum height=2em, inner sep=5pt,]
+\begin{tikzpicture}
+  \node[nx] at (2,6) {\textcolor{uogthistle}{idx\_i}};
+  \node[colidx] at (4,6) {$j_1$};
+  \node[colidx] at (6,6) {$j_2$};
+  \node[colidx] at (8,6) {$j_3$};
+  \node[rowidx] at (2,4) {$i_1$};
+  \node[rowidx] at (2,3) {$i_2$};
+  \node[block] at (4,4) {$a_{i_1j_1}$};
+  \node[block] at (6,4) {$a_{i_1j_2}$};
+  \node[block] at (8,4) {$a_{i_1j_3}$};
+  \node[block] at (4,3) {$a_{i_2j_1}$};
+  \node[block] at (6,3) {$a_{i_2j_2}$};
+  \node[block] at (8,3) {$a_{i_2j_3}$};
+  \draw (1.25,5) -- (8.75,5);
+
+  \node[nx] at (16,6) {\textcolor{uogthistle}{idx\_i}};
+  \node[nx] at (18,6) {\textcolor{uoglavender}{idx\_j}};
+  \node[nx] at (20,6) {\textcolor{uogblue}{value}};
+  \draw (15.25,5) -- (20.75,5);
+  \node[rowidx] at (16,4) {$i_1$};
+  \node[rowidx] at (16,3) {$i_2$};
+  \node[rowidx] at (16,2) {$i_1$};
+  \node[rowidx] at (16,1) {$i_2$};
+  \node[rowidx] at (16,0) {$i_1$};
+  \node[rowidx] at (16,-1) {$i_2$};
+  \node[colidx] at (18,4) {$j_1$};
+  \node[colidx] at (18,3) {$j_1$};
+  \node[colidx] at (18,2) {$j_2$};
+  \node[colidx] at (18,1) {$j_2$};
+  \node[colidx] at (18,0) {$j_3$};
+  \node[colidx] at (18,-1) {$j_3$};
+  \node[block] at (20,4) {$a_{i_1j_1}$};
+  \node[block] at (20,2) {$a_{i_1j_2}$};
+  \node[block] at (20,0) {$a_{i_1j_3}$};
+  \node[block] at (20,3) {$a_{i_2j_1}$};
+  \node[block] at (20,1) {$a_{i_2j_2}$};
+  \node[block] at (20,-1) {$a_{i_2j_3}$};
+ 
+  \draw[->, thick] (9,4) -- (15,4) node[pos=0.5,above] {\texttt{gather(\textcolor{uoglavender}{idx\_j}, \textcolor{uogblue}{value}, -\textcolor{uogthistle}{idx\_i})}} ;
+  
+  \draw[<-, thick] (9,3) -- (15,3) node[pos=0.5,below] {\texttt{spread(\textcolor{uoglavender}{idx\_j}, \textcolor{uogblue}{value})}} ;
+
+\end{tikzpicture}
+
+\end{document}

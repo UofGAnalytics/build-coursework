@@ -1,0 +1,62 @@
+## Using knitr without Rmarkdown
+
+Markdown has many strengths (ease of use, ability to convert to many output formats, etc.), however one weakness is that Markdown does not give you fine-grain control over detailed aspects of the layout.
+
+If you are familiar with HTML or LaTeX, you can also embed knitr chunks in these documents while retaining fine-grain control of how the content is rendered.
+
+### knitr chunks in HTML documents
+
+`knitr` code chunks can be included in HTML using 
+
+```{r,include=FALSE}
+source("trick.R")
+```
+
+`r I(printfile("HTMLsrc.Rmd"))`
+
+Inline `knitr` expressions in HTML use the syntax `r I(paste0(backtick,"<","!--rinline #R expression goes here --",">",backtick))`.
+
+The file containing the HTML with the R chunks should then be saved as a `.Rhtml` file. This file can then be knitted in RStudio by clicking in the *Knit* button. Alternatively, you can run
+```{r, eval=FALSE}
+library(knitr)
+knit("report.Rhtml")
+```
+####[example]Baby names as Rhtml file
+
+`r I(printfile("example6.Rhtml"))`
+
+####[/example]
+
+
+### knitr chunks in LaTeX documents (Rnw files)
+
+`knitr` code chunks can be included in [LaTeX](https://en.wikipedia.org/wiki/LaTeX) documents using standard ["noweb"](https://en.wikipedia.org/wiki/Noweb) syntax.
+
+```
+<<#chunk-options>>=
+# R code goes here
+@          
+```        
+Inline `knitr` expressions in LaTeX use the syntax `\Sexpr{#R expression goes here}`. If you are wondering about the name of the command: R is a re-implementation of the S engine and a key concept in the implementation of both R and S is an S expression (`SEXP` in C code).
+
+The file containing the LaTeX code with the R chunks is then saved as `.Rnw` file. The file can then be compiled into a PDF file by clicking on the PDF icon in RStudio. The file can be translated into a LaTeX file using
+```{r, eval=FALSE}
+library(knitr)
+knit("report.Rnw")
+```
+You then need to run LaTeX to convert the TeX file into a PDF document.
+
+####[example]Baby names as Rnw file
+
+`r I(printfile("example7.Rnw"))`
+
+####[/example]
+
+
+####[background]Sweave
+`knitr` was inspired by `Sweave`, the literate programming functionality built into base R. The basic syntax of `knitr` for LaTeX is very similar to the one used by `Sweave`. More information about `Sweave` is available in the [Sweave manual](https://stat.ethz.ch/R-manual/R-devel/library/utils/doc/Sweave.pdf).
+####[/background]
+
+
+
+\newpage

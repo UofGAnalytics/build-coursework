@@ -1,0 +1,121 @@
+## Warnings and Errors
+
+<!--
+NEXT YEAR COVER assertthat
+-->
+
+Exceptions are conditions which do not allow continuing the normal flow
+of execution. R has two major types of exceptions:
+
+### Warnings
+
+Warnings are less serious exceptions. R has encountered a problem processing some part of your commands, but can continue processing the other commands. However, the result might not be what you would expect, so you should carefully examine all variables used in the command that triggered the warning. Before returning to the command prompt R will display a short warning message describing the problem that has occurred.
+
+Examples of code that produces warnings are:
+
+- taking the logarithm of negative numbers, 
+```{r}
+x <- log(-1:1)
+x
+```
+
+- trying to use recycling rules when the lengths of the vectors involved are not multiples of each other.
+```{r}
+x <- 1:3
+y <- 4:5
+z <- x+y
+z
+```
+
+### Errors
+
+Errors are more serious exceptions. They are that serious that R cannot continue processing your commands and returns to the command prompt showing a brief description of the error.
+
+Examples of code causing errors are:
+
+- syntax errors like mismatched parentheses
+```{r, error=TRUE}
+sin(x[i)]
+```
+- trying to use a variable that does not exist, 
+```{r, error=TRUE}
+print(I.do.not.exist)
+```
+
+- calling a function with the wrong arguments.
+```{r, error=TRUE}
+rnorm(sample.size=10)
+```
+
+A warning or an error message does not necessarily imply that there is something wrong with this specific line of code. It might well be that you made a mistake earlier on, but somehow R manages to carry on for a while before producing an error or a warning message.
+
+In the ref://debug we will look at techniques for identifying the root cause of errors.
+
+### Raising warnings and errors in your code
+
+When writing your own R functions, you can (and should) make use of functions like `warning` and `stop` to handle exceptions (do *not* use `print` or `cat`  for these purposes). `warning` will display a warning message, but not abort the function, whereas `stop` will display an error message and return immediately to the command prompt.
+
+####[example]
+Consider the following function `moments`, which calculates the expected value and standard deviation for a discrete distribution with range space `x` and associated probabilities `p`.
+```{r}
+moments <- function(x, p) {
+    e.x <- sum(x*p)
+    var.x <- sum((x-e.x)^2*p)
+    sd.x <- sqrt(var.x)
+    list(e.x=e.x, sd.x=sd.x)
+}
+```
+The calculations above are only sensible if:
+
+- `x` and `p` are vectors of the same length.
+- The entries in `p` are non-negative.
+- The entries in `p` sum to one. However in this case we can simply rescale `p` so that it sums to 1.
+
+This suggests that we should raise an error in the first two scenarios and raise a warning if we need to rescale `p`.
+
+```{r}
+moments <- function(x, p) {
+    if (length(x)!=length(p))
+        stop("p and x must be of the same length.")
+    if (any(p<0))
+        stop("p is a vector probabilities and cannot have negative entries")
+    if (abs(sum(p)-1)>1e-8) {                  # Allow for some numerical error
+        p <- p/sum(p)
+        warning("p has been rescaled so that probabilities sum to 1")
+    }
+    e.x <- sum(x*p)
+    var.x <- sum((x-e.x)^2*p)
+    sd.x <- sqrt(var.x)
+    list(e.x=e.x, sd.x=sd.x)
+}
+```
+####[/example]
+
+### Suppressing warnings and handling errors
+
+Sometimes you want to call an R function that will create a  warning which you know is safe to ignore. In these cases it can be useful to tell R to suppress the warning messages. You can do so by
+using the function `suppressWarnings`.
+
+```{r}
+suppressWarnings(x <- log(-1))
+```
+will not show any warning messages.
+
+The function `try` allows the user to "catch" errors, i.e. it allows us
+to deal with the error ourselves instead of having R deal with it. If an
+error occurs within a `try` block, R does not abort, but `try` simply
+returns an object of the class `try-error`.
+
+```
+success <- try({read.table("file.does.not.exist.txt")})
+success
+```
+but the execution is not aborted. It is now up to us to decide how we
+want to proceed. The function `try` has a sibling ` tryCatch`, which allows for more fine-grain control.
+
+
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

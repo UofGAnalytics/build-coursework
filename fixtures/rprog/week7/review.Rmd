@@ -1,0 +1,264 @@
+## Review exercises
+
+###[task]
+Draw `x` at random from the $\textsf{N}(0,1)$ distribution (`x <- rnorm(1)`). Use an `if` statement to set `x` to $0$ if `x` is negative. Print `x`.
+####[answer]
+
+\mbox{ }
+
+#####[video, videoid="0AE_ayqPGX4", duration="40s"] Video model answers
+
+We can use the following R code.
+```{r}
+x <- rnorm(1)
+if (x<0) {
+  x <- 0
+}
+x
+```
+####[/answer]
+###[/task]
+
+
+###[task]
+Set `x` to a sample of size 10 from the $\textsf{N}(0,1)$ distribution using `x <- rnorm(10)`. Replace all values that are less than $0$ by $0$ using the following three methods:
+
+- using the function `ifelse`;
+- using a `for` loop containing an `if` statement; and
+-  by subsetting `x` appropriately.
+
+The difference between this task and the previous task  is that in this task you are dealing with vectors of length $>1$.
+####[answer]
+\mbox{ }
+
+#####[video, videoid="2XNxVmSo1rs", duration="2m39s"] Video model answers
+
+We can use `ifelse` ...
+```{r}
+x <- rnorm(10)
+x <- ifelse(x<0, 0, x)
+x
+```
+... a `for` loop ...
+```{r}
+x <- rnorm(10)
+for (i in seq_along(x))
+    if (x[i]<0)
+        x[i] <- 0
+x
+```
+... or subsetting ...
+```{r}
+x <- rnorm(10)
+x[x<0] <- 0
+print(x)
+```
+####[/answer]
+###[/task]
+
+###[task]
+The R function `cumsum(x)` computes the cumulative sum of a vector `x`.
+
+`z` is the cumulative sum of `x` if $z_1=x_1$, $z_2=x_1+x_2$, \dots, $z_k=\sum_{i=1}^k x_i$, \dots. So for example is `x` is $(1,2,3,4)$, then cumulative sum `z` is $(1,3,6,10)$.
+
+You can compute the cumulative sum of the vector
+```{r, echo=FALSE}
+x <- rnorm(10)
+x[x<0] <- 0
+```
+```{r}
+x
+```
+from the previous task using
+```{r}
+cumsum(x)
+```
+Now use a `for` loop instead of the built-in function `cumsum` to compute the cumulative sum of `x`.
+
+####[answer]
+We can use the following R code.
+```{r}
+cumsum.x <- numeric(length(x))            # Create empty vector to hold result
+
+cumsum.x[1] <- x[1]                       # Set first entry
+for (i in 2:length(x))
+  cumsum.x[i] <- cumsum.x[i-1]+x[i]       # Set remaining entries
+
+cumsum.x                                  # Print result
+cumsum(x)                                 # Compare to built-in function
+```
+####[/answer]
+###[/task]
+
+###[task]
+ For $x_0>0$ the recursive sequence defined as
+$$
+x_{n}= 1 + \frac{1}{x_{n-1}}
+$$
+can be shown to tend to the ["golden ratio"](https://en.wikipedia.org/wiki/Golden_ratio) $\frac{1+\sqrt{5}}{2}$ as $n\longrightarrow +\infty$.
+
+- Write a loop that approximates the golden ratio by computing $x_{50}$. 
+- Modify your code such that the loop stops as soon as either $|x_n-x_{n-1}|<10^{-10}$ or 50 iterations haven been carried out (whichever occurs first).
+
+####[answer]
+We can use the following R code.
+```{r}
+x <- 1                                    # Set initial value (arbitrary)
+for (i in 1:50) {                         # Repeat at most 50 times
+  old.x <- x                              # Store old value
+  x <- 1 + 1/x                            # Update x
+  if (abs(old.x-x)<10e-10)                # Check for convergence
+    break
+}
+
+x                                         # Print result
+(1+sqrt(5)) / 2                           # Compare to desired answer
+```
+####[/answer]
+###[/task]
+
+
+###[task]
+Simulate and plot ten points from $\mathbb{R}^2$ using
+```r
+n <- 10
+coords <- matrix(rnorm(2*n), ncol=2)
+plot(coords)
+```
+
+- Connect all pairs of points using blue lines. Your plot should look like the one shown below (except for the thick red line).
+- Connect the two closest points with a thick red line. Your code should find the two closest points automatically. Your plot should now look like the plot shown below.
+
+```{r, echo=FALSE}
+set.seed(1234)
+```
+```{r, echo=FALSE, dev.args=list(pointsize=10), out.width=".7\\textwidth"}
+n <- 10                                   # Simulate points
+coords <- matrix(rnorm(2*n), ncol=2)     
+plot(coords, pch=16, xlab="x", ylab="y")  # Draw the points
+for (i in 1:(n-1))
+  for (j in (i+1):n)
+    lines(coords[c(i,j),], col="blue")    
+closest.pair <- c(NA,NA)                   # Initialise closest pair
+closest.distance <- Inf                    # Initialise closest distance
+for (i in 1:(n-1))                         # Go through all pairs of points
+  for (j in (i+1):n) {
+    dist <- sum((coords[i,]-coords[j,])^2) # Compute (squared) distance
+    if (dist<closest.distance) {           # If we find a pair which is closer ...
+      closest.pair <- c(i,j)               # ... store it ...
+      closest.distance <- dist             # ... along with the distance
+    }     
+  }
+lines(coords[closest.pair,], col="red", lwd=4)
+```
+
+####[answer]
+We can use the following R code.
+```{r, echo=FALSE}
+set.seed(1234)
+```
+```{r, dev.args=list(pointsize=10), out.width=".7\\textwidth"}
+n <- 10                                   # Simulate points
+coords <- matrix(rnorm(2*n), ncol=2)     
+plot(coords, pch=16, xlab="x", ylab="y")  # Draw the points
+for (i in 1:n)                            # For all pairs of points ...
+  for (j in 1:n)
+    lines(coords[c(i,j),], col="blue")    # Connect i-th and j-th point
+```
+
+The `for` loop is not optimal. It connects each pair of points twice ($i\rightarrow j$ and $j\rightarrow i$), and it also connects each point with itself, which is not necessary either. Thus a better solution would be
+```r
+for (i in 1:(n-1))
+  for (j in (i+1):n)
+    lines(coords[c(i,j),], col="blue")    
+```
+This setup makes sure that $i<j$, thus each pair of points is only connected once.
+
+To find the closest pair of points, we can use.
+```{r}
+closest.pair <- c(NA,NA)                   # Initialise closest pair
+closest.distance <- Inf                    # Initialise closest distance
+for (i in 1:(n-1))                         # Go through all pairs of points
+  for (j in (i+1):n) {
+    dist <- sum((coords[i,]-coords[j,])^2) # Compute (squared) distance
+    if (dist<closest.distance) {           # If we find a pair which is closer ...
+      closest.pair <- c(i,j)               # ... store it ...
+      closest.distance <- dist             # ... along with the distance
+    }     
+  }
+```
+```r
+lines(coords[closest.pair,], col="red", lwd=4)
+                                           # Connect two closest points
+```
+```{r, echo=FALSE, dev.args=list(pointsize=10), out.width=".7\\textwidth"}
+plot(coords, pch=16, xlab="x", ylab="y")  # Draw the points
+for (i in 1:(n-1))
+  for (j in (i+1):n)
+    lines(coords[c(i,j),], col="blue")    
+lines(coords[closest.pair,], col="red", lwd=4)
+                                           # Connect two closest points
+
+```
+####[/answer]
+###[/task]
+
+
+###[task] Monty-Hall problem
+In this task you will simulate the so-called Monty Hall problem. The Monty Hall problem is a paradox, named after the host of a US game show, in which probability theory appears to give a counter-intuitive answer.
+
+Suppose you are on a game show and you are given the choice of three doors. Behind two of the doors is a goat and behind one of the doors is a sports car.
+
+Suppose you have chosen door 1. The game host, who knows what is behind the doors, opens door 2, behind which is a goat. You are now given the choice of sticking with door 1 or switching to door 3.
+
+Intuitively, there appears to be no benefit of switching doors. There are two doors, one with a goat and one with a car, but we don't know which one is which, so we might be tempted to believe that the probability that the car is behind each of the remaining two doors is $\frac12$.
+
+However, one can show by using Bayes theorem that the probability that the car is behind door 1 is $\frac13$ and that the probability that the car is behind door 3 is $\frac23$, i.e. you should switch to the other door.
+
+Consider the event $C_i =$ car behind door $i$. Then $\mathbb{P}(C_i)=\frac13$. Consider the event $D$, that the host opens door 2. Then
+
+- $\mathbb{P}(D_2|C_1)=\frac12$, as host can either open door 2 or door 3.
+- $\mathbb{P}(D_2|C_2)=0$, as the host won't open the door revealling the car
+- $\mathbb{P}(D_2|C_3)=1$, as the host has to open door 2, as door 3 would reveal the car.
+
+Thus, the probability that the car is behind door 1 is
+$$
+\mathbb{P}(C_1|D_2)=\frac{\mathbb{P}(D_2|C_1)\mathbb{P}(C_1)}{
+\mathbb{P}(D_1|C_1)\mathbb{P}(C_1)\mathbb{P}(D_2|C_2)\mathbb{P}(C_2)+\mathbb{P}(D_2|C_3)\mathbb{P}(C_3)}
+=\frac{\frac12\times\frac13}{\frac12\times\frac13+0\times\frac13+1\times\frac13}=\frac{\frac16}{\frac12}=\frac13,
+$$
+which means that $\mathbb{P}(C_3|D_2)=\frac{2}{3}$ (as $\mathbb{P}(C_2|D_2)=0$).
+
+In this question you will program a simulation which confirms this. In the simulation we will assume that, like in the example, you stand in front of door 1 and that the host opens door 2.
+
+Write a script that repeats the steps below 10,000 times:
+
+i. Randomly choose the door behind which the car is. 
+ii. If the car is behind door 1, the host opens either door 2 or door 3 with equal probability. If the car is behind door 2, the host opens door 3. If the car is behind door 3, the host opens door 2.
+iii. If the host does not open door 2, go back to step i. (We have to reject this realisation as it goes against our assumption that the host opens door 2).
+iv. Store whether the car is behind door 1 or not.
+
+You can estimate the probability that the car is behind door 1 by the proportion of times the car was behind door 1 in your simulation. Compute this estimate.
+
+*Hint:* You can use `sample(1:3,1)` to randomly draw an integer from the set $\{1,2,3\}$.
+####[answer]
+We can use the following R code.
+```{r}
+n.sim <- 1e4                     # Set number of simulations
+results <- logical(n.sim)        # Vector to hold result
+for (i in 1:n.sim) {             # Perform n.sim simulations
+  while (TRUE) {                 # Keep sampling ...
+    car <- sample(3,1)           # Randomly place the car
+    if (car==1) door <- sample(2:3,1)
+    if (car==2) door <- 3
+    if (car==3) door <- 2
+    if (door==2)                 # ... until host opens door 2
+      break
+  }
+  results[i] <- car==1           # Record whether car is behind door 1
+}
+mean(results)
+```
+This is close to the probability $\mathbb{P}(C_1|D_2)=\frac13$.
+####[/answer]
+###[/task]

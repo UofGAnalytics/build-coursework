@@ -1,0 +1,226 @@
+## Root finding in one dimension
+
+In this section we will study numerical methods for solving a non-linear equation of the form 
+$$f(x)=0.$$
+
+Note that an equation of the form $g(x)=h(x)$ can be written as $g(x)-h(x)=0$, thus can be written as $f(x)=0$ with $f(x)=g(x)-h(x)$.
+
+### Newton's method for solving a non-linear equation
+
+So far we have studied how Newton's method can be used to find a local extremum (i.e. a local minimum or maximum) of a function $f(x)$. We have seen that Newton's method for optimising a function $f(x)$ can also be seen as solving the equation that the derivative is $0$, i.e.  $f'(x)=0$. This suggests that Newton's method can also be used to solve a non-linear equation.
+
+Suppose we want to solve the linear equation $a+b(x-x_0)=0$, then the solution is $x=x_0-\frac{a}{b}$, if $b\neq 0$. 
+
+Now suppose we want to solve the non-linear equation $f(x)=0$. We can approximate
+ the function $f(x)$ by its tangent in some point $x_0$ (which also happens to be its first-order Taylor approximation around $x_0$):
+$$
+f(x)\approx f(x_0) + f'(x_0) \cdot (x-x_0)
+$$
+
+Thus the solution to the linear equation $f(x_0) + f'(x_0) \cdot (x-x_0)=0$ is an approximate solution to the non-linear equation $f(x)=0$. The solution to this linear equation is
+$$
+x=x_0-\frac{f(x_0)}{f'(x_0)}
+$$
+
+Geometrically speaking, $x$ is the intersection of the tangent to $f(x)$ in $x_0$ with the x-axis.
+
+We obtain Newton's method for solving a non-linear equation by repeatedly using this approximation, which gives the following algorithm:
+
+1. Initialise $x^{(0)}$ to some value.
+2. For $h=1,2,3,\ldots$ iterate until convergence \dots
+   $$
+   x^{(h)}=
+    x^{(h-1)} - \frac{f(x^{(h-1)})}{f'(x^{(h-1)})}.
+   $$
+
+####[example, label="toyroot1"]
+Suppose we want to solve the equation $\exp(-2x)=2$, i.e. $\exp(-2x)-2=0$ using Newton's method, starting at $x^{(0)}=0$. Each iteration, we approximate $f(x)=\exp(-2x)-2$ by a linear function and take the intersection of that linear function with the x-axis as our new "best guess" $x^{(h+1)}$.
+	
+```{r, echo=FALSE, out.width="100%", fig.width=9, fig.height=3}
+f <- function(theta) {
+  exp(-2*theta)-2
+}
+
+f.d <- function(theta) {
+  -2*exp(-2*theta)
+}
+x <- numeric(3)
+x[1] <- 0
+cols <- c("#003865", "#00843D", "#5B4D94", "#FFB948", "#B30C00")
+par(mfrow=c(1,3))
+for (h in seq_along(x)) {
+  curve(f, from=-1, to=2)
+  x0 <- x[h]
+  gg <- function(x) f.d(x0) * (x-x0) + f(x0)
+  curve(gg, add=TRUE, col="#951272", ylim=c(-6, 2))
+  legend("topright", lty=1, col=c("black", "#951272"), c("f(x)", "approximation"))
+  x[h+1] <- x[h] - f(x[h])/f.d(x[h])
+  abline(v=x[h], lty=3, col=cols[h])
+  abline(v=x[h+1], lty=3, col=cols[h+1])
+  abline(h=0, lty=2)
+  axis(3, at=x[h], labels=bquote(x^(.(h-1))), col=cols[h], col.ticks=NULL, col.axis=cols[h], hadj=x[h]<x[h+1])
+  axis(3, at=x[h+1], labels=bquote(x^(.(h))), col=cols[h+1],  col.ticks=NULL, col.axis=cols[h+1], hadj=x[h]>x[h+1])
+}
+```
+So after three iterations only, we are already pretty close.
+
+Actually, there would be no need to use Newton's method. We can find the root in closed form: $f(x)=0$ for $x=-\frac{1}{2}\log 2$.
+####[/example]
+
+We will now implement Newton's method for root-finding in R.
+   
+####[example, continued="toyroot1"]
+In order to solve the equation $\exp(-2x)=2$, i.e. $\exp(-2x)-2=0$, we start by defining the functions $f(x)$ and $f'(x)$.
+```{r}
+f <- function(theta) {
+  exp(-2*theta)-2
+}
+
+f.d <- function(theta) {
+  -2*exp(-2*theta)
+}
+```
+
+In its simplest form Newton's method can now be implemented as follows:
+```{r}
+theta <- 0
+for (h in 1:20) {
+    theta <- theta - f(theta) / f.d(theta)
+}
+theta
+```
+
+We can actually also obtain this answer using the function `newton1d` we have written for optimisation, simply by passing on $f(x)$ instead of $f'(x)$ and $f'(x)$ instead of $f''(x)$, because Newton's method for optimisation is just Newton's method for root-finding applied to the first derivative.
+```{r, echo=FALSE}
+newton1d <- function(f.d, f.dd, initial, ..., max.iter=100, tol=1e-8) {
+  x <- numeric(max.iter+1)                   # Create vector to hold results
+  x[1] <- initial
+  for (h in seq_along(x)) {
+    x[h+1] <- x[h] - f.d(x[h], ...)/f.dd(x[h], ...)    # Perform Newton update
+    if (abs(x[h+1]-x[h])<tol)                # Check for early convergence
+      return(x[h+1])
+  } 
+  warning("Newton's method might not have converged")
+                                             # If we haven't returned already, 
+                                             # it probably hasn't converged
+  x[h+1]
+}
+```
+```{r}
+newton1d(f, f.d, 0)
+```
+####[/example]
+
+#### Alternatives to Newton's method
+
+Newton's method converges to a solution of the equation $f(x)=0$ if started close enough to a solution. In general, there is however no guarantee that Newton's method will converge to a solution of the equation $f(x)=0$. It can also happen that it diverges or that it cycles between two or more values. Thus it is usually better to use slower, but safer alternatives to Newton's method, such as the bisection method. 
+
+The bisection method starts with an interval $(a,b)$, such that $f(a)\cdot f(b)<0$, i.e. $f(x)$ changes sign between $a$ and $b$. In other words, if $f(x)$ is continuous, $f(x)$ intersects the x-axis somewhere between $x$ and $b$, i.e. a solution to the equation $f(x)$ must lie inside the interval $(a,b)$. Now we split the interval into two halves. Now either $f(x)$ intersects the x-axis in the left half or in the right half (or in both, in which case it has to intersect the x-axis at least twice in at least one of the intervals). If
+$f(a)\cdot f\left(\frac{a+b}{2}\right)<0$ a solution must lie in the interval $\left(a,\frac{a+b}{2}\right)$, otherwise a solution must lie in the interval $\left(\frac{a+b}{2},b\right)$. Now this interval is split into two halves again, etc. etc.
+
+This certainly won't be faster than Newton's method, but it is actually a lot safer.
+     	   
+#### uniroot in R
+
+The R function `uniroot` makes use of a more powerful version of the bisection method, [Brent's method](https://en.wikipedia.org/wiki/Brent's_method). The syntax of `uniroot` is 
+
+```{r, eval=FALSE}
+uniroot(f, interval=c(from, to), ...)
+```
+
+
+- `f` the function whose root $f(x)=0$ we want to find.
+-  `from` and `to` are the lower and upper end of the interval in which the root is searched.
+-  Additional arguments (`...`) are passed on to `f`.
+
+
+In contrast to Newton's method, \texttt{uniroot} does not require the derivative of $f(x)$.
+
+####[example, continued="toyroot1"]
+Let's return to ref://toyroot1 and use `optimize` instead of Newton's method.
+```{r}
+uniroot(f, c(-1,1))
+```
+Like for `optimize` we need to decrease the tolerance to obtain a more precise answer.
+```{r}
+uniroot(f, c(-1,1), tol=1e-10)
+```
+####[/example]
+
+####[example] Wilks intervals		
+In week 7 of Learning from Data you will learn about Wilks intervals, which are a way of deriving likelihood-based confidence intervals for the parameter of interest $\theta$.
+
+A confidence interval at confidence level $c$ for $\theta$ consist of all those values of $\theta$ for which the loglikelihood is not more than $q$ lower than the loglikelihood $\ell(\hat \theta)$ at the maximum-likelihood estimate $\hat\theta$, where $q$ is half the $c$-quantile of the $\chi^2(1)$ distribution (denoted $\chi^2_1(c)$).
+
+In other words the confidence interval is defined as
+$$
+\left\{\theta: \; \ell(\hat \theta)- \ell(\theta)\leq \frac12 \chi^2_1(c)\right\}
+$$
+The figure below illustrates this definition.
+
+```{r, echo=FALSE, out.width="50%"}
+set.seed(123)
+x <- rexp(1e3) 
+loglik <- function(theta, x) {
+  -sum(x) + (theta-1)*sum(log(x)) - length(x) * lgamma(theta)
+}
+thetahat <- optimize(loglik, c(0.75, 1.5), x=x, maximum=TRUE, tol=1e-10)$maximum
+theta.range <- seq(0.75, 1.3375, length.out=1000)
+plot(theta.range, loglik(theta.range, x), type="l", 
+     xlab=expression(theta), ylab=expression(loglik(theta)), xaxt="n", yaxt="n")
+abline(v=thetahat, lty=3, col="#003865")
+abline(h=loglik(thetahat,x), lty=3, col="#003865")
+abline(h=loglik(thetahat,x)-0.5*qchisq(0.99, 1), lty=3, col="#951272")
+axis(1, thetahat, expression(hat(theta)), col="#003865", col.ticks=NULL, col.axis="#003865")
+axis(2, loglik(thetahat,x), expression(loglik(hat(theta))), col="#003865", col.ticks=NULL, col.axis="#003865", hadj=0)
+axis(2, loglik(thetahat,x)-0.5*qchisq(0.99, 1), expression(loglik(hat(theta))-frac(1,2)*chi[1]^2*(c)), col="#951272", col.ticks=NULL, col.axis="#951272", hadj=1)
+f <- function(theta, x, thetahat, c)
+    loglik(thetahat, x) - loglik(theta, x) - 0.5*qchisq(c, df=1) 
+left <- uniroot(f, c(0.5, thetahat), x=x, thetahat=thetahat, c=0.99)$root
+right <- uniroot(f, c(thetahat, 2), x=x, thetahat=thetahat, c=0.99)$root
+abline(v=c(left, right), lty=3, col="#951272")
+l <- par()$usr[3]
+u <- par()$usr[4]
+rect(left, l, right, l+0.02*(u-l), col="#951272", border=NA)
+```
+
+	
+We can rewrite the condition as $$\ell(\hat \theta)- \ell(\theta)\leq \frac12 \chi^2(c)$$ as $$\ell(\hat \theta)- \ell(\theta)- \frac12 \chi^2_1(c)\leq 0.$$ Thus we can find the endpoints of this interval by solving the equation
+$$
+f(\theta) = \ell(\hat \theta)- \ell(\theta)- \frac12 \chi^2_1(c)=0
+$$
+
+We will re-use the model and data from ref://gammamle.
+```{r, echo=FALSE}
+set.seed(123)
+``` 
+```{r}
+x <- rexp(1e3) 
+
+loglik <- function(theta, x) {
+  -sum(x) + (theta-1)*sum(log(x)) - length(x) * lgamma(theta)
+}
+
+thetahat <- optimize(loglik, c(0.5, 2), x=x, maximum=TRUE, tol=1e-10)$maximum
+```
+Now that we have the maximum likelihood estimate we can find the left and right end of the confidence interval. We need to compute each one using `uniroot`. The interval for finding the left end ends at $\hat\theta$ (so that we don't end up finding the right end). Similarly, the interval for the right end begins at $\hat\theta$ (so that we don't end up finding the left end).
+
+```{r}
+f <- function(theta, x, thetahat, c)
+    loglik(thetahat, x) - loglik(theta, x) - 0.5*qchisq(c, df=1) 
+left <- uniroot(f, c(0.5, thetahat), x=x, thetahat=thetahat, c=0.95)$root
+right <- uniroot(f, c(thetahat, 2), x=x, thetahat=thetahat, c=0.95)$root
+c(left, right)
+```
+
+The function `uniroot.all` from the package `rootSolve` lets us find both solutions in one go (provided that the confidence interval is not less than 1/100-th of the width of the interval we provide).
+```{r}
+library(rootSolve)
+uniroot.all(f, c(0.5, 2), x=x, thetahat=thetahat, c=0.95)
+```
+(All that `uniroot.all` does is split the interval into $n=100$ subintervals of equal size and then run `uniroot` on each interval for which the sign of the function changes).    
+####[/example]
+	
+
+\newpage
+

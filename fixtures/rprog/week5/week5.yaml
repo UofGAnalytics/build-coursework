@@ -1,0 +1,28 @@
+name: "Week 5"
+title: "R Graphics"
+golive: "+3w"
+content:
+  - type: text
+    src: overview.Rmd
+  - type: text
+    src: plot.Rmd
+  - type: text
+    src: highlevel.Rmd
+  - type: text
+    src: lowlevel.Rmd
+  - type: text
+    src: threed.Rmd
+  - type: text
+    src: maths.Rmd
+  - type: text
+    src: margins.Rmd 
+  - type: text
+    src: export.Rmd
+  - type: text
+    src: case.Rmd
+  - type: text
+    src: alternatives.Rmd
+  - type: text
+    src: review.Rmd
+    
+    

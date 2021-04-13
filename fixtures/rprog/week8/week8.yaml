@@ -1,0 +1,25 @@
+name: "Week 8"
+title: "Functions"
+golive: "+5w"
+content:
+  - type: text
+    src: calling.Rmd
+  - type: text
+    src: functions.Rmd
+  - type: text
+    src: scoping.Rmd
+#  - type: text
+#    src: recursive.Rmd
+  - type: text
+    src: designing.Rmd    
+#  - type: text
+#    src: funcproc.Rmd
+  - type: text
+    src: error.Rmd
+  - type: text
+    src: debug.Rmd
+  - type: text
+    src: review.Rmd
+  - type: text
+    src: bonus.Rmd
+    

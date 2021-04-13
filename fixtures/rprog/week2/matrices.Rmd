@@ -1,0 +1,389 @@
+## Matrices
+
+####[video, videoid="slxsFdCNfkk", duration="6m45s"] Matrices
+
+### Matrices in R
+
+Matrices are the two-dimensional generalisation of vectors. The main difference between a vector and a matrix is that a vector has a single index, whereas a matrix has two indexes: row and column.
+
+Internally, R stores matrices in column-major mode, i.e. the matrix
+$$
+\mathbf{A}=\begin{bmatrix}
+1 & 4 & 7\\
+2 & 5 & 8 \\
+3 & 6 & 9 \end{bmatrix}
+$$
+is stored as
+```
+1 2 3 4 5 6 7 8 9
+```
+i.e. R internally stacks the columns on top of each other, which is known as "column-major mode". If you had stored the matrix $\mathbf{A}$ is a two-dimensional array in C or Java, it would be stored in what is called "row-major mode", i.e. the rows would be stacked on top of each other.
+
+### Creating matrices
+
+There are essentially three ways of creating a matrix in R.
+
+#### Using the internal representation
+
+The first one consists of using the internal representation of matrices as vectors. If we want to create a matrix
+$$
+\mathbf{B}=\begin{bmatrix}
+0 & 2 & 9\\
+7 & 4 & 6 \end{bmatrix}
+$$
+we can use the command `matrix`.
+```{r}
+B <- matrix(c(0, 7, 2, 4, 9, 6), nrow=2)
+```
+Alternatively, you could specify the number of columns using `ncol=3`.
+
+The function `matrix` can also be used to create "empty" matrices.
+`matrix(a, nrow, ncol)` creates a `nrow`$\times$`ncol` matrix in which every entry is set to `a`.
+
+#### Row-wise build-up
+Another option is to build up the matrix row-wise using the function `rbind`.
+```{r}
+B <- rbind(c(0, 2, 9),
+           c(7, 4, 6))
+```
+We can also use `rbind` to add a row to an existing matrix.
+```{r}
+rbind(B, c(1, 2, 9))
+```
+If a vector given to `rbind` is shorter than the other rows, it is "recycled" using the same rules as used for vector arithmetic. For example, to add a row of 0's to the matrix $\mathbf{B}$ we can use
+```{r}
+rbind(B, 0)
+```
+
+#### Column-wise build-up
+The third option consists of using `rbind`'s sibling `cbind`. `cbind` adds a column to a matrix and can be used to build up a matrix column-wise. Thus we can create the matrix $\mathbf{B}$ using
+```{r}
+B <- cbind(c(0, 7), c(2, 4), c(9, 6))
+```
+
+####[task, label="task_definematrixm"]
+Use all three methods fom above to create the matrix
+$$\mathbf{M}=
+\begin{bmatrix}9 &2 & 4\\3&-2&7\\4&8&-1\end{bmatrix}
+$$
+#####[answer]
+Using the internal representation ...
+```{r}
+M <- matrix(c(9,3,4,2,-2,8,4,7,-1), ncol=3)
+```
+Using `rbind` ...
+```{r}
+M <- rbind(c( 9, 2, 4),
+           c( 3,-2, 7),
+	   c( 4, 8,-1))
+```
+Using `cbind` ...
+```{r}
+M <- cbind(c( 9, 3, 4),
+           c( 2,-2, 8),
+	   c( 4, 7,-1))
+
+```
+#####[/answer]
+####[/task]
+
+#### Dimensions of a matrix
+To find out the dimensions of a matrix you can use the three functions `nrow`, `ncol` and `dim`.
+```{r}
+nrow(B)
+ncol(B)
+dim(B)
+```
+The function `length` returns the number of entries of a matrix ($2\times 3=6$ in our case)
+```{r}
+length(B)
+```
+
+### Diagonal matrices
+Diagonal matrices have a special role in Linear Algebra and thus in Statistics. For this reason R has a function dedicated to diagonal matrices: `diag`.
+```{r}
+E <- diag(c(1 ,4 , 2))
+E
+```
+
+`diag` can also be used to access the diagonal of an existing matrix. The matrix does not even need to be diagonal for this. You can change the second element of the diagonal of the matrix `E` to `5` using
+```{r}
+diag(E)[2] <- 5
+E
+```
+
+<!--[if PDF]>
+\newpage
+<![endif]-->
+
+
+
+####[task]
+Create the diagonal matrix
+$$\begin{bmatrix} 4&0&0&0\\0&7&0&0\\0&0&-9&0\\0&0&0&4\end{bmatrix}$$
+in R.
+
+#####[answer]
+You can use the following R code.
+```{r}
+diag(c(4,7,-9,4))
+```
+#####[/answer]
+####[/task]
+
+####[supplement] Sparse matrices
+Sometimes we have to work with matrices which contain mostly zeros. Diagonal matrices are a prime example. Standard R matrices explicitly stores all the entries of a matrix ("dense storage").  This is not very efficient. A zero entry costs as much storage space as a non-zero entry. Calculations with matrices involving many zero-entries are as slow as the ones for matrices with no zeros. 
+
+Consider a diagonal matrix. Storing it densley requires storing $n\times n=n^2$ entries even though it would be enough to only store the $n$ values on the diagonal. Explicitly storing the off-diagonal zeros also makes it impossible to exploit the special structure of diagonal matrices, which would allow for a significant speed-up of calculations.
+
+Sparse matrices only store the non-zero entries. For a matrix with many zeros ($\gg 90\%$) this can be much more efficient, both in terms of storage space and computational speed. There are several R packages, such as
+[Matrix](https://cran.r-project.org/web/packages/Matrix/index.html) or [spam](https://cran.r-project.org/web/packages/spam/index.html).
+
+We will look at a small example using the `Matrix` package.  We start by using dense matrices to represent and invert a $5000\times 5000$ matrix.
+```r
+A <- diag(1:5e3)         # Create a dense matrix A
+object.size(A)           # Estimate storage space required
+system.time(solve(A))    # Get timing for matrix inversion 
+                         # Third number is the time required in seconds
+```
+```
+##    user  system elapsed 
+##  10.513   0.143  10.684
+```
+```r
+library(Matrix)          # Make commands from package Matrix available
+A <- Diagonal(x=1:5e3)   # Create a sparse matrix A
+object.size(A)           # Estimate storage space required
+system.time(solve(A))    # Get timing for matrix inversion
+                         # Third number is the time required in seconds
+```
+```
+##    user  system elapsed 
+##       0       0       0 
+```
+####[/supplement]
+
+
+### Naming rows and columns
+When working with data matrices it is a good idea to name at least the columns of a matrix. It is much better to refer to variables in a matrix by their name rather than the column index in which they are stored. 
+
+Rows and columns can be named using the functions `rownames` and `colnames`.
+```{r}
+colnames(B) <- c("First column", "Second column", "Third column")
+rownames(B) <- c("First row", "Second row")
+B
+```
+### Accessing elements and submatrices
+
+Single entries of matrices can be accessed using square brackets. To extract  $B_{23}$, i.e. the value in the second row and third column of $\mathbf{B}$ we can use
+```{r}
+B[2,3]
+```
+
+Similarly, we can set $B_{23}$ to `-1` using
+```{r}
+B[2,3] <- -1 
+```
+
+Though this is not recommended, we could have also used the internal vector representation and extract the sixth element of the internal representation
+```{r}
+B[6]
+```
+
+You can access arbitrary submatrices by specifying the rows and columns you wish to access. You can do so by using any combination of the three methods used for vectors and mentioned in the third handout. To extract the first row and first and second column of $\mathbf{B}$ you can use any of the following lines (\dots and there are many other ways of doing so):
+```{r}
+B[1, 1:2]
+B[-2, 1:2]
+B[c(TRUE, FALSE), -3]
+```
+Each line returns the vector $[0, 2]$
+
+Because the output object has only one row it is returned as a vector (instead of a matrix). In complex programmes in which the result is then expected to be matrix this can sometimes cause problems. In this case you can use the additional argument `drop=FALSE`:
+```{r}
+B[1, 1:2, drop=FALSE]
+```
+
+If we only want to subset rows and columns the selector for the other dimension can be left empty. To access the first row of the matrix $\mathbf{B}$ use
+```{r}
+B[1,]
+```
+
+To access the third column of $\mathbf{B}$ use
+```{r}
+B[, 3]
+```
+To replace the third column of $\mathbf{B}$ with the numbers 1 and 8 you can use
+```{r}
+B[, 3] <- c(1, 8)
+```
+
+Furthermore, logical expressions can be used to subset matrices in the same way as they are used to subset vectors. Suppose you want to set all entries larger than 5 to 6.
+```{r}
+B[B > 5] <- 6
+B
+```
+
+####[task]
+Use the matrix $\mathbf{M}$ from ref://task_definematrixm ...
+
+- extract the first row,
+- set the top-right entry to 0,
+- add 1 to the last column.
+
+#####[answer]
+You can use the following R code.
+```{r, echo=FALSE, results='hide'}
+M <- matrix(c(9,3,4,2,-2,8,4,7,-1), ncol=3)
+```
+```{r}
+M[1,]                # Extract first row
+M[1,3] <- 0          # Set top-right entry to 0.
+M[,3] <- M[,3] + 1   # Add 1 to the last column
+```
+#####[/answer]
+####[/task]
+
+### Matrix multiplication and basic linear algebra
+
+#### Matrix multiplication
+
+The basic arithmetic operators can be applied to matrices in the same way as they can be applied to vectors. They are interpreted element-wise. Most importantly, `*` performs element-wise multiplication. In order to perform matrix multiplication you need to use the operator `%*%`.
+
+To compute the matrix product
+$$\begin{bmatrix}
+1 & -1\\
+0 & 1\\
+-1 & 0\end{bmatrix}\cdot
+\begin{bmatrix}
+0 & 2 & 9\\
+7 & 4 & -1 \end{bmatrix}
+$$
+in R, you can use:
+```{r}
+A <- matrix(c(1, 0, -1, -1, 1, 0), ncol=2)
+B <- matrix(c(0, 7, 2, 4, 9, -1), ncol=3)
+A %*% B
+```
+Note that matrix multiplication is generally not commutative (unless $\mathbf{A}$ and $\mathbf{B}$ are symmetric), thus `A\%*\%B` is not the same as `B\%*\%A`.
+
+The transpose $\mathbf{A}^{\top}$ of a matrix $\mathbf{A}$ can be computed using the function `t(A)`. The cross product $\mathbf{A}^{\top}\mathbf{A}$ can be computed using the function `crossprod(A)`.
+
+
+#####[supplement] Matrix inverse and linear systems of equations
+
+The function `solve` computes the matrix inverse. For example,
+```{r}
+C <- B%*%t(B)             # Create a square matrix C=BB'
+C.inv <- solve(C)         # Compute the inverse of C
+C.inv%*%C                 # Check whether C.inv is indeed the inverse
+C%*%C.inv
+```
+
+The function `solve` can be used not only for inverting a matrix, but also for solving a (non degenerate) system of linear equations. `solve(A, b)` solves the system of equations $\mathbf{A}\mathbf{z}=\mathbf{b}$ for $\mathbf{z}$.
+
+To solve the system of equations
+$$
+\begin{array}{rcrcrcr}
+&& 5z_2 &+& z_3&=& 7 \\
+&& 7z_2 &-& z_3&=& 5 \\
+11 z_1&+ & z_2&+&z_3 &=& 14  
+\end{array}
+$$
+you can use
+```{r}
+A <- rbind(c( 0, 5,  1),
+           c( 0, 7, -1),
+           c(11, 1,  1))
+b <- c(7, 5, 14)
+z <- solve(A, b)
+z
+```
+We can check the answer by computing $\mathbf{A}\mathbf{z}$, which should then be $\mathbf{b}$.
+```{r}
+A%*%z
+```
+You could as well first compute the inverse of $\mathbf{A}$ and then compute $\mathbf{A}^{-1}\mathbf{b}$, i.e. used 
+```{r}
+z <- solve(A)%*%b
+```
+but this is slightly less efficient than the above code.
+
+Linear systems of equations play a key role in Data Analytics and Statistics. For example, you will learn that we can find the least-squares estimate of the coefficients in a  linear regression model by computing
+$$
+\hat{\boldsymbol\beta} = (\mathbf{X}^{\top}\mathbf{X})^{-1}\mathbf{X}^{\top}\mathbf{y},
+$$
+which we can rewrite as solving the system of linear equations
+$$
+\underbrace{(\mathbf{X}^{\top}\mathbf{X})}_{=\mathbf{A}}\underbrace{\boldsymbol\beta}_{=\mathbf{z}}=\underbrace{\mathbf{X}^{\top}\mathbf{y}}_{=\mathbf{b}}
+$$
+
+To compute the regression coefficients in the cars example from above we can use
+```{r}
+y <- cars$dist              # Set y (response) to distance
+X <- cbind(1, cars$speed)   # Set X (covariate) to a column of ones and speed
+A <- t(X)%*%X               # Assemble matrix A
+b <- t(X)%*%y               # Assemble vector b
+beta <- solve(A, b)         # Solve for z (which is beta)
+beta
+```
+This is exactly the same answer as have obtained from the built-in function for linear regression.
+```{r}
+lm(dist~speed, data=cars)$coef
+```
+
+It turns out that the above way of calculating $\boldsymbol \beta$ is numerically less stable than necessary. Later on in this course we will look at how this calculation be done in a numerically more stable way.
+
+#####[/supplement]
+
+
+#####[supplement] Matrix multiplication is associative, but parentheses might matter
+Matrix multiplication is associative, i.e. for any two matrices $\mathbf{A}$ and $\mathbf{B}$ and a vector $\mathbf{x}$ we have that
+$(\mathbf{A}\cdot \mathbf{B}) \cdot \mathbf{x}=\mathbf{A}\cdot (\mathbf{B} \cdot \mathbf{x})$.
+
+Let's create matrices `A` and `B` and a vector `x`.
+```{r}
+A <- matrix(rnorm(9e6), nrow=3e3)    # Create matrix A with random entries (3000x3000)
+B <- matrix(rnorm(9e6), nrow=3e3)    # Create matrix B with random entries (3000x3000)
+x <- rnorm(3e3)                      # Create vector x with random entries (3000x1)
+```
+Because of the associativity of matrix multiplication both
+```r
+(A%*%B)%*%x
+````
+which is equivalent to `A%*%B%*%x`, and
+```r
+A%*%(B%*%x)
+```
+give, except for rounding errors, the same answer. However the first calculation is a lot slower.
+```{r}
+system.time((A%*%B)%*%x)
+system.time(A%*%(B%*%x))
+```
+Why?
+
+Multiplying to matrices is much slower than computing the product of a matrix (of the same size) and a vector.
+
+The first line of code multiplies the two matrices $\mathbf{A}$ and $\mathbf{B}$ first (which takes very long), and then multiplies the result by the vector $\mathbf{x}$.
+
+The second line of code never multiplies two matrices. The result of $\mathbf{B}\cdot \mathbf{x}$ is another vector of length $1000$. $\mathbf{A}$ is then multiplied by this vector.
+
+__A more detailed answer__
+
+This question is about what is called "FLOP counting". FLOP stands for "floating point operation", i.e. an addition or multiplication. 
+
+To multiply two matrices $\mathbf{C}$ and $\mathbf{D}$ of dimensions $m\times k$ and $k\times n$, we need to compute the $m\times n$ entries of the resulting matrix $\mathbf{E}=\mathbf{C}\cdot\mathbf{D}$. Each entry $E_{ij}$ of $\mathbf{E}$ is a sum $E_{ij}=\sum_{\iota=1}^k C_{i\iota} C_{\iota j}$. To compute this sum we need to carry out $k$ multiplications and $k$ additions, thus we require $2k$ FLOPs. There are $m\cdot n$ entries in the resulting matrix $\mathbf{E}$, thus the overall computational cost of computing $\mathbf{E}=\mathbf{C}\cdot\mathbf{D}$ is $2kmn$ FLOPs.
+
+Multiplying a $m\times k$ matrix $\mathbf{C}$ with a vector $\mathbf{y}$ of length $k$ is the same as multiplying a $m\times k$ matrix by a $k\times 1$ matrix, thus we need only $2mk$ FLOPS.
+
+In the first line of code we first compute $\mathbf{A}\cdot \mathbf{B}$, and then multiply the result by $\mathbf{x}$. $\mathbf{A}$ and $\mathbf{B}$ are $1000\times 1000$ matrices, so computing $\mathbf{A}\cdot\mathbf{B}$ requires $2\cdot 10^9$ FLOPs. Multiplying the result by $\mathbf{x}$ adds another $2\cdot 10^6$ FLOPs, so the first line takes $2.002\cdot 10^9$ FLOPs.
+
+In the second line of code we first compute $\mathbf{B} \cdot \mathbf{x}$, which requires $2\cdot 10^6$ FLOPs. Then $\mathbf{A}$ is multiplied by this vector, which again requires $2\cdot 10^6$ FLOPs. Thus computing the second line requires only $4\cdot 10^6$ FLOPs.
+
+#####[/supplement]
+
+
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

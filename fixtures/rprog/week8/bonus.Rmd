@@ -1,0 +1,132 @@
+## Bonus material: More functional programming using purrr
+
+
+In ref://learnapply we have seen the function `apply`, which applies a function to the rows and column of a matrix. In this section we will look at more `apply`-type functions.
+
+We will use the functions from the package `purrr`, rather than the corresponding functions from base R (like `sapply`). The functions from `purrr` are more convenient to use and are more consistent in terns of the data type (and "shape") returned.
+
+```{r}
+library(purrr)
+```
+
+The function 
+```r
+map(.x, .f, ...)
+```
+applies the function `.f` to each element of `.x`. As mentioned previously, `...` can be used to pass on additional arguments to `.f`. The result from a call to `map` is always a list.
+
+There are other variants of `map`, which coerce the result to a vector of specific data types.
+
+| Function | Output data type  |
+|----------|-------------------|
+|`map_dbl` | double (numeric) vector|
+|`map_int` | integer vector|
+|`map_chr` | character string vector|
+|`map_lgl` | logical (Boolean) vector|
+|`map_df` | data frame|
+
+###[example, label="mapexample"]
+We start by generating a list with three samples from three different distributions
+```{r}
+n <- 100
+samples <- list(exponential=rexp(n), normal=rnorm(n), uniform=runif(n))
+```
+We can now calculate the mean of each sample using
+```{r}
+map(samples, mean)
+```
+(which returns a list) or
+```{r}
+map_dbl(samples, mean)
+```
+(which returns a numerical vector).
+
+We can nest calls to the `map` functions. If we want to calculate the mean, median and standard deviation of each of the three samples we can first create a list containing the summary functions and then use `map` to apply each of them to all three samples.
+```{r}
+summarystats <- list(mean=mean, median=median, sd=sd)
+map_df(summarystats, function(stat) map_dbl(samples, stat)) 
+```
+###[/example]
+
+Another nice feature of the `map` functions is that if `.f` is a string or integer rather than a function then the `map` functions extract the entry with index or name `.f` of each element of the list.
+
+###[example]
+We can print the first element of each sample from ref://mapexample using
+```{r}
+map(samples, 1)
+```
+###[/example]
+
+###[task, label="asoiaf"]
+Once you have loaded `t4.RData` from the review exercises there is a list `great_houses` in your workspace. It contains all great houses from George R. R. Martin's Song of Ice and Fire ("Game of Thrones"). Each element contains basic information about the house as well as another (sub)list called `swornHouses` of lesser houses sworn to that  great house (at the begin of the books).  The data was obtained from the [API of Ice and Fire](https://anapioficeandfire.com/).
+
+(a) The name of each great house is stored in the entry `name`. Use `map` to extract the names of all great houses.   
+(b) For each great house determine the number of houses who have sworn allegiance to them.
+
+####[answer]
+We can use the following R code.
+```{r, echo=FALSE}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/t4.RData"))
+```
+```{r}
+# Part (a)
+library(purrr)
+names <- map_chr(great_houses, "name")
+names
+
+# Part (b)
+nsworn <- map_int(great_houses, function(house) length(house$swornHouses))
+names(nsworn) <- names
+nsworn
+```
+####[/answer]
+###[/task]
+
+The function `keep` and `discard` can be used to subset lists. The syntax is
+```r
+keep(.x, .f, ...)
+discard(.x, .f, ...)
+```
+`keep` retains the entries of `.x` for which `.f` returns `TRUE`, whereas `discard` retains the entries of `.x` for which `.f` returns `FALSE`.
+
+A related function is 
+```r
+map_if(x, .p, .f, ...)
+``` 
+which applies `.f` to elements of `x` for which `.p` returns `TRUE`. Other elements of `.x` are left as they are and simply copied to the resulting list.
+
+###[task]
+Using the data from ref://asoiaf, answer the following two questions.
+
+(a)  Return the names of the great houses which currently have no current lord (`currentLord` is `NA`).
+(b) Which great house has House Tarth of Evenfall Hall sworn allegiance to?
+
+####[answer]
+
+(a) We can use the following R code.
+```{r}
+map_chr(keep(great_houses, function(house) is.na(house$currentLord)), "name")
+```
+or, using pipelines,
+```{r}
+great_houses %>%
+    keep(function(house) is.na(house$currentLord)) %>%
+    map_chr("name")
+```
+(b) We can use the following R code.
+```{r}
+map_chr(keep(great_houses, function(house) {
+    "House Tarth of Evenfall Hall" %in% map_chr(house$swornHouses, "name")
+} ), "name")
+```
+or, using pipelines,
+```{r}
+great_houses %>%
+    keep(function(house) {
+      "House Tarth of Evenfall Hall" %in% map_chr(house$swornHouses, "name")
+    }) %>%
+    map_chr("name")
+```
+
+####[/answer]
+###[/task]  

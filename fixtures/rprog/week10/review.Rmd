@@ -1,0 +1,72 @@
+## Review exercises
+
+###[task]
+The package `nycflights13` contains a tibble `flights` containing data on all domestic flights which departed NYC (JFK, LGA or EWR) in 2013. 
+
+(a) Create an R Markdown report titled "Flights out of NYC on 01/01/2013". The report should just determine the number of flights that have left NYC on January 1st, 2013.  The resulting report should look like the [sample available online](http://www.stats.gla.ac.uk/~levers/rp/t5_3a.pdf).
+
+(b) Change your report from part (a) so that it does not show the R code or output, but contains the paragraph shown below. The resulting report should look like the [sample available online](http://www.stats.gla.ac.uk/~levers/rp/t5_3b.pdf).
+```
+     On 01/01/2013, [PUT NUMBER OF FLIGHTS HERE] flights left NYC. 
+```
+  
+
+(c) Add to your report a table with the ten most frequent destination showing the airport code, airport name, and the number of flights. Full airport names are available in the tibble `airports`. The resulting report should look like the [sample available online](http://www.stats.gla.ac.uk/~levers/rp/t5_3c.pdf).
+
+(d) Add to your report a plot of the destinations served on that day. Longitude and latitude of the airports are available in the tibble `airports`. The resulting report should look like the [sample available online](http://www.stats.gla.ac.uk/~levers/rp/t5_3d.pdf). 
+
+	To draw a map of the US with all airports shown you can use
+```r
+library(ggmap)
+map <- get_map(location = c(lon = -97.5, lat = 40), zoom=4)
+ggmap(map) +
+    geom_point(aes(lon, lat), data=airports, alpha=0.25) 
+``` 
+
+
+(e) Make your report parameterised and use it to generate a report for July 4th.
+The resulting report should look like the [sample available online](http://www.stats.gla.ac.uk/~levers/rp/t5_3e.pdf).
+
+####[answer]
+
+\mbox{ }
+
+
+#####[video, videoid="rbcoWh6M3Jc", duration="3m36s"] Video model answers for part (a)
+
+[Rmd file for part (a)](http://www.stats.gla.ac.uk/~levers/rp/t5_3a.Rmd)
+
+`r I(printfile("t5_3a.Rmd"))`
+
+#####[video, videoid="E8audJPgE3Q", duration="1m13s"] Video model answers for part (b)
+
+[Rmd file for part (b)](http://www.stats.gla.ac.uk/~levers/rp/t5_3b.Rmd)
+
+`r I(printfile("t5_3b.Rmd"))`
+
+#####[video, videoid="5PjptRwhCBs", duration="5m09s"] Video model answers for part (c)
+
+[Rmd file for part (c)](http://www.stats.gla.ac.uk/~levers/rp/t5_3c.Rmd)
+
+`r I(printfile("t5_3c.Rmd"))`
+
+
+#####[video, videoid="5rSDLTu-k-g", duration="5m57s"] Video model answers for part (d)
+
+[Rmd file for part (d)](http://www.stats.gla.ac.uk/~levers/rp/t5_3d.Rmd)
+
+`r I(printfile("t5_3d.Rmd"))`
+
+
+#####[video, videoid="kqLN8z488Og", duration="2m49s"] Video model answers for part (e)
+
+[Rmd file for part (e)](http://www.stats.gla.ac.uk/~levers/rp/t5_3e.Rmd)
+
+`r I(printfile("t5_3e.Rmd"))`
+
+####[/answer]
+
+###[/task]
+
+ 
+\newpage

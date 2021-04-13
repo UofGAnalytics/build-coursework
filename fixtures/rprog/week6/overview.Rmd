@@ -1,0 +1,93 @@
+## Overview
+```{r, echo=FALSE}
+knitr::opts_chunk$set(fig.width=6, fig.height=6, out.width=".67\\textwidth") 
+```
+
+```{r, echo=FALSE, results="hide"}
+library(ggplot2)
+theme_update(plot.background = element_rect(fill = "transparent",colour = NA),
+                                 legend.background = element_rect(fill = "transparent",colour = NA))
+```
+
+###[video, videoid="aiTVeohI8Ec", duration="14m0s"]An overview of ggplot2
+
+The package [ggplot2](http://ggplot2.tidyverse.org/) provides an abstract and declarative environment for creating graphics.
+
+The graphics system built into R is already quite powerful and flexible, but creating sophisticated graphics can be time-consuming and many steps that could be performed automatically, like adding a legend, have to be performed manually. Code producing more complex visualisations tends be "procedural": rather than describing how the visualisation should look like, the code describes the detailed control flow of how the plot is constructed.
+
+`ggplot2` aims like the other packages in the tidyverse, and also like languages such as [SQL](https://en.wikipedia.org/wiki/SQL), to be [declarative](https://en.wikipedia.org/wiki/Declarative_programming): your code should just describe what the plot should look like, and not how it is being put together in a detailed step-by-step manner.
+
+`ggplot2` has become by far the post popular R package for graphics, with [many extension packages](http://www.ggplot2-exts.org/) being available. `ggplot2` has been ported to other languages and environments, such as [Python](http://ggplot.yhathq.com/) or [Julia](http://gadflyjl.org).
+
+###[weblink, target="http://www.r-graph-gallery.com/portfolio/ggplot2-package/"]R Graph Gallery
+The R Graph Gallery has a section entirely dedicated to `ggplot2`.
+###[/weblink]
+
+### ggplot terms 
+
+This section gives an overview of key terms in the `ggplot2` world. `ggplot2` is based on the philosophy of a "layered grammar of graphics": plots in `ggplot2` are made up of at least one layer of geometric objects. 
+
+####[weblink, target="http://vita.had.co.nz/papers/layered-grammar.pdf"]Tidy data
+Wickham, H. (2010). A Layered Grammar of Graphics. Journal of Computational and Graphical Statistics. Volume 19, Number 1.
+
+This paper explains some of the philosophy behind `ggplot2`.
+####[/weblink]
+
+#### Geometric objects 
+A geometric object (or `geom_<type>(...)` in `ggplot2` commands) controls what type of plot a layer contains. The are many different geometric objects: the most important ones are ...
+
+| Geometry name        | Description             | Basic R equivalent  |  Common aesthetics |
+---------------|--------------------|------------|--------------------|
+| `geom_point`         | Points (scatter plot)   | `plot` / `points`   | `x`, `y`, `alpha`, `colour`, `shape`, `size`|
+| `geom_line`         | Lines (drawn left to right) | `lines` (after ordering) | `x`, `y`, `alpha`, `colour`, `group`, `linetype`, `size` |
+| `geom_path`      | Lines (drawn in original order) | `lines`         | `x`, `y`, `alpha`, `colour`, `group`, `linetype`, `size` |
+| `geom_abline`      | Line (one line) | `abline`                      | `intersept`, `slope`, `alpha`, `colour`, `linetype`, `size`|
+| `geom_hline`      | Horizontal line | `abline`                      | `yintercept`, `alpha`, `colour`, `linetype`, `size`|
+| `geom_vline`      | Vertical line | `abline`                      | `xintercept`, `alpha`, `colour`, `linetype`, `size`|
+| `geom_text`          | Text                    | `text`        | `x`, `y`, `label`, `alpha`, `angle`, `colour`, `size`, `family`, `hjust`, `vjust`, `check_overlap` | 
+| `geom_label`          | Text (styled as label) | `text`        | `x`, `y`, `label`, `alpha`, `angle`, `colour`, `size`, `family`, `hjust`, `vjust`, `check_overlap`
+| `geom_rect`          | Rectangle                    | `rect`        | `xmin`, `xmax`, `ymin`, `ymax`, `alpha`, `colour`, `fill`, `linetype`, `size` | 
+| `geom_polygon`          | Polygon                    | `polygon`        | `x`, `y`, `alpha`, `colour`, `fill`, `group`, `linetype`, `size`
+| `geom_ribbon`       | Ribbon (for confidence bands) | - | `x`, `ymin`, `ymax`, `alpha`, `colour`, `fill`, `group`, `linetype`,`size` |
+| `geom_bar`          | Bar plot                    | `barplot`        | `x`, `alpha`, `colour`, `fill`, `linetype`, `size`
+| `geom_boxplot`      | Boxplot                     |  `boxplot`       |  `x`, `y`, `alpha`, `colour`, `fill`, `group`, `linetype`,
+`shape`, `size` | 
+| `geom_histogram`         | Histogram                   |  `hist`          | `x`, `y`, `alpha`, `colour`, `fill`, `linetype`, `size` |
+| `geom_raster` / `geom_tile`  | Image plot         | `image`          | `x`, `y`, `alpha`, `fill` (both) and `linetype`, `size`, `width` (`geom_tiles` only) |
+| `geom_counter`        | Contour lines             | `contour`        | `x`, `y`, `z`, `alpha`, `colour`, `group`, `linetype`,
+`size` |
+
+There is a [cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf) providing a detailed overview of the different geometries and data.
+
+#### Aesthetics 
+
+An aesthetic (or `aes(...)` in `ggplot2` commands) controls which variables are mapped to which properties of the geometric objects (like x-coordinates, y-coordinates, colours, etc.). The aesthetics available depend on the geometric object. Aesthetics commonly available are ...
+
+| Aesthetic     | Description                       |
+|--------|-------------------------------|
+| `x`    | x-coordinate   |
+| `y`    | y-coordinate   |
+| `color` or `colour` | Colour (outline) |
+| `fill`   | Fill colour  |
+| `alpha`  | Transparency (transparent $0\leq \alpha\leq 1$ opaque)| 
+| `linetype` | Line type ("`lty`")|
+| `symbol`  | Plotting symbol ("`pch`") |
+| `size`   | Size of plotting symbol / font or line thickness | 
+
+The help file for each geometry lists the available aesthetics.
+
+###[weblink, target="https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf"]Data Visualisation Cheat Sheet
+Rstudio have put together a very handy and compact cheat sheet for `ggplot2`. 
+###[/weblink]
+
+###[weblink, target="http://r4ds.had.co.nz/data-visualisation.html", icon="book"]Background reading: Chapter 3 of R for Data Science
+Chapter 3 of *R for Data Science* gives an introduction to data visualisation using `ggplot2`.
+###[/weblink]
+
+###[weblink, target="http://r4ds.had.co.nz/graphics-for-communication.html", icon="book"]Background reading: Chapter 28 of R for Data Science
+Chapter 28 of *R for Data Science* focuses on the presentation of visual information (with a focus on `ggplot2`).
+###[/weblink]
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

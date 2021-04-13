@@ -1,0 +1,98 @@
+## Lists in R
+
+####[video, videoid="-MumGJIIrTI", duration="6m46s"]Lists
+
+Lists allow us to combine several variables into one object. In contrast to regular vectors and matrices, the entries of a list do not all have to be of the same data type.
+
+
+#### Creating lists
+
+You can create a list using the `list` command.
+```{r}
+example1 <- list(1:3, c(TRUE,FALSE), 7)
+example1
+```
+
+Lists can be nested within each other.
+```{r}
+example2 <- list(list(pi, 1:2), list("some text", 1:3))
+example2
+```
+
+Just like vectors, lists can be concatenated using the function `c`. The fist three entries of the resulting list will come from `example1`. the remaining fourth and fifth entry from `example2`.
+```{r}
+c(example1, example2)
+```
+
+It is good programming style to name the elements of a list (if possible). This can be done using `names`:
+```{r}
+names(example1) <- c("a", "b", "c")
+example1
+```
+
+Alternatively, you can specify the names directly in the `list` command:
+```{r}
+example1 <- list(a=1:3, b=c(TRUE,FALSE), c=7)
+```
+
+#### Accessing elements
+Elements of a list can be accessed using either double square brackets or, if the list has names, `$`. The following three lines of R code all return the first entry of the list `example1` (using either its position or its name).
+```{r}
+example1[[1]]
+example1[["a"]]
+example1$a
+```
+
+If you want to subset a list (in the sense of extracting more than one entry) use single square brackets:
+```{r}
+example1[1:2]
+```
+
+If we extract an individual entry using single square brackets we obtain a list containing that entry rather than the entry itself.
+```{r}
+example1[1]
+```
+#### Lists are everywhere ...
+
+Most R functions return lists. Take the `lm` function as an example. The function `lm` fits a linear regression model, which is essentially a straight line fit to the data. First of all we fit a linear model:
+```{r}
+fit <- lm(dist~speed, data=cars)          # Fit a linear model
+fit                                       # Print the model
+```
+The output object \texttt{fit} is in fact a list.
+```{r}
+is.list(fit)
+```
+Let's look at its entries
+```{r}
+names(fit)
+```
+So, if we for example want to retrieve the regression coefficients we can use
+```{r}
+fit$coefficients
+```
+Actually, we do not have to fully spell out the name of the entry after the `$`, we only have to use the first few characters until the name is uniquely determined. So we could have also used
+```{r}
+fit$coef
+```
+We could have not used
+
+```{r}
+fit$c
+```
+as there is more than one element with a name starting with a "c" (`"call"` and `"coefficients"`).
+
+#####[supplement] R classes and lists
+R classes are typically also based on lists. A list becomes a class when it has an attribute called `"class"`.
+```{r}
+attr(fit, "class")
+```
+So in the above example, the class of the linear model fit is `"lm"`. This tells R which functions to use to print, plot or summarise this object. Later on in the course we will look at how this (compared to other programming languages) rather simplistic concept of object-oriented programming works.
+#####[/supplement]
+
+
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

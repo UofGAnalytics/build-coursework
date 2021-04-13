@@ -1,0 +1,399 @@
+##[label=oop_r6] R6 classes
+
+### The shortcomings of S3
+
+If you are familiar with the classical approach to OOP (Java, C++, C#, Python, ...) you have probably found R's S3 classes rather unsatisfactory. Though the S3 approach works quite well for implementing statistical models (which is what most classes in R are about), S3 isn't that well suited to projects involving several interacting classes (like for example complex simulation studies or for developing user interfaces).
+
+The main drawback of S3 objects is how they are passed on to functions. S3 objects are like all other R objects (except for environments) passed on "by value": as soon an object is changed inside a function, a local copy is created and all changes made to the object are effectively rolled-back at the end of the function. So, in other words, S3 objects are not mutable. A work-around in S3 is to return the modified object, but this is not always feasible.
+
+In the standard use case of S3 objects, an S3 object is created (say by fitting a model). This object is then never modified, as methods like `print`, `summary`, `plot` and `predict` just query the object without modifying it. 
+
+However, most classical approaches on OOP are centred around mutable objects and functions modifying these.
+
+####[example]
+This example will illustrate the challenges that arise from S3 objects not being mutable.
+
+Suppose you want to create a class `s3person`, which has a name and a list of friends. We can write a function that creates such an S3 object.
+```{r}
+#' Create a person
+#' @param name of the person
+#' @param friends list of friends (optional)
+#' @return an object of the class s3person.
+s3person <- function(name, friends=list()) {
+    person <- list(name=name, friends=friends)
+    class(person) <- "s3person"
+    person
+}
+
+#' @method print person
+print.s3person <-  function(person) {
+    cat(person$name, "- a person with",length(person$friends),"friend(s):\n")
+    # Extract names of friends
+    friend.names <- vapply(person$friends, function(friend)
+        friend$name, character(1))
+    # Print them (separated by a ,)
+    cat(paste0(friend.names,collapse=", "),"\n")
+}
+```
+Suppose we want to now write a function `befriend` that makes two persons friends.
+```{r}
+#' Store two persons as each others' friends
+#' @param person1 a person
+#' @param person2 another person
+befriend <- function(person1, person2) {
+    person1$friends <- c(person1$friends, person2)
+    person2$friends <- c(person2$friends, person1)
+}
+```
+Unfortunately this won't work in R.
+```{r}
+jack <- s3person("Jack")
+jill <- s3person("Jill")
+befriend(jack, jill)
+jack
+jill
+```
+Though Jack and Jill became friends inside the function `befriend`, they aren't friends outside that function. The two lines which add the other person as a friend, modify the objects `person1` and `person2` and thus R creates a local copy for these modifications. These local copies will then get deleted at the end of the function.
+
+A similar issue arisen when storing a person in the list of friends. As soon as a change is made to `jack` after he has become friends with `jill`, we will have two different Jacks, one who is the friend of `jill` (not updated) and the person referred to as `jack`.
+
+Other programming languages avoid this issue by passing objects "by reference" or by using pointers, but R does not support this (though environments can be used to mimic some of this). 
+####[/example]
+
+### R6
+
+The R package [R6](https://cran.r-project.org/web/packages/R6) provides an alternative framework for object orientation, which is much more similar to how object orientation is handled in other programming languages.
+
+The main difference between R6 and S3 are:
+
+- R6 objects are mutable as they are passed by reference. This makes R6 classes particularly useful for representing "stateful" object, i.e. objects that change over time. For this reason Shiny is based on R6.
+- R6 classes have formal definitions and class methods are defined in the class definition.
+- S3 methods are called like regular functions, `methodname(object, ...)`. R6 class methods are using `object$methodname(...)`.
+
+#### Class definitions
+
+The syntax for declaring an R6 class is
+```{r, eval=FALSE}
+ClassName <- R6Class("ClassName",
+#                     ^^^^^^^^^ should be the same as the class name
+                     public=list(
+                         field=value,
+                         ...
+                         initialize=function(...) {
+                             # Code for object initialisation ("constructor")
+                         },
+                         methodname=function(...) {
+                             # Function implementation ...
+                         },
+                         print=function() {
+                             # Print implementation
+                         }
+                         ...
+                     ))
+
+```
+An R6 object of the class `ClassName` can then be created using
+```{r, eval=FALSE}
+object <- ClassName$new(...)
+```
+R then creates the object and runs the method `initialize(...)`. The arguments given to `new(...)` will be passed on to `initialize(...)`. The fields and functions of the list given as argument `public` are available as `object$field` and `object$methodname(...)`.  Inside an R6 method the object is available as a `self`.
+
+By default, R6 objects are locked and you cannot create a new field `object$newfield`. All fields need to be "declared" by adding them to the list `public` (with some initial value, which can be `NULL`).
+
+Just like for S3 objects, the `print` method is getting called when R prints the object to the screen (for example when its name is being entered in the console). 
+
+\newpage
+
+#####[example, label=jackjillr6]
+We struggled implementing our friendship model in S3. It is straightforward to implement in R6.
+
+```{r}
+library(R6)
+Person <- R6Class("Person",
+                  public=list(
+                      name=NULL,
+                      friends=list(),
+                      
+                      initialize = function(name, friends=list()) {
+                          self$name <- name
+                          self$friends<- friends
+                      },
+                      
+                      befriend = function(person) {
+                          self$friends <- c(self$friends, person)
+                          person$friends <- c(person$friends, self)
+                      },
+                      
+                      print  = function() {
+                          cat(self$name, "- a person with",length(self$friends),
+                              "friend(s):\n")
+                          # Extract names of friends
+                          friend.names <- vapply(self$friends,
+                                                 function(elt) elt$name, character(1))
+                          # Print them (separated by a ,)
+                          cat(paste0(friend.names,collapse=", "),"\n")
+                      }
+                      
+                  )
+)
+```
+We can then create Jack and Jill using
+```{r}
+jack <-  Person$new("Jack")
+jill <-  Person$new("Jill")
+jack$befriend(jill)
+jack
+jill
+```
+#####[/example]
+
+
+#### Private members and functions
+In addition to the argument `public`,  we can provide a list as argument `private` when we define a class using `R6Class`.  The fields and functions of the list given as argument `private` not externally visible, i.e. the user cannot directly manipulate these fields or run these methods. The private fields and functions are available as a list `private`.
+
+#####[example, label=jackjillr6private]
+Let's return to ref://jackjillr6. At the moment the user can simply change the name of a person. 
+```{r}
+jill$name <- "Jennifer"
+jill
+```
+in which case Jill will now be called Jennifer. If we want to prevent the user from changing the name of a person, we have to hide the name from the user. We can do this by making it private. We need to do three things for this:
+
+- We need to remove the initialisation `name=NULL` from the list provided as argument `public` to a new list provided as argument `private`.
+- We need to introduce a new method `getName` which will return the name of person (without letting the user change the name). 
+- Finally we need to replace `self$name` by `private$name`.
+
+```{r}
+library(R6)
+Person <- R6Class("Person",
+                  public=list(
+                      friends = list(),
+                      
+                      initialize = function(name, friends=list()) {
+                          private$name <- name
+                          self$friends<- friends
+                      },
+                      
+                      befriend = function(person) {
+                          self$friends <- c(self$friends, person)
+                          person$friends <- c(person$friends, self)
+                      },
+
+                      getName = function() {
+                          private$name
+                      },
+                      
+                      print  = function() {
+                          cat(self$getName(), "- a person with",
+                              length(self$friends),"friend(s):\n")
+                          # Extract names of friends
+                          friend.names <- vapply(self$friends,
+                                                 function(elt) elt$getName(), character(1))
+                          # Print them (separated by a ,)
+                          cat(paste0(friend.names,collapse=", "),"\n")
+                      }
+                      
+                  ),
+                  private=list(
+                      name=NULL
+                  )
+)
+```
+Now we cannot change Jill's name any more.
+```{r error=TRUE}
+jill <-  Person$new("Jill")
+jill$name <- "Jennfier"
+```
+This is not 100% bullet-proof though. R6 classes are based on S3 classes and environments, so a user can (with some effort) use the internal S3 representation of the R6 object to access the environments and modify private fields. 
+
+We could have also made the list of friends private, but this is a bit more complicated, because our method `befriend` currently modifies the friend's list of friends, which would not be accessible if it was private.
+
+\newpage 
+
+#####[/example]
+
+#####[task]
+Add a method `setName` to the class `Person`, so that the name can be set by the user. Produce an error message if the user tries to set a name of length 0.
+######[answer]
+Starting with the class definition from above we add a class method "setName"
+```{r}
+library(R6)
+Person <- R6Class("Person",
+                  public=list(
+                      friends = list(),
+                      
+                      initialize = function(name, friends=list()) {
+                          private$name <- name
+                          self$friends<- friends
+                      },
+                      
+                      befriend = function(person) {
+                          self$friends <- c(self$friends, person)
+                          person$friends <- c(person$friends, self)
+                      },
+
+                      getName = function() {
+                          private$name
+                      },
+
+                      setName = function(name) {
+                          if (nchar(name)>0) {
+                              private$name <- name
+                          } else {
+                              stop("Blank names not allowed")
+                          }
+                      },
+                      
+                      print  = function() {
+                          cat(self$getName(), "- a person with",length(self$friends),"friend(s):\n")
+                          # Extract names of friends
+                          friend.names <- vapply(self$friends, function(elt) elt$getName(),
+                                                 character(1))
+                          # Print them (separated by a ,)
+                          cat(paste0(friend.names,collapse=", "),"\n")
+                      }
+                      
+                  ),
+                  private=list(
+                      name=NULL
+                  )
+)
+```
+
+
+######[/answer]
+#####[/task]
+
+#### Inheritance
+R6 classes support inheritance in the form of a single superclass being specified as argument `inherit` when creating the class using `R6Class`. Fields and methods from the superclass are then available in the subclass, as if they were defined in the subclass.
+
+#####[example]
+Think of a class model for pets, which we assume to be dogs or cats. We can formalise this as a class `Pet` with two subclasses `Dog` and `Cat`,
+
+```{r}
+Pet <- R6Class("Pet",
+               public=list(
+                   name=NULL,
+
+                   initialize = function(name) {
+                       self$name <- name
+                   }
+               )
+)
+
+Dog <- R6Class("Dog",
+               inherit=Pet,
+               public=list(
+                   initialize = function(name) {
+                       super$initialize(name)   # Call initialize from superclass Pet                       
+                   },
+                   makeSound = function() {
+                       cat("Woof!\n")
+                   }
+               )
+)
+
+Cat <- R6Class("Cat",
+               inherit=Pet,
+               public=list(
+                   initialize = function(name) {
+                       super$initialize(name)   # Call initialize from superclass                       
+                   },
+                   makeSound = function() {
+                       cat("Meow!\n")
+                   }
+               )
+)
+
+milly <- Cat$new("Milly")
+max <- Dog$new("Max")
+milly$makeSound()
+max$makeSound()
+```
+We can now access
+```{r}
+milly$name
+```
+`name` is a field of objects of class `Animal`. However, `milly` is a object of the class `Cat`, which inherits from `Animal` and thus the fields from `Animal` are also available.
+#####[/example]
+
+#####[task]Shapes
+Recreate the shape example from example ref://s3exrect4 using R6 classes.
+######[answer]
+We start by defining the R6 class.
+```{r}
+library(R6)
+Shape <- R6Class("Shape",
+                 public = list(
+                     draw = function(...) {
+                         coords <- self$makecoords()
+                         polygon(coords, ...)
+                     }
+                 )
+)
+
+Rectangle <- R6Class("Rectangle",
+                     inherit=Shape,
+                     public=list(
+                         centre=NULL,
+                         width=NULL,
+                         height=NULL,
+                         
+                         initialize = function(width, height=width,
+                                               centre=c(0,0))  {
+                             self$width <- width
+                             self$height <- height
+                             self$centre <- centre
+                         },
+
+                         makecoords =function() {
+                             cbind(self$centre[1]+self$width/2*c(-1,1,1,-1),
+                                   self$centre[2]+self$height/2*c(-1,-1,1,1))
+                         }
+                     )
+)
+
+
+Octagon <- R6Class("Octagon",
+                     inherit=Shape,
+                     public=list(
+                         centre=NULL,
+                         width=NULL,
+                         height=NULL,
+                         corner=NULL,
+                         
+                         initialize = function(width, height=width,
+                                               corner=.2929, centre=c(0,0)) {
+                             self$width <- width
+                             self$height <- height
+                             self$corner <- corner
+                             self$centre <- centre
+                         },
+
+                         makecoords =function() {
+                             a <- c(-0.5, -0.5+self$corner, 0.5-self$corner, 0.5)
+                             cbind(self$centre[1]+self$width*c(a, -a),
+                                   self$centre[2]+self$height*c(a[3:4],a[4:1],
+                                                                a[1:2]))
+                         }
+                     )
+)
+```
+
+We can then draw same the picture as we have drawn using S3 classes.
+```{r}
+plot(NULL, xlim=0:1, ylim=0:1, xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+s <- Rectangle$new(0.1, centre=c(0.2,0.2))
+o <- Octagon$new(0.3, centre=c(0.5,0.5))
+s$draw(col="yellow")
+o$draw(col="blue")
+```
+
+######[/answer]
+#####[/task]
+
+
+
+###[supplement]Reference classes
+R also has a built-in a class system which is very similar to R6 classes: reference classes (RC). Compared to reference classes R6 is the simpler, more lightweight and slightly better performing system. The syntax for R6 classes is also closer to the syntax for defining classes in other OOP-based programming languages (Java, C++, C#, Python, ...)
+###[/supplement]

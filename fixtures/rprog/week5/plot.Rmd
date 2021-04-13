@@ -1,0 +1,154 @@
+## The function plot
+
+### Specifying the coordinates
+
+The function `plot` is at the heart of R's built-in graphics. It can be used to create two-dimensional plots. 
+
+The following four commands all create the same scatter plot of `y` against `x`:
+
+- `plot(x, y, ...)` where `x` and `y` are the vectors containing the coordinates.
+- `plot(y~x, ...)` where `x` and `y` are the vectors containing the coordinates, or `plot(y~x, data=data, ...)` where `x` and `y` are columns in `data`.
+- `plot(M, ...)`, where `M` is a matrix having two columns (x- and y-coordinates). If `M` has more than two columns, R will ignore these.
+-  `plot(lst, ...)`, where `lst` is a list with (possibly amongst others) an element `x` and an element `y`.
+
+We first look at a simple example illustrating these three ways of calling `plot`. We first create two vectors `x` and `y` containing [white noise](https://en.wikipedia.org/wiki/White_noise#Statistical_properties).
+
+```{r}
+n <- 20
+x <- rnorm(n)
+y <- rnorm(n)
+```
+
+In this example, the simplest way of calling `plot` provides two vectors
+as arguments:
+```{r, dev.args=list(pointsize=10)}
+plot(x, y)
+```
+
+Alternatively we could have used 
+```r
+plot(y~x)
+```
+(note that `y` comes first if we use the formula interface).
+If we arrange `x` and `y` in matrix (or data frame or tibble)
+```{r}
+data <- cbind(x=x, y=y)
+```
+we can use
+```r
+plot(data)
+```
+or 
+```r
+plot(y~x, data=data)
+```
+For the former command the order of the columns in `data` matters. 
+
+If we store `x` and `y` in a list 
+```r
+lst <- list(x=x, y=y)
+```
+we can use
+```r
+plot(lst)
+```
+
+### Customising the plot
+`plot` has a wide range of optional arguments. The most important ones are:
+
+- `type`: controls how the data is plotted. Use  `p` (default) for points, `l` for a line through the points, `b` for a line together with the points, `n` to set up the plot without actually plotting any points. For more options, see `?plot`.
+- `xlab`:  the label of the x axis (in quotes). Otherwise, R will use the name of the corresponding variable / column.
+- `ylab`:   the label of the y axis (in quotes). Otherwise, R will use the name of the corresponding variable / column.
+- `main`: the title of the plot (in quotes). We can also set the title using the function `title`.
+- `sub`:  the subtitle of the plot (in quotes).
+- `xlim`: if set to `c(xmin, xmax)` the range of the x axis is from `xmin` to `xmax`. If not specified, R will determine the ranges of the axes automatically.
+- `ylim`:  if set to `c(ymin, ymax)` the range of the y axis is from `ymin` to `ymax`.
+- `log`:  controls which axes should use a logarithmic scale (`""` (default), `"x"`, `"y"`, or `"xy"`).
+- `pch`:   the plotting symbol (`0`-`14` for open symbols, `15`-`20` for solid symbols, `21`-`25` for filled symbols (fill colour can be set using `bg`), or a character in quotes).	
+- `lty`:   the type of line (`0`=blank, `1`=solid (default), `2`=dashed, `3`=dotted, `4`=dot-dash, `5`=long dash, `6`=two dashes).
+- `lwd`:   the width of the line.
+- `col`:  the colour (either a number, a name in quotes, `#` followed by the  hex triplet in quotes (as used in HTML, e.g. `"#ffff00"` for yellow), or the output of the functions such as `rgb`, `hsv`, `gray`/`grey`, `rainbow`). The function `palette` can be used to change how integers map to colours.
+- `cex`:   the size of the plotting symbol.
+
+If the arguments `col`, `pch`, and `cex` are set to a single value, this value is applied to all points. If they are set to a vector of the same length as the the data points, a different colour / plotting symbol / size is used for each point.
+
+####[example,label=healthplot]
+In this example we will plot the health expenditure data which we looked at in the video. It is contained in the RData file
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/w5.RData"))
+head(health)
+```
+We can create a scatter plot of life expectancy against health expenditure using
+```r
+plot(LifeExpectancy~HealthExpenditure, data=health)
+```
+We can now use `col` to use colour to denote the geographical region. However, `Region` is a factor, so we first need to convert it to integers (which R accepts as colours). We can do this using the function `unclass` -- we add 1 to the result, otherwise one group would have their points drawn in black (R's first choice of colour). 
+```{r, dev.args=list(pointsize=10)}
+plot(LifeExpectancy~HealthExpenditure, data=health, col=1+unclass(Region))
+title("Link between health expenditure and life expectancy")
+```
+
+We should now add a legend to the plot. We will look at this later on.
+####[/example]
+
+####[background]The exposition pipe operator from magrittr
+In the above example we have avoided having to use `health$` in front of the variables by using the additional argument `data=health`. However not all plotting functions in R allow for a `data` argument. 
+
+Another strategy of avoiding having to use `health$` is to use `attach`:
+```r
+attach(health)
+plot(HealthExpenditure, LifeExpectancy)
+```
+However, we have seen that `attach` can be a little tricky if we make changes to the data set, so we better avoid using it. The function `with` provides a (slightly clunky)  alternative:
+```r
+with(health, plot(HealthExpenditure, LifeExpectancy))
+```
+The exposition pipe operator `%$%` from [magrittr](https://cran.r-project.org/web/packages/magrittr), lets us write this a bit more elegantly:
+```r
+health %$% plot(HealthExpenditure, LifeExpectancy)
+```
+####[/background]
+
+####[task, label=plottask1]
+The package `ggplot2` contains a data set `diamonds` containing the prices and other attributes of almost 54,000 diamonds.
+```{r,message=FALSE}
+library(ggplot2)
+diamonds <- as.data.frame(diamonds)
+head(diamonds)
+```
+Create a scatter plot of carat against price, using different colours to denote the different colour and different plotting symbols to denote the different cuts.
+
+#####[answer]
+We should also add a legend, which we will soon learn about.
+```{r, dev.args=list(pointsize=10)}
+plot(price~carat, data=diamonds, col=unclass(color)+1, pch=unclass(cut))
+```
+#####[/answer]
+####[/task]
+
+
+### Plotting objects
+
+Many R objects (such as model fits) have a `plot` method, which draws a visualisation of (or diagnostic check relating to) this object. 
+
+####[example]
+Suppose we fit a linear regression model  to the data from the example:
+```{r}
+model <- lm(LifeExpectancy ~ log(HealthExpenditure), data=health)
+```
+The `plot` method for linear model objects produces a series of diagnostic plots.
+```r
+plot(model)
+```
+```{r, echo=FALSE, dev.args=list(pointsize=10)}
+par(mfrow=c(2,2))
+plot(model)
+```
+
+You will learn more about linear regression models and also how to interpret these diagnostic plots  in *Predictive Modelling*.
+
+####[/example]
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

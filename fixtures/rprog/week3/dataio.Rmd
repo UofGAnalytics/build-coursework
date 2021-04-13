@@ -1,0 +1,226 @@
+## Importing and exporting data from R
+
+### Native .RData files
+R has an internal binary data format ("`.RData` files"), which can be used to store one or more objects. Typically `.RData` or `.rda` is used as the file extension. The key advantage of using R's internal format is that it stores objects exactly as they are in R. If you load the objects back in R you are guaranteed that they are exactly reproduced. 
+
+If you want to save a object \texttt{x} to a file you can use 
+```r
+save(x, file="MyX.RData")
+```
+If you want to save more than one object (say `x` and `y`) you can use 
+```r
+save(x, y, file="MyXY.RData")
+```
+If you want to save all objects in your workspace to a file (`MyVariables.RData`), you can use 
+```r
+save.image(file="MyVariables.RData")
+```
+
+To load the data you have saved back into R use
+```r
+load(file="MyVariables.RData")
+```
+
+When saving the workspace at the end of a session, R simply stores all objects in your workspace in a file `.RData` in your home directory.
+
+R's internal format is a good idea if you only work with R. However, very few other software products support it.
+
+####[background] Path names on Windows
+Path names in Windows typically contain backslashes (`\`). In R you need to either use a forward slash instead (for example `c:/Users/Ludger/data.RData`) or escape the backslash, i.e. use a double `\\` (for example `c:\\Users\\Ludger\\data.RData`).
+####[/background]
+
+### Table data
+
+#### Text and CSV files
+
+#####[video, videoid="OWR6DJKpz3A", duration="5m56s"]Reading in data
+
+##### Importing data into R
+In most cases data is stored in a table or spreadsheet format. The easiest way of reading external data into R is to use delimited text files. If the data at hand is say an Excel spreadsheet it is typically easier to open it in Excel first and convert it to a text (or CSV) file in Excel, and only then open the text file in R.
+
+Before reading a text file into R, it is always a good idea to look at the file first using a raw text editor and determine the following information, which is easy for you to determine, but hard for R to guess automatically:
+
+- Column names: Does the first line of the file contain data or does it contain the names of the columns ("variables")?
+- Delimiter: What character is used to delimit the columns? This is typically white space, tabulator, `,` or `;`.
+- Missing values: Determine how missing values are encoded (if there are any). R uses `NA`, but `*` and `.` are common as well.
+
+
+Below are the first few lines of the file [chol.txt](http://www.stats.gla.ac.uk/~levers/rp/chol.txt).
+```
+175 25 148 39 female no
+196 36 92 32 female no
+139 65 NA 42 male NA
+```
+We can see that ...
+
+- The first line contains data and *not* the names of the columns.
+- The columns are delimited using white space.
+- The data set uses `NA` to encode missing values.
+
+Such white space (or tab) delimited files can be read in using the R function
+`read.table`. It assumes by default that the first line of the file does *not* contain the column names (i.e. the first line already contains data), that white space is used as delimiter, and that missing values are encoded as `NA`.
+If this is not the case, you need to use the following additional arguments:
+
+
+- `header`: Use `header=TRUE` if the first line of the file contains the names of the columns.
+- `sep`: If the delimiter of the columns is not white space, but another character, you need to use the additional argument `sep`. For comma-separated data, use `sep=","`. The latter is better read in using the function `read.csv`.
+- `na.strings`: If missing values are encoded using strings other than "`NA`", you need to use the additional argument `na.strings`. If for example "`*`" is used to denote missing values, you would use `na.strings="*"`. The argument `na.strings` can be a character vector if more than one string is used to denote missing values. You do not need to use this argument if your data set does not contain any missing values.
+- `dec`: You can use the additional option \texttt{dec} to set the decimal separator (e.g. `dec=','`)
+
+The file `chol.txt` uses no column names, white space as a separator, and 
+uses "`NA`" for missing values. Thus we do not need to use any additional arguments to read it into R.
+```{r}
+chol <- read.table("chol.txt")
+head(chol)
+```
+It is always worth looking at the first few lines of the data you have read in to make sure it was read in correctly.
+
+If, like in our example, the data file does not contain variables, it is a good idea to set them right after you have read in the data.
+```{r}
+colnames(chol) <- c("ldl", "hdl", "trig", "age", "gender", "smoke")
+```
+
+ R tries to guess of what type each column/variable is, but might not always get it right. It also is worth checking that each column was read in as the data type you had intended. This can be done using
+```{r}
+sapply(chol, class)                     
+```
+Alternatively we could use
+```{r}
+str(chol)
+```
+
+
+If a variable which you had intended to be numeric (or an integer) shows up as a factor it is likely that missing values (or other error codes) were in the data that were not read in correctly. 
+
+The file [chol.csv](http://www.stats.gla.ac.uk/~levers/rp/chol.csv) contains the same data, however in comma-separated ("CSV") format. The first few lines of this file are
+```
+ldl,hdl,trig,age,gender,smoke
+175,25,148,39,female,no
+196,36,92,32,female,no
+139,65,.,42,male,.
+```
+We can see that \dots
+
+
+- The first line of the file are the column names.
+- The columns are delimited using commas.
+- The missing values are coded using `.`.
+
+Thus we can read the file into R using
+```{r}
+chol <- read.table("chol.csv", header=TRUE, sep=",", na.strings=".")
+```
+or 
+```{r}
+chol <- read.csv("chol.csv", na.strings=".")
+```
+`read.csv` is a sibling of `read.table` with the main difference that it assumes by default that the data is comma-separated and that the first line contains the variable names. In other words, you do not need to specify `sep=","` and `header=TRUE"` when using `read.csv`.
+
+######[task]
+Read the data files [`cars.csv`](http://www.stats.gla.ac.uk/~levers/rp/cars.csv) and [`ships.txt`](http://www.stats.gla.ac.uk/~levers/rp/ships.txt) into R.
+
+You can download the two files from:
+
+- http://www.stats.gla.ac.uk/~levers/rp/cars.csv
+- http://www.stats.gla.ac.uk/~levers/rp/ships.txt
+
+
+#######[answer]
+The first line of the file `cars.csv` contains the variable names and the fields are separated by commas. Missing values are encoded as asterisks.
+```{r}
+cars <- read.csv("cars.csv", na.strings="*")
+str(cars)
+```
+We could have also used the function `read.table`.
+
+```{r}
+cars <- read.table("cars.csv", header=TRUE, sep=",", na.strings="*")
+str(cars)
+```
+The first line of the file `ships.txt` contains the variable names and the fields are separated by whitespace. Missing values are encoded as ".".
+```{r}
+ships <- read.table("ships.txt", header=TRUE, na.strings=".")
+str(ships)
+```
+
+#######[/answer]
+######[/task]
+
+
+##### Exporting data from R
+Text files can be used as well to export data from R using the function  
+```{r}
+write.table(chol, file="chol.csv", sep=",", col.names=TRUE, row.names=FALSE) 
+```
+The arguments `col.names` and `row.names` can be used to choose whether the column names and row names should be exported as well. The function `write.csv` can be used instead of the additional argument `sep=","`.
+```{r}
+write.csv(chol, file="chol.csv", row.names=FALSE) 
+```
+
+
+
+
+
+#### Other file formats
+There are many R packages that allow reading in data stored in file formats used by other software products.
+In most cases it is best to first convert the file into a text file using the proprietary software the file format corresponds to and then open the exported text file in R. However, there are R packages which allow opening various different file formats.
+
+| Package       | Functions          | Formats that can be read in |
+|---------------|--------------------|-----------------------------|
+| `readxl`      | `read_excel`       | Excel spreadsheets (`.xls` and `.xlsx`) |
+| `xlsx`        | `read.xlsx`, `write.xlsx` | Excel spreadsheets (only `.xlsx`) | `foreign`     | `read.xport`, `write.xport`| SAS XPORT format |
+                                                                                | `foreign`     | `read.dta`, `write.dta` | Stata binary files |
+| `foreign`     | `read.spss`             | SPSS files  |
+
+#### SQL databases
+If the data you want to work with data which is stored in a relational database it is typically best to connect straight to that database. The R package [DBI](https://cran.r-project.org/web/packages/DBI/) provides a high-level interface allowing direct connections to various database management systems: [SQLite](https://cran.r-project.org/web/packages/RSQLite/index.html), [MySQL and MariaDB](https://cran.r-project.org/web/packages/RMySQL/index.html), [PostgreSQL](https://cran.r-project.org/web/packages/RPostgreSQL/index.html), [Oracle](https://cran.r-project.org/web/packages/ROracle/index.html), etc. It can also work using Microsoft's [ODBC](https://cran.r-project.org/web/packages/odbc/index.html) or Java's [JDBC](https://cran.r-project.org/web/packages/RJDBC/index.html) interface.
+
+We will look at an example using a temporary in-memory SQLite database (so to run the example below you do not need any additional software other than the R packages used). We will use the [babynames](https://cran.r-project.org/web/packages/babynames/) data as an example. Because we start with an empty database we first move the babynames table from R into the SQL database (in practice your data would of course already be in the database). You will learn how to write SQL queries in the *Data Management and Analytics using SAS* course.
+
+```{r}
+library(DBI)                                     # Load required packages
+library(RSQLite)
+con <- dbConnect(RSQLite::SQLite(), ":memory:")  # Connect to temporary database
+library(babynames)                               # Load data package                                                 
+dbWriteTable(con, "babynames", babynames)        # Store data in database
+
+dbListTables(con)                                # List tables in database
+
+dbListFields(con, "babynames")                   # List variables in babynames table
+
+result <- dbSendQuery(con, "SELECT * FROM babynames WHERE year = 2015 ORDER By prop DESC")
+                                                 # Send a query to the database
+result.data <- dbFetch(result)                   # Fetch the data
+dbClearResult(result)                            # Free up resources again
+                                                 # Data is now in R in data frame result.data
+
+head(result.data)                                # Print top 6 observations from data frame
+
+dbDisconnect(con)                                # Disconnect from the database
+```
+
+####[background] Installing R packages
+Before you can load an R package  with `library(packagename)` you need to install it, either using the RStudio user interface (click on the tab *Packages* in the bottom right pane and then click on `Install`  or install the package from command line using the command `install.packages("packagename")`.
+####[/background]
+
+### Hierarchical data
+So far we have only looked at reading in data stored in flat tables. However not every data set can be easily stored in flat tables (this is what lead to the ascent no "NoSQL" databases like [MongoDB](https://mongodb.com)). If you only work with R, you can simply use R's internal `.RData` format. However it is not widely supported by other software.
+
+Alternative file formats that can represent complex data structures are JSON ("JavaScript object notation") and YAML (a recursive acronym for "YAML Ain't Markup Language").  JSON encodes an object as JavaScript code whereas YAML produces a more or less human-readable representation.
+
+Many public data APIs provide data in JSON format (or XML, see below). We'll look at an example reading in such JSON data. We will get the current disruptions on Transport for London's (TfL) tube lines using TfL's public API.
+
+```{r}
+library(jsonlite)                               # Load required package
+uri <- "https://api.tfl.gov.uk/line/mode/tube/status"
+data <- read_json(uri,  simplifyVector = FALSE) # Download data and convert
+for (line in data) {                            # We'll learn about loops later
+  cat("Disruptions on",line$name,"\n")
+  print(line$disruptions)                       # Most of the time there are none
+}
+```
+
+YAML files can be read and written in R using the [yaml](https://cran.r-project.org/web/packages/yaml/index.html) package. XML files also provide a way of importing (and exporting) complex data into R. This can be done using the [xml2](https://cran.r-project.org/web/packages/xml2/index.html) package.
+
+
+\newpage

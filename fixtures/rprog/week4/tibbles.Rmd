@@ -1,0 +1,162 @@
+## Tibbles
+
+The package [tibble](https://cran.r-project.org/web/packages/tibble/) provides `tbl_df`'s (or "tibbles", which is easier to pronounce). They are a modern take on the built-in class `data.frame`.
+
+One key advantage of tibbles is that they can store anything. A `data.frame` can only store a single value per "cell", for example a number or a character string. However, in a tibble, you can store a list or even another tibble in a cell. An example of this is the tibble `starwars` from the package `dplyr`. The column `starships` contains for each row the list of starships flown by that character (which is a list of different length depending on the character.)
+```{r}
+library(dplyr)                             # Load library dplyr which contains the data
+starwars[,c("name", "starships")]          # Print columns name and starships
+starwars[10,"starships"][[1]]              # Starships flown by Obi-Wan
+```
+We could not have stored this information in a data frame. We would have had to either store the information across several data frames or stored the list of starships as a character string.
+
+### Creating tibbles
+
+##### Coercion
+A data frame or matrix can be converted to a tibble using the function `as_tibble`. Let's start with the data frame kids from week 3:
+```{r, echo=FALSE}
+kids <- rbind(Sarah=data.frame(age=4, weight=15, height=101, gender="f"),
+              John=data.frame(age=11, weight=28, height=132, gender="m"))
+```
+```{r}
+kids
+library(tibble)
+kidstibble <- as_tibble(kids)
+kidstibble
+````
+As you can see from the output, tibbles do not use row names (though they store them so that the row names can be added back when the tibble is converted back to a data frame). Thus in this case it would be best to add a column called `name`: we will first add the column and then re-arrange the columns that the names come first.
+```{r}
+kidstibble$name <- rownames(kids)     # Create a column with names
+kidstibble <- kidstibble[,c("name", "age", "weight", "height", "gender")]
+                                      # Re-arrange columns that names comes first
+```
+There also is a function `rownames_to_column` which we could have also used for this purpose. It adds the rownames as first column to the tibble. 
+```{r}
+kidstibble2 <- rownames_to_column(kids)
+kidstibble2 
+```
+
+We can work with tibbles in pretty much the same way as with data frames, though not all R functions work with tibbles yet. In this case, you can convert a tibble into a data frame using `as.data.frame`.
+```{r}
+kidsdf <- as.data.frame(kidstibble)
+kidsdf
+```
+
+#### Creation
+
+We can create tibbles using the function `tibble`. We can create the tibble from above using
+```{r}
+kidstibble <- tibble(name=c("Sarah", "John"), age=c(4,11), weight=c(15,28),
+                     height=c(101,132), gender=c("f", "m"))
+```
+In other words, the function `tibble` assembles a tibble on a column-by-column basis (akin to using `cbind`). 
+
+The function `tribble` ("transposed tibble") lets you create a tibble on a row-by-bow basis (akin to using `rbind`), which is typically more legible when creating a matrix in code.
+```{r}
+kidstibble <- tribble(~name,   ~age, ~weight, ~height, ~gender,
+                      "Sarah",    4,      15,     101,     "f",
+                      "John",    11,      28,     132,     "m")
+```
+
+#####[task, label="tibbletask1"]
+Create a tibble called `courses` containing the data shown below ...
+
+- by converting it from a data frame using `as_tibble`,
+- by creating it using `tibble`, and
+- by creating it using `tribble`.
+
+```{r,echo=FALSE}
+tribble(~course, ~taught_by, ~weeks,
+        "psm", "Alexey", 11,
+        "psf", "Eilidh and Colette",11,
+	"rp", "Ludger", 11)
+```
+######[answer]
+You can use the following R code.
+```{r}
+courses_df <- data.frame(course=c("psm","psf", "rp"),
+                         taught_by=c("Alexey","Eilidh and Colette", "Ludger"),
+                         weeks=c(11,11,11))
+courses <- as_tibble(courses_df)
+
+courses<- tibble(course=c("psm","psf","rp"),
+          taught_by=c("Alexey","Eilidh and Colette", "Ludger"),
+          weeks=c(11,11,11))
+
+courses <- tribble(~course,           ~taught_by, ~weeks,            
+                     "psm",             "Alexey", 11,
+                     "psf", "Eilidh and Colette", 11,
+                      "rp",             "Ludger", 11)
+
+courses
+```
+You might notice a tiny difference: the first tibble stores the first two columns as factors, whereas the latter two store them as character strings. The reason for this different behaviour is that the first way first creates a data frame, and `data.frame` automatically converts character strings to factors.
+######[/answer]
+
+#####[/task]
+
+### By and large tibbles work like data frames
+In most circumstances, you can work with the tibbles in the same way as you would work with data frames, though there are [important differences](ref://tibble_differences):
+
+- Variables/Columns can be accessed and added using `tibble$varname` (`varname` needs to be fully spelled out). You can also access a column using `tibble[,"varname"]` or `tibble[["varname"]]`.
+- Rows can be selected using `tibble[rowindices,]` (note that you cannot use row names).
+- Individual cells can be accessed using `tibble[rowindices, colindices]`.
+
+<!--Note that you need to avoid `rbind` and `cbind` when working with tibbles. `rbind` and `cbind` would convert the tibble back into a data frame. Use the functions `bind_rows` and `bind_cols` (from `dplyr`) instead.-->
+
+####[task, label="tibbletask2"]
+Add a column called "coursework_perc" taking the values 30 and 100 to the tibble `courses` from ref://tibbletask1. Then print the first row and then print the first and second column.
+#####[answer]
+You can use the following R code:
+```{r}
+courses$coursework_perc <- c(30,NA,100)
+courses
+courses[1,]
+courses[,1:2]
+```
+#####[/answer]
+####[/task]
+
+
+
+###[label="tibble_differences"] Lazy and surly 
+
+#### Tibbles are stricter
+In some way, R's built-in  data frames are designed to make interactive data analysis more convenient. Partial matching of column names and R's extensive recycling rules mean that (if you know what you are doing) you can get away with less typing. For example instead of typing `kids$weight` you  just need to type `kids$w`.
+
+However, there is a price to pay for this convenience: when used in complex programmes, these "convenience features" can sometimes conceal coding mistakes and make them much harder to track down.
+
+For example, a programme using `kids$w` instead of `kids$weight` will stop working once you have added another column starting with the letter `w` (say `wakeup_time`). To make things worse, `kids$w` will then simply return `NULL` (and not produce a warning or error message), so your code might not fail immediately, but simply return wrong results. You might spend hours (or even days or weeks) tracking down that using `kids$w` was the culprit.
+
+R's recycling rules are convenient, but can easily conceal semantic coding mistakes when say adding a column of the wrong length that happens to be a factor of the number of rows of the data frame (in which case R will recycle it and not complain, which is in most cases *not* what the user had intended). 
+
+For these reasons tibbles are a lot more restrictive, forcing you to write cleaner and more expressive (but also longer) code. Or, in the words of their designers, tibbles are  "lazy and surly": they do less and complain more, which, at least in their eyes, are both good things, because it forces you to confront problems earlier. The main differences to data frames are ...
+
+- Column names of tibbles have to be fully spelled out, there is no partial matching of column names: `kidstibble$w` for example will not work, you have to spell out `kidstibble$weight` . Furthermore, tibbles produce a warning message when accessing a column that does not exist, where as data frames just return `NULL` without making any further noises. 
+- Tibbles do not recycle arguments, unless they are of length 1 (in which case it is pretty clear that the user wants the argument to be recycled). 
+- Tibbles also do not automatically convert strings to factors, which data frames in R do. 
+
+#### Subsetting tibbles always results in a tibble
+Tibbles are also more consistent. Subsetting tibbles always results in a tibble.
+```{r}
+kidstibble[,1]                            # Result is a tibble
+```
+In contrast, subsetting a data frame or matrix is not guaranteed to result in a data frame or matrix (unless you use `drop=FALSE`). If the result is a single column or row, subsetting a data frame or matrix results in a vector.
+```{r}
+kids[,1]                                  # Result is "dropped" to a vector
+```
+
+This "dropping" of the dimension can be very useful when using R interactively, but can be the source of many issues in more complex projects, when programmers incorrectly assume that subsetting a data frame or matrix will always result in another data frame or matrix, rather than possibly just a vector (it is thus a good idea to always use `drop=FALSE` when working with data frames or matrices in complex projects).
+
+###[weblink, target="https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf"]Data Import Cheat Sheet
+RStudio's cheat sheet for data import also covers tibbles.
+###[/weblink]
+
+###[weblink, target="http://r4ds.had.co.nz/tibbles.html", icon="book"]Background reading: Chapter 10 of *R for Data Science*
+Chapter 10 of *R for Data Science* gives a detailed overview of tibbles.
+###[/weblink]
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

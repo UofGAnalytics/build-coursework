@@ -1,0 +1,64 @@
+##[label=debug] Debugging
+
+### Bugs
+
+###[background] Bugs in computer code 
+For more than a century, engineers have been referring to small glitches in their devices as "bugs". In 1947 [Grace Hopper](https://en.wikipedia.org/wiki/Grace_Hopper) and her colleagues at the University of Harvard found a moth stuck in a faulty relay in the computer. They taped the insect in their logbook and wrote "first actual case of bug being found" next to it. Grace Hopper is said to have coined the term of the system having been "debugged". The logbook with the moth is now an exhibit in the Smithsonian National Museum of American History in Washington DC and also [available online](http://americanhistory.si.edu/collections/search/object/nmah_334663).
+###[/background]
+
+A bug  is a fault in a computer program that will cause the program either to produce an error or a warning message, and/or to produce an incorrect or unexpected result. Whilst it is relatively easy to find bugs that lead to an error or a warning message, it is much harder to locate bugs that "just" lead to an incorrect result: often such bugs remain unnoticed for some time.
+
+Bugs can be due to many factors: a faulty design ("semantic error"), an error in the code, numerical problems, or, however not very often, a bug in R (or the operating system) itself.
+
+It is almost impossible (at least for me) to write code that is free from errors. Having a well thought-out design and having structured and commented your code will not only help avoiding mistakes, but also help simplify debugging. Nonetheless, every program will (at least initially) contain bugs. Thus it is important to know how to find bugs and how to fix them.
+
+It is an unfortunate fact of life that it often takes as least as much time (or even more) to debug a program as it takes to write it in the first place. When programming I typically spend around one third of my time on designing the program, one third on actual coding, and another third on testing and debugging.
+
+Identifying and fixing bugs usually involves going through the following steps:
+
+1. Realise that your program does not (always) work as intended. 
+2. Find out how you can trigger the bug. Without being able to reproduce the bug, you have little chance of being able to locate the bug. Thinking about the conditions under which you can trigger the bug might help you get an idea of where the bug might be. This step can be very difficult, especially if your code uses random numbers (simulation studies, bootstrap, MCMC, etc.)
+3. Once you know how to trigger the bug, you have to identify where it is and what is causing the bug. R has special tools for this (more on this in the video).
+4. Once you have identified the actual mistake, you ``just'' have to correct it.
+5. Look out for similar bugs. If for example your bug was due to a design fault, it is likely that other parts of the program also turn out to be faulty.
+
+### Debugging in RStudio
+####[video,videoid="hS482Goj1t8", duration="9m38s"] Debugging in RStudio
+
+####[task]
+The function below is meant to compute the variance  $\frac1{n-1}\sum_{i=1}^n(x_i-\bar x)^2$ of a sample $(x_1,\ldots,x_n)$.
+```r
+compute.variance <- function(x) {
+  x.bar <- mean(x)
+  variance <- sum(x-x.bar)^2 / n-1
+  variance
+}
+```
+Can you fix it?
+
+#####[answer]
+First of all we need to define `n` as the length of `x`. There are also two mistakes in the line `variance <- sum(x-x.bar)^2 / n-1`. As it stands it computes
+$$
+\frac{\left(\sum_{i=1}^n (x_i-\bar x)\right)^2}{n}-1
+$$
+instead of
+$$
+\frac{\sum_{i=1}^n \left(x_i-\bar x\right)^2}{n-1}
+$$
+Thus this line of code should be `variance <- sum((x-x.bar)^2) / (n-1)`, i.e. the function should be
+```r
+compute.variance <- function(x) {
+  x.bar <- mean(x)
+  n <- length(x)
+  variance <- sum((x-x.bar)^2) / (n-1)
+  variance
+}
+```
+#####[/answer]
+####[/task]
+
+###[weblink, target="http://adv-r.had.co.nz/Exceptions-Debugging.html", icon="book"]Background reading: Advanced R
+The chapter on debugging, condition handling and defensive programming from *Advanced R* is worth a read if you want to delve little deeper into the nitty-gritty details.
+###[/weblink]
+
+\newpage

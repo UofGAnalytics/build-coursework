@@ -1,0 +1,70 @@
+## Merging data sets
+
+Often, the data required for a certain analysis is stored in more than one data frame. Many transactional databases are designed using the so-called ["third-normal form"](https://en.wikipedia.org/wiki/Third_normal_form) design principle, which, despite being optimal from a transactional point of view, requires combining many tables before being able to analyse the data. R has a built-in command `merge`, which allows for merging tables using common keys. Next week, we will look at the package [dplyr](http://dplyr.tidyverse.org/), which has more powerful functions for combining data sets. When possible, it is however often easier to combine the information required for analysis using SQL and the database engine before importing the data into R.
+
+In this section we will look at the function `merge` built into R.
+
+Consider the following example. In a study of 2,287 eighth-grade pupils (aged about 11) a language test score and the verbal IQ were determined. The question of interest is whether the socio-economic status (SES) of the parents and various characteristics of the class influence the language test score and the verbal IQ. The data is stored in two data frames, one containing the data about the children (`children`) and one containing the data about the different classes (`classes`).
+
+
+The first few rows of `children` are:
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/children_classes.RData"))
+head(children)
+```
+
+The first few rows of `classes` are:
+```{r}
+head(classes)
+```
+There are good reasons for storing the data in this format. This way, less redundant information is stored and the information about each class is stored exactly once. This makes it easier to change class properties like for example the number of pupils. 
+
+However, for the analysis of the data it is necessary that we "copy" all information from the data frame `classes` into the data frame `children`: for every child we need to look up which class it belongs to and copy the information about that class into the row belonging to that child. Of course we cannot simply use `cbind`: the child in the second row of the data frame `children` attended class "180", which is described in the first row of `classes`.
+
+The function `merge` can be used for such a task. By default, `merge` merges data sets using the columns both data frames have in common (in our case `class`)
+```{r}
+data <- merge(children, classes)
+```
+It is typically better to explicitly specify which column(s) are to be used for merging the data frames. This avoids that columns that happen to have the same name in both data frames, but are not related are used in the merger. The common key(s) to be used for merging can be specified using the argument `by`, provided they have the same names in both data frames.
+```{r}
+data <- merge(children, classes, by="class")
+```
+The arguments `by.x` and `by.y` allow merging data frames using columns which do not have the same name in both data frames (in our case they of course do have the same name).
+```{r}
+data <- merge(children, classes, by.x="class", by.y="class")
+```
+
+For each child `merge` has looked up the information about the class and added it to the row in the resulting data frame `data`.
+```{r}
+head(data)
+```
+
+If there were children in a class for which there is no entry in `classes` R would by default remove these from the resulting data frame. Similarly, data from classes for which there are no pupils in `children` will also not appear in the resulting table. If you are familiar with SQL this corresponds to the default `INNER JOIN`.
+
+If you want the resulting data frame to contain all cases from the first data frame even if there is no matching entry in the second data frame (`LEFT JOIN` in SQL speak), you need to specify the additional argument (`all.x=TRUE`). If you want the resulting data frame to contain all cases from the second data frame even if there is no matching entry in the first data frame (`RIGHT JOIN` in SQL speak), you need to specify the additional argument (`all.y=TRUE`). 
+
+
+####[task]
+Consider two data frames `patients` and `weights`, which you can load into R using
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/patients_weights.RData"))
+```
+The first few rows of the data sets are
+```{r}
+head(patients)
+head(weights)
+```
+
+Merge the data sets such that there is information about the patient for each weighting.
+
+
+#####[answer]
+We can use the following R code:
+```{r}
+weights.all <- merge(patients, weights, by="PatientID")
+head(weights.all)
+```
+#####[/answer]
+####[/task]
+
+\newpage

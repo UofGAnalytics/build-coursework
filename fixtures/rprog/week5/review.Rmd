@@ -1,0 +1,202 @@
+# Review exercises
+
+For the tasks in this section you need to load a data file `t3.RData`, which you can download from
+
+- http://www.stats.gla.ac.uk/~levers/rp/t3.RData
+
+If you run R on a computer connected to the internet, you can simply run
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/t3.RData"))
+```
+
+###[task, label="taskhills"]
+The package `MASS` contains a data frame called `hills`, which we
+will use in this task. It contains the record times (in 1984) for 35
+Scottish hill races. It has three columns, of which we will only use
+the following two:
+
+|Column name | Description |
+|------------|--------------------------|
+|`dist` |  Distance of the race (in miles)|
+| `time` |  Record time (in minutes) | 
+
+
+(a) Create a scatter plot of `time` against `dist`. Label the x-axis "Distance (miles)", and the y-axis "Time (min)". Use "Hill Races in Scotland" as title of your plot.
+
+(b) A linear regression model (without intercept term) fitted to this data gives the following estimated regression equation: $$\widehat{\texttt{time}}_i = 7.908 \cdot \texttt{dist}_i$$ Add the regression line to the plot.
+
+(c) A 95% confidence interval for the expected (average) `time` given `dist` is $$(7.1728 \cdot \texttt{dist}  , \; 8.6437 \cdot \texttt{dist})$$ Shade the confidence interval in colour.
+
+*Hint:* Use the function `polygon`.
+
+(d) A 95% prediction interval for `time` given `dist` is $$(7.908 \cdot \texttt{dist} - 0.7355\cdot\sqrt{3021.25+\texttt{dist}^2} , \; 7.908 \cdot \texttt{dist} + 0.7355\cdot\sqrt{3021.25+\texttt{dist}^2})$$ Draw the upper and lower bound of the prediction interval in dashed lines.
+
+Once you have taken the course Predictive Modelling, you will be able to compute the bounds yourself.
+
+Your final plot should look similar to the plots shown below.
+```{r, echo=FALSE, result="hide", dev.args=list(pointsize=10)}
+library(MASS)
+plot(hills$dist, hills$time, xlab="Distance (miles)", ylab="Time (min)", 
+     main="Hill Races in Scotland", type="n")
+# We draw the shaded area first, because it would otherwise cover the things
+# we have plotted already. The confidence bands are linear, so we are just
+# plotting a triangle.
+triangle <- rbind(c(0,0), 
+                  c(30, 7.1728 * 30),
+                  c(30, 8.6437 * 30))
+polygon(triangle,  lty=2, col="grey")
+points(hills$dist, hills$time)
+abline(0, 7.908, lwd=2)
+# The confidence bounds are not linear. Thus we first create a sequence with 
+# 250 numbers spread out over the range of dist, and then evaluate the lower 
+# bound and upper bound for this sequence.
+d <- seq(0, 30, length.out=250)
+lower <- 7.908 * d - 0.7355 * sqrt(3021.25 + d^2)
+upper <- 7.908 * d + 0.7355 * sqrt(3021.25 + d^2)
+lines(d, lower, lty=2)
+lines(d, upper, lty=2)
+```
+
+
+####[answer]
+
+\mbox{ }
+
+#####[video, videoid="5bmySEbN_o4", duration="11m43s"] Video model answers
+
+We can use the following R code.
+```{r, dev.args=list(pointsize=10)}
+library(MASS)
+plot(hills$dist, hills$time, xlab="Distance (miles)", ylab="Time (min)", 
+     main="Hill Races in Scotland", type="n")
+# We draw the shaded area first, because it would otherwise cover the things
+# we have plotted already. The confidence bands are linear, so we are just
+# plotting a triangle.
+triangle <- rbind(c(0,0), 
+                  c(30, 7.1728 * 30),
+                  c(30, 8.6437 * 30))
+polygon(triangle,  lty=2, col="grey")
+# We need to draw the points again, as some got covered by the polygon
+points(hills$dist, hills$time)
+# Add the regression line
+abline(0, 7.908, lwd=2)
+# The confidence bounds are not linear. Thus we first create a sequence with 
+# 250 numbers spread out over the range of dist, and then evaluate the lower 
+# bound and upper bound for this sequence.
+# The data in hills is not sorted by the dist, so if we draw a nonlinear
+# function (with the data not sorted by the x-coordinate) the lines go back 
+# and forth. 
+dist0 <- seq(0, 30, length.out=250)
+lower <- 7.908 * dist0 - 0.7355 * sqrt(3021.25 + dist0^2)
+upper <- 7.908 * dist0 + 0.7355 * sqrt(3021.25 + dist0^2)
+lines(dist0, lower, lty=2)
+lines(dist0, upper, lty=2)
+```
+
+####[/answer]
+###[/task]
+
+
+```{r, echo=FALSE, result="hide"}
+try(detach("package:MASS"), silent=TRUE)
+```
+
+###[task, label="euplots"]
+
+The file `t3.RData` contains a data frame `EU` on the per-capita gross domestic product (GDP) in PPS of seven EU countries. PPS (purchasing power standard) is an artificial currency unit used by Eurostat. One PPS can buy the same amount of goods and services in each country.
+
+(a) Create a plot of the per-capita GDP in the UK from 1995 to 2010.
+
+- The time series should be shown as a line.
+- The axis labels should be “Year” and “per capita GDP”.
+- The title should be “Per capita GDP in PPS (UK)”.
+
+```{r, echo=FALSE, result="hide", dev.args=list(pointsize=10)}
+plot(`United Kingdom`~Year, data=EU, type="l",
+     ylab="per capita GDP", main="Per capita GDP in PPS (UK)")
+```
+
+(b) Change your code from part (a) so that the plot shows the data for all countries available in the data set. Each line should correspond to one country. Use different colours and/or line types for the different countries. Make sure that all time series are fully visible in the plot. Add a legend to your plot.
+
+(c) If one is interested only in comparing the growth of the economies, it is best to normalise the data by dividing the time series for each country by the per capita GDP recorded for that country in the year 2000. Adapt your code from part (b) to plot the normalised data for all countries. Draw a dashed vertical line corresponding to the year 2000.
+
+ 
+```{r, echo=FALSE, result="hide", dev.args=list(pointsize=10)}
+matplot(EU$Year, EU[,-1], type="l", lty=1,
+        xlab="Year", ylab="per capita GDP", main="Per capita GDP in PPS")
+legend("topleft", col=1:(ncol(EU)-1), lty=1, colnames(EU)[-1], cex=0.75)
+```
+
+####[answer]
+
+
+\mbox{ }
+
+#####[video, videoid="N6N4UKAv8QU", duration="6m50s"] Video model answers
+
+We can use the following R code.
+
+
+```{r, echo=FALSE, result="hide"}
+try(detach("package:MASS"), silent=TRUE)
+```
+```{r, dev.args=list(pointsize=10)}
+### Part (a)
+
+plot(`United Kingdom`~Year, data=EU, type="l",
+     ylab="per capita GDP", main="Per capita GDP in PPS (UK)")
+
+# We need to use backticks around United Kingdom as this column name contains a space
+
+### Part (b)
+
+matplot(EU$Year, EU[,-1], type="l", lty=1,
+        xlab="Year", ylab="per capita GDP", main="Per capita GDP in PPS")
+legend("topleft", col=1:(ncol(EU)-1), lty=1, colnames(EU)[-1], cex=0.75)
+
+### Part (c) - Construction of dataset
+
+#### Answer 1 (divide all columns manually)
+EU.rel <- EU
+EU.rel$`United Kingdom` <- EU$`United Kingdom` / EU$`United Kingdom`[6]
+EU.rel$Ireland <- EU$Ireland / EU$Ireland[6]
+EU.rel$Luxembourg <- EU$Luxembourg / EU$Luxembourg[6]
+EU.rel$Germany <- EU$Germany / EU$Germany[6]
+EU.rel$Poland <- EU$Poland / EU$Poland[6]
+EU.rel$Slovenia <- EU$Slovenia / EU$Slovenia[6]
+EU.rel$Sweden <- EU$Sweden / EU$Sweden[6]
+
+#### Answer 2 (use tidyverse, requires converting data to long format first)
+EU.long <- EU%>%
+    gather(Country,  GDP, -Year)
+
+EU.rel.long <- EU.long %>%
+    inner_join(EU.long%>%filter(Year==2000), by="Country", suffix=c("", "_2000")) %>%
+                                                # Add data from year 2000 to each row
+    mutate(relGDP=GDP/GDP_2000) %>%             # Calculate ratio
+    select(Year, Country, relGDP) 
+
+EU.rel <- EU.rel.long %>%
+    spread(Country, relGDP)
+
+#### Answer 3 (use a loop, which we will look at in more detail in 2 weeks)
+
+EU.rel <- EU
+for (i in 2:ncol(EU.rel))
+    EU.rel[,i] <- EU.rel[,i] / EU[6,i]
+
+### Part (c) - Plot
+
+matplot(EU.rel$Year, EU.rel[,-1], type="l", lty=1,
+        xlab="Year", ylab="per capita GDP (relative to yr 2000)", main="Per capita GDP in PPS")
+abline(h=1, lty=2)
+legend("topleft", col=1:(ncol(EU)-1), lty=1, colnames(EU)[-1], cex=0.75)    
+
+```
+
+
+
+####[/answer]
+
+
+###[/task]

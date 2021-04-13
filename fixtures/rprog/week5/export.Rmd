@@ -1,0 +1,31 @@
+## Exporting plots 
+
+By default R uses the screen as plotting device. 
+
+- To  copy your graphics from the classical R GUI into another application under
+Windows, choose *File* $>$ *Copy to the clipboard* and then *as a
+Metafile*. You can then paste the graphics into your document (in
+Word, Powerpoint, ...).
+- In RStudio, to copy a plot to the clipboard choose *Export* and then
+*Copy plot to clipboard ...*. Choosing the *Metafile* option usually
+gives better quality results. You can also export the plot to a variety
+of other file formats.
+
+The screen is not the only graphics device under R and, especially if
+you want to create a large number of plots, it is simpler to use a
+dedicated graphics device, rather than using the GUI to export the active graphics device. The most important graphics devices are:
+
+-   `win.metafile("filename.emf" , width=w, height=h)` creates an [enhanced Windows metafile](https://en.wikipedia.org/wiki/Windows_Metafile) with the dimensions `w`$\times$`h` (not available on Mac or Linux).
+-   `pdf("filename.pdf", width=w, height=h)` and `postscript("filename.ps", width=w, height=h)` create a [PDF](https://en.wikipedia.org/wiki/Portable_Document_Format) or [PostScript](https://en.wikipedia.org/wiki/PostScript) file with the dimensions `w`$\times$`h`.
+-  `svg("filename.svg", width=w, height=h)` creates an [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) file with the dimensions `w`$\times$`h`.
+-  `png("filename.png", width=w, height=h)` and `jpeg("filename.jpg", width=w, height=h)` create an [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics) / [JPEG](https://en.wikipedia.org/wiki/JPEG) image of resolution `w`$\times$`h` pixels.
+
+The `w` and `h` arguments are optional.
+
+When using any of the above graphics devices, you have to use
+`dev.off()` to close the device once you have finished the plot,
+otherwise the file remains open (and most likely unfinished).
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

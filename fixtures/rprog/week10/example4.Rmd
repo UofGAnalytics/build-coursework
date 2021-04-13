@@ -1,0 +1,10 @@
+---
+title: A report written in R Markdown
+author: A N Other
+output: html_document
+---
+
+# Content
+
+R Markdown content goes here ...
+

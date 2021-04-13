@@ -1,0 +1,472 @@
+## Review exercises
+
+For the tasks in this section you need to load a data file `t3.RData`, which you can download from
+
+- http://www.stats.gla.ac.uk/~levers/rp/t3.RData
+
+If you run R on a computer connected to the internet, you can simply run
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/t3.RData"))
+```
+
+
+###[task]
+####[columns]
+#####[column, width=12]
+This task is identical  to ref://taskhills, but this time we will be using `ggplot2.`
+
+The package `MASS` contains a data frame called `hills`, which we
+will use in this task. It contains the record times (in 1984) for 35
+Scottish hill races. It has three columns, of which we will only use
+the following two:
+
+|Column name | Description |
+|------------|--------------------------|
+|`dist` |  Distance of the race (in miles)|
+| `time` |  Record time (in minutes)|
+
+(a) Create a scatter plot of `time` against `dist`. Label the x-axis "Distance (miles)", and the y-axis "Time (min)". Use "Hill Races in Scotland" as title of your plot.
+
+(b) A linear regression model (without intercept term) fitted to this data gives the following estimated regression equation: $$\widehat{\texttt{time}}_i = 7.908 \cdot \texttt{dist}_i$$ Add the regression line to the plot.
+
+(c) A 95% confidence interval for the expected (average) `time` given `dist` is $$(7.1728 \cdot \texttt{dist}  , \; 8.6437 \cdot \texttt{dist})$$ Shade the confidence interval in colour.
+
+*Hint:* Use the function `geom_ribbon`.
+
+(d) A 95% prediction interval for `time` given `dist` is $$(7.908 \cdot \texttt{dist} - 0.7355\cdot\sqrt{3021.25+\texttt{dist}^2} , \; 7.908 \cdot \texttt{dist} + 0.7355\cdot\sqrt{3021.25+\texttt{dist}^2})$$ Draw the upper and lower bound of the prediction interval in as dashed lines.
+
+Your final plot should look similar to the plots shown below.
+
+#####[/column]
+####[/columns]
+
+```{r, echo=FALSE, out.width=".5\\textwidth", results="hide", message=FALSE, dev.args=list(pointsize=10)}
+                                        #, fig.width=10, fig.height=6, out.width="\\textwidth"}
+library(MASS)                                        
+ggplot(data=hills) + 
+    aes(x=dist, y=time) + 
+    geom_ribbon(aes(ymin=7.1728*dist, ymax=8.6437*dist), fill="lightgrey") + 
+    geom_point() +
+    geom_line(aes(y=7.908*dist), size=1) + 
+    geom_line(aes(y=7.908 * dist - 0.7355 * sqrt(3021.25 + dist^2)), linetype=2) +     geom_line(aes(y=7.908 * dist + 0.7355 * sqrt(3021.25 + dist^2)), linetype=2) + 
+    xlab("Distance (miles)") + ylab("Hill Races in Scotland") +
+    ggtitle("Hill Races in Scotland")
+```
+```{r, echo=FALSE, results="hide"}
+try(detach("package:MASS"), silent=TRUE)
+```
+
+####[answer]
+
+\mbox{ }
+
+#####[video, videoid="7d4DNjehhB4", duration="12m07s"] Video model answers
+
+We can use the following R code.
+
+```{r, results="hide"}
+library(MASS)
+ggplot(data=hills) +                                   # Set data source
+    aes(x=dist, y=time) +                              # Set global aesthetics 
+    geom_ribbon(aes(ymin=7.1728*dist, ymax=8.6437*dist), fill="lightgrey") + 
+                                                       # add confidence bands
+    geom_point() +                                     # draw points
+    geom_line(aes(y=7.908*dist), size=1) +             # draw regression line
+    geom_line(aes(y=7.908 * dist - 0.7355 * sqrt(3021.25 + dist^2)), 
+              linetype=2) +
+    geom_line(aes(y=7.908 * dist + 0.7355 * sqrt(3021.25 + dist^2)), 
+              linetype=2) +                            # draw prediction bands
+    xlab("Distance (miles)") + ylab("Time (min)") +
+    ggtitle("Hill Races in Scotland")                  # set labels and titles
+```
+
+It would in general be better if we drew the prediction bands using a regular grid, so that the nonlinear bands don't look piece-wise linear. Note that the lines don't go back and forth when using `ggplot2` as they would do if used the classical plotting functions. `geom_line` sorts the data by the x values first. 
+
+In this example we get away with just using the hills data, as the prediction bands are almost linear. Below we create equally spaced data for the prediction bands.
+
+```{r}
+hills0 <- data.frame(dist=seq(from=min(hills$dist),
+                              to=max(hills$dist), length.out=250))
+                                                       # Create regularly spaced data
+
+ggplot(data=hills) +                                   # Set data source
+    aes(x=dist, y=time) +                              # Set global aesthetics 
+    geom_ribbon(aes(ymin=7.1728*dist, ymax=8.6437*dist), fill="lightgrey") + 
+                                                       # add confidence bands
+    geom_point() +                                     # draw points
+    geom_line(aes(y=7.908*dist), size=1) +             # draw regression line
+    geom_line(aes(y=7.908 * dist - 0.7355 * sqrt(3021.25 + dist^2)), 
+              linetype=2, data=hills0) +
+    geom_line(aes(y=7.908 * dist + 0.7355 * sqrt(3021.25 + dist^2)), 
+              linetype=2, data=hills0) +               # draw prediction bands
+    xlab("Distance (miles)") + ylab("Time (min)") +
+    ggtitle("Hill Races in Scotland")                  # set labels and titles
+```
+
+This is not a task at which `ggplot2` can shine. However, if you do not insist that the regression line goes through the origin, `ggplot2` makes creating the plot much easier (you don't even have to compute any coefficients and confidence intervals).
+
+```{r}
+ggplot(data=hills) +
+    aes(x=dist, y=time) + 
+    geom_point() + 
+    geom_smooth(method="lm")
+```
+
+This is a lot less code than either of the above.
+
+
+```{r, echo=FALSE, results="hide"}
+try(detach("package:MASS"), silent=TRUE)
+```
+
+####[/answer]
+```{r, echo=FALSE, results="hide"}
+try(detach("package:MASS"), silent=TRUE)
+```
+
+###[/task]
+
+
+\newpage
+
+###[task]
+This task is identical to ref://euplots, but this time we will be using `ggplot2.`
+
+The file `t3.RData` contains a data frame `EU` on the per-capita gross domestic product (GDP) in PPS of seven EU countries. PPS (purchasing power standard) is an artificial currency unit used by Eurostat. One PPS can buy the same amount of goods and services in each country.
+
+(a) Create a plot of the per-capita GDP in the UK from 1995 to 2010.
+
+- The time series should be shown as a line.
+- The axis labels should be “Year” and “per capita GDP”.
+- The title should be “Per capita GDP in PPS (UK)”.
+
+```{r, echo=FALSE, out.width=".5\\textwidth", result="hide", dev.args=list(pointsize=10)}
+ggplot(data=EU) + 
+    geom_line(aes(Year, `United Kingdom`)) +
+    ylab("per capita GDP") +
+    ggtitle("Per capita GDP in PPS (UK)")
+```
+
+(b) Change your code from part (a) so that the plot shows the data for all countries available in the data set. Each line should correspond to one country. Use different colours and/or line types for the different countries. Make sure that all time series are fully visible in the plot. Add a legend to your plot.
+
+(c) If one is interested only in comparing the growth of the economies, it is best to normalise the data by dividing the time series for each country by the per capita GDP recorded for that country in the year 2000. Adapt your code from part (b) to plot the normalised data for all countries. Draw a dashed vertical line corresponding to the year 2000.
+
+Your final plot should look similar to the one shown below.
+
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth", echo=FALSE}
+library(tidyr)
+EU.long <- EU%>%
+    gather(Country,  GDP, -Year)
+ggplot(data=EU.long) + 
+    geom_line(aes(Year, GDP, colour=Country)) +
+    ylab("per capita GDP") +
+    ggtitle("Per capita GDP in PPS (UK)")
+```
+
+####[answer]
+
+\mbox{ }
+
+#####[video, videoid="5lZU93OmnsM", duration="9m05s"] Video model answers
+
+We need to use backticks around \texttt{United Kingdom} as this column name contains a space.
+
+```{r, dev.args=list(pointsize=10)}
+ggplot(data=EU) + 
+    geom_line(aes(Year, `United Kingdom`)) +
+    ylab("per capita GDP") +
+    ggtitle("Per capita GDP in PPS (UK)")
+```
+
+For `ggplot2` it is best to first convert the data into long format.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth"}
+library(tidyr)
+EU.long <- EU%>%
+    gather(Country,  GDP, -Year)
+ggplot(data=EU.long) + 
+    geom_line(aes(Year, GDP, colour=Country)) +
+    ylab("per capita GDP") +
+    ggtitle("Per capita GDP in PPS (UK)")
+```
+
+We can normalise the data by joining the data to the subset for the year 2000 and then create the ratio of the GDPs.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth"}
+EU.long.2000 <- EU.long %>%                      # Extract data from yr 2000
+    filter(Year==2000)           
+EU.long.rel <- EU.long %>%
+    inner_join(EU.long.2000, by="Country", suffix=c("", "_2000")) %>%
+                                                # Add data from year 2000 to each row
+    mutate(relGDP=GDP/GDP_2000) %>%             # Calculate ratio
+    select(Year, Country, relGDP)               # Only keep the variables we need
+ggplot(data=EU.long.rel) + 
+    geom_line(aes(Year, relGDP, colour=Country)) +
+    ylab("per capita GDP (relative to year 2000)") +
+    geom_hline(yintercept=1, linetype=2) +
+    ggtitle("Per capita GDP in PPS (UK)")
+```
+####[/answer]
+
+###[/task]
+
+\newpage
+
+###[task, label="ggplotsf"]
+
+####[columns]
+#####[column, width=12]
+The file `t3.RData` contains two tibbles, `stations` and `trips`, which we will use in this task. `stations` contains the list of bike stations of the Bay Area Bike Share system in the San Francisco Bay  Area.
+It has the following columns.
+
+
+| Column name | Description                    |
+|-------------|--------------------------------|
+|      `station_id` |  Numeric identifier of the station|
+|      `name`       |  Name of the station|
+|      `lat`        |  Latitude of the station|
+|      `long`       |  Longitude of the station|
+|      `dockcount`  |  Number of docks at the station|
+|      `city`       |  City in which the station is located|
+  
+
+The tibble `trips` contains all trips made during August 2015. It has the following columns.
+
+| Column name | Description                    |
+|-------------|--------------------------------|
+|      `trip_id`           | Numeric identifier of the trip|
+|      `trip_duration`     | Duration of the trip in seconds|
+|      `day`               | Day of the month the trip was started|
+|      `hour`              | Decimal hour when the strip was started|
+|      `start_station_id`  | Numeric identifier of the station where the trip started|
+|      `end_station_id`    | Numeric identifier of the station where the trip ended|
+|      `bike_id`           | Numeric identifier of the bike used|
+|      `end_date`          | Date and time the trip ended|
+|      `subscriber_type`   | User type (“Subscriber” or “Customer”)|
+
+#####[/column]
+####[/columns]
+
+(a) Create a bar plot showing the number of stations in each city.
+
+```{r, echo=FALSE, results="hide", out.width=".5\\textwidth", dev.args=list(pointsize=10)}
+ggplot(data=stations) +
+    geom_bar(aes(x=city, fill=city), show.legend=FALSE)
+```
+
+(b) Create a plot of the density of the time (decimal hour) of when trips are started. Use colour to distinguish between the different cities the trip is started in and create one panel for week days and one for week ends. Saturdays and Sundays in August 2015 were August 1st, 2nd, 8th, 9th, 15th, 16th, 22nd, 23rd, 29th, 30th.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth", echo=FALSE}
+library(tidyr)
+ggplot(data=trips%>%
+           inner_join(stations, by=c("start_station_id"="station_id"))%>%
+           mutate(weekend=day%in%c(1,2,8,9,15,16,22,23,29,30)))+ 
+    geom_density(aes(x=hour, colour=city)) +
+    facet_wrap(~weekend)    
+```
+
+(c) Create a plot of the locations of the bike stations. Use colour to indicate the city they are located in. When using `ggplot2` use the size of the plotting symbol to indicate the number of docks. The label of the x-axis should be “Longitude” and the label of the y-axis should be “Latitude”. The title of the plot should be “Bicycle stations in the San Francisco Bay Area”.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth", echo=FALSE}
+library(tidyr)
+ggplot(data=stations) +
+    geom_point(aes(x=long, y=lat,  colour=city)) +
+    xlab("Longitude") + ylab("Latitude") + 
+    ggtitle("Bicycle stations in the San Francisco Bay Area")
+```
+	
+(d) Add labels corresponding to each city. You can obtain the location of each city by averaging the coordinates of the bike stations in that city.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth", echo=FALSE}
+library(tidyr)
+cities <- stations %>%
+              group_by(city) %>%
+              summarise(lat=mean(lat), long=mean(long))
+
+library(ggrepel)
+ggplot(data=stations) +
+    geom_point(aes(x=long, y=lat,  colour=city), show.legend=FALSE)+
+    geom_label_repel(data=cities, aes(x=long, y=lat, colour=city, label=city), show.legend=FALSE, alpha=0.5)+
+    xlab("Longitude") + ylab("Latitude") + 
+    ggtitle("Bicycle stations in the San Francisco Bay Area")
+```
+
+(e) *(harder)* For trips within the city of San Francisco create a so-called origin-destination matrix. The $(i,j)$-th entry should contain the number of trips made from station $i$ to station $j$.
+You can store the origin-destination matrix either in wide matrix format or in long “tidy” format.
+```{r, echo=FALSE, results="hide"}
+sf_stations <- stations %>%
+    filter(city=="San Francisco") 
+
+od <- trips %>%
+         filter(start_station_id%in%sf_stations$station_id,
+                end_station_id%in%sf_stations$station_id) %>%
+         group_by(start_station_id, end_station_id) %>%
+         summarise(ntrips=n()) 
+
+odm <- od %>%
+         spread(end_station_id, ntrips, fill=0) 
+
+odm <- as.matrix(od[,-1])
+rownames(odm) <- od$start_station_id
+```
+
+(f) Add lines to your plot representing the number of trips between the stations. Use the line thickness or transparency to indicate the number of trips.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width=".8\\textwidth", echo=FALSE}
+od2 <- od %>% 
+    full_join(od, by=c("start_station_id"="end_station_id", "end_station_id"=
+"start_station_id")) %>%
+    replace_na(list(ntrips.x=0, ntrips.y=0)) %>%
+    mutate(ntrips=ntrips.x+ntrips.y) %>%
+    select(-ntrips.x, -ntrips.y) %>%
+    filter(start_station_id<end_station_id)
+
+odall <- 
+    od2 %>% 
+    inner_join(sf_stations, by=c("start_station_id"="station_id")) %>%
+    inner_join(sf_stations, by=c("end_station_id"="station_id"), suffix=c("","_end")) 
+    
+
+
+ggplot() + 
+    geom_point(data=sf_stations, aes(long, lat, size=dockcount)) +
+    geom_segment(data=odall, aes(long, lat, xend=long_end, yend=lat_end, alpha=ntrips))
+```
+
+####[answer]
+
+\mbox{ }
+
+#####[video, videoid="nHbjIkMR4xQ", duration="28m22s"] Video model answers
+
+(a) We can create the bar plot using the code
+
+```{r, dev.args=list(pointsize=10)}
+ggplot(data=stations) +
+    geom_bar(aes(x=city, fill=city), show.legend=FALSE)
+``` 
+   
+   
+(b) The density of trips over time has to be inferred from the tibble \texttt{trips}. To get the city of departure we need to look up the city from \texttt{stations}. We also need to create a variable indicating whether a day is on a weekend or not.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+trips_data <- trips%>%
+                 inner_join(stations, by=c("start_station_id"="station_id"))%>%
+                 mutate(weekend=day%in%c(1,2,8,9,15,16,22,23,29,30))
+
+ggplot(data=trips_data)+ 
+    geom_density(aes(x=hour, colour=city)) +
+    facet_wrap(~weekend)    
+```   
+   
+(c) We cam create the plot using 
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+ggplot(data=stations) +
+    geom_point(aes(x=long, y=lat,  colour=city)) +
+    xlab("Longitude") + ylab("Latitude") + 
+    ggtitle("Bicycle stations in the San Francisco Bay Area")
+```    
+
+(d) We first need to get the location of each city. I have used `geom_label_repel` to make sure the labels are fully visible. I have also made them slightly transparent `alpha=0.5`). The plotting command is the same as the one from the previous task, except for the additional `geom_label_repel`.
+   
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+cities <- stations %>%
+              group_by(city) %>%
+              summarise(lat=mean(lat), long=mean(long))
+
+library(ggrepel)
+ggplot(data=stations) +
+    geom_point(aes(x=long, y=lat,  colour=city), show.legend=FALSE)+
+    geom_label_repel(data=cities, aes(x=long, y=lat, colour=city, label=city),
+                     show.legend=FALSE, alpha=0.5)+
+    xlab("Longitude") + ylab("Latitude") + 
+    ggtitle("Bicycle stations in the San Francisco Bay Area")
+```    
+
+(e) We start by subsetting the `stations` data and only keeping the stations from San Francisco.
+
+```{r)
+sf_stations <- stations %>%
+    filter(city=="San Francisco") 
+```
+
+We can create the required origin destination matrix by first subsetting the trip data to ensure that all trips start and end in San Francisco. Then we need to group by the start and end station and count the number of records per combination.
+
+```{r}
+od <- trips %>%
+         filter(start_station_id%in%sf_stations$station_id,
+                end_station_id%in%sf_stations$station_id) %>%
+         group_by(start_station_id, end_station_id) %>%
+         summarise(ntrips=n()) 
+```
+
+We can convert the matrix from long format to wide matrix format using `spread` from `tidyr`.
+
+```{r}
+odm <- od %>%
+         spread(end_station_id, ntrips, fill=0) 
+```
+  
+(f) In order to draw lines from the origin to the destination we need to add the GPS coordinates to the `od` data. We need to to this twice: once for the GPS coordinates of the origin and once for the GPS coordinates of the destination.
+  
+```{r}
+odall <- od %>% 
+    inner_join(sf_stations, by=c("start_station_id"="station_id")) %>%
+    inner_join(sf_stations, by=c("end_station_id"="station_id"), 
+               suffix=c("","_end")) 
+```
+
+Now we can create the plot.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+ggplot() + 
+    geom_point(data=sf_stations, aes(long, lat, size=dockcount)) +
+    geom_segment(data=odall, aes(long, lat, xend=long_end, 
+                                 yend=lat_end, alpha=ntrips))
+``` 
+
+We have made a small mistake when creating the plot. We have drawn two lines between each point of stations: once for trips from A to B and once from B to A, but both lines are exactly on top of each other. Essentially the problem is that the origin-destination matrix is ``directed'': we account for trips from A to B and from B to A separately. The visualisation we have chosen is not directed: it is simply a line between A and B.
+
+It would be better if we added up the number of trips from A to B and B to A and then only draw a single line between A and B.
+
+We can do this by joining `od` to itself, but with the roles or start and end swapped. We can then add up the trips in both directions and we need to only keep records for one direction (as the other direction now has exactly the same total number of trips): we do this by requiring the start index is less than the end index (Trips that originate and end in the same station are in any case not visible in this plot).
+
+```{r}
+od2 <- od %>% 
+    full_join(od, by=c("start_station_id"="end_station_id", "end_station_id"=
+"start_station_id")) %>%
+    replace_na(list(ntrips.x=0, ntrips.y=0)) %>%
+    mutate(ntrips=ntrips.x+ntrips.y) %>%
+    select(-ntrips.x, -ntrips.y) %>%
+    filter(start_station_id<end_station_id)
+```
+
+We need to use `replace_na` because for some pairs of stations, we have observed trips from A to B, but not from B to A (or vice versa). This is also why I have used a full join: In a full join rows that do not have a match in the joined data set are kept with the columns from the other data set set to `NA`.
+
+We can now proceed in the same way as before.We just need to use `od2` instead of `od`.
+
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+odall <- od2 %>% 
+    inner_join(sf_stations, by=c("start_station_id"="station_id")) %>%
+    inner_join(sf_stations, by=c("end_station_id"="station_id"), 
+               suffix=c("","_end")) 
+
+ggplot() + 
+    geom_point(data=sf_stations, aes(long, lat, size=dockcount)) +
+    geom_segment(data=odall, aes(long, lat, xend=long_end, 
+                                 yend=lat_end, alpha=ntrips))
+``` 
+
+
+
+
+
+####[/answer]
+
+###[/task]
+
+
+
+\newpage
