@@ -23,7 +23,7 @@ export function embedAssets(ctx: Context) {
         case '.gif':
           return embedImage(node, ctx);
         case '.pdf':
-          return embedTexPdfSvg(node, ctx, file);
+          return embedTexPdfSvg(node);
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
@@ -80,9 +80,9 @@ async function getImageDataFromWeb(src: string) {
   return buffer.toString('base64');
 }
 
-async function embedTexPdfSvg(imgNode: Node, ctx: Context, file: VFile) {
+async function embedTexPdfSvg(imgNode: Node) {
   const src = getImageSrc(imgNode);
-  const svgNode = await texPdfToSvg(src, ctx, file);
+  const svgNode = await texPdfToSvg(src);
   const svgProps = svgNode.properties as Record<string, string>;
   const imgProps = imgNode.properties as Record<string, string>;
   const properties = { ...svgProps, ...imgProps };

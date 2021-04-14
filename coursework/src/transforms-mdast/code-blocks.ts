@@ -7,6 +7,8 @@ import { VFile } from 'vfile';
 import { executeRCode } from '../r-markdown/exec-r';
 import { parseCodeParams } from '../r-markdown/parse-code-params';
 import { Context } from '../types';
+import { cacheToFile } from '../utils/cache-to-file';
+import { failMessage } from '../utils/message';
 import { rehypeParser } from '../utils/utils';
 
 export function codeBlocks(ctx: Context) {
@@ -25,10 +27,6 @@ export function codeBlocks(ctx: Context) {
 
 async function customCode(node: Node, ctx: Context, file: VFile) {
   const { language, options, value } = parseCodeParams(node);
-
-  if (language === '') {
-    console.log(node);
-  }
 
   node.data = {
     hName: 'div',
@@ -55,49 +53,78 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
                   value,
                 },
               ]
-            : highlight(language, value).value,
+            : highlight(language.toLowerCase(), value).value,
         },
       ],
     },
   ];
 
-  if (language !== 'r' || options.eval === false) {
-    return;
-  }
+  if (language === 'r' && options.eval !== false) {
+    try {
+      const output = await cacheToFile({
+        ctx,
+        prefix: 'r',
+        key: value,
+        execFn: executeRCode,
+      });
 
-  try {
-    const output = await executeRCode(value as string);
-
-    if (output.trim() === '') {
-      return;
-    }
-
-    children.push({
-      type: 'element',
-      tagName: 'div',
-      properties: {
-        className: ['output'],
-      },
-      children: [
-        {
+      if (output.trim() !== '') {
+        children.push({
           type: 'element',
-          tagName: 'h3',
+          tagName: 'div',
+          properties: {
+            className: ['output'],
+          },
           children: [
             {
-              type: 'text',
-              value: 'Output',
+              type: 'element',
+              tagName: 'h3',
+              children: [
+                {
+                  type: 'text',
+                  value: 'Output',
+                },
+              ],
+            },
+            {
+              type: 'element',
+              tagName: 'code',
+              children: rehypeParser.parse(output).children,
             },
           ],
+        });
+      }
+    } catch (err) {
+      children.push({
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: ['output', 'error'],
         },
-        {
-          type: 'element',
-          tagName: 'code',
-          children: rehypeParser.parse(output).children,
-        },
-      ],
-    });
-  } catch (err) {
-    // TODO: not sure this is a great idea but it's current functionality
+        children: [
+          {
+            type: 'element',
+            tagName: 'h3',
+            children: [
+              {
+                type: 'text',
+                value: 'Exception',
+              },
+            ],
+          },
+          {
+            type: 'element',
+            tagName: 'code',
+            children: [
+              {
+                type: 'text',
+                value: err.message,
+              },
+            ],
+          },
+        ],
+      });
+    }
   }
 
   node.data.hChildren = children;

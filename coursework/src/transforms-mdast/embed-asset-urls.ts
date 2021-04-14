@@ -13,13 +13,13 @@ export function embedAssetUrl() {
     if (!file.dirname) {
       throw new Error('VFile dirname undefined');
     }
-    if (/^\.{1,2}\//.test(url)) {
+    if (!url.startsWith('http')) {
       const fullPath = path.join(file.cwd, file.dirname, url);
       const exists = await checkFileExists(fullPath);
-      if (!exists) {
-        failMessage(file, `No asset found at ${url}`, node.position);
-      } else {
+      if (exists) {
         node.url = fullPath;
+      } else {
+        failMessage(file, `No asset found at ${url}`, node.position);
       }
     }
   }

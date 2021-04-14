@@ -2,29 +2,49 @@ import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
 import { mmlToSpeech, mmlToSvg, texToMml } from '../latex/mathjax-tex';
+import { Context } from '../types';
+import { cacheJsonToFile } from '../utils/cache-to-file';
 import { rehypeParser } from '../utils/utils';
 
-export function accessibleTex() {
-  return (tree: Node) => {
-    visit(tree, ['math', 'inlineMath'], customMath);
+export function accessibleTex(ctx: Context) {
+  return async (tree: Node) => {
+    const transformations: Node[] = [];
+    visit(tree, ['math', 'inlineMath'], (node) => {
+      transformations.push(node);
+    });
+    await Promise.all(
+      transformations.map((node) => customMath(node, ctx))
+    );
   };
 }
 
-function customMath(node: Node) {
-  const className = node.type === 'inlineMath' ? 'math-inline' : 'math';
-  const mml = texToMml((node.value || '') as string);
-  const label = mmlToSpeech(mml);
-  const mathjaxSvg = mmlToSvg(mml);
-  const svg = customSvgOutput(mathjaxSvg, label);
+async function customMath(node: Node, ctx: Context) {
+  const value = node.value as string;
+
+  const svg = await cacheJsonToFile({
+    ctx,
+    prefix: 'tex',
+    key: value,
+    execFn: mathJaxSvg,
+  });
 
   node.data = {
     hName: node.type === 'inlineMath' ? 'span' : 'div',
-    hProperties: { className },
+    hProperties: {
+      className: node.type === 'inlineMath' ? 'math-inline' : 'math',
+    },
     hChildren: [svg],
   };
 }
 
-function customSvgOutput(mathjaxSvg: string, label: string = '') {
+async function mathJaxSvg(value: string) {
+  const mml = texToMml(value);
+  const label = mmlToSpeech(mml);
+  const svg = mmlToSvg(mml);
+  return createAccessibleSvg(svg, label);
+}
+
+function createAccessibleSvg(mathjaxSvg: string, label: string = '') {
   const tree = rehypeParser.parse(mathjaxSvg) as Parent;
   const parent = tree.children[0] as Parent;
   const svg = parent.children[0] as Parent;

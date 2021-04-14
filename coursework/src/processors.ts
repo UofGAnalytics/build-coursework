@@ -73,7 +73,7 @@ export async function linter(mdast: Node, ctx: Context, file: VFile) {
 
 export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   const processor = unified()
-    .use(accessibleTex)
+    .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
     // .use(inspect)
     .use(boxouts)

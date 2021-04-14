@@ -4,9 +4,7 @@ import SandboxedModule from 'sandboxed-module';
 import unified from 'unified';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
-import { VFile } from 'vfile';
 
-import { Context } from '../types';
 // @ts-expect-error
 import { Element, Image, document } from './domstubs';
 
@@ -15,11 +13,7 @@ const pdfjsLib = SandboxedModule.require('pdfjs-dist/es5/build/pdf', {
   globals: { document, Image, Element, console, process },
 });
 
-export async function texPdfToSvg(
-  filePath: string,
-  ctx: Context,
-  file: VFile
-) {
+export async function texPdfToSvg(filePath: string) {
   const doc = await pdfjsLib.getDocument({
     url: filePath,
     fontExtraProperties: true,

@@ -48,6 +48,7 @@ function formatError(err: ExecException, wrappedCode: string) {
   err.message = err.message
     .replace(wrappedCode, '')
     .replace('Execution halted', '')
+    .replace('Command failed:', '')
     .trim();
   return err;
 }
