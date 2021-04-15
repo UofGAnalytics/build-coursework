@@ -3,13 +3,15 @@
   "private": true,
   "workspaces": [
     "coursework",
-    "template"
+    "template",
+    "dev"
   ],
   "repository": "https://github.com/UofGAnalytics/build-coursework.git",
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
   "license": "MIT",
   "scripts": {
     "dev": "concurrently yarn:coursework yarn:template -c green,cyan",
+    "dev2": "babel-node --extensions .ts dev/index.ts",
     "coursework": "yarn workspace coursework dev",
     "template": "yarn workspace template dev",
     "test": "jest --verbose",

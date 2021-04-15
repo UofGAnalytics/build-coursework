@@ -11,9 +11,28 @@ const { argv } = yargs(process.argv.slice(2))
   .option('watch', {
     type: 'boolean',
     description: 'Watch coursework for changes',
+  })
+  .option('noDoc', {
+    type: 'boolean',
+    description: 'Only Compile content HTML',
+  })
+  .option('noReport', {
+    type: 'boolean',
+    description: 'Bypass linter',
+  })
+  .option('noDoc', {
+    type: 'boolean',
+    description: 'Only Compile content HTML',
   });
 
 const dirPath = String(argv._[0] || '.');
 
-buildCourse(dirPath);
+const options = {
+  week: argv.week,
+  watch: argv.watch,
+  noDoc: argv.noDoc,
+  noReport: argv.noReport,
+};
+
+buildCourse(dirPath, options);
 // console.log(dirPath, argv.week);

@@ -13,9 +13,9 @@
     "build-coursework": "bin/cli.js"
   },
   "scripts": {
-    "dev": "NODE_ENV=development nodemon src/index.ts",
-    "cli": "babel-node --root-mode upward --extensions .ts bin/cli.ts",
-    "build": "NODE_ENV=production webpack"
+    "dev": "babel-node --root-mode upward --extensions .ts bin/cli.ts",
+    "build": "NODE_ENV=production webpack",
+    "compile": "node ./build/main.js"
   },
   "dependencies": {
     "@double-great/remark-lint-alt-text": "^0.7.0",

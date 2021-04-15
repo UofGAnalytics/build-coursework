@@ -43,7 +43,7 @@ This course has three different types of assessment.
 
 This course has no final degree exam.
 
-\newpage 
+\newpage
 #### Assessment and Feedback Calendar
 
 |Assessment  | Weight | Handed Out | Due in | Feedback by|
@@ -54,7 +54,7 @@ This course has no final degree exam.
 |Project      | 20% | December 9th | January 20th | January 28th|
 |Mini viva    | 20% ||||
 
-The mini vivas will be scheduled between December 2nd and December 20th. You will be able to book appointments for these from early November. 
+The mini vivas will be scheduled between December 2nd and December 20th. You will be able to book appointments for these from early November.
 
 ## Software requirements
 
@@ -71,11 +71,11 @@ You can download the standard version of R from [CRAN](https://cran.r-project.or
 ####[background]Downloading and installing R for Windows
 To download the Windows installer of R, just enter the following URL (or click on the clink).
 
-https://cran.r-project.org//bin/windows/base/release.html 
+https://cran.r-project.org//bin/windows/base/release.html
 
-This will download the most installer for the most recent version of R. Alternatively, you can go to the main CRAN page, https://cran.r-project.org/, and then click on "Download R for Windows", click on "base" and then on "Download R x.y.z for Windows" (where x.y.z is the current version number of R). 
+This will download the most installer for the most recent version of R. Alternatively, you can go to the main CRAN page, https://cran.r-project.org/, and then click on "Download R for Windows", click on "base" and then on "Download R x.y.z for Windows" (where x.y.z is the current version number of R).
 
-You can then run the installer, accepting all default settings. 
+You can then run the installer, accepting all default settings.
 ####[/background]
 
 ####[weblink, target="https://mran.microsoft.com/download/"]MRAN
@@ -124,7 +124,7 @@ The [introduction](https://cran.r-project.org/doc/manuals/r-release/R-intro.html
 ###[/weblink]
 
 ###[weblink, target="https://datacamp.com/"]Datacamp
-Finally, [Datacamp](https://datacamp.) is worth mentioning. Datacamp offer [online training courses on R](https://www.datacamp.com/courses/free-introduction-to-r) (and Python). 
+Finally, [Datacamp](https://datacamp.) is worth mentioning. Datacamp offer [online training courses on R](https://www.datacamp.com/courses/free-introduction-to-r) (and Python).
 ###[/weblink]
 
 

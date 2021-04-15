@@ -6,6 +6,7 @@ export type Options = {
   noReport?: boolean;
   noEmbedAssets?: boolean;
   week?: number;
+  watch?: boolean;
 };
 
 export type Context = {

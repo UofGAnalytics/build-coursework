@@ -1,17 +1,20 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
-const CopyPlugin = require('copy-webpack-plugin');
+// const CopyPlugin = require('copy-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = {
-  entry: path.join(__dirname, 'src/index.ts'),
+  entry: [
+    path.join(__dirname, 'src/index.ts'),
+    path.join(__dirname, 'bin/cli.ts')
+  ],
   mode: isProd ? 'production' : 'development',
   target: 'node',
   output: {
     path: path.join(__dirname, 'build'),
-    filename: 'index.js',
+    filename: '[name].js',
     publicPath: '',
     libraryTarget: 'commonjs'
   },
@@ -36,11 +39,11 @@ module.exports = {
   externals: [nodeExternals({ modulesFromFile: true })],
   plugins: [
     new CleanWebpackPlugin(),
-    new CopyPlugin({
-      patterns: [
-        { from: '../template/build', to: 'template' },
-      ],
-    }),
+    // new CopyPlugin({
+    //   patterns: [
+    //     { from: '../template/build', to: 'template' },
+    //   ],
+    // }),
   ],
   optimization: {
     minimize: false,
