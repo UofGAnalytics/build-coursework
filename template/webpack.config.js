@@ -4,9 +4,12 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { template } = require('lodash')
+const VirtualModulesPlugin = require('webpack-virtual-modules');
+
+const COURSE = 'rprog'
+const UNIT = 'week-1.html'
 
 const isProd = process.env.NODE_ENV === 'production';
-
 const html = fs.readFileSync('./public/index.html', 'utf-8')
 
 const entry = [
@@ -30,9 +33,16 @@ plugins.push(
 
 if (!isProd) {
   entry.push(
-    path.join(__dirname, 'public/dev.ts')
+    path.join(__dirname, 'dev.ts')
   )
   plugins.push(
+    new VirtualModulesPlugin({
+      './dev.ts': `
+        import html from '../fixtures/${COURSE}/build/${UNIT}';
+        const root = document.getElementById('root') as HTMLElement;
+        root.innerHTML = html;
+      `,
+    }),
     new HtmlWebpackPlugin({
       inject: false,
       templateContent: ({ htmlWebpackPlugin }) => {

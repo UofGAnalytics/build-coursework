@@ -2,6 +2,7 @@ import { Course } from './course/types';
 
 export type Options = {
   noDoc?: boolean;
+  noWrapper?: boolean;
   noSyntaxHighlight?: boolean;
   noReport?: boolean;
   noEmbedAssets?: boolean;

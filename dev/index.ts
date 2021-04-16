@@ -1,64 +1,67 @@
 import { exec } from 'child_process';
 
 import chokidar from 'chokidar';
-import liveServer from 'live-server';
 
-const FIXTURE = 'rprog';
+const COURSE = 'rprog';
 
-liveServer.start({
-  host: 'localhost',
-  port: 3000,
-  root: `fixtures/${FIXTURE}/build`,
-  open: false,
-});
+run();
 
-const cmd = `yarn workspace coursework compile ../fixtures/${FIXTURE} --noReport`;
-
-console.log('watching...');
+async function run() {
+  await rebuildCompiler();
+  await recompile();
+  console.log('open at http://localhost:3000');
+  await runCommand('yarn workspace template dev');
+}
 
 chokidar.watch('./coursework/src').on('change', async () => {
-  console.log('rebuilding coursework');
-  await runCommand('yarn workspace coursework build');
-
-  console.log('recompiling');
-  await runCommand(cmd);
-
-  console.log('done!');
-});
-
-chokidar.watch('./template/src').on('change', async () => {
-  console.log('rebuilding template');
-  await runCommand('yarn workspace template build');
-
-  console.log('recompiling');
-  await runCommand(cmd);
-
+  await rebuildCompiler();
+  await recompile();
   console.log('done!');
 });
 
 chokidar
-  .watch(`./fixtures/${FIXTURE}/`, { ignored: '**/*.html' })
+  .watch(`./fixtures/${COURSE}`, { ignored: '**/*.html' })
   .on('change', async () => {
-    console.log('recompiling');
-    await runCommand(cmd);
-
+    await recompile();
     console.log('done!');
   });
+
+async function rebuildCompiler() {
+  console.log('rebuilding compiler');
+  console.time('rebuild-compiler');
+  await runCommand('yarn workspace coursework build');
+  console.timeEnd('rebuild-compiler');
+}
+
+async function recompile() {
+  console.log('recompiling');
+  console.time('compile');
+  await runCommand(
+    `yarn workspace coursework compile ../fixtures/${COURSE} --noReport --noDoc`
+  );
+  console.timeEnd('compile');
+}
 
 function runCommand(command: string) {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
+        console.error(error);
         reject(error);
-        return;
-      }
-
-      if (stderr) {
+      } else if (stderr) {
+        console.error(error);
         reject(stderr);
-        return;
+      } else {
+        resolve(stdout);
       }
-
-      resolve(stdout);
     });
   });
 }
+
+// import liveServer from 'live-server';
+// liveServer.start({
+//   host: 'localhost',
+//   port: 3000,
+//   root: `fixtures/${FIXTURE}/build`,
+//   open: false,
+// });

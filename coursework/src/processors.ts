@@ -97,8 +97,12 @@ export async function htmlCompiler(
     processor.use(embedAssets, ctx); // TODO: try to get this inside custom transforms
   }
 
+  if (!ctx.options.noWrapper) {
+    processor.use(htmlWrapper, titles);
+  }
+
   if (!ctx.options.noDoc) {
-    processor.use(htmlWrapper, titles).use(doc, {
+    processor.use(doc, {
       title: titles.docTitle,
       style: `\n${await getTemplateCss()}\n`,
       script: `\n${await getTemplateJs()}\n`,
