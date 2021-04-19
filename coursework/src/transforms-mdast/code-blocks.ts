@@ -8,7 +8,6 @@ import { executeRCode } from '../r-markdown/exec-r';
 import { parseCodeParams } from '../r-markdown/parse-code-params';
 import { Context } from '../types';
 import { cacheToFile } from '../utils/cache-to-file';
-import { failMessage } from '../utils/message';
 import { rehypeParser } from '../utils/utils';
 
 export function codeBlocks(ctx: Context) {
@@ -69,6 +68,7 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
       });
 
       if (output.trim() !== '') {
+        const response = rehypeParser.parse(output).children;
         children.push({
           type: 'element',
           tagName: 'div',
@@ -76,25 +76,26 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
             className: ['output'],
           },
           children: [
-            {
-              type: 'element',
-              tagName: 'h3',
-              children: [
-                {
-                  type: 'text',
-                  value: 'Output',
-                },
-              ],
-            },
+            // {
+            //   type: 'element',
+            //   tagName: 'h6',
+            //   children: [
+            //     {
+            //       type: 'text',
+            //       value: 'R output',
+            //     },
+            //   ],
+            // },
             {
               type: 'element',
               tagName: 'code',
-              children: rehypeParser.parse(output).children,
+              children: response,
             },
           ],
         });
       }
     } catch (err) {
+      const errMessage = err.message as string;
       children.push({
         type: 'element',
         tagName: 'div',
@@ -102,23 +103,23 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
           className: ['output', 'error'],
         },
         children: [
-          {
-            type: 'element',
-            tagName: 'h3',
-            children: [
-              {
-                type: 'text',
-                value: 'Exception',
-              },
-            ],
-          },
+          // {
+          //   type: 'element',
+          //   tagName: 'h6',
+          //   children: [
+          //     {
+          //       type: 'text',
+          //       value: 'R exception',
+          //     },
+          //   ],
+          // },
           {
             type: 'element',
             tagName: 'code',
             children: [
               {
                 type: 'text',
-                value: err.message,
+                value: errMessage,
               },
             ],
           },

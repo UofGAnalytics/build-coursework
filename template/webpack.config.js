@@ -83,12 +83,13 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
+        test: /\.s?css$/,
         use: [
           isProd
             ? MiniCssExtractPlugin.loader
             : 'style-loader',
-          'css-loader'
+          'css-loader',
+          "sass-loader",
         ]
       },
       // for inlining SVG icons in CSS files

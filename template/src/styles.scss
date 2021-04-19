@@ -1,3 +1,24 @@
+// https://www.gla.ac.uk/myglasgow/staff/brandtoolkit/brandelements/colours
+
+$blue: #003865;
+$cobalt: #0075b0;
+$skyblue: #005398;
+$slate: #4f5961;
+$leaf: #00843d;
+$moss: #385a4f;
+$sandstone: #7a6855;
+$burgundy: #7d2239;
+$pillarbox: #b30c00;
+$lavender: #5b4d94;
+$thistle: #951272;
+$rust: #be4d00;
+
+$turqoise: #00b5d1;
+$rose: #b06c96;
+$pumpkin: #ffb948;
+$sunshine: #ffdc36;
+$mocha: #aa8066;
+
 @import "~highlight.js/styles/an-old-hope.css";
 
 * {
@@ -10,8 +31,11 @@ html {
   /* system font-family https://css-tricks.com/snippets/css/system-font-stack */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  font-weight: 400;
+  line-height: 1.75;
   text-rendering: geometricPrecision;
+  color: #222;
+  scroll-behavior: smooth;
 }
 
 /* ------------------------ */
@@ -19,13 +43,16 @@ html {
 /* ------------------------ */
 
 .wrapper {
-  padding: 2rem 10rem;
+  width: 75%;
+  max-width: 1200px;
+  /* padding: 2rem 0; */
+  margin: 0 auto;
 }
-@media (max-width: 1000px) {
+/* @media (max-width: 1000px) {
   .wrapper {
     padding: 2rem 5rem;
   }
-}
+} */
 
 /* ------------------------ */
 /* logo ------------------- */
@@ -35,7 +62,7 @@ html {
   display: inline-flex;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  background: #003865;
+  background: $blue;
 }
 .logo .crest {
   width: 4rem;
@@ -68,20 +95,49 @@ body {
   color: #222;
 }
 
+p {
+  padding-bottom: 1rem;
+}
+
+code {
+  display: inline;
+  vertical-align: middle;
+  font-family: monospace;
+  padding: 0.2rem 0.5rem 0.3rem;
+  margin: 0 0.2rem;
+  position: relative;
+  /* bottom: 0.1rem; */
+  background: #EAE2DA88;
+  color: #7a6855;
+  border-radius: 0.25rem;
+}
+
+p, li {
+  a {
+    font-weight: 600;
+    text-decoration: none;
+    color: #0075b0;
+  }
+}
+
+/* ------------------------ */
+/* titles ----------------- */
+/* ------------------------ */
+
 h1, h2, h3, h4, h5, h6 {
   padding: 1.5rem 0 1rem;
-  color: #003865;
+  color: $blue;
+  font-weight: 700;
 }
 
 h1 {
-  font-size: 4rem;
-  padding: 4rem 0 7rem;
+  font-size: 3.5rem;
+  padding: 4rem 0 2rem;
 }
 h1 span {
   display: block;
-  font-size: 1.8rem;
+  font-size: 0.5em;
   color: #666;
-  padding-top: 0.5rem;
 }
 
 h2 {
@@ -93,33 +149,71 @@ h2 {
 
 h3 {
   font-size: 1.5rem;
+  padding: 3rem 0 1rem;
 }
 
 h4 {
   font-size: 1.25rem;
-  color: #222;
+  color: $slate;
 }
 
-p {
-  padding-bottom: 1rem;
+h2 + h3, h3 + h4, h4 + h5, h5 + h6 {
+  padding-top: 0;
 }
 
-a {
-  font-weight: 800;
+// link icon on hover
+h2, h3, h4, h5, h6 {
+  a {
+    color: $blue;
+    text-decoration: none;
+
+    &::before {
+      $diam: 1em;
+      $spacing: 0.2em;
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      width: $diam;
+      height: $diam;
+      margin-top: -0.15em;
+      margin-right: $spacing;
+      margin-left: ($diam + $spacing) * -1;
+      background: center / 60% auto no-repeat url(./icons/link-icon2.svg);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    &:hover::before {
+      opacity: 0.5;
+    }
+  }
+}
+
+/* ------------------------ */
+/* buttons ---------------- */
+/* ------------------------ */
+
+.button {
+  display: inline-block;
+  background: $leaf;
+  color: white;
+  fill: white;
+  padding: 0.6em 0.8em;
+  border-radius: 0.3rem;
   text-decoration: none;
-  color: #0075b0;
-}
+  font-weight: 600;
+  line-height: 1;
 
-code {
-  display: inline;
-  padding: 0.2rem 0.5rem 0.3rem;
-  position: relative;
-  bottom: 0.1rem;
-  vertical-align: middle;
-  background: #EAE2DA;
-  color: #7a6855;
-  border-radius: 0.25rem;
-  font-family: monospace;
+  &.external::after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+    margin: -0.2em 0 0 1em;
+    background: center / 80% auto no-repeat url(./icons/external-link-icon.svg);
+    opacity: 0.75;
+  }
 }
 
 /* ------------------------ */
@@ -141,28 +235,35 @@ table {
   border-collapse: collapse;
   background: #f2f2f2;
   border-radius: 0.4rem;
-  margin: 0.5rem 0 1.5rem;
+  margin: 0.5rem 0 2rem;
 }
 th, td {
   border: 0.1rem solid #bbb;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem 0.5rem 1rem;
   text-align: left;
 }
 th {
-  padding-top: 1rem;
+  /* padding-top: 1rem; */
   border-top-width: 0;
+  color: $blue;
 }
 th:first-child, td:first-child {
   padding-left: 1rem;
   border-left-width: 0;
 }
 tr:last-child td {
-  padding-bottom: 1rem;
+  /* padding-bottom: 1rem; */
   border-bottom-width: 0;
 }
 th:last-child, td:last-child {
-  padding-right: 1rem;
+  padding-right: 2rem;
   border-right-width: 0;
+}
+table code {
+  background: none;
+  color: #222;
+  padding: 0;
+  margin: 0;
 }
 
 /* ------------------------ */
@@ -195,9 +296,9 @@ svg.pdftex {
 
 .code-wrapper {
   background: #1c1d21;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0 1.5rem;
   border-radius: 0.5rem;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .code-wrapper pre {
@@ -220,13 +321,19 @@ svg.pdftex {
 
 .code-wrapper .output.error {
   background: #C21919;
+}
+.code-wrapper .output.error code {
   color: #fff;
 }
 
-.code-wrapper .output h3 {
+.code-wrapper .output h6 {
+  font-size: 1rem;
   color: white;
   margin-top: -0.1rem;
   padding: 0 0 1rem;
+}
+.code-wrapper .output h6::after {
+  content: ':'
 }
 
 .code-wrapper .output svg {
@@ -246,11 +353,11 @@ svg.pdftex {
   background: #f2f2f2;
 }
 
-.boxout *:first-child {
+.boxout > *:first-child {
   padding-top: 0;
 }
 
-.boxout *:last-child {
+.boxout > *:last-child:not(.button) {
   padding-bottom: 0;
 }
 
@@ -259,22 +366,40 @@ svg.pdftex {
   font-size: 1rem;
 }
 
-.boxout h3::before {
+.boxout.weblink {
+  a.target {
+    color: $leaf;
+    // font-size: 1.2rem;
+    // font-weight: 600;
+    text-decoration: none;
+    // padding-bottom: 2px;
+    // border-bottom: 2px solid $leaf;
+    &::after {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      width: 1em;
+      height: 1em;
+      margin: -0.3em 0 0 0.5em;
+      background: center / 80% auto no-repeat url(./icons/external-link-icon.svg);
+      opacity: 0.4;
+    }
+  }
+}
+
+/* .boxout h3::before {
   content: '';
   display: inline-block;
   width: 2rem;
   height: 2rem;
   vertical-align: middle;
-  /* position: relative;
-  top: 0.6rem; */
-  /* background-color: red; */
   background-position: center top;
   background-size: contain;
   background-repeat: no-repeat;
   margin-right: 0.5rem;
-}
+} */
 
-.boxout.task h3::before {
+/* .boxout.task h3::before {
   background-image: url(./icons/task-icon.svg);
 }
 
@@ -292,14 +417,28 @@ svg.pdftex {
 
 .boxout.weblink h3::before {
   background-image: url(./icons/link-icon.svg);
-}
+} */
 
 .boxout.task {
   background-color: #e7d9e3;
+}
+
+.boxout.task h3 {
   color: #831262;
 }
 
 .boxout.supplement {
   background-color: #dfdfdf;
+}
+
+.boxout.supplement h3 {
   color: #464646;
+}
+
+/* ------------------------ */
+/* video ------------------ */
+/* ------------------------ */
+
+.video-wrapper {
+  padding: 1rem 0 1.5rem;
 }

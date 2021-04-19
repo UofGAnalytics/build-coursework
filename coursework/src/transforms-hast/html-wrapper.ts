@@ -23,17 +23,17 @@ export function htmlWrapper(opts: Options) {
           type: 'element',
           tagName: 'div',
           properties: {
-            className: 'logo',
-          },
-          children: [crest, uofg],
-        },
-        {
-          type: 'element',
-          tagName: 'div',
-          properties: {
             className: 'wrapper',
           },
           children: [
+            {
+              type: 'element',
+              tagName: 'div',
+              properties: {
+                className: 'logo',
+              },
+              children: [crest, uofg],
+            },
             {
               type: 'element',
               tagName: 'h1',

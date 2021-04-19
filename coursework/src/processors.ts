@@ -8,6 +8,8 @@ import doc from 'rehype-document';
 // @ts-expect-error
 import format from 'rehype-format';
 import stringify from 'rehype-stringify';
+// @ts-expect-error
+import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
 import gfm from 'remark-gfm';
 import math from 'remark-math';
@@ -15,6 +17,8 @@ import markdown from 'remark-parse';
 import remark2rehype from 'remark-rehype';
 // @ts-expect-error
 import remark2retext from 'remark-retext';
+// @ts-expect-error
+import slug from 'remark-slug';
 // @ts-expect-error
 import english from 'retext-english';
 // @ts-expect-error
@@ -73,6 +77,8 @@ export async function linter(mdast: Node, ctx: Context, file: VFile) {
 
 export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   const processor = unified()
+    .use(slug)
+    .use(headings, { behavior: 'wrap' })
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
     // .use(inspect)
