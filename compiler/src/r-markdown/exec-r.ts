@@ -56,7 +56,12 @@ function formatError(err: ExecException, wrappedCode: string) {
 function formatResponse(out: string) {
   // if output is text it will print an empty SVG after, so remove it
   if (containsEmptySvg(out)) {
-    return out.slice(0, out.indexOf('<?xml'));
+    return out
+      .slice(0, out.indexOf('<?xml'))
+      .split('\n')
+      .filter((l) => l.trim() !== '')
+      .map((l) => `## ${l}`)
+      .join('\n');
   }
 
   // if the output is SVG, remove the xml declaration at the top

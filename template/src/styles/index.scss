@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.wrapper {
+  width: 75%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// @media (max-width: 1000px) {
+//   .wrapper {
+//     padding: 2rem 5rem;
+//   }
+// }
+
+@import "./variables.scss";
+@import "./logo.scss";
+@import "./typography.scss";
+@import "./lists.scss";
+@import "./tables.scss";
+@import "./images.scss";
+@import "./tex.scss";
+@import "./code.scss";
+@import "./boxouts.scss";
+@import "./videos.scss";

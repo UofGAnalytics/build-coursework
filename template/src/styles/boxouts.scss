@@ -1,0 +1,109 @@
+.boxout {
+  padding: 0 2rem 2rem;
+  margin: 1rem 0 1.5rem;
+  background: #f7f7f7;
+  border-top: 5px solid black;
+
+  .type {
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    margin-bottom: 1rem;
+    background: black;
+    color: white;
+  }
+
+  h3 {
+    color: #222;
+    font-size: 1rem;
+  }
+
+  .type + h3 {
+    padding-top: 0.5rem;
+  }
+
+  & > *:first-child {
+    padding-top: 0;
+  }
+
+  & > *:last-child:not(.button) {
+    padding-bottom: 0;
+  }
+
+  &.task {
+    border-top-color: $thistle;
+    background-color: rgba($thistle, 0.1);
+    .type {
+      background: $thistle;
+    }
+    h3 {
+      color: $thistle;
+    }
+  }
+}
+
+
+
+// .boxout.weblink {
+//   a.target {
+//     color: $leaf;
+//     // font-size: 1.2rem;
+//     // font-weight: 600;
+//     text-decoration: none;
+//     // padding-bottom: 2px;
+//     // border-bottom: 2px solid $leaf;
+//     &::after {
+//       content: '';
+//       display: inline-block;
+//       vertical-align: middle;
+//       width: 1em;
+//       height: 1em;
+//       margin: -0.3em 0 0 0.5em;
+//       background: center / 80% auto no-repeat url(../icons/external-link-icon.svg);
+//       opacity: 0.4;
+//     }
+//   }
+// }
+
+/* .boxout h3::before {
+  content: '';
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: middle;
+  background-position: center top;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 0.5rem;
+} */
+
+/* .boxout.task h3::before {
+  background-image: url(./icons/task-icon.svg);
+}
+
+.boxout.example h3::before {
+  background-image: url(./icons/example-icon.svg);
+}
+
+.boxout.supplement h3::before {
+  background-image: url(./icons/supplement-icon.svg);
+}
+
+.boxout.background h3::before {
+  background-image: url(./icons/background-icon.svg);
+}
+
+.boxout.weblink h3::before {
+  background-image: url(./icons/link-icon.svg);
+} */
+
+// .boxout.task h3 {
+//   color: #831262;
+// }
+
+// .boxout.supplement {
+//   background-color: #dfdfdf;
+// }
+
+// .boxout.supplement h3 {
+//   color: #464646;
+// }

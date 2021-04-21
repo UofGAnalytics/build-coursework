@@ -1,0 +1,28 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: $blue;
+}
+.logo .crest {
+  width: 4rem;
+  height: 6rem;
+  margin-right: 1rem;
+}
+.logo .uofg {
+  width: 10rem;
+  height: 4rem;
+}
+/* .logo::before {
+  content: '';
+  width: 4rem;
+  height: 6rem;
+  background: center / contain no-repeat url(./logo/crest.svg);
+  margin-right: 0.5rem;
+}
+.logo::after {
+  content: '';
+  width: 10rem;
+  height: 4rem;
+  background: center / contain no-repeat url(./logo/uofg.svg);
+} */

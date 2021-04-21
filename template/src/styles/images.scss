@@ -1,0 +1,14 @@
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+figure {
+  figcaption {
+    font-style: italic;
+    .caption-count {
+      color: $blue;
+    }
+  }
+}

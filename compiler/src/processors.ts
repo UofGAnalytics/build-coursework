@@ -30,6 +30,7 @@ import { VFile } from 'vfile';
 import { codeMod } from './code-mod';
 import { getTemplateCss, getTemplateJs } from './env';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
+import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
@@ -37,6 +38,7 @@ import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-urls';
+import { images } from './transforms-mdast/images';
 import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
@@ -67,6 +69,7 @@ export async function linter(mdast: Node, ctx: Context, file: VFile) {
   const retextProcessor = unified().use(english).use(spell, dictionary);
   const processor = unified()
     .use(assertTaskAnswerStructure)
+    .use(assertWeblinkTarget)
     .use(lintLatex)
     .use(lintAltText)
     .use(lintLinkText)
@@ -83,6 +86,7 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
     .use(codeBlocks, ctx)
     // .use(inspect)
     .use(boxouts)
+    .use(images)
     .use(moveAnswersToEnd);
 
   return processor.run(mdast);

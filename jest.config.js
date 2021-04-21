@@ -1,21 +1,21 @@
 module.exports = {
   testTimeout: 30000,
   roots: [
-    '<rootDir>/coursework/src',
+    '<rootDir>/compiler/src',
     '<rootDir>/template/src',
     '<rootDir>/fixtures',
   ],
   watchPathIgnorePatterns: [
     '<rootDir>/node_modules/',
-    '<rootDir>/coursework/build/',
+    '<rootDir>/compiler/build/',
     '<rootDir>/template/build/',
     '<rootDir>/fixtures/**/build/',
   ],
   moduleFileExtensions: ['ts', 'js'],
   projects: [
     {
-      displayName: { name: 'coursework', color: 'cyan' },
-      testMatch: ['<rootDir>/coursework/**/?(*.)test.ts?(x)'],
+      displayName: { name: 'compiler', color: 'cyan' },
+      testMatch: ['<rootDir>/compiler/**/?(*.)test.ts?(x)'],
       testEnvironment: "node",
     },
     {

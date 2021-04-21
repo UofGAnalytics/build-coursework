@@ -1,0 +1,49 @@
+@import "~highlight.js/styles/atom-one-light.css";
+
+.code-wrapper {
+  background: #f7f7f7;
+  margin: 0.5rem 0 1.5rem;
+  // border-radius: 0.5rem;
+  overflow: auto;
+}
+
+.code-wrapper pre {
+  font-family: monospace;
+  padding: 2rem;
+}
+
+.code-wrapper code {
+  white-space: pre-wrap;
+  color: #abb2bf;
+  background: transparent;
+  padding: 0;
+
+}
+
+.code-wrapper .output {
+  background: #fff3;
+  padding: 2rem;
+}
+
+.code-wrapper .output.error {
+  background: #C21919;
+}
+.code-wrapper .output.error code {
+  color: #fff;
+}
+
+.code-wrapper .output h6 {
+  font-size: 1rem;
+  color: white;
+  margin-top: -0.1rem;
+  padding: 0 0 1rem;
+}
+.code-wrapper .output h6::after {
+  content: ':'
+}
+
+.code-wrapper .output svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}

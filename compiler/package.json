@@ -1,5 +1,5 @@
 {
-  "name": "coursework",
+  "name": "compiler",
   "version": "0.0.1",
   "main": "build/index.js",
   "repository": "https://github.com/UofGAnalytics/build-coursework.git",
