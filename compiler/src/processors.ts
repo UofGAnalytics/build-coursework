@@ -4,6 +4,7 @@ import lintAltText from '@double-great/remark-lint-alt-text';
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
 import dictionary from 'dictionary-en-gb';
+import getToc from 'mdast-util-toc';
 import doc from 'rehype-document';
 // @ts-expect-error
 import format from 'rehype-format';
@@ -108,7 +109,8 @@ export async function htmlCompiler(
   }
 
   if (!ctx.options.noWrapper) {
-    processor.use(htmlWrapper, titles);
+    const toc = getToc(mdast).map;
+    processor.use(htmlWrapper, titles, toc);
   }
 
   if (!ctx.options.noDoc) {
@@ -120,6 +122,7 @@ export async function htmlCompiler(
   }
 
   const transformed = await processor.run(mdast);
+
   return processor.stringify(transformed);
 }
 
