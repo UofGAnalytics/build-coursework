@@ -11,26 +11,76 @@ import { rehypeParser } from '../utils/utils';
 export function htmlWrapper(titles: UnitTitles, toc: Node | null) {
   return async (tree: Node) => {
     const logo = await createLogo();
-    const children: Node[] = [logo];
-    const treeChildren = tree.children as Node[];
-
-    if (toc !== null) {
-      children.push(toHast(toc));
-    }
-    children.push(createH1(titles));
-    children.push(...treeChildren);
-
+    const content = tree.children as Node[];
     return {
       type: 'root',
       children: [
         {
           type: 'element',
-          tagName: 'div',
-          properties: {
-            className: 'wrapper',
-          },
-          children,
+          tagName: 'aside',
+          children: [
+            logo,
+            {
+              type: 'element',
+              tagName: 'nav',
+              children: [
+                {
+                  type: 'element',
+                  tagName: 'div',
+                  properties: {
+                    id: 'view-options',
+                  },
+                  children: [
+                    {
+                      type: 'text',
+                      value: 'View options',
+                    },
+                  ],
+                },
+                toHast(toc as Node),
+              ],
+            },
+          ],
         },
+        {
+          type: 'element',
+          tagName: 'main',
+          children: [
+            {
+              type: 'element',
+              tagName: 'div',
+              properties: {
+                className: 'wrapper',
+              },
+              children: [createH1(titles), ...content],
+            },
+          ],
+        },
+        // {
+        //   type: 'element',
+        //   tagName: 'div',
+        //   properties: {
+        //     id: 'modal',
+        //   },
+        //   children: [
+        //     {
+        //       type: 'element',
+        //       tagName: 'div',
+        //       properties: {
+        //         id: 'modal-bg',
+        //       },
+        //       children: [],
+        //     },
+        //     {
+        //       type: 'element',
+        //       tagName: 'div',
+        //       properties: {
+        //         id: 'modal-content',
+        //       },
+        //       children: [],
+        //     },
+        //   ],
+        // },
       ],
     };
   };

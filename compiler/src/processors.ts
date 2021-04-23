@@ -109,7 +109,7 @@ export async function htmlCompiler(
   }
 
   if (!ctx.options.noWrapper) {
-    const toc = getToc(mdast).map;
+    const toc = getToc(mdast, { maxDepth: 3 }).map;
     processor.use(htmlWrapper, titles, toc);
   }
 
@@ -132,4 +132,6 @@ export async function pdfHtmlCompiler(
   unitIdx: number
 ) {
   // TODO: pdf cover
+  // const processor = unified().use(moveAnswersToEnd);
+  // const transformed = await processor.run(mdast);
 }

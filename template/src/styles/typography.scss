@@ -6,25 +6,15 @@ html {
   line-height: 1.75;
   text-rendering: geometricPrecision;
   color: #222;
-  scroll-behavior: smooth;
 }
 
 p {
   padding-bottom: 1rem;
 }
 
-code {
-  // display: inline;
-  vertical-align: baseline;
-  font-family: monospace;
-  padding: 0.1rem 0.3rem 0.2rem;
-  margin: 0 0.2rem;
-  position: relative;
-  /* bottom: 0.1rem; */
-  background: rgba(black, 0.07);
-  // color: #7a6855;
-  border-radius: 0.25rem;
-}
+/* ------------------------ */
+/* links ------------------ */
+/* ------------------------ */
 
 p, li {
   a {
@@ -45,18 +35,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 3.5rem;
-  padding: 4rem 0 2rem;
+  font-size: 3.3rem;
+  padding: 0rem 0 2rem;
+  color: black;
 }
 h1 span {
   display: block;
-  font-size: 0.5em;
-  color: #666;
+  font-size: 0.4em;
+  opacity: 0.5;
+  margin-top: -0.75rem;
 }
 
 h2 {
   font-size: 2.5rem;
-  padding: 3rem 0 1.5rem;
+  padding: 2rem 0 1rem;
   // margin-bottom: 1.5rem;
   // border-bottom: 0.3rem solid #ddd;
 }

@@ -1,0 +1,73 @@
+html.theme-light {
+  background: white;
+
+  body, h1, h1 span {
+    color: black;
+  }
+
+  nav {
+    $bg: #f7f7f7;
+    $thumb: #ccc;
+    background: $bg;
+
+    scrollbar-color: $thumb $bg;
+    &::-webkit-scrollbar-track {
+      background: $bg;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: $thumb;
+      border-color: $bg;
+    }
+  }
+
+  main {
+    $bg: white;
+    $thumb: #222;
+
+    scrollbar-color: $thumb $bg;
+    &::-webkit-scrollbar-track {
+      background: $bg;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: $thumb;
+      border-color: $bg;
+    }
+  }
+}
+
+html.theme-dark {
+  background: black;
+
+  body, h1, h1 span {
+    color: white;
+  }
+
+  nav {
+    $bg: #111;
+    $thumb: #222;
+    background: $bg;
+
+    scrollbar-color: $thumb $bg;
+    &::-webkit-scrollbar-track {
+      background: $bg;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: $thumb;
+      border-color: $bg;
+    }
+  }
+
+  main {
+    $bg: black;
+    $thumb: #ddd;
+
+    scrollbar-color: $thumb $bg;
+    &::-webkit-scrollbar-track {
+      background: $bg;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: $thumb;
+      border-color: $bg;
+    }
+  }
+}

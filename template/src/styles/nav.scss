@@ -1,0 +1,39 @@
+nav {
+
+  & > #view-options {
+    display: inline-block;
+    padding: 0.2rem 1rem;
+    margin: 2rem 2rem 0;
+    color: white;
+    background: $blue;
+    border-radius: 0.2rem;
+    cursor: pointer;
+  }
+
+  li {
+    list-style: none;
+    padding: 0;
+  }
+
+  p {
+    padding: 0;
+    line-height: 1.4;
+  }
+
+  // h2s
+  & > ul {
+    padding: 2rem;
+    & > li {
+      padding-bottom: 1.5rem !important;
+    }
+  }
+
+  // h3s
+  ul ul {
+    padding: 0.5rem;
+    a {
+      color: #888;
+      font-weight: 400;
+    }
+  }
+}

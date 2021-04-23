@@ -1,7 +1,4 @@
-setHtmlFontSize();
-window.addEventListener('resize', setHtmlFontSize, false);
-
-function setHtmlFontSize() {
+export function setHtmlFontSize() {
   const min = 14;
   const max = 30;
   const width = Math.min(window.innerWidth, 1000 * 1.5);

@@ -1,0 +1,13 @@
+$scrollbarWidth: 15px;
+$padding: 5px;
+
+*::-webkit-scrollbar {
+  width: $scrollbarWidth;
+}
+* {
+  scrollbar-width: thin;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: $scrollbarWidth / 2;
+  border: $padding solid;
+}

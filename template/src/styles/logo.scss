@@ -1,7 +1,8 @@
 .logo {
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 1.25rem 1.5rem;
+  padding: 1.25rem 0;
   background: $blue;
 }
 .logo .crest {

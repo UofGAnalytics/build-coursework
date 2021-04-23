@@ -1,0 +1,33 @@
+html, body {
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+
+  & > aside {
+    width: 18rem;
+    display: flex;
+    flex-direction: column;
+
+    & > nav {
+      flex: 1;
+      overflow: auto;
+      scroll-behavior: smooth;
+    }
+  }
+
+  & > main {
+    flex: 1;
+    overflow: auto;
+    scroll-behavior: smooth;
+
+    & > .wrapper {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+}
