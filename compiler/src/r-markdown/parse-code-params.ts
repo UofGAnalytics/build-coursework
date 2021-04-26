@@ -12,7 +12,7 @@ export function parseCodeParams(node: Node): CodeParams {
 
   // TODO: yup validate options?
   const options = parseOptions(combined);
-  const value = String(node.value || '');
+  const value = String(node.value || '').trim();
 
   return { language, options, value };
 }
@@ -25,7 +25,7 @@ function parseLanguage(options: string) {
       .split(',')
       .map((s) => s.trim())[0];
   }
-  return trimmed;
+  return trimmed.toLowerCase();
 }
 
 function parseOptions(options: string) {

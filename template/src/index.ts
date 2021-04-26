@@ -25,6 +25,10 @@ setTimeout(() => {
   document
     .getElementById('view-options')
     ?.addEventListener('click', handleViewOptionsClick);
+
+  document.querySelectorAll('.answer-trigger').forEach((elem) => {
+    elem.addEventListener('click', handleAnswerTriggerClick);
+  });
 }, 1000);
 
 function handleViewOptionsClick() {
@@ -46,4 +50,10 @@ function handleSelectThemeChange(e: Event) {
   const newTheme = target.value;
   $html.classList.replace(currentTheme, newTheme);
   currentTheme = newTheme;
+}
+
+function handleAnswerTriggerClick(e: Event) {
+  const target = e.target as HTMLSpanElement;
+  const { answerId } = target.dataset;
+  document.getElementById(`answer-${answerId}`)?.classList.toggle('show');
 }

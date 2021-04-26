@@ -1,0 +1,25 @@
+.form-block {
+  width: 10rem;
+  label {
+    display: block;
+    padding-bottom: 0.75rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $cobalt;
+  }
+  select {
+    background: transparent;
+    display: block;
+    font-size: 0.8rem;
+    color: white;
+    padding: 0.3rem 0.2rem;
+    width: 100%;
+    border-radius: 0.2rem;
+    box-shadow: 0 0 0 2px rgba(white, 0.5);
+    outline: 0;
+
+    &:focus {
+      box-shadow: 0 0 0 2px $rust;
+    }
+  }
+}

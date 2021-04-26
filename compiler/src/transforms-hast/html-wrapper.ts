@@ -22,23 +22,21 @@ export function htmlWrapper(titles: UnitTitles, toc: Node | null) {
             logo,
             {
               type: 'element',
-              tagName: 'nav',
+              tagName: 'div',
+              properties: {
+                id: 'view-options',
+              },
               children: [
                 {
-                  type: 'element',
-                  tagName: 'div',
-                  properties: {
-                    id: 'view-options',
-                  },
-                  children: [
-                    {
-                      type: 'text',
-                      value: 'View options',
-                    },
-                  ],
+                  type: 'text',
+                  value: 'View options',
                 },
-                toHast(toc as Node),
               ],
+            },
+            {
+              type: 'element',
+              tagName: 'nav',
+              children: [toHast(toc as Node)],
             },
           ],
         },
@@ -128,6 +126,15 @@ async function createLogo() {
     properties: {
       className: 'logo',
     },
-    children: [crest, uofg],
+    children: [
+      {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: 'logo-wrapper',
+        },
+        children: [crest, uofg],
+      },
+    ],
   };
 }

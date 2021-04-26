@@ -1,8 +1,8 @@
 .boxout {
   padding: 0 2rem 2rem;
   margin: 1rem 0 1.5rem;
-  background: #f7f7f7;
-  // border-top: 5px solid black;
+  border-radius: 0.4rem;
+  overflow: hidden;
 
   .type {
     display: inline-block;
@@ -13,7 +13,6 @@
   }
 
   h3 {
-    color: #222;
     font-size: 1rem;
   }
 
@@ -30,13 +29,54 @@
   }
 
   &.task {
-    border-top-color: $thistle;
-    background-color: rgba($thistle, 0.1);
-    .type {
-      background: $thistle;
+    .answer-trigger {
+      display: inline-block;
+      padding: 0.2rem 0.8rem 0.25rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 0.3rem;
+      // margin-bottom: 2rem;
     }
-    h3 {
-      color: $thistle;
+    .answer-reveal {
+      display: none;
+      background: #f2f2f2;
+      margin: 2rem -2rem -2rem -2rem;
+      padding: 2rem;
+      &.show {
+        display: block;
+      }
+    }
+  }
+
+  &.video {
+    display: block;
+    text-decoration: none;
+    padding: 0 2rem 2rem;
+    margin-bottom: 1.5rem;
+
+    .type {
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .content {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    img {
+      display: block;
+      width: 25%;
+      margin-left: 2rem;
+    }
+
+    .desc {
+      flex: 1;
+      .title {
+        font-weight: 700;
+        padding: 0 0 1rem;
+      }
     }
   }
 }

@@ -6,9 +6,7 @@ img {
 
 figure {
   figcaption {
+    padding-top: 0.5rem;
     font-style: italic;
-    .caption-count {
-      color: $blue;
-    }
   }
 }

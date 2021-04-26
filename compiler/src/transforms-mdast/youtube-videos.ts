@@ -20,7 +20,7 @@ function template(node: Node, file: VFile) {
     failMessage(file, 'id attribute is required', node.position);
   }
   if (!attributes.duration) {
-    failMessage(file, 'id attribute is required', node.position);
+    failMessage(file, 'duration attribute is required', node.position);
   }
 
   const title = getTitle(node);
@@ -31,7 +31,7 @@ function template(node: Node, file: VFile) {
   node.data = {
     hName: 'a',
     hProperties: {
-      className: 'video-wrapper',
+      className: ['boxout', 'video'],
       href: getYoutubeUrl(attributes.id),
       title: attributes.title || null,
       target: '_blank',

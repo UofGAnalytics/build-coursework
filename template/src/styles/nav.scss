@@ -1,39 +1,42 @@
-nav {
-
-  & > #view-options {
+aside {
+  #view-options {
     display: inline-block;
-    padding: 0.2rem 1rem;
-    margin: 2rem 2rem 0;
+    padding: 0.2rem 0.8rem 0.25rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin: 0 2rem 2rem;
     color: white;
-    background: $blue;
+    background: rgba($slate, 0.6);
     border-radius: 0.2rem;
     cursor: pointer;
   }
 
-  li {
-    list-style: none;
-    padding: 0;
-  }
-
-  p {
-    padding: 0;
-    line-height: 1.4;
-  }
-
-  // h2s
-  & > ul {
-    padding: 2rem;
-    & > li {
-      padding-bottom: 1.5rem !important;
+  nav {
+    li {
+      list-style: none;
+      padding: 0;
     }
-  }
 
-  // h3s
-  ul ul {
-    padding: 0.5rem;
-    a {
-      color: #888;
-      font-weight: 400;
+    p {
+      padding: 0;
+      line-height: 1.4;
+    }
+
+    // h2s
+    & > ul {
+      padding: 0 2rem 2rem 2rem;
+      & > li {
+        padding-bottom: 1.5rem !important;
+      }
+    }
+
+    // h3s
+    ul ul {
+      padding: 0.5rem;
+      a {
+        color: #888;
+        font-weight: 400;
+      }
     }
   }
 }

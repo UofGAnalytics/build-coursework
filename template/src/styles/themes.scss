@@ -1,12 +1,26 @@
 html.theme-light {
   background: white;
 
-  body, h1, h1 span {
+  body {
     color: black;
   }
 
-  nav {
-    $bg: #f7f7f7;
+  h1, h2, h3, h4, h5, h6 {
+    color: $blue;
+  }
+
+  h1 {
+    color: black;
+  }
+
+  h2, h3, h4, h5, h6 {
+    a {
+      color: $blue;
+    }
+  }
+
+  aside {
+    $bg: #f2f2f2;
     $thumb: #ccc;
     background: $bg;
 
@@ -33,18 +47,113 @@ html.theme-light {
       border-color: $bg;
     }
   }
+
+  .logo {
+    .crest {
+      .dark-only {
+        opacity: 0;
+      }
+    }
+    .uofg {
+      path {
+        fill: $blue;
+      }
+    }
+  }
+
+  table {
+    background: #f2f2f2;
+    th, td {
+      border-color: #bbb;
+    }
+    code {
+      color: #222;
+    }
+  }
+
+  .boxout, .video-wrapper {
+    background: #f2f2f2;
+    color: #222;
+    .type {
+      background: black;
+      color: white;
+    }
+    h3 {
+      color: #222;
+    }
+    &.task {
+      background-color: rgba($thistle, 0.1);
+      .type {
+        background: $thistle;
+      }
+      h3 {
+        color: $thistle;
+      }
+      .answer-trigger {
+        background: $thistle;
+        color: white;
+      }
+    }
+  }
+
+  figure {
+    figcaption {
+      color: #888;
+      .caption-count {
+        color: $blue;
+      }
+    }
+  }
+
+  code {
+    background: rgba(black, 0.07);
+  }
+
+  .code-wrapper {
+    code {
+      color: #333;
+      background: transparent;
+    }
+  }
+
+  #modal-wrapper {
+    background: white;
+  }
+
+  .form-block {
+    label {
+      color: $cobalt;
+    }
+    select {
+      color: black;
+      box-shadow: 0 0 0 2px rgba(black, 0.25);
+      &:focus {
+        box-shadow: 0 0 0 2px $rust;
+      }
+    }
+  }
 }
 
 html.theme-dark {
-  background: black;
+  background: #111;
 
-  body, h1, h1 span {
+  body {
+    color: #ccc;
+  }
+
+  h1 {
     color: white;
   }
 
-  nav {
-    $bg: #111;
-    $thumb: #222;
+  h2, h3, h4, h5, h6 {
+    a {
+      color: $cobalt;
+    }
+  }
+
+  aside {
+    $bg: #222;
+    $thumb: #333;
     background: $bg;
 
     scrollbar-color: $thumb $bg;
@@ -58,7 +167,7 @@ html.theme-dark {
   }
 
   main {
-    $bg: black;
+    $bg: #111;
     $thumb: #ddd;
 
     scrollbar-color: $thumb $bg;
@@ -70,4 +179,64 @@ html.theme-dark {
       border-color: $bg;
     }
   }
+
+  table {
+    background: #222;
+    th, td {
+      border-color: #555;
+    }
+    td {
+      color: #999;
+    }
+    code {
+      color: #ccc;
+    }
+  }
+
+  figure {
+    figcaption {
+      color: #666;
+      .caption-count {
+        color: $cobalt;
+      }
+    }
+  }
+
+  code {
+    background: rgba(white, 0.07);
+  }
+
+  .code-wrapper {
+    code {
+      color: #888;
+      background: transparent;
+    }
+  }
+
+  .boxout, .video-wrapper {
+    background: #222;
+    color: #ccc;
+    .type {
+      background: white;
+      color: black;
+    }
+  }
+
+  #modal-wrapper {
+    background: #2e2e2e;
+  }
+
+  .form-block {
+    label {
+      color: $cobalt;
+    }
+    select {
+      color: white;
+      box-shadow: 0 0 0 2px rgba(white, 0.5);
+      &:focus {
+        box-shadow: 0 0 0 2px $rust;
+      }
+    }
+  }
+
 }

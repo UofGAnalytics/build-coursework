@@ -40,18 +40,65 @@ function createAttributes(node: Node, count: number) {
 
 export function createBoxout(node: Node, count: number): Node[] {
   const typeTitle = createBoxoutType(node);
-  const title = createTitle(node);
   const titles = [typeTitle];
-  if (title !== null) {
+
+  const titleValue = getTitleValue(node);
+  if (titleValue !== null) {
+    const title = createTitle(node);
     titles.push(title);
   }
 
   const children = node.children as Node[];
   const content = children
     .filter((o) => !o.data?.directiveLabel)
-    .map((o) => ({ ...toHast(o), name: o.name }));
+    .filter((o) => o.type !== 'containerDirective' && o.name !== 'answer')
+    .map((o) => toHast(o));
+
+  if (node.name === 'task') {
+    const answer = children.find(
+      (o) => o.type === 'containerDirective' && o.name === 'answer'
+    );
+    if (answer) {
+      content.push(createAnswer(answer, count));
+    }
+  }
 
   return [...titles, ...content];
+}
+
+function createAnswer(node: Node, count: number) {
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: {
+      className: ['answer'],
+    },
+    children: [
+      {
+        type: 'element',
+        tagName: 'span',
+        properties: {
+          className: ['answer-trigger'],
+          'data-answer-id': count,
+        },
+        children: [
+          {
+            type: 'text',
+            value: 'Show/Hide answer',
+          },
+        ],
+      },
+      {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: ['answer-reveal'],
+          id: `answer-${count}`,
+        },
+        children: [toHast(node)],
+      },
+    ],
+  };
 }
 
 function createBoxoutType(node: Node): Parent {

@@ -45,23 +45,28 @@ function sanitizeRCode(code: string) {
 }
 
 function formatError(err: ExecException, wrappedCode: string) {
-  err.message = err.message
+  const message = err.message
     .replace(wrappedCode, '')
     .replace('Execution halted', '')
-    .replace('Command failed:', '')
-    .trim();
+    .replace('Command failed:', '');
+
+  err.message = addLinePrefix(message);
   return err;
+}
+
+function addLinePrefix(str: string) {
+  return str
+    .split('\n')
+    .filter((l) => l.trim() !== '')
+    .map((l) => `> ${l}`)
+    .join('\n');
 }
 
 function formatResponse(out: string) {
   // if output is text it will print an empty SVG after, so remove it
   if (containsEmptySvg(out)) {
-    return out
-      .slice(0, out.indexOf('<?xml'))
-      .split('\n')
-      .filter((l) => l.trim() !== '')
-      .map((l) => `## ${l}`)
-      .join('\n');
+    const response = out.slice(0, out.indexOf('<?xml'));
+    return addLinePrefix(response);
   }
 
   // if the output is SVG, remove the xml declaration at the top

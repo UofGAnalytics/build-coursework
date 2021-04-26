@@ -9,14 +9,18 @@ html, body {
 
   & > aside {
     width: 18rem;
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
+    overflow: auto;
+    scroll-behavior: smooth;
 
-    & > nav {
-      flex: 1;
-      overflow: auto;
-      scroll-behavior: smooth;
-    }
+    // & > .logo {
+    //   flex: 0 0 auto;
+    // }
+
+    // & > nav {
+    //   flex: 1;
+    // }
   }
 
   & > main {
@@ -25,7 +29,7 @@ html, body {
     scroll-behavior: smooth;
 
     & > .wrapper {
-      width: 90%;
+      width: 88%;
       max-width: 1200px;
       margin: 0 auto;
     }

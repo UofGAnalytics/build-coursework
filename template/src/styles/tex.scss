@@ -2,7 +2,12 @@ svg.pdftex {
   display: block;
   width: 100%;
   height: auto;
-  margin: 1rem 0 1.5rem;
+  // margin: 1rem 0 1.5rem;
+  background: white;
+}
+
+.math svg {
+  max-width: 100%;
 }
 
 .math-inline {

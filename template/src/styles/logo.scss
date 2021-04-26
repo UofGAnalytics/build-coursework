@@ -1,19 +1,22 @@
 .logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.25rem 0;
-  background: $blue;
+  padding: 2.25rem 2rem 3rem;
+
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    width: 70%;
+  }
+
+  .crest {
+    width: 25%;
+    margin-right: 10%;
+  }
+
+  .uofg {
+    width: 60%;
+  }
 }
-.logo .crest {
-  width: 4rem;
-  height: 6rem;
-  margin-right: 1rem;
-}
-.logo .uofg {
-  width: 10rem;
-  height: 4rem;
-}
+
 /* .logo::before {
   content: '';
   width: 4rem;

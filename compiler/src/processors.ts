@@ -87,8 +87,8 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
     .use(codeBlocks, ctx)
     // .use(inspect)
     .use(boxouts)
-    .use(images)
-    .use(moveAnswersToEnd);
+    .use(images);
+  // .use(moveAnswersToEnd);
 
   return processor.run(mdast);
 }

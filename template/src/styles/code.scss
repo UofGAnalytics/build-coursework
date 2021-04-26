@@ -1,62 +1,52 @@
 @import "~highlight.js/styles/atom-one-light.css";
 
 code {
-  // display: inline;
   vertical-align: baseline;
   font-family: monospace;
   padding: 0.1rem 0.3rem 0.2rem;
   margin: 0 0.2rem;
   position: relative;
-  /* bottom: 0.1rem; */
-  background: rgba(black, 0.07);
-  // color: #7a6855;
   border-radius: 0.25rem;
 }
 
 .code-wrapper {
-  background: #f7f7f7;
-  margin: 0.5rem 0 1.5rem;
-  // border-radius: 0.5rem;
-  overflow: auto;
+  padding-bottom: 1rem;
+
+  pre {
+    font-family: monospace;
+  }
+
+  code {
+    white-space: pre;
+    overflow: auto;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+  }
+
+  .output {
+    &.error {
+      code {
+        color: $pillarbox;
+      }
+    }
+
+    h6 {
+      font-size: 1rem;
+      color: white;
+      margin-top: -0.1rem;
+      padding: 0 0 1rem;
+      &::after {
+        content: ':'
+      }
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
 }
 
-.code-wrapper pre {
-  font-family: monospace;
-  padding: 2rem;
-}
 
-.code-wrapper code {
-  white-space: pre-wrap;
-  color: #abb2bf;
-  background: transparent;
-  padding: 0;
-
-}
-
-.code-wrapper .output {
-  background: #fff3;
-  padding: 2rem;
-}
-
-.code-wrapper .output.error {
-  background: #C21919;
-}
-.code-wrapper .output.error code {
-  color: #fff;
-}
-
-.code-wrapper .output h6 {
-  font-size: 1rem;
-  color: white;
-  margin-top: -0.1rem;
-  padding: 0 0 1rem;
-}
-.code-wrapper .output h6::after {
-  content: ':'
-}
-
-.code-wrapper .output svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
