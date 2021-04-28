@@ -2,21 +2,22 @@ const path = require('path');
 const fs = require('fs')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { template } = require('lodash')
-const VirtualModulesPlugin = require('webpack-virtual-modules');
+const WatchExternalFilesPlugin = require('webpack-watch-files-plugin').default;
+const {
+  MiniHtmlWebpackPlugin,
+  generateCSSReferences,
+  generateJSReferences
+} = require('mini-html-webpack-plugin');
 
-const COURSE = 'rprog'
-const UNIT = 'week-1.html'
 
 const isProd = process.env.NODE_ENV === 'production';
-const html = fs.readFileSync('./public/index.html', 'utf-8')
 
-const entry = [
-  path.join(__dirname, 'src/index.ts'),
+const plugins = [
+  new MiniCssExtractPlugin({
+    filename: '[name].css',
+    chunkFilename: '[id].css'
+  }),
 ]
-
-const plugins = []
 
 if (isProd) {
   plugins.push(
@@ -24,41 +25,20 @@ if (isProd) {
   )
 }
 
-plugins.push(
-  new MiniCssExtractPlugin({
-    filename: '[name].css',
-    chunkFilename: '[id].css'
-  }),
-)
-
 if (!isProd) {
-  entry.push(
-    path.join(__dirname, 'dev.ts')
-  )
+  const COURSE = 'rprog'
+  const UNIT = 'week-1.html'
+  const htmlFilePath = `../fixtures/${COURSE}/build/${UNIT}`
   plugins.push(
-    new VirtualModulesPlugin({
-      './dev.ts': `
-        import html from '../fixtures/${COURSE}/build/${UNIT}';
-        const root = document.getElementById('root') as HTMLElement;
-        root.innerHTML = html;
-      `,
-    }),
-    new HtmlWebpackPlugin({
-      inject: false,
-      templateContent: ({ htmlWebpackPlugin }) => {
-        const props = {
-          //
-        }
-        return template(html)({ ...props, htmlWebpackPlugin })
-      },
-    }),
+    new WatchExternalFilesPlugin({ files: [htmlFilePath] }),
+    new MiniHtmlWebpackPlugin({ template })
   )
 }
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
   devtool: isProd ? false : 'cheap-module-source-map',
-  entry,
+  entry: [path.join(__dirname, 'src/index.ts')],
   target: 'web',
   output: {
     path: isProd ? path.join(__dirname, 'build') : undefined,
@@ -72,7 +52,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts?$/,
+        test: /\.ts$/,
         use: [
           {
             loader: 'babel-loader',
@@ -97,12 +77,6 @@ module.exports = {
         test: /\.svg$/,
         loader: 'url-loader'
       },
-      // for importing sample coursework in dev mode
-      {
-        test: /\.html$/,
-        include: [/\/fixtures\//],
-        loader: 'raw-loader'
-      }
     ]
   },
   plugins,
@@ -117,3 +91,34 @@ module.exports = {
     hot: true
   }
 };
+
+function template({ css, js }) {
+  const cssTags = generateCSSReferences({ files: css })
+  const jsTags = generateJSReferences({ files: js })
+  const content = fs.readFileSync(htmlFilePath, 'utf-8')
+  return `
+    <!DOCTYPE html>
+    <html lang="en" class="theme-light">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <title>Coursework</title>
+        ${cssTags}
+      </head>
+      <body>
+        <div id="root">
+          ${content}
+        </div>
+        <div id="modal">
+          <div id="modal-bg"></div>
+          <div id="modal-wrapper">
+            <div id="modal-close"></div>
+            <div id="modal-content"></div>
+          </div>
+        </div>
+        ${jsTags}
+      </body>
+    </html>
+  `
+}

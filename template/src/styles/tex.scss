@@ -12,4 +12,7 @@ svg.pdftex {
 
 .math-inline {
   vertical-align: middle;
+  svg {
+    max-width: 100%;
+  }
 }

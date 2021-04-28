@@ -13,12 +13,11 @@ code {
   padding-bottom: 1rem;
 
   pre {
+    overflow: auto;
     font-family: monospace;
   }
 
   code {
-    white-space: pre;
-    overflow: auto;
     background: transparent;
     padding: 0;
     margin: 0;

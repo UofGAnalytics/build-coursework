@@ -88,8 +88,14 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
             // },
             {
               type: 'element',
-              tagName: 'code',
-              children: response,
+              tagName: 'pre',
+              children: [
+                {
+                  type: 'element',
+                  tagName: 'code',
+                  children: response,
+                },
+              ],
             },
           ],
         });
@@ -115,11 +121,17 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
           // },
           {
             type: 'element',
-            tagName: 'code',
+            tagName: 'pre',
             children: [
               {
-                type: 'text',
-                value: errMessage,
+                type: 'element',
+                tagName: 'code',
+                children: [
+                  {
+                    type: 'text',
+                    value: errMessage,
+                  },
+                ],
               },
             ],
           },

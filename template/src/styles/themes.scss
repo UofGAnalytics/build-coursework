@@ -93,6 +93,9 @@ html.theme-light {
         background: $thistle;
         color: white;
       }
+      .answer-reveal {
+        background: #f2f2f2;
+      }
     }
   }
 
@@ -219,6 +222,23 @@ html.theme-dark {
     .type {
       background: white;
       color: black;
+    }
+
+    &.task {
+      background-color: rgba($thistle, 0.1);
+      .type {
+        background: $thistle;
+      }
+      h3 {
+        color: $thistle;
+      }
+      .answer-trigger {
+        background: $thistle;
+        color: white;
+      }
+      .answer-reveal {
+        background: #333;
+      }
     }
   }
 

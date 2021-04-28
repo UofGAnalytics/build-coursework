@@ -40,7 +40,8 @@ import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-urls';
 import { images } from './transforms-mdast/images';
-import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
+import { responsiveTables } from './transforms-mdast/responsive-tables';
+// import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
 
@@ -83,6 +84,7 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   const processor = unified()
     .use(slug)
     .use(headings, { behavior: 'wrap' })
+    .use(responsiveTables)
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
     // .use(inspect)

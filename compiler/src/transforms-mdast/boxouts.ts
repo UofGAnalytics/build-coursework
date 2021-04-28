@@ -95,7 +95,7 @@ function createAnswer(node: Node, count: number) {
           className: ['answer-reveal'],
           id: `answer-${count}`,
         },
-        children: [toHast(node)],
+        children: [createBoxoutType(node), toHast(node)],
       },
     ],
   };
