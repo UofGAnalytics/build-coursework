@@ -9,6 +9,9 @@ const {
   generateJSReferences
 } = require('mini-html-webpack-plugin');
 
+const COURSE = 'rprog'
+const UNIT = 'week-1.html'
+const htmlFilePath = `../fixtures/${COURSE}/build/${UNIT}`
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -26,9 +29,6 @@ if (isProd) {
 }
 
 if (!isProd) {
-  const COURSE = 'rprog'
-  const UNIT = 'week-1.html'
-  const htmlFilePath = `../fixtures/${COURSE}/build/${UNIT}`
   plugins.push(
     new WatchExternalFilesPlugin({ files: [htmlFilePath] }),
     new MiniHtmlWebpackPlugin({ template })
@@ -98,7 +98,7 @@ function template({ css, js }) {
   const content = fs.readFileSync(htmlFilePath, 'utf-8')
   return `
     <!DOCTYPE html>
-    <html lang="en" class="theme-light">
+    <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />

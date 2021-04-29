@@ -72,8 +72,8 @@
   --modalContentBg: white;
 
   --selectColor: black;
-  --selectShadow: 0 0 0 2px rgba(black, 0.25);
-  --selectFocusShadow: 0 0 0 2px var(--rust);
+  --selectShadow: rgba(0, 0, 0, 0.25);
+  --selectFocusShadow: var(--rust);
 }
 
 html.theme-dark {
@@ -113,6 +113,6 @@ html.theme-dark {
   --modalContentBg: #2e2e2e;
 
   --selectColor: white;
-  --selectShadow: 0 0 0 2px rgba(white, 0.25);
-  --selectFocusShadow: 0 0 0 2px var(--rust);
+  --selectShadow: rgba(255, 255, 255, 0.25);
+  --selectFocusShadow: var(--rust);
 }
