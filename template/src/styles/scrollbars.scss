@@ -1,5 +1,5 @@
 $scrollbarWidth: 15px;
-$padding: 5px;
+$scrollbarPadding: 5px;
 
 *::-webkit-scrollbar {
   width: $scrollbarWidth;
@@ -9,5 +9,5 @@ $padding: 5px;
 }
 *::-webkit-scrollbar-thumb {
   border-radius: $scrollbarWidth / 2;
-  border: $padding solid;
+  border: $scrollbarPadding solid;
 }

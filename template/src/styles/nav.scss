@@ -6,7 +6,7 @@ aside {
     font-weight: bold;
     margin: 0 2rem 2rem;
     color: white;
-    background: rgba($slate, 0.6);
+    background: rgba(var(--slateRgb), 0.6);
     border-radius: 0.2rem;
     cursor: pointer;
   }

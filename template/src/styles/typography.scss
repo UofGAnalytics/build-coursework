@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Martel:wght@900&display=swap');
 
 html {
-  font-family: $system-font;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.75;
@@ -34,6 +34,13 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
+h1, h1 a { color: var(--h1Color); }
+h2, h2 a { color: var(--h2Color); }
+h3, h3 a { color: var(--h3Color); }
+h4, h4 a { color: var(--h4Color); }
+h5, h5 a { color: var(--h5Color); }
+h6, h6 a { color: var(--h6Color); }
+
 h1 {
   font-family: 'Martel', serif;
   font-size: 3.3rem;
@@ -58,7 +65,6 @@ h3 {
 
 h4 {
   font-size: 1.25rem;
-  color: $slate;
 }
 
 h2 + h3,

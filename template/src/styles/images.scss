@@ -8,5 +8,9 @@ figure {
   figcaption {
     padding-top: 0.5rem;
     font-style: italic;
+    color: var(--fadedTextColor);
+    .caption-count {
+      color: var(--labelColor);
+    }
   }
 }

@@ -7,6 +7,7 @@ code {
   margin: 0 0.2rem;
   position: relative;
   border-radius: 0.25rem;
+  background: var(--codeBg);
 }
 
 .code-wrapper {
@@ -18,15 +19,16 @@ code {
   }
 
   code {
-    background: transparent;
     padding: 0;
     margin: 0;
+    color: var(--blockCodeColor);
+    background: transparent;
   }
 
   .output {
     &.error {
       code {
-        color: $pillarbox;
+        color: var(--pillarbox);
       }
     }
 

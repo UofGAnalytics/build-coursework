@@ -10,26 +10,27 @@ table {
   border-collapse: collapse;
   border-radius: 0.4rem;
   margin: 0.5rem 0 2rem;
+  background: var(--tableBg);
 
   th, td {
-    border: 0.1rem solid;
+    border: 0.1rem solid var(--tableBorderColor);
     padding: 0.5rem 2rem 0.5rem 1rem;
     text-align: left;
   }
+  td {
+    color: var(--tableTextColor);
+  }
   th {
-    /* padding-top: 1rem; */
     border-top-width: 0;
+    color: var(--tableTitleColor);
   }
   th:first-child, td:first-child {
-    padding-left: 1rem;
     border-left-width: 0;
   }
   tr:last-child td {
-    /* padding-bottom: 1rem; */
     border-bottom-width: 0;
   }
   th:last-child, td:last-child {
-    padding-right: 2rem;
     border-right-width: 0;
   }
 
@@ -37,5 +38,6 @@ table {
     background: none;
     padding: 0;
     margin: 0;
+    color: var(--tableTextColor);
   }
 }

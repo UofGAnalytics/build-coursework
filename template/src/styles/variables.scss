@@ -1,22 +1,118 @@
-// https://www.gla.ac.uk/myglasgow/staff/brandtoolkit/brandelements/colours
-$blue: #003865;
-$cobalt: #0075b0;
-$skyblue: #005398;
-$slate: #4f5961;
-$leaf: #00843d;
-$moss: #385a4f;
-$sandstone: #7a6855;
-$burgundy: #7d2239;
-$pillarbox: #b30c00;
-$lavender: #5b4d94;
-$thistle: #951272;
-$rust: #be4d00;
+:root {
+  // https://www.gla.ac.uk/myglasgow/staff/brandtoolkit/brandelements/colours
+  --blue: #003865;
+  --blueRgb: 0, 56, 101;
+  --cobalt: #0075b0;
+  --cobaltRgb: 0, 117, 176;
+  --skyblue: #005398;
+  --skyblueRgb: 0, 83, 152;
+  --slate: #4f5961;
+  --slateRgb: 79, 89, 97;
+  --leaf: #00843d;
+  --leafRgb: 0, 132, 61;
+  --moss: #385a4f;
+  --mossRgb: 56, 90, 79;
+  --sandstone: #7a6855;
+  --sandstoneRgb: 122, 104, 85;
+  --burgundy: #7d2239;
+  --burgundyRgb: 125, 34, 57;
+  --pillarbox: #b30c00;
+  --pillarboxRgb: 179, 12, 0;
+  --lavender: #5b4d94;
+  --lavenderRgb: 91, 77, 148;
+  --thistle: #951272;
+  --thistleRgb: 149, 18, 114;
+  --rust: #be4d00;
+  --rustRgb: 190, 77, 0;
 
-$turqoise: #00b5d1;
-$rose: #b06c96;
-$pumpkin: #ffb948;
-$sunshine: #ffdc36;
-$mocha: #aa8066;
+  --turqoise: #00b5d1;
+  --turquoiseRgb: 0, 181, 209;
+  --rose: #b06c96;
+  --roseRgb: 176, 108, 150;
+  --pumpkin: #ffb948;
+  --pumpkinRgb: 255, 185, 72;
+  --sunshine: #ffdc36;
+  --sunshineRgb: 255, 220, 54;
+  --mocha: #aa8066;
+  --mochaRgb: 170, 128, 102;
 
-// system font-family https://css-tricks.com/snippets/css/system-font-stack
-$system-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  --bg: white;
+  --textColor: black;
+  --fadedTextColor: #888;
+  --labelColor: var(--blue);
+
+  --h1Color: black;
+  --h2Color: var(--blue);
+  --h3Color: var(--blue);
+  --h4Color: var(--slate);
+  --h5Color: var(--blue);
+  --h6Color: var(--blue);
+
+  --asideBg: #f2f2f2;
+  --asideScrollbarThumb: #ccc;
+  --mainScrollbarThumb: #222;
+
+  --tableBg: #f2f2f2;
+  --tableBorderColor: #bbb;
+  --tableTitleColor: #222;
+  --tableTextColor: #222;
+
+  --boxoutBg: #f2f2f2;
+  --boxoutTextColor: #222;
+  --boxoutTypeBg: black;
+  --boxoutTypeTextColor: white;
+
+  --taskBg: rgba(var(--thistleRgb), 0.1);
+  --taskFg: var(--thistle);
+  --answerBg: #f2f2f2;
+
+  --codeBg: rgba(black, 0.07);
+  --blockCodeColor: #333;
+
+  --modalContentBg: white;
+
+  --selectColor: black;
+  --selectShadow: 0 0 0 2px rgba(black, 0.25);
+  --selectFocusShadow: 0 0 0 2px var(--rust);
+}
+
+html.theme-dark {
+  --bg: #111;
+  --textColor: #ccc;
+  --fadedTextColor: #666;
+  --labelColor: var(--cobalt);
+
+  --h1Color: white;
+  --h2Color: var(--cobalt);
+  --h3Color: var(--cobalt);
+  --h4Color: var(--cobalt);
+  --h5Color: var(--cobalt);
+  --h6Color: var(--cobalt);
+
+  --asideBg: #222;
+  --asideScrollbarThumb: #333;
+  --mainScrollbarThumb: #ddd;
+
+  --tableBg: #222;
+  --tableBorderColor: #444;
+  --tableTitleColor: #ccc;
+  --tableTextColor: #999;
+
+  --boxoutBg: #222;
+  --boxoutTextColor: #ccc;
+  --boxoutTypeBg: white;
+  --boxoutTypeTextColor: black;
+
+  --taskBg: rgba(var(--thistleRgb), 0.1);
+  --taskFg: var(--thistle);
+  --answerBg: #333;
+
+  --codeBg: rgba(white, 0.07);
+  --blockCodeColor: #888;
+
+  --modalContentBg: #2e2e2e;
+
+  --selectColor: white;
+  --selectShadow: 0 0 0 2px rgba(white, 0.25);
+  --selectFocusShadow: 0 0 0 2px var(--rust);
+}

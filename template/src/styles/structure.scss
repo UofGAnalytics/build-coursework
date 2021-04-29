@@ -2,6 +2,14 @@ html, body {
   height: 100%;
 }
 
+html {
+  background: var(--bg);
+}
+
+body {
+  color: var(--textColor);
+}
+
 #root {
   display: flex;
   height: 100%;
@@ -9,24 +17,33 @@ html, body {
 
   & > aside {
     width: 18rem;
-    // display: flex;
-    // flex-direction: column;
     overflow: auto;
+    background: var(--asideBg);
+
     scroll-behavior: smooth;
-
-    // & > .logo {
-    //   flex: 0 0 auto;
-    // }
-
-    // & > nav {
-    //   flex: 1;
-    // }
+    scrollbar-color: var(--asideScrollbarThumb) var(--asideBg);
+    &::-webkit-scrollbar-track {
+      background: var(--asideBg);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--asideScrollbarThumb);
+      border-color: var(--asideBg);
+    }
   }
 
   & > main {
     flex: 1;
     overflow: auto;
+
     scroll-behavior: smooth;
+    scrollbar-color: var(--mainScrollbarThumb) var(--bg);
+    &::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--mainScrollbarThumb);
+      border-color: var(--bg);
+    }
 
     & > .wrapper {
       width: 88%;

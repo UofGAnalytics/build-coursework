@@ -4,20 +4,14 @@
   padding: 0;
 }
 
-
-// @media (max-width: 1000px) {
-//   .wrapper {
-//     padding: 2rem 5rem;
-//   }
-// }
-
 @import "./variables.scss";
 @import "./scrollbars.scss";
 @import "./structure.scss";
+@import "./typography.scss";
 @import "./logo.scss";
 @import "./nav.scss";
+
 @import "./modal.scss";
-@import "./typography.scss";
 @import "./lists.scss";
 @import "./tables.scss";
 @import "./images.scss";
@@ -25,4 +19,3 @@
 @import "./code.scss";
 @import "./boxouts.scss";
 @import "./view-options.scss";
-@import "./themes.scss";
