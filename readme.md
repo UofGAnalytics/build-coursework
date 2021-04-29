@@ -23,6 +23,7 @@ https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rebber
 
 https://github.com/ajrgodfrey/BrailleR
 https://stem-enable.github.io/Accessibility-of-maths-e-resources/index.html
+https://www.dyslexiefont.com
 
 ### Prior art
 
