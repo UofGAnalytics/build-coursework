@@ -17,7 +17,8 @@ body {
 
   & > aside {
     width: 18rem;
-    overflow: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
     background: var(--asideBg);
 
     scroll-behavior: smooth;
@@ -26,8 +27,14 @@ body {
       background: var(--asideBg);
     }
     &::-webkit-scrollbar-thumb {
-      background-color: var(--asideScrollbarThumb);
+      background-color: var(--asideBg);
       border-color: var(--asideBg);
+      transition: background-color 0.2s;
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--asideScrollbarThumb);
+      }
     }
   }
 

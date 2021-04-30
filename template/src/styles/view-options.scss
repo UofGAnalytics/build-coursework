@@ -1,25 +1,128 @@
-.form-block {
-  width: 10rem;
-  label {
-    display: block;
-    padding-bottom: 0.75rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--labelColor);
-  }
-  select {
-    background: transparent;
-    display: block;
-    font-size: 0.8rem;
-    color: var(--textColor);
-    padding: 0.3rem 0.2rem;
-    width: 100%;
-    border-radius: 0.2rem;
-    box-shadow: 0 0 0 2px var(--selectShadow);
-    outline: 0;
+#view-options-trigger {
+  display: inline-block;
+  padding: 0.2rem 0.8rem 0.25rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin: 0 2rem 2rem;
+  color: white;
+  background: rgba(var(--slateRgb), 0.6);
+  border-radius: 0.2rem;
+  cursor: pointer;
+  user-select: none;
+}
 
-    &:focus {
-      box-shadow: 0 0 0 2px var(--selectFocusShadow);
+// show/hide view options
+#view-options {
+  display: none;
+}
+html.view-options-open {
+  #toc {
+    display: none;
+  }
+  #view-options {
+    display: block;
+  }
+}
+
+#view-options {
+  padding: 0 calc(2rem - 15px) 2rem 2rem;
+  h3 {
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  ul {
+    padding: 1rem 0 2rem;
+    li {
+      list-style: none;
     }
   }
+}
+
+ul#themes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+
+  li {
+    padding: 0.75rem 0.5rem 0.5rem;
+    height: 3rem;
+    border-radius: 0.3rem;
+    line-height: 1.4;
+    cursor: pointer;
+
+    &.light {
+      background: white;
+      color: black;
+      // html.theme-light & {
+
+      // }
+    }
+    &.dark {
+      background: #111;
+      color: white;
+    }
+    &.yellow-on-black {
+      background: black;
+      color: #ebd90e;
+    }
+    &.black-on-yellow {
+      background: #ebd90e;
+      color: black;
+    }
+    &.black-on-red {
+      background: #de7777;
+      color: black;
+    }
+    &.black-on-blue {
+      background: #64a8e1;
+      color: black;
+    }
+  }
+}
+
+ul#fonts {
+  li {
+    border: 2px solid rgba(white, 0.2);
+    margin-bottom: 0.5rem;
+    border-radius: 0.3rem;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+ul#readability {
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    // margin-bottom: 0.2rem;
+  }
+  span {
+    &.label {
+      flex: 1;
+    }
+    &.btn {
+      $diameter: 1.3rem;
+      display: inline-block;
+      width: $diameter;
+      height: $diameter;
+      line-height: $diameter;
+      box-sizing: border-box;
+      text-align: center;
+      background: rgba(white, 0.5);
+      border-radius: 0.2rem;
+      color: black;
+      padding: 0 0.3rem;
+      margin-left: 0.5rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+      &.reset {
+        opacity: 0.5;
+        width: auto;
+      }
+    }
+  }
+
 }

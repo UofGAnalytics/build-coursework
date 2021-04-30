@@ -1,5 +1,3 @@
-import { openModal } from './modal';
-
 type State = {
   theme: string;
 };
@@ -8,19 +6,20 @@ const defaultState: State = {
   theme: 'theme-light',
 };
 
+// initialise
 const state = getSavedState();
-document.documentElement.classList.add(state.theme);
+document.documentElement.classList.add(...Object.values(state));
 
-const openBtn = document.getElementById('view-options') as Element;
-openBtn.addEventListener('click', () => {
-  openModal(template);
-  init();
-});
+// elements
+const openBtn = document.getElementById('view-options-trigger') as Element;
+const theme = document.getElementById('select-theme') as HTMLSelectElement;
 
-function init() {
-  const theme = document.getElementById('select-theme') as HTMLSelectElement;
-  theme.value = state.theme;
-  theme.addEventListener('change', setTheme);
+// events
+openBtn.addEventListener('click', toggleOpen);
+// theme.addEventListener('change', setTheme);
+
+function toggleOpen() {
+  document.documentElement.classList.toggle('view-options-open');
 }
 
 function setTheme(e: Event) {
@@ -30,21 +29,11 @@ function setTheme(e: Event) {
   saveState(state);
 }
 
+function getSavedState(): State {
+  const saved = localStorage.getItem('view-options');
+  return saved ? JSON.parse(saved) : defaultState;
+}
+
 function saveState(state: State) {
   localStorage.setItem('view-options', JSON.stringify(state));
 }
-
-function getSavedState(): State {
-  const saved = localStorage.getItem('view-options');
-  return saved === null ? defaultState : JSON.parse(saved);
-}
-
-const template = `
-  <div class="form-block">
-    <label for="select-theme">Select theme</label>
-    <select id="select-theme">
-      <option value="theme-light">Light</option>
-      <option value="theme-dark">Dark</option>
-    </select>
-  </div>
-`;

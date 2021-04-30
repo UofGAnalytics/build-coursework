@@ -4,7 +4,6 @@ import lintAltText from '@double-great/remark-lint-alt-text';
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
 import dictionary from 'dictionary-en-gb';
-import getToc from 'mdast-util-toc';
 import doc from 'rehype-document';
 // @ts-expect-error
 import format from 'rehype-format';
@@ -30,11 +29,11 @@ import { VFile } from 'vfile';
 
 import { codeMod } from './code-mod';
 import { getTemplateCss, getTemplateJs } from './env';
+import { htmlWrapper } from './html-wrapper';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
-import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
@@ -49,20 +48,12 @@ import { Context } from './types';
 
 export async function markdownParser(file: VFile) {
   file.contents = codeMod(file.contents as string);
-  const processor = unified()
-    .use(markdown)
-    .use(directive)
-    .use(math)
-    .use(gfm);
+  const processor = unified().use(markdown).use(directive).use(math).use(gfm);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
 
-export async function customTransforms(
-  mdast: Node,
-  ctx: Context,
-  file: VFile
-) {
+export async function customTransforms(mdast: Node, ctx: Context, file: VFile) {
   const processor = unified().use(embedAssetUrl).use(youtubeVideos);
   return processor.run(mdast, file);
 }
@@ -95,24 +86,16 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   return processor.run(mdast);
 }
 
-export async function htmlCompiler(
-  mdast: Node,
-  ctx: Context,
-  unitIdx: number
-) {
+export async function htmlCompiler(mdast: Node, ctx: Context, unitIdx: number) {
   const { titles } = ctx.course.units[unitIdx];
-  const processor = unified()
-    .use(remark2rehype)
-    .use(format)
-    .use(stringify);
+  const processor = unified().use(remark2rehype).use(format).use(stringify);
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx); // TODO: try to get this inside custom transforms
   }
 
   if (!ctx.options.noWrapper) {
-    const toc = getToc(mdast, { maxDepth: 3 }).map;
-    processor.use(htmlWrapper, titles, toc);
+    processor.use(htmlWrapper, titles, mdast);
   }
 
   if (!ctx.options.noDoc) {
@@ -128,11 +111,7 @@ export async function htmlCompiler(
   return processor.stringify(transformed);
 }
 
-export async function pdfHtmlCompiler(
-  mdast: Node,
-  ctx: Context,
-  unitIdx: number
-) {
+export async function pdfHtmlCompiler(mdast: Node, ctx: Context, unitIdx: number) {
   // TODO: pdf cover
   // const processor = unified().use(moveAnswersToEnd);
   // const transformed = await processor.run(mdast);

@@ -1,16 +1,4 @@
 aside {
-  #view-options {
-    display: inline-block;
-    padding: 0.2rem 0.8rem 0.25rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin: 0 2rem 2rem;
-    color: white;
-    background: rgba(var(--slateRgb), 0.6);
-    border-radius: 0.2rem;
-    cursor: pointer;
-  }
-
   nav {
     li {
       list-style: none;
@@ -24,7 +12,7 @@ aside {
 
     // h2s
     & > ul {
-      padding: 0 2rem 2rem 2rem;
+      padding: 0 calc(2rem - 15px) 2rem 2rem;
       & > li {
         padding-bottom: 1.5rem !important;
       }

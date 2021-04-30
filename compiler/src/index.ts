@@ -10,21 +10,14 @@ import {
 } from './processors';
 import { Context, Options } from './types';
 import { printReport, reportHasFatalErrors } from './utils/report';
-import {
-  combineMdastTrees,
-  getBuildDir,
-  getCacheDir,
-  mkdir,
-} from './utils/utils';
+import { combineMdastTrees, getBuildDir, getCacheDir, mkdir } from './utils/utils';
 import { writeHtml } from './utils/write-files';
 
 export async function buildCourse(dirPath: string, options: Options = {}) {
-  const course = await collectCoursework(dirPath);
-
   const ctx: Context = {
+    course: await collectCoursework(dirPath),
     buildDir: getBuildDir(dirPath),
     cacheDir: getCacheDir(dirPath),
-    course,
     options,
   };
 
@@ -32,8 +25,8 @@ export async function buildCourse(dirPath: string, options: Options = {}) {
     await mkdir(ctx.buildDir);
   }
 
-  for (let idx = 0; idx < course.units.length; idx++) {
-    const unit = course.units[idx];
+  for (let idx = 0; idx < ctx.course.units.length; idx++) {
+    const unit = ctx.course.units[idx];
 
     try {
       const { html } = await buildUnit(ctx, idx);
@@ -53,14 +46,10 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
   const mdasts = await Promise.all(files.map(markdownParser));
 
   // transforms in parallel with reports back to original files
-  await Promise.all(
-    mdasts.map((mdast, idx) => customTransforms(mdast, ctx, files[idx]))
-  );
+  await Promise.all(mdasts.map((mdast, idx) => customTransforms(mdast, ctx, files[idx])));
 
   // linter in parallel
-  await Promise.all(
-    mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
-  );
+  await Promise.all(mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx])));
   if (!ctx.options.noReport) {
     printReport(files, ctx);
   }
