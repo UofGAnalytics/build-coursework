@@ -12,6 +12,7 @@
     margin-bottom: 1rem;
     background: var(--boxoutTypeBg);
     color: var(--boxoutTypeTextColor);
+    border-radius: 0.3rem;
   }
 
   h3 {
@@ -64,20 +65,18 @@
   }
 
   &.video {
-    display: block;
+    display: flex;
+    justify-content: space-between;
     text-decoration: none;
-    padding: 0 2rem 2rem;
+    padding: 2rem;
     margin-bottom: 1.5rem;
 
-    .type {
-      display: inline-block;
-      padding: 0.2rem 0.8rem;
-      margin-bottom: 1rem;
+    .content {
+      flex: 1;
     }
 
-    .content {
-      display: flex;
-      justify-content: space-between;
+    .title {
+      display: block;
     }
 
     img {

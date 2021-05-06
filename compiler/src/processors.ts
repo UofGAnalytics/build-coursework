@@ -29,11 +29,11 @@ import { VFile } from 'vfile';
 
 import { codeMod } from './code-mod';
 import { getTemplateCss, getTemplateJs } from './env';
-import { htmlWrapper } from './html-wrapper';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
+import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
@@ -43,6 +43,7 @@ import { responsiveTables } from './transforms-mdast/responsive-tables';
 // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
+import { createSvg } from './utils/icons';
 
 // import { inspect } from './utils/utils';
 
@@ -72,9 +73,10 @@ export async function linter(mdast: Node, ctx: Context, file: VFile) {
 }
 
 export async function customCombinedTransforms(mdast: Node, ctx: Context) {
+  const linkIcon = await createSvg('link-icon');
   const processor = unified()
     .use(slug)
-    .use(headings, { behavior: 'wrap' })
+    .use(headings, { content: linkIcon })
     .use(responsiveTables)
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)

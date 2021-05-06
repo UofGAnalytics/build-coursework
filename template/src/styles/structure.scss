@@ -1,61 +1,87 @@
-html, body {
-  height: 100%;
-}
-
 html {
   background: var(--bg);
 }
 
 body {
   color: var(--textColor);
+
+  scroll-behavior: smooth;
+  scrollbar-color: var(--mainScrollbarThumb) var(--bg);
+  &::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--mainScrollbarThumb);
+    border-color: var(--bg);
+  }
 }
 
-#root {
-  display: flex;
+.hamburger-icon {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: var(--hamburger);
+  top: 3.1rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .logo > & {
+    right: 1rem;
+  }
+
+  #root > & {
+    left: 2rem;
+  }
+}
+
+aside {
+  position: fixed;
   height: 100%;
-  overflow: hidden;
+  width: 18rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: var(--asideBg);
+  transition: margin-left 0.2s;
 
-  & > aside {
-    width: 18rem;
-    overflow-y: scroll;
-    overflow-x: hidden;
+  scroll-behavior: smooth;
+  scrollbar-color: var(--asideScrollbarThumb) var(--asideBg);
+  &::-webkit-scrollbar-track {
     background: var(--asideBg);
-
-    scroll-behavior: smooth;
-    scrollbar-color: var(--asideScrollbarThumb) var(--asideBg);
-    &::-webkit-scrollbar-track {
-      background: var(--asideBg);
-    }
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--asideBg);
+    border-color: var(--asideBg);
+    transition: background-color 0.2s;
+  }
+  &:hover {
     &::-webkit-scrollbar-thumb {
-      background-color: var(--asideBg);
-      border-color: var(--asideBg);
-      transition: background-color 0.2s;
-    }
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        background-color: var(--asideScrollbarThumb);
-      }
+      background-color: var(--asideScrollbarThumb);
     }
   }
 
-  & > main {
-    flex: 1;
-    overflow: auto;
+  html.hide-sidebar & {
+    margin-left: -18rem;
+  }
+}
 
-    scroll-behavior: smooth;
-    scrollbar-color: var(--mainScrollbarThumb) var(--bg);
-    &::-webkit-scrollbar-track {
-      background: var(--bg);
-    }
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--mainScrollbarThumb);
-      border-color: var(--bg);
-    }
+main {
+  flex: 1;
+  overflow: auto;
+  margin-left: 18rem;
+  transition: margin-left 0.2s;
 
-    & > .wrapper {
-      width: 88%;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+  html.hide-sidebar & {
+    margin-left: 0rem;
+  }
+
+  & > .wrapper {
+    width: 88%;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 }

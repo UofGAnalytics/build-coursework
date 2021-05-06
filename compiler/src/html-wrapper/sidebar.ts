@@ -1,12 +1,9 @@
 import toHast from 'mdast-util-to-hast';
 import getToc from 'mdast-util-toc';
-// @ts-expect-error
-import toVFile from 'to-vfile';
-import { Node, Parent } from 'unist';
-import { VFile } from 'vfile';
+import { Node } from 'unist';
 
-import { getAsset } from '../env';
-import { rehypeParser } from '../utils/utils';
+import { getAssetHast } from '../utils/get-asset-hast';
+import { createSvg } from '../utils/icons';
 import { createViewOptions, createViewOptionsButton } from './view-options';
 
 export async function createSidebar(mdast: Node) {
@@ -42,6 +39,7 @@ export async function createSidebar(mdast: Node) {
 async function createLogo() {
   const crest = await getAssetHast('crest.svg');
   const uofg = await getAssetHast('uofg.svg');
+  const hamburgerIcon = await createSvg('hamburger-icon');
   return {
     type: 'element',
     tagName: 'div',
@@ -57,13 +55,7 @@ async function createLogo() {
         },
         children: [crest, uofg],
       },
+      hamburgerIcon,
     ],
   };
-}
-
-async function getAssetHast(name: string) {
-  const contents = await getAsset(name);
-  const vfile = toVFile({ contents }) as VFile;
-  const parsed = rehypeParser().parse(vfile) as Parent;
-  return parsed.children[0];
 }

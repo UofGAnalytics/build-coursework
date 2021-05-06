@@ -1,24 +1,39 @@
-type Item = {
-  value: string;
-  label: string;
+import { Item } from './shared';
+
+type ReadabilityItem = Item & {
+  min: number;
+  max: number;
+  increment: number;
 };
 
-const options: Item[] = [
+const options: ReadabilityItem[] = [
   {
-    value: 'font-size',
+    value: 'fontSize',
     label: 'Font-size',
+    min: 0.6,
+    max: 2,
+    increment: 0.1,
   },
   {
-    value: 'line-spacing',
+    value: 'lineSpacing',
     label: 'Line spacing',
+    min: 0.6,
+    max: 2,
+    increment: 0.1,
   },
   {
-    value: 'letter-spacing',
+    value: 'letterSpacing',
     label: 'Letter spacing',
+    min: 0.6,
+    max: 2,
+    increment: 0.1,
   },
   {
-    value: 'line-width',
+    value: 'lineWidth',
     label: 'Line width',
+    min: 0.6,
+    max: 2,
+    increment: 0.1,
   },
 ];
 
@@ -33,12 +48,15 @@ export function createReadabilityList() {
   };
 }
 
-function createOption(item: Item) {
+function createOption(item: ReadabilityItem) {
   return {
     type: 'element',
     tagName: 'li',
     properties: {
       className: [item.value],
+      'data-min': item.min,
+      'data-max': item.max,
+      'data-increment': item.increment,
     },
     children: [
       {

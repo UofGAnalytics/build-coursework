@@ -9,8 +9,13 @@ html {
   color: #222;
 }
 
+main {
+  font-size: calc(14px * var(--fontSize));
+  // transition: font-size 0.2s;
+}
+
 p {
-  padding-bottom: 1rem;
+  margin-bottom: 1em;
 }
 
 /* ------------------------ */
@@ -30,48 +35,49 @@ p, li {
 /* ------------------------ */
 
 h1, h2, h3, h4, h5, h6 {
-  padding: 1.5rem 0 1rem;
+  font-family: 'Martel', serif;
   font-weight: 700;
+  margin: 1.5em 0 1em;
 }
 
-h1, h1 a { color: var(--h1Color); }
-h2, h2 a { color: var(--h2Color); }
-h3, h3 a { color: var(--h3Color); }
-h4, h4 a { color: var(--h4Color); }
-h5, h5 a { color: var(--h5Color); }
-h6, h6 a { color: var(--h6Color); }
+h1 { color: var(--h1Color); }
+h2 { color: var(--h2Color); }
+h3 { color: var(--h3Color); }
+h4 { color: var(--h4Color); }
+h5 { color: var(--h5Color); }
+h6 { color: var(--h6Color); }
 
 h1 {
-  font-family: 'Martel', serif;
-  font-size: 3.3rem;
-  padding: 1.1rem 0 3rem;
+  font-size: 3.3em;
+  margin: 0.6em 0 1.45em;
 }
 h1 span {
   display: block;
   font-size: 0.4em;
   opacity: 0.4;
-  margin-top: -0.75rem;
+  margin-top: -0.5em;
 }
 
 h2 {
-  font-size: 2.5rem;
-  padding: 2rem 0 1rem;
+  font-size: 2.5em;
+  margin: 1em 0 0.5em;
 }
 
 h3 {
-  font-size: 1.5rem;
-  padding: 3rem 0 1rem;
+  font-size: 1.5em;
+  margin: 3em 0 0.5em;
 }
 
 h4 {
-  font-size: 1.25rem;
+  font-size: 1.25em;
+  margin-top: 2em;
 }
 
 h2 + h3,
 h3 + h4,
 h4 + h5,
 h5 + h6 {
-  padding-top: 0;
+  margin-top: 0;
 }
 
 h2 + .boxout,
@@ -83,27 +89,28 @@ h5 + .boxout {
 
 // link icon on hover
 h2, h3, h4, h5, h6 {
+  $diam: 0.7em;
+  $spacing: 0.4em;
   a {
-    text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
+    width: $diam + $spacing;
+    height: $diam;
+    margin-top: -0.15em;
+    margin-left: ($diam + $spacing) * -1;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  svg.icon {
+    display: block;
+    width: $diam + $spacing;
+    height: $diam;
+    fill: var(--headingLinkColor);
+  }
 
-    &::before {
-      $diam: 1em;
-      $spacing: 0.2em;
-      content: '';
-      display: inline-block;
-      vertical-align: middle;
-      width: $diam;
-      height: $diam;
-      margin-top: -0.15em;
-      margin-right: $spacing;
-      margin-left: ($diam + $spacing) * -1;
-      background: center / 60% auto no-repeat url(../icons/link-icon2.svg);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    &:hover::before {
-      opacity: 0.5;
+  &:hover {
+    a {
+      opacity:1;
     }
   }
 }

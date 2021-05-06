@@ -1,9 +1,6 @@
-type Theme = {
-  value: string;
-  label: string;
-};
+import { Item } from './shared';
 
-const themes: Theme[] = [
+const themes: Item[] = [
   {
     value: 'light',
     label: 'Light',
@@ -41,7 +38,7 @@ export function createThemeList() {
   };
 }
 
-function createThemeButton(theme: Theme) {
+function createThemeButton(theme: Item) {
   return {
     type: 'element',
     tagName: 'li',

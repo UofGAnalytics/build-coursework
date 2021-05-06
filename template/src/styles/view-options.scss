@@ -1,4 +1,4 @@
-#view-options-trigger {
+#view-options-toggle {
   display: inline-block;
   padding: 0.2rem 0.8rem 0.25rem;
   font-size: 0.8rem;
@@ -14,6 +14,7 @@
 // show/hide view options
 #view-options {
   display: none;
+  user-select: none;
 }
 html.view-options-open {
   #toc {
@@ -51,13 +52,13 @@ ul#themes {
     border-radius: 0.3rem;
     line-height: 1.4;
     cursor: pointer;
-
+    &.selected {
+      box-shadow: 0 0 0 0.2rem var(--asideBg),
+                  0 0 0 calc(0.2rem + 2px) rgba(var(--viewOptionsSelected), 1);
+    }
     &.light {
       background: white;
       color: black;
-      // html.theme-light & {
-
-      // }
     }
     &.dark {
       background: #111;
@@ -84,11 +85,15 @@ ul#themes {
 
 ul#fonts {
   li {
-    border: 2px solid rgba(white, 0.2);
+    border: 2px solid rgba(var(--viewOptionsSelected), 0.2);
     margin-bottom: 0.5rem;
     border-radius: 0.3rem;
     line-height: 1;
     padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    &.selected {
+      border-color: rgba(var(--viewOptionsSelected), 1)
+    }
   }
 }
 
@@ -97,31 +102,38 @@ ul#readability {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // margin-bottom: 0.2rem;
   }
-  span {
-    &.label {
-      flex: 1;
-    }
-    &.btn {
-      $diameter: 1.3rem;
-      display: inline-block;
-      width: $diameter;
-      height: $diameter;
-      line-height: $diameter;
-      box-sizing: border-box;
-      text-align: center;
-      background: rgba(white, 0.5);
-      border-radius: 0.2rem;
-      color: black;
-      padding: 0 0.3rem;
-      margin-left: 0.5rem;
-      font-weight: 600;
-      font-size: 0.8rem;
-      &.reset {
-        opacity: 0.5;
-        width: auto;
+  .label {
+    flex: 1;
+  }
+  .btn {
+    $diameter: 1.5rem;
+    display: inline-block;
+    width: $diameter;
+    line-height: 1.1rem;
+    box-sizing: border-box;
+    text-align: center;
+    border: 2px solid rgba(var(--viewOptionsSelected), 0.2);
+    border-radius: 0.2rem;
+    padding: 0 0.3rem 0.1rem;
+    margin-left: 0.5rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    cursor: pointer;
+    &.reset {
+      width: auto;
+      border-color: transparent;
+      &:not(.disabled) {
+        background: var(--pillarbox);
+        color: white;
       }
+      &.disabled {
+        background: rgba(var(--viewOptionsSelected), 0.1);
+      }
+    }
+    &.disabled {
+      opacity: 0.5;
+      cursor: default;
     }
   }
 

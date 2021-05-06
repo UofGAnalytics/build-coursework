@@ -9,7 +9,7 @@ export function createViewOptionsButton() {
     type: 'element',
     tagName: 'div',
     properties: {
-      id: 'view-options-trigger',
+      id: 'view-options-toggle',
     },
     children: [
       {

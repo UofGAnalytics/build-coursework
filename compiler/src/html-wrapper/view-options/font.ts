@@ -1,9 +1,6 @@
-type Font = {
-  value: string;
-  label: string;
-};
+import { Item } from './shared';
 
-const fonts: Font[] = [
+const fonts: Item[] = [
   {
     value: 'default',
     label: 'Default',
@@ -33,7 +30,7 @@ export function createFontList() {
   };
 }
 
-function createFontButton(font: Font) {
+function createFontButton(font: Item) {
   return {
     type: 'element',
     tagName: 'li',

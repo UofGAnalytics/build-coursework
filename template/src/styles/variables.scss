@@ -41,12 +41,18 @@
   --fadedTextColor: #888;
   --labelColor: var(--blue);
 
+  --hamburger: var(--blue);
+  --viewOptionsSelected: 0, 0, 0;
+  --readabilityBtnBg: 0, 0, 0;
+  --readabilityBtnColor: 0, 0, 0;
+
   --h1Color: black;
   --h2Color: var(--blue);
   --h3Color: var(--blue);
   --h4Color: var(--slate);
   --h5Color: var(--blue);
   --h6Color: var(--blue);
+  --headingLinkColor: var(--blue);
 
   --asideBg: #f2f2f2;
   --asideScrollbarThumb: #ccc;
@@ -82,12 +88,16 @@ html.theme-dark {
   --fadedTextColor: #666;
   --labelColor: var(--cobalt);
 
+  --hamburger: white;
+  --viewOptionsSelected: 255, 255, 255;
+
   --h1Color: white;
-  --h2Color: var(--cobalt);
-  --h3Color: var(--cobalt);
+  --h2Color: var(--sandstone);
+  --h3Color: var(--sandstone);
   --h4Color: var(--cobalt);
   --h5Color: var(--cobalt);
   --h6Color: var(--cobalt);
+  --headingLinkColor: white;
 
   --asideBg: #222;
   --asideScrollbarThumb: #333;

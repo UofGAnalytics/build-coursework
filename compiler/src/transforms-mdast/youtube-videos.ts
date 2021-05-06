@@ -41,19 +41,6 @@ function template(node: Node, file: VFile) {
         type: 'element',
         tagName: 'span',
         properties: {
-          className: 'type',
-        },
-        children: [
-          {
-            type: 'text',
-            value: 'Video',
-          },
-        ],
-      },
-      {
-        type: 'element',
-        tagName: 'span',
-        properties: {
           className: 'content',
         },
         children: [
@@ -61,44 +48,48 @@ function template(node: Node, file: VFile) {
             type: 'element',
             tagName: 'span',
             properties: {
-              className: 'desc',
+              className: 'type',
             },
             children: [
               {
-                type: 'element',
-                tagName: 'span',
-                properties: {
-                  className: 'title',
-                },
-                children: [
-                  {
-                    type: 'text',
-                    value: title,
-                  },
-                ],
-              },
-              {
-                type: 'element',
-                tagName: 'p',
-                children: [
-                  {
-                    type: 'text',
-                    value: `Duration: ${attributes.duration}`,
-                  },
-                ],
+                type: 'text',
+                value: 'Video',
               },
             ],
           },
           {
             type: 'element',
-            tagName: 'img',
+            tagName: 'span',
             properties: {
-              src: getYoutubeThumbnailUrl(attributes.id),
-              alt: '',
+              className: 'title',
             },
-            children: [],
+            children: [
+              {
+                type: 'text',
+                value: title,
+              },
+            ],
+          },
+          {
+            type: 'element',
+            tagName: 'p',
+            children: [
+              {
+                type: 'text',
+                value: `Duration: ${attributes.duration}`,
+              },
+            ],
           },
         ],
+      },
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          src: getYoutubeThumbnailUrl(attributes.id),
+          alt: '',
+        },
+        children: [],
       },
     ],
   };
