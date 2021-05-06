@@ -6,8 +6,15 @@ $scrollbarPadding: 5px;
 }
 * {
   scrollbar-width: thin;
+  scroll-behavior: smooth;
+  scrollbar-color: var(--mainScrollbarThumb) var(--bg);
+}
+*::-webkit-scrollbar-track {
+  background: var(--bg);
 }
 *::-webkit-scrollbar-thumb {
   border-radius: $scrollbarWidth / 2;
   border: $scrollbarPadding solid;
+  background-color: var(--mainScrollbarThumb);
+  border-color: var(--bg);
 }

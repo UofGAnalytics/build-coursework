@@ -42,9 +42,8 @@
   --labelColor: var(--blue);
 
   --hamburger: var(--blue);
+  --viewOptionsLabel: var(--blue);
   --viewOptionsSelected: 0, 0, 0;
-  --readabilityBtnBg: 0, 0, 0;
-  --readabilityBtnColor: 0, 0, 0;
 
   --h1Color: black;
   --h2Color: var(--blue);
@@ -88,7 +87,8 @@ html.theme-dark {
   --fadedTextColor: #666;
   --labelColor: var(--cobalt);
 
-  --hamburger: white;
+  --hamburger: var(--sandstone);
+  --viewOptionsLabel: white;
   --viewOptionsSelected: 255, 255, 255;
 
   --h1Color: white;

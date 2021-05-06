@@ -1,28 +1,28 @@
-@import "~highlight.js/styles/atom-one-light.css";
+@import "~prismjs/themes/prism-dark.css";
 
 code {
   vertical-align: baseline;
   font-family: monospace;
   padding: 0.1rem 0.3rem 0.2rem;
-  margin: 0 0.2rem;
-  position: relative;
-  border-radius: 0.25rem;
-  background: var(--codeBg);
 }
 
 .code-wrapper {
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  // padding-bottom: 0.2rem;
+  border-left: 0.3rem solid var(--lavender);
 
   pre {
     overflow: auto;
+    padding-left: 1rem;
     font-family: monospace;
   }
 
   code {
+    display: block;
     padding: 0;
     margin: 0;
     color: var(--blockCodeColor);
-    background: transparent;
+    // background: transparent;
   }
 
   .output {

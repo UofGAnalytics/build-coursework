@@ -13,12 +13,10 @@ const watcherOptions = {
 rebuildAndRecompile();
 
 chokidar
-  .watch('./compiler/src', watcherOptions)
+  .watch(['./compiler/src', './compiler/assets'], watcherOptions)
   .on('all', debounce(rebuildAndRecompile, 300));
 
-chokidar
-  .watch(`./fixtures/${COURSE}/${UNIT}`, watcherOptions)
-  .on('all', debounce(recompile, 300));
+chokidar.watch(`./fixtures/${COURSE}/${UNIT}`, watcherOptions).on('all', debounce(recompile, 300));
 
 async function rebuildAndRecompile() {
   await rebuildCompiler();
@@ -43,9 +41,7 @@ async function recompile() {
 
   // TODO: watch single unit
   try {
-    await runCommand(
-      `yarn workspace compiler compile ../fixtures/${COURSE} --noReport --noDoc`
-    );
+    await runCommand(`yarn workspace compiler compile ../fixtures/${COURSE} --noReport --noDoc`);
   } finally {
     console.timeEnd(timerName);
   }

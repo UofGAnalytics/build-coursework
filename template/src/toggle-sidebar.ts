@@ -1,5 +1,5 @@
-document.querySelector('#root > .hamburger')?.addEventListener('click', openSidebar);
-document.querySelector('.logo > .hamburger')?.addEventListener('click', closeSidebar);
+document.querySelector('#root > .hamburger-icon')?.addEventListener('click', openSidebar);
+document.querySelector('.logo > .hamburger-icon')?.addEventListener('click', closeSidebar);
 
 function openSidebar() {
   document.documentElement.classList.remove('hide-sidebar');

@@ -76,7 +76,7 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   const linkIcon = await createSvg('link-icon');
   const processor = unified()
     .use(slug)
-    .use(headings, { content: linkIcon })
+    .use(headings, { content: linkIcon, linkProperties: { className: 'link' } })
     .use(responsiveTables)
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)

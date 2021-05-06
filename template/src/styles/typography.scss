@@ -10,7 +10,7 @@ html {
 }
 
 main {
-  font-size: calc(14px * var(--fontSize));
+  font-size: calc(1rem * var(--fontSize));
   // transition: font-size 0.2s;
 }
 
@@ -18,23 +18,21 @@ p {
   margin-bottom: 1em;
 }
 
-/* ------------------------ */
-/* links ------------------ */
-/* ------------------------ */
+a {
+  font-weight: 600;
+  text-decoration: none;
+  color: #0075b0;
+}
 
-p, li {
-  a {
-    font-weight: 600;
-    text-decoration: none;
-    color: #0075b0;
-  }
+strong {
+  font-weight: 600;
 }
 
 /* ------------------------ */
 /* titles ----------------- */
 /* ------------------------ */
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .boxout .title {
   font-family: 'Martel', serif;
   font-weight: 700;
   margin: 1.5em 0 1em;
@@ -91,7 +89,7 @@ h5 + .boxout {
 h2, h3, h4, h5, h6 {
   $diam: 0.7em;
   $spacing: 0.4em;
-  a {
+  .link {
     display: inline-block;
     vertical-align: middle;
     width: $diam + $spacing;
@@ -100,17 +98,33 @@ h2, h3, h4, h5, h6 {
     margin-left: ($diam + $spacing) * -1;
     opacity: 0;
     transition: opacity 0.2s;
-  }
-  svg.icon {
-    display: block;
-    width: $diam + $spacing;
-    height: $diam;
-    fill: var(--headingLinkColor);
+    .icon {
+      display: block;
+      width: $diam + $spacing;
+      height: $diam;
+      fill: var(--headingLinkColor);
+    }
   }
 
   &:hover {
-    a {
-      opacity:1;
+    .link  {
+      opacity: 0.5;
     }
   }
+}
+
+/* ------------------------ */
+/* tag -------------------- */
+/* ------------------------ */
+
+#view-options-toggle, .boxout .type {
+  display: inline-block;
+  padding: 0.3rem 0.8rem 0.25rem;
+  font-size: 0.8rem;
+  line-height: 1.5rem;;
+  font-weight: bold;
+  color: white;
+  background: rgba(var(--slateRgb), 0.6);
+  border-radius: 0.2rem;
+  user-select: none;
 }

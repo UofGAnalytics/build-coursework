@@ -1,5 +1,5 @@
 .boxout {
-  padding: 0 2rem 2rem;
+  padding: 2rem;
   margin: 1rem 0 1.5rem;
   border-radius: 0.4rem;
   overflow: hidden;
@@ -7,12 +7,8 @@
   color: var(--boxoutTextColor);
 
   .type {
-    display: inline-block;
-    padding: 0.2rem 0.8rem;
     margin-bottom: 1rem;
-    background: var(--boxoutTypeBg);
-    color: var(--boxoutTypeTextColor);
-    border-radius: 0.3rem;
+    background: var(--bg);
   }
 
   h3 {
@@ -21,15 +17,11 @@
   }
 
   .type + h3 {
-    padding-top: 0.5rem;
+    margin-top: 0.5rem;
   }
 
-  & > *:first-child {
-    padding-top: 0;
-  }
-
-  & > *:last-child:not(.button) {
-    padding-bottom: 0;
+  & > *:last-child {
+    margin-bottom: 0;
   }
 
   &.task {
@@ -67,9 +59,10 @@
   &.video {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     text-decoration: none;
-    padding: 2rem;
     margin-bottom: 1.5rem;
+    font-weight: 400;
 
     .content {
       flex: 1;
@@ -77,12 +70,28 @@
 
     .title {
       display: block;
+      margin: 0.2rem 0 0.5rem;
+      color: var(--h3Color);
     }
 
-    img {
+    .duration {
+      color: var(--fadedTextColor);
+      strong {
+        color: var(--boxoutTextColor);
+        padding-right: 0.5em;
+      }
+    }
+
+    .thumbnail {
       display: block;
       width: 25%;
       margin-left: 2rem;
+      border: 0.2rem solid rgba(white, 0.2);
+      border-radius: 0.4rem;
+      overflow: hidden;
+      img {
+        display: block;
+      }
     }
 
     .desc {

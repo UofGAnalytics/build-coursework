@@ -72,11 +72,24 @@ function template(node: Node, file: VFile) {
           },
           {
             type: 'element',
-            tagName: 'p',
+            tagName: 'span',
+            properties: {
+              className: 'duration',
+            },
             children: [
               {
+                type: 'element',
+                tagName: 'strong',
+                children: [
+                  {
+                    type: 'text',
+                    value: 'Duration',
+                  },
+                ],
+              },
+              {
                 type: 'text',
-                value: `Duration: ${attributes.duration}`,
+                value: formatDuration(attributes.duration),
               },
             ],
           },
@@ -84,12 +97,21 @@ function template(node: Node, file: VFile) {
       },
       {
         type: 'element',
-        tagName: 'img',
+        tagName: 'span',
         properties: {
-          src: getYoutubeThumbnailUrl(attributes.id),
-          alt: '',
+          className: 'thumbnail',
         },
-        children: [],
+        children: [
+          {
+            type: 'element',
+            tagName: 'img',
+            properties: {
+              src: getYoutubeThumbnailUrl(attributes.id),
+              alt: '',
+            },
+            children: [],
+          },
+        ],
       },
     ],
   };
@@ -107,4 +129,12 @@ function getYoutubeUrl(id: string) {
 
 function getYoutubeThumbnailUrl(id: string) {
   return `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+}
+
+function formatDuration(duration: string) {
+  const match = duration.match(/^(\d+)m(\d+)s$/);
+  if (match === null) {
+    return '';
+  }
+  return `${match[1]}:${match[2]}`;
 }

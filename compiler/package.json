@@ -37,6 +37,7 @@
     "node-fetch": "^2.6.1",
     "parse-english": "^4.2.0",
     "pdfjs-dist": "^2.6.347",
+    "refractor": "^3.3.1",
     "rehype-document": "^5.1.0",
     "rehype-format": "^3.1.0",
     "rehype-highlight": "^4.0.1",

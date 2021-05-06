@@ -4,26 +4,17 @@ html {
 
 body {
   color: var(--textColor);
-
-  scroll-behavior: smooth;
-  scrollbar-color: var(--mainScrollbarThumb) var(--bg);
-  &::-webkit-scrollbar-track {
-    background: var(--bg);
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--mainScrollbarThumb);
-    border-color: var(--bg);
-  }
 }
 
 .hamburger-icon {
+  $diam: 1.3rem;
   position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: $diam;
+  height: $diam;
   fill: var(--hamburger);
   top: 3.1rem;
   cursor: pointer;
-  opacity: 0.5;
+  opacity: 0.75;
   transition: opacity 0.2s;
 
   &:hover {

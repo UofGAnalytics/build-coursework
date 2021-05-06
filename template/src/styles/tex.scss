@@ -2,8 +2,13 @@ svg.pdftex {
   display: block;
   width: 100%;
   height: auto;
-  // margin: 1rem 0 1.5rem;
   background: white;
+  // path {
+  //   stroke: white;
+  // }
+  // tspan {
+  //   fill: white;
+  // }
 }
 
 .math svg {
@@ -12,6 +17,7 @@ svg.pdftex {
 
 .math-inline {
   vertical-align: middle;
+  font-size: 0.9em;
   svg {
     max-width: 100%;
   }

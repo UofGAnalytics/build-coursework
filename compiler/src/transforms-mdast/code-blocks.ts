@@ -1,5 +1,5 @@
 // @ts-expect-error
-import { highlight } from 'lowlight';
+import refractor from 'refractor';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
@@ -26,7 +26,7 @@ export function codeBlocks(ctx: Context) {
 
 async function customCode(node: Node, ctx: Context, file: VFile) {
   const { language, options, value } = parseCodeParams(node);
-
+  node.type = 'custom-code';
   node.data = {
     hName: 'div',
     hProperties: {
@@ -34,27 +34,21 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
     },
   };
 
-  const children: Node[] = [
+  const children = [
     {
       type: 'element',
-      tagName: 'pre',
-      children: [
-        {
-          type: 'element',
-          tagName: 'code',
-          properties: {
-            className: language === '' ? '' : `language-${language}`,
-          },
-          children: ctx.options.noSyntaxHighlight
-            ? [
-                {
-                  type: 'text',
-                  value,
-                },
-              ]
-            : highlight(language.toLowerCase(), value).value,
-        },
-      ],
+      tagName: 'code',
+      properties: {
+        className: language === '' ? [] : [language],
+      },
+      children: ctx.options.noSyntaxHighlight
+        ? [
+            {
+              type: 'text',
+              value,
+            },
+          ]
+        : refractor.highlight(value, language.toLowerCase()),
     },
   ];
 
@@ -71,74 +65,36 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
         const response = rehypeParser.parse(output).children;
         children.push({
           type: 'element',
-          tagName: 'div',
+          tagName: 'code',
           properties: {
             className: ['output'],
           },
-          children: [
-            // {
-            //   type: 'element',
-            //   tagName: 'h6',
-            //   children: [
-            //     {
-            //       type: 'text',
-            //       value: 'R output',
-            //     },
-            //   ],
-            // },
-            {
-              type: 'element',
-              tagName: 'pre',
-              children: [
-                {
-                  type: 'element',
-                  tagName: 'code',
-                  children: response,
-                },
-              ],
-            },
-          ],
+          children: response,
         });
       }
     } catch (err) {
       const errMessage = err.message as string;
       children.push({
         type: 'element',
-        tagName: 'div',
+        tagName: 'code',
         properties: {
           className: ['output', 'error'],
         },
         children: [
-          // {
-          //   type: 'element',
-          //   tagName: 'h6',
-          //   children: [
-          //     {
-          //       type: 'text',
-          //       value: 'R exception',
-          //     },
-          //   ],
-          // },
           {
-            type: 'element',
-            tagName: 'pre',
-            children: [
-              {
-                type: 'element',
-                tagName: 'code',
-                children: [
-                  {
-                    type: 'text',
-                    value: errMessage,
-                  },
-                ],
-              },
-            ],
+            type: 'text',
+            value: errMessage,
           },
         ],
       });
     }
   }
 
-  node.data.hChildren = children;
+  node.data.hChildren = [
+    {
+      type: 'element',
+      tagName: 'pre',
+      children,
+    },
+  ];
 }
