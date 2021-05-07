@@ -39,7 +39,7 @@ function createAttributes(node: Node, count: number) {
 }
 
 export function createBoxout(node: Node, count: number): Node[] {
-  const typeTitle = createBoxoutType(node);
+  const typeTitle = createBoxoutType(node, count);
   const titles = [typeTitle];
 
   const titleValue = getTitleValue(node);
@@ -55,9 +55,7 @@ export function createBoxout(node: Node, count: number): Node[] {
     .map((o) => toHast(o));
 
   if (node.name === 'task') {
-    const answer = children.find(
-      (o) => o.type === 'containerDirective' && o.name === 'answer'
-    );
+    const answer = children.find((o) => o.type === 'containerDirective' && o.name === 'answer');
     if (answer) {
       content.push(createAnswer(answer, count));
     }
@@ -67,6 +65,8 @@ export function createBoxout(node: Node, count: number): Node[] {
 }
 
 function createAnswer(node: Node, count: number) {
+  const hast = toHast(node);
+  const children = hast.children as Node[];
   return {
     type: 'element',
     tagName: 'div',
@@ -84,7 +84,7 @@ function createAnswer(node: Node, count: number) {
         children: [
           {
             type: 'text',
-            value: 'Show/Hide answer',
+            value: 'Show answer',
           },
         ],
       },
@@ -95,14 +95,16 @@ function createAnswer(node: Node, count: number) {
           className: ['answer-reveal'],
           id: `answer-${count}`,
         },
-        children: [createBoxoutType(node), toHast(node)],
+        children,
       },
     ],
   };
 }
 
-function createBoxoutType(node: Node): Parent {
+function createBoxoutType(node: Node, count: number): Parent {
   const name = node.name as string;
+  const label = startCase(name);
+  const value = name === 'task' ? `${label} ${count}` : label;
   return {
     type: 'element',
     tagName: 'span',
@@ -112,7 +114,7 @@ function createBoxoutType(node: Node): Parent {
     children: [
       {
         type: 'text',
-        value: startCase(name),
+        value,
       },
     ],
   };

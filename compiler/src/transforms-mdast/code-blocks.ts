@@ -61,8 +61,9 @@ async function customCode(node: Node, ctx: Context, file: VFile) {
         execFn: executeRCode,
       });
 
-      if (output.trim() !== '') {
-        const response = rehypeParser.parse(output).children;
+      const trimmed = output.trim();
+      if (trimmed !== '') {
+        const response = rehypeParser.parse(trimmed).children as Node[];
         children.push({
           type: 'element',
           tagName: 'code',
