@@ -13,7 +13,10 @@
     margin-right: 10%;
 
     path.dark-only {
-      html.theme-light & {
+      html.theme-light &,
+      html.theme-black-on-yellow &,
+      html.theme-black-on-red &,
+      html.theme-black-on-blue & {
         opacity: 0
       }
     }
@@ -22,23 +25,12 @@
   .uofg {
     width: 60%;
     path {
-      html.theme-light & {
+      html.theme-light &,
+      html.theme-black-on-yellow &,
+      html.theme-black-on-red &,
+      html.theme-black-on-blue &  {
         fill: var(--blue);
       }
     }
   }
 }
-
-/* .logo::before {
-  content: '';
-  width: 4rem;
-  height: 6rem;
-  background: center / contain no-repeat url(./logo/crest.svg);
-  margin-right: 0.5rem;
-}
-.logo::after {
-  content: '';
-  width: 10rem;
-  height: 4rem;
-  background: center / contain no-repeat url(./logo/uofg.svg);
-} */

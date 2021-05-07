@@ -3,7 +3,6 @@ import { saveState, state } from './util';
 document.documentElement.classList.add(state.font);
 
 const current = state.font.replace('font-', '');
-console.log(current);
 document.querySelector(`#fonts .${current}`)?.classList.add('selected');
 
 document.querySelectorAll('#fonts li').forEach((elem) => {

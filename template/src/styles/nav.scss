@@ -15,6 +15,9 @@ aside {
       padding: 0 calc(2rem - 15px) 2rem 2rem;
       & > li {
         padding-bottom: 1.5rem !important;
+        & > p > a {
+          color: var(--asideTocH2);
+        }
       }
     }
 
@@ -22,7 +25,7 @@ aside {
     ul ul {
       padding: 0.5rem;
       a {
-        color: #888;
+        color: var(--asideTocH3);
         font-weight: 400;
       }
     }

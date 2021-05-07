@@ -21,16 +21,16 @@ p {
 a {
   font-weight: 600;
   text-decoration: none;
-  color: #0075b0;
+  color: var(--linkColor);
 }
 
 strong {
   font-weight: 600;
 }
 
-/* ------------------------ */
-/* titles ----------------- */
-/* ------------------------ */
+// ------------------------
+// titles -----------------
+// ------------------------
 
 h1, h2, h3, h4, h5, h6, .boxout .title {
   font-family: 'Martel', serif;
@@ -113,9 +113,9 @@ h2, h3, h4, h5, h6 {
   }
 }
 
-/* ------------------------ */
-/* tag -------------------- */
-/* ------------------------ */
+// ------------------------
+// tag --------------------
+// ------------------------
 
 #view-options-toggle, .boxout .type, .answer-trigger {
   display: inline-block;
@@ -124,7 +124,7 @@ h2, h3, h4, h5, h6 {
   line-height: 1.5rem;;
   font-weight: bold;
   color: white;
-  background: rgba(var(--slateRgb), 0.6);
+  background: var(--btnBg);
   border-radius: 0.2rem;
   user-select: none;
 }
