@@ -4,16 +4,13 @@
   padding: 0;
 }
 
-@import "./theme.scss";
 @import "./variables.scss";
+
 @import "./scrollbars.scss";
 @import "./structure.scss";
 @import "./typography.scss";
 @import "./logo.scss";
 @import "./nav.scss";
-
-@import "./modal.scss";
-@import "./lists.scss";
 @import "./tables.scss";
 @import "./images.scss";
 @import "./tex.scss";

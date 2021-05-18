@@ -38,12 +38,12 @@ h1, h2, h3, h4, h5, h6, .boxout .title {
   margin: 1.5em 0 1em;
 }
 
-h1 { color: var(--h1Color); }
-h2 { color: var(--h2Color); }
-h3 { color: var(--h3Color); }
-h4 { color: var(--h4Color); }
-h5 { color: var(--h5Color); }
-h6 { color: var(--h6Color); }
+h1 { color: rgb(var(--primaryColor)); }
+h2 { color: var(--highlightColor); }
+h3 { color: var(--highlightColor); }
+h4 { color: var(--highlightColor); }
+h5 { color: var(--highlightColor); }
+h6 { color: var(--highlightColor); }
 
 h1 {
   font-size: 3.3em;
@@ -87,8 +87,8 @@ h5 + .boxout {
 
 // link icon on hover
 h2, h3, h4, h5, h6 {
-  $diam: 0.7em;
-  $spacing: 0.4em;
+  $diam: 0.6em;
+  $spacing: 0.5em;
   .link {
     display: inline-block;
     vertical-align: middle;
@@ -102,7 +102,7 @@ h2, h3, h4, h5, h6 {
       display: block;
       width: $diam + $spacing;
       height: $diam;
-      fill: var(--headingLinkColor);
+      fill: rgb(var(--primaryColor));
     }
   }
 
@@ -114,6 +114,18 @@ h2, h3, h4, h5, h6 {
 }
 
 // ------------------------
+// list -------------------
+// ------------------------
+
+ul {
+  padding: 0rem 2rem 1rem;
+}
+li:not(:last-child) {
+  padding-bottom: 0.5rem;
+}
+
+
+// ------------------------
 // tag --------------------
 // ------------------------
 
@@ -123,8 +135,12 @@ h2, h3, h4, h5, h6 {
   font-size: 0.8rem;
   line-height: 1.5rem;;
   font-weight: bold;
-  color: white;
-  background: var(--btnBg);
+  color: rgba(var(--primaryColor), 1);
+  background: rgba(var(--primaryColor), 0.1);
   border-radius: 0.2rem;
   user-select: none;
+  transition: background 0.2s;
+  &:hover {
+    background: rgba(var(--primaryColor), 0.2);
+  }
 }

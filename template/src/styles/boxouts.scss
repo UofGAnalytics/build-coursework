@@ -4,17 +4,15 @@
   border-radius: 0.4rem;
   overflow: hidden;
   background: var(--boxoutBg);
-  color: var(--boxoutTextColor);
 
   .type {
     margin-bottom: 1rem;
     background: var(--bg);
-    color: var(--boxoutTypeColor);
+    color: rgb(var(--primaryColor));
   }
 
   h3 {
     font-size: 1rem;
-    color: var(--boxoutTextColor);
   }
 
   .type + h3 {
@@ -69,14 +67,12 @@
     .title {
       display: block;
       margin: 0.2rem 0 0.5rem;
-      color: var(--h3Color);
+      color: var(--highlightColor);
     }
 
     .duration {
       color: var(--fadedTextColor);
-      font-size: 0.8rem;
       strong {
-        color: var(--boxoutTextColor);
         padding-right: 0.5em;
       }
     }
@@ -85,7 +81,7 @@
       display: block;
       width: 25%;
       margin-left: 2rem;
-      box-shadow: 0 0 0 0.3rem rgba(var(--boxoutThumbnailBorder), 0.2);
+      box-shadow: 0 0 0 0.3rem rgba(var(--primaryColor), 0.15);
       border-radius: 0.2rem;
       overflow: hidden;
       img {

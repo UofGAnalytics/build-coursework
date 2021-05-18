@@ -24,7 +24,7 @@ html.view-options-open {
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.4;
-    color: var(--viewOptionsLabel);
+    color: rgb(var(--primaryColor));
   }
   ul {
     padding: 1rem 0 2rem;
@@ -46,8 +46,8 @@ ul#themes {
     line-height: 1.4;
     cursor: pointer;
     &.selected {
-      box-shadow: 0 0 0 0.2rem var(--asideBg),
-                  0 0 0 calc(0.2rem + 2px) rgba(var(--viewOptionsSelected), 1);
+      box-shadow: 0 0 0 0.2rem var(--boxoutBg),
+                  0 0 0 calc(0.2rem + 2px) rgb(var(--primaryColor));
     }
     &.light {
       background: white;
@@ -78,14 +78,14 @@ ul#themes {
 
 ul#fonts {
   li {
-    border: 2px solid rgba(var(--viewOptionsSelected), 0.2);
+    border: 2px solid rgba(var(--primaryColor), 0.2);
     margin-bottom: 0.5rem;
     border-radius: 0.3rem;
     line-height: 1;
     padding: 0.3rem 0.5rem;
     cursor: pointer;
     &.selected {
-      border-color: rgba(var(--viewOptionsSelected), 1)
+      border-color: rgba(var(--primaryColor), 1)
     }
   }
 }
@@ -106,7 +106,7 @@ ul#readability {
     line-height: 1.1rem;
     box-sizing: border-box;
     text-align: center;
-    border: 2px solid rgba(var(--viewOptionsSelected), 0.2);
+    border: 2px solid rgba(var(--primaryColor), 0.2);
     border-radius: 0.2rem;
     padding: 0 0.3rem 0.1rem;
     margin-left: 0.5rem;
@@ -117,11 +117,11 @@ ul#readability {
       width: auto;
       border-color: transparent;
       &:not(.disabled) {
-        background: var(--pillarbox);
+        background: var(--errorColor);
         color: white;
       }
       &.disabled {
-        background: rgba(var(--viewOptionsSelected), 0.1);
+        background: rgba(var(--primaryColor), 0.1);
       }
     }
     &.disabled {

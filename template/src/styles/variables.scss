@@ -1,304 +1,113 @@
+$blue: #003865;
+$cobalt: #0075b0;
+$skyblue: #005398;
+$slate: #4f5961;
+$leaf: #00843d;
+$moss: #385a4f;
+$sandstone: #7a6855;
+$burgundy: #7d2239;
+$pillarbox: #b30c00;
+$lavender: #5b4d94;
+$thistle: #951272;
+$rust: #be4d00;
+
+$turqoise: #00b5d1;
+$rose: #b06c96;
+$pumpkin: #ffb948;
+$sunshine: #ffdc36;
+$mocha: #aa8066;
+
+@function toRGB($color) {
+  @return red($color) + ", " + green($color) + ", " + blue($color);
+}
+
 // default theme (light)
 :root {
   --bg: white;
-  --textColor: black;
-  --linkColor: var(--cobalt);
+  --textColor: #333;
   --fadedTextColor: #888;
-  --labelColor: var(--blue);
-
-  --hamburger: var(--blue);
-  --btnBg: #91969C;
-  --viewOptionsLabel: var(--blue);
-  --viewOptionsSelected: 0, 0, 0;
-
-  --h1Color: black;
-  --h2Color: var(--blue);
-  --h3Color: var(--blue);
-  --h4Color: var(--slate);
-  --h5Color: var(--blue);
-  --h6Color: var(--blue);
-  --headingLinkColor: var(--blue);
-
-  --asideBg: #f2f2f2;
-  --asideScrollbarThumb: #ccc;
-  --asideTocH2: var(--cobalt);
-  --asideTocH3: #888;
-
-  --mainScrollbarThumb: #222;
-
-  --tableBg: #f2f2f2;
-  --tableBorderColor: #bbb;
-  --tableTitleColor: #222;
-  --tableTextColor: #222;
-
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$cobalt};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: #{$blue};
   --boxoutBg: #f2f2f2;
-  --boxoutTextColor: #222;
-  --boxoutTypeColor: var(--blue);
-  --boxoutTypeTextColor: white;
-  --boxoutThumbnailBorder: 0, 0, 0;
-
-  --taskBg: rgba(var(--thistleRgb), 0.1);
-  --taskFg: var(--thistle);
-  --answerBg: #f2f2f2;
-
-  --codeBg: rgba(black, 0.07);
-  --blockCodeColor: #333;
-
-  --modalContentBg: white;
-
-  --selectColor: black;
-  --selectShadow: rgba(0, 0, 0, 0.25);
-  --selectFocusShadow: var(--rust);
+  --boxoutHighlightColor: #e2e2e2;
+  --boxoutFadedTextColor: #444;
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
 }
 
 html.theme-dark {
   --bg: #111;
   --textColor: #ccc;
   --fadedTextColor: #666;
-  --labelColor: var(--cobalt);
-
-  --hamburger: var(--sandstone);
-  --btnBg: #3D4347;
-  --viewOptionsLabel: white;
-  --viewOptionsSelected: 255, 255, 255;
-
-  --h1Color: white;
-  --h2Color: var(--sandstone);
-  --h3Color: var(--sandstone);
-  --h4Color: var(--cobalt);
-  --h5Color: var(--cobalt);
-  --h6Color: var(--cobalt);
-  --headingLinkColor: white;
-
-  --asideBg: #222;
-  --asideScrollbarThumb: #333;
-  --mainScrollbarThumb: #ddd;
-
-  --tableBg: #222;
-  --tableBorderColor: #444;
-  --tableTitleColor: #ccc;
-  --tableTextColor: #999;
-
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$cobalt};
+  --primaryColor: 255, 255, 255;
+  --highlightColor: #{$sandstone};
   --boxoutBg: #222;
-  --boxoutTextColor: #ccc;
-  --boxoutTypeColor: white;
-  --boxoutTypeTextColor: black;
-  --boxoutThumbnailBorder: 200, 200, 200;
-
-  --taskBg: rgba(var(--thistleRgb), 0.1);
-  --taskFg: var(--thistle);
-  --answerBg: #333;
-
-  --codeBg: rgba(white, 0.07);
-  --blockCodeColor: #888;
-
-  --modalContentBg: #2e2e2e;
-
-  --selectColor: white;
-  --selectShadow: rgba(255, 255, 255, 0.25);
-  --selectFocusShadow: var(--rust);
+  --boxoutHighlightColor: #333;
+  --boxoutFadedTextColor: #999;
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
 }
 
 html.theme-yellow-on-black {
   --bg: #111;
-  --textColor: #ccc;
-  --linkColor: var(--moss);
-  --fadedTextColor: #666;
-  --labelColor: var(--cobalt);
-
-  --hamburger: var(--sandstone);
-  --viewOptionsLabel: white;
-  --viewOptionsSelected: 255, 255, 255;
-
-  --h1Color: white;
-  --h2Color: var(--sandstone);
-  --h3Color: var(--sandstone);
-  --h4Color: var(--cobalt);
-  --h5Color: var(--cobalt);
-  --h6Color: var(--cobalt);
-  --headingLinkColor: white;
-
-  --asideBg: #222;
-  --asideScrollbarThumb: #333;
-  --mainScrollbarThumb: #ddd;
-
-  --tableBg: #222;
-  --tableBorderColor: #444;
-  --tableTitleColor: #ccc;
-  --tableTextColor: #999;
-
+  --textColor: #ebd90e;
+  --fadedTextColor: #{darken(#ebd90e, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$rose};
+  --primaryColor: #{toRGB(#ebd90e)};
+  --highlightColor: #ebd90e;
   --boxoutBg: #222;
-  --boxoutTextColor: #ccc;
-  --boxoutTypeColor: white;
-  --boxoutTypeTextColor: black;
-  --boxoutThumbnailBorder: 200, 200, 200;
-
-  --taskBg: rgba(var(--thistleRgb), 0.1);
-  --taskFg: var(--thistle);
-  --answerBg: #333;
-
-  --codeBg: rgba(white, 0.07);
-  --blockCodeColor: #888;
-
-  --modalContentBg: #2e2e2e;
-
-  --selectColor: white;
-  --selectShadow: rgba(255, 255, 255, 0.25);
-  --selectFocusShadow: var(--rust);
+  --boxoutHighlightColor: #333;
+  --boxoutFadedTextColor: #{darken(#ebd90e, 20%)};
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
 }
 
 html.theme-black-on-yellow {
   --bg: #ebd90e;
   --textColor: #000;
-  --linkColor: var(--moss);
-  --fadedTextColor: #666;
-  --labelColor: var(--cobalt);
-
-  --hamburger: #000;
-  --btnBg: #000;
-  --viewOptionsLabel: #000;
-  --viewOptionsSelected: 0, 0, 0;
-
-  --h1Color: #000;
-  --h2Color: #000;
-  --h3Color: #000;
-  --h4Color: #000;
-  --h5Color: #000;
-  --h6Color: #000;
-  --headingLinkColor: #000;
-
-  --asideBg: #D1C21F;
-  --asideScrollbarThumb: #AEA21E;
-  --asideTocH2: #000;
-  --asideTocH3: #333;
-
-  --mainScrollbarThumb: #000;
-
-  --tableBg: #D1C21F;
-  --tableBorderColor: #AEA21E;
-  --tableTitleColor: #000;
-  --tableTextColor: #000;
-
-  --boxoutBg: #D1C21F;
-  --boxoutTextColor: #000;
-  --boxoutTypeColor: #000;
-  --boxoutTypeTextColor: black;
-  --boxoutThumbnailBorder: 200, 200, 200;
-
-  --taskBg: rgba(var(--thistleRgb), 0.1);
-  --taskFg: var(--thistle);
-  --answerBg: #333;
-
-  --codeBg: rgba(white, 0.07);
-  --blockCodeColor: #888;
-
-  --modalContentBg: #2e2e2e;
-
-  --selectColor: white;
-  --selectShadow: rgba(255, 255, 255, 0.25);
-  --selectFocusShadow: var(--rust);
+  --fadedTextColor: #{lighten(#000, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$thistle};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: black;
+  --boxoutBg: #{darken(#ebd90e, 3%)};
+  --boxoutHighlightColor: #{darken(#ebd90e, 8%)};
+  --boxoutFadedTextColor: #{lighten(#000, 30%)};
+  --taskBg: #{rgba($burgundy, 0.2)};
+  --taskFg: #{$burgundy};
 }
 
 html.theme-black-on-red {
   --bg: #de7777;
-  --textColor: #000;
-  --linkColor: var(--moss);
-  --fadedTextColor: #666;
-  --labelColor: var(--cobalt);
-
-  --hamburger: #000;
-  --btnBg: #000;
-  --viewOptionsLabel: #000;
-  --viewOptionsSelected: 0, 0, 0;
-
-  --h1Color: #000;
-  --h2Color: #000;
-  --h3Color: #000;
-  --h4Color: #000;
-  --h5Color: #000;
-  --h6Color: #000;
-  --headingLinkColor: #000;
-
-  --asideBg: #C37071;
-  --asideScrollbarThumb: #A15959;
-  --asideTocH2: #000;
-  --asideTocH3: #333;
-
-  --mainScrollbarThumb: #000;
-
-  --tableBg: #C37071;
-  --tableBorderColor: #A15959;
-  --tableTitleColor: #000;
-  --tableTextColor: #000;
-
-  --boxoutBg: #C37071;
-  --boxoutTextColor: #000;
-  --boxoutTypeColor: #000;
-  --boxoutTypeTextColor: black;
-  --boxoutThumbnailBorder: 200, 200, 200;
-
-  --taskBg: rgba(var(--thistleRgb), 0.1);
-  --taskFg: var(--thistle);
-  --answerBg: #333;
-
-  --codeBg: rgba(white, 0.07);
-  --blockCodeColor: #888;
-
-  --modalContentBg: #2e2e2e;
-
-  --selectColor: white;
-  --selectShadow: rgba(255, 255, 255, 0.25);
-  --selectFocusShadow: var(--rust);
+  --textColor: black;
+  --fadedTextColor: #{lighten(#000, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$pumpkin};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: black;
+  --boxoutBg: #{darken(#de7777, 3%)};
+  --boxoutHighlightColor: #{darken(#de7777, 10%)};
+  --boxoutFadedTextColor: #{lighten(#000, 20%)};
+  --taskBg: #{rgba($blue, 0.1)};
+  --taskFg: #{$blue};
 }
 
 html.theme-black-on-blue {
   --bg: #64a8e1;
-  --textColor: #000;
-  --linkColor: var(--moss);
-  --fadedTextColor: #666;
-  --labelColor: var(--cobalt);
-
-  --hamburger: #000;
-  --btnBg: #000;
-  --viewOptionsLabel: #000;
-  --viewOptionsSelected: 0, 0, 0;
-
-  --h1Color: #000;
-  --h2Color: #000;
-  --h3Color: #000;
-  --h4Color: #000;
-  --h5Color: #000;
-  --h6Color: #000;
-  --headingLinkColor: #000;
-
-  --asideBg: #5E98C8;
-  --asideScrollbarThumb: #4F7FA7;
-  --asideTocH2: #000;
-  --asideTocH3: #333;
-
-  --mainScrollbarThumb: #000;
-
-  --tableBg: #5E98C8;
-  --tableBorderColor: #4F7FA7;
-  --tableTitleColor: #000;
-  --tableTextColor: #000;
-
-  --boxoutBg: #5E98C8;
-  --boxoutTextColor: #000;
-  --boxoutTypeColor: #000;
-  --boxoutTypeTextColor: black;
-  --boxoutThumbnailBorder: 200, 200, 200;
-
-  --taskBg: rgba(var(--thistleRgb), 0.1);
-  --taskFg: var(--thistle);
-  --answerBg: #333;
-
-  --codeBg: rgba(white, 0.07);
-  --blockCodeColor: #888;
-
-  --modalContentBg: #2e2e2e;
-
-  --selectColor: white;
-  --selectShadow: rgba(255, 255, 255, 0.25);
-  --selectFocusShadow: var(--rust);
+  --textColor: black;
+  --fadedTextColor: #{lighten(#000, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$sunshine};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: black;
+  --boxoutBg: #{darken(#64a8e1, 5%)};
+  --boxoutHighlightColor: #{darken(#64a8e1, 15%)};
+  --boxoutFadedTextColor: #{lighten(#000, 20%)};
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
 }

@@ -10,19 +10,18 @@ table {
   border-collapse: collapse;
   border-radius: 0.4rem;
   margin: 0.5rem 0 2rem;
-  background: var(--tableBg);
+  background: var(--boxoutBg);
 
   th, td {
-    border: 0.1rem solid var(--tableBorderColor);
+    border: 2px solid var(--boxoutHighlightColor);
     padding: 0.5rem 2rem 0.5rem 1rem;
     text-align: left;
   }
   td {
-    color: var(--tableTextColor);
+    color: var(--boxoutFadedTextColor);
   }
   th {
     border-top-width: 0;
-    color: var(--tableTitleColor);
   }
   th:first-child, td:first-child {
     border-left-width: 0;
@@ -38,6 +37,6 @@ table {
     background: none;
     padding: 0;
     margin: 0;
-    color: var(--tableTextColor);
+    color: var(--boxoutFadedTextColor);
   }
 }
