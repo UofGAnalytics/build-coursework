@@ -2,7 +2,6 @@ import visit from 'unist-util-visit';
 import { Node, Position } from 'unist';
 import { VFile } from 'vfile';
 import { exec } from 'child_process';
-import { reject } from 'lodash';
 
 export function lintLatex() {
   return async (tree: Node, file: VFile) => {
@@ -18,7 +17,7 @@ export function lintLatex() {
 }
 
 async function chktex(node: Node, file: VFile) {
-  return new Promise<void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     exec(`chktex -q <<< "${node.value}"`, (err, response) => {
       if (err) {
         reject(err);

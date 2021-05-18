@@ -5,9 +5,11 @@ export async function executeRCode(code: string) {
   // https://stackoverflow.com/questions/54309405#54310307
 
   const wrappedCode = `
+    library(svglite)
+
     dev_stdout = function () {
       filename = tempfile()
-      svg(filename)
+      svglite(filename)
       filename
     }
 
@@ -70,7 +72,11 @@ function formatResponse(out: string) {
   }
 
   // if the output is SVG, remove the xml declaration at the top
-  return out.slice(out.indexOf('<svg'));
+  if (out.includes('<svg')) {
+    return out.slice(out.indexOf('<svg'));
+  }
+
+  return addLinePrefix(out);
 }
 
 function containsEmptySvg(out: string) {
