@@ -38,11 +38,13 @@ if (!isProd) {
 module.exports = {
   mode: isProd ? 'production' : 'development',
   devtool: isProd ? false : 'cheap-module-source-map',
-  entry: [path.join(__dirname, 'src/index.ts')],
+  entry: {
+    template: path.join(__dirname, 'src/index.ts')
+  },
   target: 'web',
   output: {
     path: isProd ? path.join(__dirname, 'build') : undefined,
-    filename: '[name].js',
+    filename: '[name].js2', // non-standard ext to make it easier to import as static file in the compiler
     publicPath: '',
     pathinfo: !isProd
   },
@@ -107,9 +109,7 @@ function template({ css, js }) {
         ${cssTags}
       </head>
       <body>
-        <div id="root">
-          ${content}
-        </div>
+        ${content}
         <div id="modal">
           <div id="modal-bg"></div>
           <div id="modal-wrapper">

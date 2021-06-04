@@ -9,8 +9,10 @@ export function boxouts() {
     visit(tree, 'containerDirective', (node) => {
       switch (node.name) {
         case 'example':
+        case 'error':
         case 'supplement':
         case 'background':
+        case 'definition':
         case 'weblink':
         case 'task':
         case 'answer': {
@@ -48,11 +50,31 @@ export function createBoxout(node: Node, count: number): Node[] {
     titles.push(title);
   }
 
+  // console.log(
+  //   toHast(
+  //     {
+  //       type: 'html',
+  //       value:
+  //         '<!-- This is a dataset on admissions to US medical schools which you have first seen in [Predictive Modelling](http://moodle2.gla.ac.uk/pluginfile.php/1457608/mod_resource/content/0/week9.pdf). -->',
+  //     },
+  //     { allowDangerousHtml: true }
+  //   )
+  // );
+
   const children = node.children as Node[];
+  // if (count === 1 && node.name === 'example') {
+  //   console.dir(children, { depth: null });
+  // }
+
   const content = children
     .filter((o) => !o.data?.directiveLabel)
     .filter((o) => o.type !== 'containerDirective' && o.name !== 'answer')
-    .map((o) => toHast(o));
+    .map((o) => toHast(o), { allowDangerousHtml: true })
+    .filter(Boolean);
+
+  // if (count === 1 && node.name === 'example') {
+  //   console.dir(content, { depth: null });
+  // }
 
   if (node.name === 'task') {
     const answer = children.find((o) => o.type === 'containerDirective' && o.name === 'answer');

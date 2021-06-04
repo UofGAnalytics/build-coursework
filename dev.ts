@@ -16,7 +16,9 @@ chokidar
   .watch(['./compiler/src', './compiler/assets'], watcherOptions)
   .on('all', debounce(rebuildAndRecompile, 300));
 
-chokidar.watch(`./fixtures/${COURSE}/${UNIT}`, watcherOptions).on('all', debounce(recompile, 300));
+chokidar
+  .watch(`./fixtures/${COURSE}/${UNIT}`, watcherOptions)
+  .on('all', debounce(recompile, 300));
 
 async function rebuildAndRecompile() {
   await rebuildCompiler();
@@ -34,18 +36,23 @@ async function rebuildCompiler() {
   }
 }
 
-async function recompile() {
+async function recompile(eventName?: string, path?: string) {
+  console.log({ eventName, path });
   console.log('recompiling...');
   const timerName = 'compiling took';
   console.time(timerName);
 
   // TODO: watch single unit
   try {
-    await runCommand(`yarn workspace compiler compile ../fixtures/${COURSE} --noReport --noDoc`);
+    await runCommand(
+      `yarn workspace compiler rmarkdown ../fixtures/${COURSE} --week=1 --noCache --noReport --noDoc`
+    );
   } finally {
     console.timeEnd(timerName);
   }
 }
+
+// rmarkdown ../fixtures/rprog --week=1
 
 function runCommand(command: string) {
   return new Promise((resolve, reject) => {

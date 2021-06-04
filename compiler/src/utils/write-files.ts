@@ -11,6 +11,7 @@ export async function writeHtml(
   dirPath: string
 ) {
   const filePath = getFilePath(dirPath, fileName);
+  // console.log(filePath)
   await writeFile(`${filePath}.html`, html);
   console.log('html file written to:', `${filePath}.html`);
 }

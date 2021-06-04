@@ -5,15 +5,14 @@ import {
 
 describe('example', () => {
   it('should render an example boxout', async () => {
-    const { html } = await testProcessor(`
+    const { html, mdast } = await testProcessor(`
       :::example
       An example of *this*!
       :::
     `);
 
     const expected = createHtml(`
-      <div class="boxout example" id="example-1">
-        <h3>Example 1</h3>
+      <div class="boxout example" id="example-1"><span class="type">Example</span>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -29,8 +28,8 @@ describe('example', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout example" id="example-1">
-        <h3>Example 1 (My Example)</h3>
+      <div class="boxout example" id="example-1"><span class="type">Example</span>
+        <h3>My Example</h3>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -46,8 +45,7 @@ describe('example', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout example" id="example-1">
-        <h3>Example 1</h3>
+      <div class="boxout example" id="example-1"><span class="type">Example</span>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -63,8 +61,7 @@ describe('example', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout example hello-icon" id="example-1">
-        <h3>Example 1</h3>
+      <div class="boxout example hello-icon" id="example-1"><span class="type">Example</span>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -80,8 +77,8 @@ describe('example', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout example hello-icon" id="example-1">
-        <h3>Example 1 (My Example)</h3>
+      <div class="boxout example hello-icon" id="example-1"><span class="type">Example</span>
+        <h3>My Example</h3>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -99,8 +96,7 @@ describe('supplement', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout supplement" id="supplement-1">
-        <h3>Supplement 1</h3>
+      <div class="boxout supplement" id="supplement-1"><span class="type">Supplement</span>
         <p>A supplement of <em>this</em>!</p>
       </div>
     `);
@@ -118,8 +114,7 @@ describe('background', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout background" id="background-1">
-        <h3>Background 1</h3>
+      <div class="boxout background" id="background-1"><span class="type">Background</span>
         <p>A background of <em>this</em>!</p>
       </div>
     `);
@@ -137,8 +132,7 @@ describe('weblink', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout weblink" id="weblink-1">
-        <h3>Weblink 1</h3>
+      <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
         <p>A weblink of <em>this</em>!</p>
       </div>
     `);

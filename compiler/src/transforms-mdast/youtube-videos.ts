@@ -131,7 +131,7 @@ function getYoutubeThumbnailUrl(id: string) {
   return `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 }
 
-function formatDuration(duration: string) {
+function formatDuration(duration: string = '') {
   const match = duration.match(/^(\d+)m(\d+)s$/);
   if (match === null) {
     return '';

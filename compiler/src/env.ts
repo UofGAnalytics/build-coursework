@@ -1,13 +1,14 @@
 import { readFile } from './utils/utils';
 
-export function getTemplateCss() {
-  return readFile('../template/build/main.css');
-}
+// export function getTemplateCss() {
+//   return readFile('./assets/template.css');
+// }
 
-export function getTemplateJs() {
-  return readFile('../template/build/main.js');
-}
+// export function getTemplateJs() {
+//   return readFile('./assets/template.js');
+// }
 
-export function getAsset(assetName: string) {
-  return readFile(`./assets/${assetName}`);
-}
+// export function getAsset(assetName: string) {
+//   // console.log(process.argv[1]);
+//   return readFile(`./assets/${assetName}`);
+// }

@@ -15,13 +15,14 @@ describe('moveAnswersToEnd', () => {
     `);
 
     const expected = createHtml(`
-      <div class="boxout task" id="task-1">
-        <h3>Task 1 (My task title)</h3>
+      <div class="boxout task" id="task-1"><span class="type">Task 1</span>
+        <h3>My task title</h3>
         <p>This is the <em>task</em> content</p>
-      </div>
-      <div class="boxout answer" id="answer-1">
-        <h3>Answer 1</h3>
-        <p>My answer!</p>
+        <div class="answer"><span class="answer-trigger" data-answer-id="1">Show answer</span>
+          <div class="answer-reveal" id="answer-1">
+            <p>My answer!</p>
+          </div>
+        </div>
       </div>
     `);
 

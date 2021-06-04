@@ -1,10 +1,13 @@
 import { Parent } from 'unist';
 
-import { testProcessor } from '../../test-utils/test-processor';
+import {
+  createHtml,
+  testProcessor,
+} from '../../test-utils/test-processor';
 
 describe('codeBlocks', () => {
   it('should share state with other codeblocks', async () => {
-    const { mdast } = await testProcessor(`
+    const { html, mdast } = await testProcessor(`
       \`\`\`{r}
       a <- c(1, 4, 2)
       a
@@ -38,44 +41,48 @@ describe('codeBlocks', () => {
       \`\`\`
     `);
 
-    expect(getOutputAtIdx(mdast, 0)?.value).toBe('[1] 1 4 2\n');
-    expect(getOutputAtIdx(mdast, 1)?.value).toBe(
-      ' first second  third \n     1      4      2 \n'
-    );
-    expect(getOutputAtIdx(mdast, 2)).toBe(null);
-    expect(getOutputAtIdx(mdast, 3)?.value).toBe('third \n    2 \n');
-    expect(getOutputAtIdx(mdast, 4)?.value).toBe(
-      ' first second  third \n     1      4     10 \n'
-    );
-    expect(getOutputAtIdx(mdast, 5)?.value).toBe(
-      ' first second  third                             \n     1      4     10     NA     NA     NA     99 \n'
-    );
-    expect(getOutputAtIdx(mdast, 6)?.value).toBe('third \n   10 \n');
-  });
+    const withOutput = mdast.children.map((o, idx) => {
+      const v = (o.value || '') as string;
+      const value = v.slice(0, v.indexOf('\n'));
+      return `${idx} ${value}`.trim();
+    });
 
-  it('should not show output if none is given', async () => {
-    const { mdast } = await testProcessor(`
-      \`\`\`{r}
-      a <- c(first=1, second=4, third=2)
-      \`\`\`
+    const expected = createHtml(`
+      0 a <- c(1, 4, 2)
+      1 ## [1] 1 4
+      2 names(a) <- c("first", "second", "third")
+      3 ##  first second  third
+      4 a <- c(first=1, second=4, third=2
+      5 a[3
+      6 ## third
+      7 a[3] <- 10
+      8 ##  first second  third
+      9 a[7] <- 99
+      10 ##  first second  third
+      11 a["third"
+      12 ## third
     `);
 
-    expect(getOutputAtIdx(mdast, 0)).toBe(null);
+    expect(withOutput.join('\n')).toBe(expected.trim());
   });
 
   it('should output a graph as svg', async () => {
-    const { mdast } = await testProcessor(`
+    const { hast } = await testProcessor(
+      `
       \`\`\`{r}
       x <- rnorm(100)
       hist(x)
       \`\`\`
-    `);
+    `,
+      { noEmbedAssets: false }
+    );
 
-    const node = getOutputAtIdx(mdast, 0) as Parent;
-    expect(node.children.length > 2).toBe(true);
+    const children = hast.children as any[];
+    const tagName = children[3].children[1].children[1].tagName;
+    expect(tagName).toBe('svg');
   });
 
-  it.skip('should ignore tab whitespace', async () => {
+  it('should ignore tab whitespace', async () => {
     const { html } = await testProcessor(`
       \`\`\`{r, echo=TRUE}
       n <- 20
@@ -105,19 +112,3 @@ describe('codeBlocks', () => {
     expect(html.includes('Error: unexpected end of input')).toBe(false);
   });
 });
-
-function getOutputAtIdx(mdast: Parent | null, idx: number) {
-  if (mdast === null) {
-    return null;
-  }
-  const children = (mdast.children[idx]?.data?.hChildren ||
-    []) as Parent[];
-
-  const outer1 = children[1];
-  if (!outer1) return null;
-
-  const outer2 = outer1.children[1] as Parent;
-  if (!outer2) return null;
-
-  return outer2.children[0] || null;
-}

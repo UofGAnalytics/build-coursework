@@ -1,0 +1,610 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+
+# Introduction 
+
+## Distribution theory
+
+### Univariate probability distributions
+Discrete probability distributions are defined by a probability mass function $f(y)=P(Y=y)$ for $y \in R_Y$ where $\sum_{y \in R_Y} f(y)=1$, while continuous probability distributions are defined by a probability density function $f(y)$ where $P(a <Y<b)=\int_a^b f(y)dy$.
+The expected value of a discrete random variable $Y$ is defined as $E(Y)=\sum_{y \in R_Y} y f(y)$ and that of a continuous random variable as $E(Y)=\int_{-\infty}^{\infty} yf(y)dy$. The expectation of a function $g$ of $Y$ is given by $E[g(Y)]=\sum_{y \in R_Y} g(y) f(y)$ and
+$E[g(Y)]=\int_{-\infty}^{\infty} g(y)f(y)dy$ for discrete and continuous random variables respectively. The variance of a random variable $Y$ is defined by $var{Y}=E\left\lbrace [Y-E(Y)]^2 \right \rbrace = E(Y^2)-[E(Y)]^2$.
+
+The following are a few examples of discrete and continuous distributions frequently encountered in this course.
+
+####  Bernoulli distribution
+
+A random variable $Y$ with a Bernoulli$(p)$ distribution where $p\in(0,1)$ has probability distribution $f(y;p)=p^y(1-p)^{1-y}, \hspace{1cm} y=0,1.$ For the Bernoulli distribution $E(Y)=p$ and $var{Y}=p(1-p)$. This distribution is used to model binary outcomes that can be coded as 0 and 1.
+ 
+#### Binomial distribution
+
+A random variable $Y$ with a Bin$(n,p)$ distribution where $p\in(0,1)$ has probability distribution $f(y;p)=\binom{n}{y}p^y(1-p)^{n-y}, \hspace{1cm} y=0,1,\dots,n.$ For the binomial distribution $E(Y)=np$ and $var{Y}=np(1-p)$. The Bin$(1,p)$ distribution is the same as the Bernoulli$(p)$ distribution. If $Y_1,Y_2,\dots, Y_n$ are independent Bernoulli$(p)$ random variables, then $Y_1+Y_2+\dots+Y_n$ is Bin$(n,p)$. The binomial distribution is used to model $Y$, the number of 'successes', out of a fixed number $n$ of independent Bernoulli trials, where each trial has two possible outcomes ('success' and 'failure') with constant probability of success from trial to trial.
+
+#### Poisson distribution
+
+A random variable $Y$ with a Poisson$(\lambda)$ distribution where $\lambda>0$ has probability distribution $f(y;\lambda)=\frac{\exp(\lambda)\lambda^y}{y!}, \hspace{1cm} y=0,1,\dots.$ For the Poisson distribution $E(Y)=var{Y}=\lambda$.  If $Y_1,Y_2,\dots, Y_n$ are independent Poisson random variables with parameters $\lambda_1$,$\lambda_2$, ... , $\lambda_n$, then $Y_1+Y_2+\dots+Y_n$ is Poisson$(\lambda_1+\lambda_2+\dots+\lambda_n)$. The Poisson distribution with mean $np$ can be used as an approximation to the Bin$(n,p)$ distribution when $n$ is large and $p$ is small. The Poisson distribution is used to model counts such as arrivals at a checkout or hospital admissions.
+
+#### Normal distribution
+
+The distributions listed so far are discrete distributions. The normal distribution is continuous. If random variable $Y$ is normal with mean $\mu$ and variance $\sigma^2$ we write $Y \sim N(\mu, \sigma^2)$. The probability distribution of $Y$ is given by
+$$f(y; \mu, \sigma^2)= \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left\lbrace -\frac{(y-\mu)^2}{2 \sigma^2} \right \rbrace, \hspace{1cm} -\infty <y <\infty. $$
+
+* The normal distribution with mean $\mu=0$ and variance $\sigma^2=1$, $Y \sim N(0,1)$, is called \textbf{standard normal}.
+* If $Y_1,\dots, Y_n$ are independent normal random variables with means $\mu_1, \dots, \mu_n$ and variances $\sigma_1^2,\dots, \sigma_n^2$, then $Y_1+\dots+Y_n \sim N(\mu_1+\dots+\mu_n, \sigma_1^2+\dots+\sigma_n^2)$. Slightly more generally, $a_1 Y_1+ \dots + a_n Y_n \sim N (\sum_{i=1}^n a_i \mu_i, \sum_{i=1}^n a_i^2 \sigma^2_i )$.
+*  If $Y\sim N(\mu, \sigma^2)$ then $a+bY \sim N(a+b\mu, b^2 \sigma^2).$
+* **Central Limit Theorem**: If $Y_1,\dots, Y_n$ are independent, identically distributed random variables with mean $E(Y_i)=\mu$ and variance $var{Y_i}=\sigma^2<\infty$ for $i=1,\dots, n$, then as $n \rightarrow \infty$ the distribution of $\bar{Y}= \frac{1}{n}\sum_{i=1}^n Y_i$ approaches the normal $N(\mu, \frac{\sigma^2}{n})$ distribution.
+
+ 
+### Multivariate probability distributions
+Consider a vector of random variables, $\mathbf{y}=(Y_1,Y_2,\dots, Y_n)^\intercal$.
+\begin{itemize}
+ *  For discrete random variables $Y_1,Y_2,\dots, Y_n$, the multivariate probability mass function of $\mathbf{y}$ is defined as $f(\mathbf{y})=P(Y_1=y_1,Y_2=y_2,\dots, Y_n=y_n)$ for $(y_1,y_2,\dots,y_n)$ in the joint range space of $Y_1,Y_2,\dots, Y_n$.
+ *  For continuous random variables $Y_1,Y_2,\dots, Y_n$, the joint probability density function is $f(\mathbf{y})$ with $P(\mathbf{y} \in A) = \int_A f(\mathbf{y}) d\mathbf{y}$.
+ *  Marginal distributions for each of the $Y_i$ can be obtained by integrating out the other variables, \emph{e.g.} $f(y_1)=\int_{-\infty}^{\infty} \dots \int_{-\infty}^{\infty} f(y_1,y_2,\dots,y_n) dy_2\dots dy_n$
+*  The expected value of $\mathbf{y}=(Y_1,Y_2,\dots, Y_n)^\intercal$ is defined as $E(\mathbf{y})=[E(Y_1),E(Y_2),\dots, E(Y_n)]^\intercal$. For any function $g(\mathbf{y})$ the expectation is given by $E[g(\mathbf{y})]=\int_{\mathbb{R}^n} g(\mathbf{y}) f(\mathbf{y}) d\mathbf{y}$.
+*  For any $p\times n$ constant matrix $\mathbf{A}$ and $p$-dimensional constant vector $\mathbf{b}$, we have that 
+$$E(\mathbf{A}\mathbf{y}+\mathbf{b})=\mathbf{A}E(\mathbf{y})+\mathbf{b}, \text{ and}\\  var{\mathbf{A}\mathbf{y}+\mathbf{b}}=\mathbf{A}var{\mathbf{y}}\mathbf{A}^\intercal.$$
+*  The covariance of two random variables $Y_1$ and $Y_2$ is defined as $cov{Y_1,Y_2}=E[Y_1-E(Y_1)]E[Y_2-E(Y_2)]=E(Y_1Y_2)-E(Y_1)E(Y_2)$ and the correlation as $\rho(Y_1,Y_2)=\frac{cov{Y_1,Y_2}}{\sqrt{var{Y_1}var{Y_2}}}$.
+
+*  The \textbf{variance-covariance matrix} $var{\mathbf{y}}$ of $\mathbf{y}=(Y_1,Y_2,\dots, Y_n)^\intercal$ is an $n \times n$ matrix whose $(ij)$th element is given by $var{\mathbf{y}}_{ij}=cov{Y_i,Y_j}.$
+*  Random variables $Y_1,Y_2,\dots, Y_n$ are jointly \textbf{independent} if their joint density is the product of their marginal densities: $f(\mathbf{y})=f(y_1)f(y_2)\dots f(y_n)$. If $Y_1,Y_2,\dots, Y_n$ are independent then $E(Y_1Y_2\dots Y_n)=E(Y_1)E(Y_2)\dots E(Y_n)$, $cov{Y_i,Y_j}=0$ for $i,j=1,\dots, n, j\neq i$ and $var{Y_1+Y_2+\dots+ Y_n}=var{Y_1}+var{Y_2}+\dots+var{Y_n}$. However, zero covariance or correlation does not necessarily imply independence.
+*  Consider $Y_1, \dots Y_n$ with $Y_i \sim N(\mu_i, \sigma^2_i)$ and with covariances $cov{Y_i, Y_j} = \rho_{ij} \sigma_i \sigma_j$. Then the $Y_i$ are jointly distributed as multivariate normal with mean vector $\boldsymbol{\mu}= (\mu_1, \dots, \mu_n)^\intercal$ and variance-covariance matrix $\boldsymbol{\Sigma}= \left( \begin{array}{cccc} \sigma_1^2 & \rho_{12} \sigma_1 \sigma_2 &  \dots &  \rho_{1n}\sigma_1 \sigma_n \\
+ \vdots & \vdots & \vdots & \vdots \\
+ \rho_{1n} \sigma_1 \sigma_n &   \rho_{2n}\sigma_2 \sigma_n & \dots & \sigma^2_n                                                                                                                                        \end{array}\right) $ We write $\mathbf{y} \sim MVN(\boldsymbol{\mu}, \boldsymbol{\Sigma})$. The probability density function of $\mathbf{y}$ is given by $(2\pi)^{-\frac{n}{2}}|\boldsymbol{\Sigma}|^{-\frac{1}{2}}\exp[-\frac{1}{2}(\mathbf{y}-\boldsymbol{\mu})^\intercal \boldsymbol{\Sigma}^{-1}(\mathbf{y}-\boldsymbol{\mu})].$ The marginal distribution of each $Y_i$ is univariate normal, and so is the conditional distribution of $Y_i$ given the other components of $\mathbf{y}$. Also $\mathbf{A}\mathbf{y}+\mathbf{b} \sim MVN(\mathbf{A}\boldsymbol{\mu}+\mathbf{b}, \mathbf{A}\boldsymbol{\Sigma} \mathbf{A}^\intercal)$ where $\mathbf{A}$ is any $p\times n$ matrix of constants and $\mathbf{b}$ is any vector of $p$ constants. For $\mathbf{y}$ following the multivariate normal distribution, $cov{Y_i,Y_j}=0$ implies that $Y_i$ and $Y_j$ are independent.
+
+
+# Generalized Linear Models 
+Consider the \textbf{linear} model $E(Y_i) = \mu_i = \mathbf{x}_i ^\intercal \boldsymbol{\beta}$ with $Y_i \sim N(\mu_i, \sigma^2)$,
+where $Y_i$ are independent for $i=1, \dots, n$, and where $ \mathbf{x}_i ^\intercal$ is the $i$th row of the design matrix $\mathbf{X}$. This can be\textbf{ generalized} to include:
+\begin{itemize}
+ *  a response variable with a distribution other than normal, but a member of the class known as the \textbf{exponential family of distributions}; and
+ *  a relationship between the response and the linear component of the form $g(\mu_i) = \mathbf{x}_i ^\intercal \boldsymbol{\beta}$ where $g$ is the \textbf{link function}.
+\end{itemize}
+
+## The exponential family
+
+### Definition and examples
+\begin{definition}[Exponential family of distributions] Consider a random variable $Y$ whose p.d.f. depends on parameter $\theta$. The distribution belongs to the exponential family if it can be written as $ f(y; \theta) = s(y) t(\theta) e^{a(y) b(\theta)}.$ This is equivalent to \begin{align} f(y; \theta) = \exp \left[a(y) b(\theta)+c(\theta) + d(y) \right] \label{eqn:expfam} \end{align} where $s(y) = \exp[d(\theta)]$ and $t(\theta)=\exp[c(\theta)]$. The term $b(\theta)$ is called the \textbf{natural parameter}. If $a(y)=y$ the distribution is said to be in \textbf{canonical form}.
+\end{definition}
+Some commonly used distributions are members of the exponential family.
+\begin{example}[Normal distribution] Consider $Y \sim N(\theta, \sigma^2)$ with p.d.f. \begin{align} f(y; \theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}\exp \left[ -\frac{1}{2\sigma^2} (y-\theta)^2\right], \hspace{0.5cm} -\infty <y<\infty.\end{align} If we are interested in estimating $\theta$, the variance, $\sigma^2$, can be regarded as a nuisance parameter. By rewriting the p.d.f. as \begin{align} f(y; \theta) = \exp \left[-\dfrac{y^2}{2\sigma^2}+\dfrac{y \theta}{\sigma^2} -\dfrac{\theta^2}{2\sigma^2}-\dfrac{1}{2}\log(2 \pi \sigma^2)\right]\end{align} we can see that this is of exponential family form with $a(y) = y$ ( hence in canonical form) and natural parameter $b(\theta)= \theta/\sigma^2$.
+\end{example}
+
+
+\begin{example}[Poisson distribution]
+Consider $Y \sim \text{Poisson}(\theta)$ with p.m.f. \begin{align} f(y; \theta) = \frac{\theta^y e^{-\theta}}{y!} \hspace{1cm} \text{for } y=0,1,2,\dots \end{align} This is a member of the exponential family since the probability distribution can be rewritten as \begin{align} f(y; \theta) = \exp \left[ y \log \theta - \theta - \log (y!) \right].\end{align} It is in canonical form since $a(y) = y$, and has natural parameter $b(\theta)= \log \theta$.
+\end{example}
+
+
+\begin{example}[Binomial distribution] Consider $Y \sim Bin(n,\theta)$ with p.m.f. \begin{align} f(y; \theta) = \binom{n}{y} \theta^y (1-\theta)^{n-y} \hspace{1cm} \text{for } y=0,1,\dots,n. \end{align} By rewriting the p.m.f. as
+ \begin{align} \hspace{-0.8cm} f(y; \theta) = \exp \left[ y \log \theta - y \log (1-\theta) + n \log(1-\theta) +\log \binom{n}{y} \right] \end{align} we see that this is a member of the exponential family in canonical form, and with natural parameter $b(\theta)= \log \left(\dfrac{\theta}{1-\theta} \right)$.
+\end{example}
+Table \ref{tab:expfam} shows a summary of the distributions in Examples 2.1-2.3.
+%  \begin{center}
+\begin{table}
+\begin{tabular}{lccc}
+\hline
+ Distribution & Natural parameter & $c(\theta)$ & $d(y)$\\
+ \hline
+  & & & \\
+ Normal & $\dfrac{\theta}{\sigma^2}$ & $-\dfrac{\theta^2}{2\sigma^2}-\dfrac{1}{2}\log(2 \pi \sigma^2)$ & $-\dfrac{y^2}{2\sigma^2}$ \\
+ & & & \\
+  Poisson & $\log \theta$ & $-\theta$ & $-\log(y!)$ \\
+ & & & \\
+ Binomial & $\log\left(\dfrac{\theta}{1-\theta} \right)$ & $n \log(1-\theta)$ &
+ $\log \binom{n}{y}$\\
+  & & & \\
+ \hline
+\end{tabular}
+\caption{Summary of some common distributions as members of the exponential family}
+\label{tab:expfam}
+\end{table}
+% \end{center}
+
+
+### Properties of exponential family distributions
+
+We will now look at some properties of exponential family distributions. In what follows we obtain expressions for the mean and variance of $a(Y)$ when $Y$ follows a distribution that is a member of the exponential family. First note that since $f(y;\theta)$ is a p.d.f. \begin{align}\int f(y; \theta) dy = 1 \Rightarrow \frac{d}{d \theta} \int f(y; \theta) dy = 0 \Rightarrow \int  \frac{df(y; \theta)}{d \theta} dy = 0.     \end{align} Taking the second derivative in a similar way gives \begin{align} \int  \frac{d^2f(y; \theta)}{d \theta^2} dy = 0.      \end{align}
+To apply this to \begin{align} f(y; \theta) = \exp \left[a(y) b(\theta)+c(\theta) + d(y) \right] \end{align} first obtain the derivative \begin{align}\frac{df(y; \theta)}{d \theta} = [a(y)b'(\theta)+c'(\theta)]f(y; \theta).\end{align} We then have
+ \begin{align}\int \frac{df(y; \theta)}{d \theta} dy=0 & \Rightarrow  \int [a(y)b'(\theta)+c'(\theta)]f(y; \theta)dy =0 \nonumber\\
+ & \Rightarrow \int a(y)b'(\theta)f(y; \theta)dy + \int c'(\theta)f(y; \theta)dy=0 \nonumber \\
+  & \Rightarrow b'(\theta) E[a(Y)]+c'(\theta) =0 \nonumber\\
+    & \Rightarrow E[a(Y)] = -\frac{c'(\theta)}{b'(\theta)}. \label{eqn:mean}
+ \end{align}
+ For the variance of $a(Y)$ we first need to obtain the second derivative \begin{align}\frac{d^2 f(y; \theta)}{d \theta^2} &= [a(y)b''(\theta)+c''(\theta)]f(y; \theta)+ [a(y)b'(\theta)+c'(\theta)]^2f(y; \theta) \nonumber \\
+&= [a(y)b''(\theta)+c''(\theta)]f(y; \theta)
++[b'(\theta)]^2 \left \lbrace a(y)-E[a(Y)] \right \rbrace^2 f(y;\theta).
+\end{align}
+ Since $\int \dfrac{d^2f(y; \theta)}{d \theta^2} dy=0$,
+ \begin{align} &  \Rightarrow b''(\theta) E[a(Y)] +c''(\theta)+[b'(\theta)]^2 var{a(Y)}=0  \nonumber \\
+& \Rightarrow var{a(Y)}=\frac{b''(\theta)c'(\theta)-c''(\theta)b'(\theta)}{[b'(\theta)]^3}. \label{eqn:variance}
+ \end{align}
+In Exercise 7 of Problem Sheet 1 you will be asked to verify that the normal, Poisson and binomial distributions satisfy equations (\ref{eqn:mean}) and (\ref{eqn:variance}).
+
+
+Some further useful properties of exponential family distributions relate to the \textbf{score function}. This is defined as the derivative of the log-likelihood with respect to $\theta$. The log-likelihood for exponential family distributions is
+ $l(\theta; y) = a(y)b(\theta)+c(\theta) +d(y),$  so its derivative with respect to $\theta$ is given by \begin{align} U(\theta;y)=\frac{dl(\theta;y)}{d\theta}=a(y)b'(\theta)+c'(\theta).\end{align}
+
+ \begin{definition}[Score statistic] \label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$ is called the \textbf{score statistic}, and is used for inference about parameters in generalized linear models.
+ \end{definition}
+  $U=a(Y) b'(\theta)+c'(\theta)$ can be viewed as a random variable in its own right. The expectation of $U$ is  \begin{align} E(U)= b'(\theta)E[a(Y)]+c'(\theta)=b'(\theta)\left[-\frac{c'(\theta)}{b'(\theta)} \right]+c'(\theta)=0 \end{align}
+  The variance of $U$ is \begin{align}var{U}=[b'(\theta)^2]var{a(Y)}. \label{eqn:varU}\end{align}
+
+  \begin{definition}[Fisher's information] \label{def:infuniv}The \textbf{information}, $\mathcal{I}$, is given by \begin{align} \mathcal{I}=var{U}=E(U^2)=E\left[ \left(\dfrac{dl(\theta;y)}{d\theta}\right)^2\right].
+  \end{align}
+  \end{definition}
+  
+ Combining equation (\ref{eqn:varU}) with equation (\ref{eqn:variance}) for the variance $var{a(Y)}$ we obtain the following expression for the information of exponential family distributions: \begin{align}\mathcal{I}=var{U}=\frac{b''(\theta)c'(\theta)}{b'(\theta)}-c''(\theta). \label{eqn:informationtheta}\end{align}
+ 
+ Another general property of the information is that \begin{align} \mathcal{I}=var{U}=E(U^2)=-E(U'). \label{eqn:informationvar}\end{align}
+  To prove this note that $E(U)=0$ so $var{U}=E(U^2)$, and that
+ \begin{align*} &U'=\frac{dU}{d\theta}= a(Y)b''(\theta)+c''(\theta)\\
+  & \Rightarrow -E(U')=-[b''(\theta)E[a(Y)]+c''(\theta)] \\
+&   \Rightarrow -E(U')=-b''(\theta)\left[ -\frac{c'(\theta)}{b'(\theta)}\right]-c''(\theta)=var{U}.
+ \end{align*}
+
+## Components of a generalized linear model
+
+### The random component
+
+  Suppose $Y_1,\dots, Y_n$ are independent random variables which follow an exponential family distribution such that
+   \begin{align*}f(y_i; \theta_i)=\exp[y_i b(\theta_i)+c(\theta_i)+d(y_i)] \text{ for } i=1,\dots n.\end{align*} The joint p.d.f. of the $Y_i$ is \begin{align} &f(y_1,\dots,Y_n; \theta_1,\dots, \theta_n) =
+  \prod_{i=1}^n \exp[y _i b(\theta_i)+c(\theta_i)+d(y_i)] \nonumber \\
+  & = \exp \left[ \sum_{i=1}^n y_i b(\theta_i)+ \sum_{i=1}^n c _i(\theta_i) +\sum_{i=1}^n d(y_i) \right] \label{eqn:joint} \end{align}
+  The distribution of each $Y_i$ is in canonical form and depends on a single parameter $\theta_i$.
+
+### The systematic component
+
+ Associated with each $y_i$ is a vector $\mathbf{x}_i=(x_{i1},x_{i2},\dots,x_{ip})^\intercal$ of values of $p$ explanatory variables. The response, $Y_i$, depends on the explanatory variables through a \textbf{linear component}, $\eta_i=\mathbf{x}_i^\intercal \boldsymbol{\beta}=\beta_1x_{i1}+\dots + \beta_p x_{ip}$ for $i=1,\dots, n$ where $\mathbf{x}^\intercal_i$ is the $i$th row of the design matrix $\mathbf{X}$ and $\boldsymbol{\beta}=(\beta_1,\dots, \beta_p)^\intercal$ is the parameter vector. As in linear models, the design matrix is given by $\mathbf{X} = \left[ $${c} \mathbf{x}_1^\intercal \\ \vdots \\ \mathbf{x}_n^\intercal \end{array}\right] =  \left[ \begin{array}{ccc} x_{11} & \dots & x_{1p} \\ \vdots & & \vdots \\ x_{n1} & \dots & x_{np}  \end{array}\right]. $
+
+
+### The link function
+
+ The parameters $\theta_i$ in equation (\ref{eqn:joint}) are usually not of direct interest. Instead, we are interested in a smaller set of parameters $(\beta_1,\dots, \beta_p)$, and assume that $Y_i$ depends on these through the linear predictor $\eta_i$. The link between the distribution of the $Y_i$ and the linear predictor $\eta_i$ is provided by the \textbf{link function} $g$, for which $g(\mu_i)=\eta_i=\mathbf{x}_i^\intercal \boldsymbol{\beta}.$ Here $\mu_i=E(Y_i)$ and $g$ is a monotone, differentiable function. Although any one-to-one function could be used in principle, certain choices of link function can offer great simplification. In particular, the link function can be chosen so that the natural parameter, $b(\theta_i)$, is proportional to the linear component $\eta_i=\mathbf{x}_i^\intercal \boldsymbol{\beta}$. Such a link function is known as the \textbf{canonical link}.
+
+ \begin{table}
+\begin{tabular}{lcc}
+\hline
+ Distribution & Natural parameter & Canonical link \\
+ \hline
+  & &  \\
+ Normal & $\dfrac{\theta}{\sigma^2}$ & $g(\mu)=\mu$ \\
+ & & \\
+  Poisson & $\log \theta$ & $g(\mu)=\log(\mu)$ \\
+ & & \\
+ Binomial & $\log\left(\dfrac{\theta}{1-\theta} \right)$ & $g(\mu)=\log\left(\dfrac{\mu}{1-\mu} \right)$\\
+  & & \\
+ \hline
+\end{tabular}
+\caption{Canonical link functions for some members of the exponential family}
+\label{tab:links}
+\end{table}
+
+##Examples of generalized linear models 
+
+
+Here are a few examples of generalized linear models and their components.
+
+\begin{example}[Normal linear model] Consider $E(Y_i)=\mu_i =  \mathbf{x}_i^\intercal \boldsymbol{\beta}$ where the $Y_i$ are independent  $N(\mu_i,\sigma^2)$  for $i=1,\dots,n$. Here $g(\mu_i)=\mu_i$, the \textbf{identity} link. You may be more familiar with this model written as $\mathbf{y}=\mathbf{X}\boldsymbol{\beta}+\mathbf{e}$ where $\mathbf{e}=\left[ \begin{array}{c} e_1\\ \vdots \\ e_n  \end{array} \right] $ with the $e_i$ independent, identically distributed $N(0,\sigma^2)$.
+\end{example}
+
+\begin{example}[A model for historical linguistics]
+ If two languages are separated by time $t$, the probability of having cognate words for a particular meaning can be modelled as $e^{-\theta t}$. For a test list of $n$ meanings, a linguist judges whether the corresponding words in two languages are cognate or not. For the $i$th meaning, define $ Y_i = \left \lbrace \right. \begin{array}{ll} 1 & \text{if the two languages have cognate words} \\ 0 & \text{if words are not cognate.} \end{array} $ Then $P(Y_i=1)=e^{-\theta t} =p \text{ and } P(Y_i=0)=1-p$
+i.e. $Y_i \sim \text{Bernoulli}(p)$ (or equivalently Bin$(1,p)$) and $E(Y_i)=p$.The link function is $g(p)= \log p = -\theta t$ so that $g(p)$ is linear in the parameter of interest, $\theta$; $\mathbf{x}_i = -t$; and $\boldsymbol{\beta}=\theta$.
+\end{example}
+
+\begin{example}[A model for mortality rates]
+ The number of deaths, $Y$, in a population can be modelled by the Poisson distribution $f(y; \mu)=\frac{\mu^y e^{-\mu}}{y!}$ where $y=0,1,2,\dots$
+ The expected number of deaths per year is $E(Y)=\mu$ and it can be modelled by $E(Y)=\mu = n \lambda (\mathbf{x}^\intercal \boldsymbol{\beta}) $ where $n$ is the population size and $\lambda (\mathbf{x}^\intercal \boldsymbol{\beta})$ is the death rate per 100,000 people per year.
+ Let $Y_1,\dots, Y_n$ be the numbers of deaths occurring in successive age groups. A possible model is $E(Y_i)=\mu_i = n_i e^{\theta i}$ where $Y_i \sim \text{Poisson}(\mu_i)$ and $i =1$ for the age group 30-34, $i=2$ for age group 35-39, $\dots, i=8$ for age group 65-69. This can be expressed as a generalized linear model as $ g(\mu_i) = \log \mu_i = \log n_i +\theta i$ where $\mathbf{x}_i^\intercal= (\log n_i, i)$;  and $\boldsymbol{\beta}=(1, \theta)^\intercal$.
+
+\end{example}
+
+# Summary 
+
+Main concepts to be sure to be familiar with from this chapter:
+\begin{itemize}
+*  What are the two ways in which the GLM generalises the normal linear model?
+*  What are the random and systematic component of a GLM and what is the role of the link function?
+*  What is the form of the p.d.f. (or p.m.f.) of a distribution that is a member of the exponential family of distributions? What do the terms \textit{natural parameter}, \textit{canonical form} and \textit{canonical link} refer to?
+*  Properties of exponential family distributions: can you derive/remember the expressions for the mean and variance of an exponential family distribution in canonical form?
+\end{itemize}
+
+# Estimation
+
+## Maximum likelihood estimation 
+
+In a generalized linear model we are interested in the parameters $\beta_1,\dots,\beta_p$ that describe how the response depends on the explanatory variables. We use the observed $y_1,\dots,y_n$ to  maximise the log-likelihood function
+\begin{align} l(\boldsymbol{\beta},\mathbf{y})=\sum_{i=1}^n y_i b(\theta_i)+ \sum_{i=1}^n c (\theta_i) +\sum_{i=1}^n d(y_i)  \label{eqn:loglik} \end{align}
+obtained from equation (\ref{eqn:joint}). This depends on $\boldsymbol{\beta}$ through \begin{align*}
+& \mu_i=E(Y_i)=-\frac{c'(\theta_i)}{b'(\theta_i)};    \\
+& var{Y_i} = [b''(\theta_i)c'(\theta_i)-c''(\theta_i)b'(\theta_i)]/[b'(\theta_i)]^3;\\
+& g(\mu_i)=\eta_i= \mathbf{x}_i^\intercal \boldsymbol{\beta}, \hspace{1cm} i=1,\dots,n.                                                                           \end{align*}
+The maximisation procedure results in $p$ simultaneous equations for $\hat{\boldsymbol{\beta}}$, which are usually solved numerically. To illustrate this process we will first present an example with a single parameter, $\theta$, of interest, before proceeding to develop the general theory of estimation of $(\beta_1,\dots,\beta_p)$ for generalized linear models.
+
+\begin{example}[Weibull distribution for failure times]
+
+Suppose we wish to obtain the maximum likelihood estimate of $\theta$ for independent random variables $Y_1, \dots, Y_n$ that follow the Weibull distribution with p.d.f. \begin{align}f(y; \theta)= \exp[\log \lambda + (\lambda-1) \log y - \lambda \log \theta - (y/\theta)^\lambda]\end{align} where $\lambda$ is assumed to be known. This distribution belongs to the exponential family with \begin{align} &a(y)= y^\lambda, \nonumber\\ &b(\theta)=-\theta^{-\lambda}, \nonumber\\ &c(\theta)=\log \lambda - \lambda \log \theta,  \text{ and} \nonumber\\ &d(y)=(\lambda-1) \log(y). \label{eqn:weibullexpfam} \end{align} The joint p.d.f. of the $Y_i$ is \begin{align}f(y_1,\dots, y_n; \theta)= \prod_{i=1}^n \frac{\lambda y_i^{\lambda-1}}{\theta^\lambda} \exp\left[ - \left( \frac{y_i}{\theta} \right)^\lambda \right],\end{align} and the corresponding log-likelihood is $l(\theta; y_1,\dots, y_n)= \sum_{i=1}^n \left[ [(\lambda-1) \log y_i + \log \lambda - \lambda \log \theta]- \left( \frac{y_i}{\theta} \right)^\lambda \right]. $
+
+
+The score function is the derivative of the log-likelihood with respect to $\theta$: \begin{align} U(\theta)=\frac{dl}{d\theta}= \sum_{i=1}^n  \left[ -\frac{\lambda}{\theta}+\frac{\lambda y_i^\lambda}{\theta^{\lambda+1}} \right]. \label{eqn:u} \end{align} The maximum likelihood estimator, $\hat{\theta}$, is the solution of the equation $U(\theta)=0 \Rightarrow \sum_{i=1}^n  \left[ -\frac{\lambda}{\theta}+\frac{\lambda y_i^\lambda}{\theta^{\lambda+1}} \right]=0$ Although this equation can be easily solved for $\theta$ (assuming $\lambda$ is known -- you can verify that the solution is $\left(\frac{1}{n} \sum y_i^{\lambda}\right)^{1/\lambda}$, for illustration purposes consider solving it numerically using the Newton-Raphson algorithm. The iterative process uses the formula \begin{align} \theta^{(m)}= \theta^{(m-1)}-\frac{U^{(m-1)}}{U'^{(m-1)}}\label{eqn:newtonraphson} \end{align} starting with an initial guess $\theta^{(1)}$ and obtaining successive approximations until convergence. The derivative, $U'$, with respect to $\theta$ is  \begin{align} U'(\theta)= \frac{dU}{d \theta}= \sum_{i=1}^n \left[ \frac{\lambda}{\theta^2}-\frac{\lambda(\lambda+1)y_i^\lambda}{\theta^{\lambda+2}} \right] = \frac{\lambda n}{\theta^2}-\frac{\lambda(\lambda+1)\sum y_i^\lambda}{\theta^{\lambda+2}} \label{eqn:uprime} .\end{align}  Given a starting value, $\theta^{(1)}$, as well as $n$, $\sum y_i^\lambda$ and the expressions for $U$ and $U'$ in (\ref{eqn:u}) and (\ref{eqn:uprime}), we can use the Newton-Raphson formula (\ref{eqn:newtonraphson}) to obtain the maximum likelihood estimate of $\theta$. An alternative approach, known as the \textbf{method of scoring} or \textbf{Fisher scoring}, is to approximate $U'$ by its expectation $E(U')$ which, for exponential family distributions, is (see equation (\ref{eqn:informationtheta}))$E(U')=-var{U}=-\mathcal{I}=b''(\theta)\left[ -\frac{c'(\theta)}{b'(\theta)}\right]+c''(\theta) .$ Using the method of scoring we write the estimating equation as \begin{align} \theta^{(m)}= \theta^{(m-1)}+\frac{U^{(m-1)}}{\mathcal{I}^{(m-1)}}. \label{eqn:scoring} \end{align} In our example the information $\mathcal{I}$ is \begin{align}\mathcal{I}=E(-U')= E\left[- \sum_{i=1}^n U'_i \right]=\sum_{i=1}^n E(-U'_i) =\sum_{i=1}^n \left[ \frac{b''(\theta)c'(\theta)}{b'(\theta)} -c''(\theta)\right]=\dots=\frac{\lambda^2 n}{\theta^2}, \label{eqn:weibull} \end{align}
+  %\vspace{5cm}
+  where $U_i$ is the score for $Y_i$ and $b(\theta)$ and $c(\theta)$ are given in (\ref{eqn:weibullexpfam}).
+\end{example}
+
+
+## Method of scoring and iteratively reweighted least squares
+
+Now let us return to the case of a generalized linear model in which we are interested in estimating the parameter vector $(\beta_1,\dots, \beta_p)^\intercal$. To find the maximum likelihood estimates $\hat{\beta}_j$ we need the scores (multivariate version of the score from Definition \ref{def:scoreuniv}) expressed as functions of the $\beta_j$:
+  \begin{align} U_j=\frac{\partial l}{\partial \beta_j} &= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \beta_j}  \right]= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \theta_i} \cdot \frac{\partial \theta_i}{\partial \mu_i} \cdot \frac{\partial \mu_i} {\partial \beta_j}  \right] \label{eqn:chainrule}           \end{align}
+
+
+For an exponential family distribution in canonical form, the components of (\ref{eqn:chainrule}) are:
+  \begin{align} &\frac{\partial l_i}{\partial \theta_i} = y_i b'(\theta) +c'(\theta)=b'(\theta) \left[y_i -\left(-\frac{c'(\theta)}{b'(\theta)}\right) \right]=b' (\theta) (y_i - \mu_i) \label{eqn:dldtheta}\\
+& \frac{\partial \mu_i}{\partial \theta_i} = -\frac{c''(\theta_i)}{b'(\theta_i)}+\frac{c'(\theta_i) b''(\theta_i)}{[b'(\theta_i)]^2} = b'(\theta_i) var{Y_i}  \nonumber \\ & \Rightarrow  \frac{\partial \theta_i}{\partial \mu_i}= \frac{1}{b'(\theta_i) var{Y_i}} \label{eqn:dmudtheta}\\
+&\frac{\partial \mu_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}\cdot \frac{\partial \eta_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}x_{ij}=\frac{x_{ij}}{g'(\mu_i)} \label{eqn:dmudbeta}
+\end{align}
+Substituting (\ref{eqn:dldtheta}), (\ref{eqn:dmudtheta}) and (\ref{eqn:dmudbeta}) into (\ref{eqn:chainrule}) the expression for the scores becomes
+ \begin{align}
+ U_j=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{var{Y_i}}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right]=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{var{Y_i}}\frac{x_{ij}} {g'(\mu_i)}\right]. \label{eqn:score}
+ \end{align}
+Note that the scores depend on $\boldsymbol{\beta}$ through $\mu_i=E(Y_i)$ and through $var{Y_i}$.
+The variance-covariance matrix of the $U_j$ has terms $\mathcal{\mathcal{I}}_{jk}=E(U_jU_k)$ and is known as the \textbf{(Fisher) information matrix}. This is the multivariate version of Definition \ref{def:infuniv}. The elements of matrix $\mathcal{\mathcal{I}}$ can be obtained from (\ref{eqn:score}):
+\begin{align}
+ \mathcal{\mathcal{I}}_{jk}&=  E \left \lbrace \sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{var{Y_i}}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right] \sum_{l=1}^n \left[  \frac{(y_l-\mu_l)}{var{Y_l}}x_{lk} \frac{\partial \mu_l}{\partial \eta_l}\right]  \right \rbrace \nonumber \\
+ &=\sum_{i=1}^n \frac{E[(Y_i-\mu_i)^2]x_{ij}x_{ik}}{[var{Y_i}]^2} \left( \frac{\partial \mu_i}{\partial \eta_i} \right)^2  \nonumber\\
+ &=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{var{Y_i}} \left( \frac{\partial \mu_i}{\partial \eta_i} \right)^2 = \sum_{i=1}^n \frac{x_{ij}x_{ik}}{var{Y_i}\left(g'(\mu_i)\right)^2} \label{eqn:informationmatrix}
+\end{align}
+Here we have used the fact that $E[(Y_i-\mu_i)(Y_l-\mu_l)]=0$ by the independence of the $Y_i$.
+Notice that the information matrix can be written as \begin{align}
+\mathcal{I}=\mathcal{I}(\boldsymbol{\beta})=\mathbf{X}^\intercal \mathbf{W} \mathbf{X} \label{eqn:informationirwls} \end{align} where $\mathbf{X}=\left[ \begin{array}{c} \mathbf{x}_1^\intercal\\ \dots \\  \mathbf{x}_n^\intercal \end{array} \right]= \left[ \begin{array}{ccc}
+x_{11} & \dots & x_{1p}\\
+\vdots & \ddots & \vdots\\
+x_{n1} & \dots & x_{np}                                                                                                                                                                                                                     \end{array} \right],$
+ $\mathbf{W}=\text{diag}(\mathbf{w})=  \left[ \begin{array}{cccc}
+w_1 & 0 &  \dots & 0\\
+0 & w_2 & & \vdots\\
+\vdots & & \ddots & 0\\
+0 & \dots &0 & w_n                                                                                                                                                                                                                     \end{array} \right],$ and \begin{align}w_i=\frac{1}{var{Y_i}\left(g'(\mu_i)\right)^2}, \hspace{1cm} i=1,\dots, n.\end{align}
+The information matrix $\mathcal{I}(\boldsymbol{\beta})$ depends on $\boldsymbol{\beta}$ through $\boldsymbol{\mu}$ and through $var{Y_i}$ for $i=1,\dots,n$.
+
+Equation (\ref{eqn:score}) can be written as \begin{align}
+U_j=\sum_{i=1}^n (y_i-\mu_i)x_{ij}w_i g'(\mu_i)=   \sum_{i=1}^n x_{ij}w_iz_i \label{eqn:scoreirwls}    \hspace{1cm} j=1,\dots,p                                                                                                                                                                                                                                                                                                                                               \end{align}
+where $z_i=(y_i-\mu_i)g'(\mu_i)$, so the score can be expressed in vector-matrix form as \begin{align}
+\mathbf{U}(\thetab)= \mathbf{X}^\intercal \mathbf{W} \mathbf{z} \label{eqn:scoreirwlsmatrix}. \end{align}
+
+
+
+The multivariate version of the estimating equation (\ref{eqn:scoring}) for the method of scoring is \begin{align}\hat{\boldsymbol{\beta}}^{(m)} = \hat{\boldsymbol{\beta}}^{(m-1)} +[\mathcal{\mathcal{I}}^{(m-1)}]^{-1} \mathbf{U}^{(m-1)} \label{eqn:scoringpdim}\end{align} where $\hat{\boldsymbol{\beta}}^{(m)}$ is the vector of estimates of $(\beta_1,\dots \beta_p)$ at the $m$th iteration, $[\mathcal{\mathcal{I}}^{(m-1)}]^{-1}$ is the inverse of the information matrix with elements $\mathcal{\mathcal{I}}_{jk}$ given by (\ref{eqn:informationmatrix}), and $\mathbf{U}^{(m-1)}$ is the vector of elements given by (\ref{eqn:score}), all evaluated at  $\hat{\boldsymbol{\beta}}^{(m-1)}$.
+  Substituting (\ref{eqn:informationirwls}) and (\ref{eqn:scoreirwlsmatrix}) in (\ref{eqn:scoringpdim}) we obtain \begin{align} \hat{\boldsymbol{\beta}}^{(m)}&=   \hat{\boldsymbol{\beta}}^{(m-1)}+\left[\mathbf{X}^\intercal \mathbf{W}^{(m-1)} \mathbf{X}\right]^{-1}  \mathbf{X}^\intercal \mathbf{W}^{(m-1)} \mathbf{z}^{(m-1)}  \nonumber \\
+  &=  \left[\mathbf{X}^\intercal \mathbf{W}^{(m-1)} \mathbf{X}\right]^{-1}  \mathbf{X}^\intercal \mathbf{W}^{(m-1)}\mathbf{X} \hat{\boldsymbol{\beta}}^{(m-1)}+\left[\mathbf{X}^\intercal \mathbf{W}^{(m-1)} \mathbf{X}\right]^{-1}  \mathbf{X}^\intercal \mathbf{W}^{(m-1)} \mathbf{z}^{(m-1)}  \nonumber \\
+  &=\left[\mathbf{X}^\intercal \mathbf{W}^{(m-1)} \mathbf{X}\right]^{-1}  \mathbf{X}^\intercal \mathbf{W}^{(m-1)} (\etab^{(m-1)}+\mathbf{z}^{(m-1)}) \label{eqn:irwls} \end{align}
+ This is the same form as the normal equations for weighted least squares, except that it has to be solved numerically because $\etab$, $\mathbf{z}$ and $\mathbf{W}$ depend on $\hat{\boldsymbol{\beta}}$.
+This is why the method to obtain maximum likelihood estimators for GLMs is called \textbf{iteratively (re)weighted least squares (IRWLS)}.
+The procedure begins by using an initial approximation $\hat{\boldsymbol{\beta}}^{(0)}$ to obtain estimates of $\etab$, $\mathbf{z}$ and $\mathbf{W}$. Then $\hat{\boldsymbol{\beta}}^{(1)}$ is obtained from (\ref{eqn:irwls}) and is used to update $\etab$, $\mathbf{z}$ and $\mathbf{W}$. The iterative process continues until the difference between successive approximations $\hat{\boldsymbol{\beta}}^{(m-1)}$ and $\hat{\boldsymbol{\beta}}^{(m)}$ is sufficiently small.
+
+
+\begin{example}[Poisson regression]
+
+Suppose we have the following data:
+\begin{center}
+\begin{tabular}{crrrrrrrrrr}
+\hline
+$y_i$ & 2 & 3 & 6 & 7 & 8 & 9 & 10& 12 & 15\\
+$x_i$ & -1 & -1 & 0 & 0 &0 & 0 & 1 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+Assume that the responses $Y_i$ are independent Poisson random variables with $E(Y_i)=\mu_i = \beta_1 + \beta_2 x_i= \mathbf{x}_i^\intercal \boldsymbol{\beta}=\eta_i$ where $\boldsymbol{\beta}= \left[ \begin{array}{c} \beta_1\\ \beta_2 \end{array}\right] \text{ and } \mathbf{x}_i =   \left[ \begin{array}{c} 1\\ x_i \end{array} \right] \text{ for } i=1,\dots, n.$ Note that here we are taking the link function to be the identity link: $g(\mu_i)= \mu_i= \mathbf{x}_i^\intercal \boldsymbol{\beta}=\eta_i$
+Then $g'(\mu_i)=\dfrac{\partial \mu_i}{\partial \eta_i}= 1$ so the weights in (\ref{eqn:informationirwls}) are  $w_i = \frac{1}{var{Y_i}} =\frac{1}{\mu_i}=\frac{1}{\beta_1+\beta_2 x_i}$ and $\eta_i+z_i$ in  (\ref{eqn:irwls}) simplifies to  $\eta_i+z_i =
+ \hat{\beta}_1+\hat{\beta}_2x_i+ (y_i-\mu_i)=\hat{\beta}_1 +\hat{\beta}_2 x_i +(y_i - \hat{\beta}_1 -\hat{\beta}_2 x_i) = y_i. $ Also $ \mathcal{\mathcal{I}}=\mathbf{X}^\intercal \mathbf{W} \mathbf{X}= \left[ \begin{array}{cc} \sum \dfrac{1}{\hat{\beta}_1+\hat{\beta}_2 x_i }&  \sum \dfrac{x_i}{\hat{\beta}_1+\hat{\beta}_2 x_i} \\
+ \sum \dfrac{x_i}{\hat{\beta}_1+\hat{\beta}_2 x_i}  &  \sum \dfrac{x_i^2}{\hat{\beta}_1+\hat{\beta}_2 x_i } \end{array}\right] $
+and $ \mathbf{X}^\intercal \mathbf{W} (\etab+\mathbf{z})= \left[ \begin{array}{c} \sum \dfrac{y_i}{\hat{\beta}_1+\hat{\beta}_2 x_i }\\
+ \sum \dfrac{x_i y_i}{\hat{\beta}_1+\hat{\beta}_2 x_i}  \end{array}\right] $
+so that the MLEs can be obtained from  $ \hat{\boldsymbol{\beta}}^{(m)}=\left[(\mathbf{X}^\intercal \mathbf{W} \mathbf{X})^{(m-1)}\right]^{-1} (\mathbf{X}^\intercal \mathbf{W} \mathbf{z}) ^{(m-1)}.$
+For the data in this example, $\etab+ \mathbf{z}=\mathbf{y}=\left[\begin{array}{c} 2\\ 3\\ \vdots\\ 15 \end{array}\right] \text{ and } \mathbf{X}=\left[ \begin{array}{c} \mathbf{x}_1^\intercal \\ \mathbf{x}_2^\intercal \\ \vdots \\ \mathbf{x}_9^\intercal  \end{array} \right]=\left[\begin{array}{rr} 1 &  -1\\ 1 &  -1\\ \vdots & \vdots\\ 1 & 1 \end{array}\right]. $
+We also need some initial parameter estimates. Start with $\hat{\beta}_1^{(1)}=7$ and $\hat{\beta}_2^{(1)}=5$.
+Then $(\mathbf{X}^\intercal \mathbf{W} \mathbf{X})^{(1)}= \left[ \begin{array}{rr} 1.821429 & -0.75  \\
+ -0.75&  1.25 \end{array}\right], $
+ $(\mathbf{X}^\intercal \mathbf{W} \mathbf{z})^{(1)}= \left[ \begin{array}{cc} 9.869048  \\
+0.583333 \end{array}\right], $
+ so \begin{align*} \hat{\boldsymbol{\beta}}^{(2)}= [(\mathbf{X}^\intercal \mathbf{W} \mathbf{X})^{(1)}]^{-1}(\mathbf{X}^\intercal \mathbf{W} \mathbf{z})^{(1)}= \left[ \begin{array}{cc} 7.4514  \\
+4.9375 \end{array}\right]
+\end{align*}
+and so on until convergence.\\
+The MLEs are $\hat{\beta}_1=7.45163$ and $\hat{\beta}_2=4.93520$.
+\end{example}
+
+\begin{remark} Fisher scoring and the Newton-Raphson algorithm are equivalent when the canonical link is used in a generalized linear model. This is because for the canonical link function $\mathcal{I}=E(U')=-U'$.
+\end{remark}
+
+\begin{remark} The linear model is a generalized linear model with identity link, $\eta_i=g(\mu_i)=\mu_i$, and $var{Y_i}=\sigma^2$ for $i=1,\dots,n$. This results in weights $w_i=1/\sigma^2$ and $z_i=(y_i-\mu_i)$ that do not depend on $\boldsymbol{\beta}$. Hence $\etab+\mathbf{z}=\mathbf{y}$ and $\mathbf{W}=1/\sigma^2 \mathbf{I}$, where $\mathbf{I}$ is the $n\times n$ identity matrix. Therefore the solution to the likelihood equations can be obtained in one step as we will see in more detail in Chapter 5.
+\end{remark}
+
+#Summary
+Points to take away from this chapter:
+\begin{itemize}
+*  Multivariate versions of the score and information (score statistics and information matrix)
+*  How to do maximum likelihood estimation
+*  Finding the maximum likelihood estimator using numerical methods (Newton-Raphson method, Fisher's scoring method/iteratively reweighted least squares)
+*  Think about estimation in the context of a GLM: if you are asked how the estimates for the model parameters were obtained, can you name the estimation method and briefly describe how it works?
+\end{itemize}
+
+\chapter{Inference}
+This chapter will focus on inference for GLMs, mainly through hypothesis tests and the construction of confidence intervals for the parameters of interest. We can think of this process in the context of two models which have the same probability distribution and the same link function, but different number of parameters in the linear component. The simpler model (model under the null hypothesis $H_0$) must be a special case of the more general model. Then hypothesis testing takes the steps:
+ \begin{enumerate}
+ *  Specify model $M_0$ to correspond to $H_0$ and a more general model $M_1$ with $M_0$ a special case of $M_1$.
+   *  Fit $M_0$ and calculate a ``goodness of fit statistic" $G_0$. Fit $M_1$ and the corresponding statistic $G_1$.
+   *   Calculate the improvement in fit, usually $G_1-G_0$ (or sometimes $G_1/G_0$).
+    *  Use the sampling distribution of $G_1-G_0$ to test the null hypothesis that $G_1=G_0$ against $G_1 \neq G_0$.
+        *  If the hypothesis $G_1=G_0$ is not rejected, then $H_0$ is not rejected and $M_0$ is the preferred model. If $G_1=G_0$ is rejected, then $M_1$ is regarded as the better model.
+ \end{enumerate}
+To obtain confidence intervals and test statistics we need the sampling distribution of the estimator. Exact sampling distributions can be obtained if the response follows the normal distribution. Otherwise, we use asymptotic (large sample) results, usually based on the Central Limit Theorem. For these results to be valid, certain conditions need to hold, but we won't go into them in detail because these are satisfied for the exponential family distributions used in the GLMs we will be covering.
+
+#Large sample approximations 
+
+To come up with the approximate distribution of a statistic of interest, we rely on the following large sample distribution results: If $S$ is a statistic of interest, under appropriate conditions $\dfrac{S-E(S)}{\sqrt{var{S}}}  \overset{\text{approx}}{\sim} N(0,1)$, or equivalently  $\dfrac{[S-E(S)]^2}{var{S}}  \overset{\text{approx}}{\sim} \chi^2(1)$.
+ For a vector of statistics of interest $\mathbf{s}=(S_1, S_2, \dots, S_p)^\intercal$ with mean $E(\mathbf{s})$ and variance-covariance matrix $\mathbf{V}$, we have the asymptotic result
+ \begin{align} [\mathbf{s}-E(\mathbf{s})]^\intercal \mathbf{V}^{-1}  [\mathbf{s}-E(\mathbf{s})]  \overset{\text{approx}}{\sim} \chi^2(p), \label{eqn:approxnormgeneral}\end{align} provided that $\mathbf{V}$ is not singular.
+
+#Sampling distribution for score statistics 
+ Suppose $Y_1, \dots, Y_n$ are independent random variables in a GLM with parameters $\boldsymbol{\beta}$, with $E(Y_i)=\mu_i$ and $g(\mu_i)=\mathbf{x}_i^\intercal \boldsymbol{\beta}= \eta_i$.
+
+Recall equation (\ref{eqn:score}), which gives the score statistics as \begin{align*}U_j= \frac{\partial l}{\partial \beta_j} = \sum_{i=1}^n \left[ \frac{(Y_i-\mu_i)}{var{Y_i}}\frac{x_{ij}}{g'(\mu_i)} \right]  \hspace{1cm}  \text{ for } j=1, \dots, p. \end{align*}
+Recall also that since $E(Y_i)=\mu_i$, we have that $E(U_j)=0$ for $j=1,\dots, p$ and that the variance-covariance matrix of the score statistics has elements
+\begin{align}\mathcal{I}_{jk}= E(U_jU_k).\label{eqn:scorevar}\end{align}
+
+For univariate $\beta$, the score statistic has asymptotic sampling distribution \begin{align}\frac{U}{\sqrt{\mathcal{I}}} \overset{\text{approx}}{\sim}N(0,1)\label{eqn:scoreuniv}\end{align} or equivalently  \begin{align}\frac{U^2}{\mathcal{I}} \overset{\text{approx}}{\sim} \chi^2(1).\end{align}
+For $\boldsymbol{\beta}=(\beta_1, \dots, \beta_p)^\intercal$, the score vector \begin{align}\mathbf{U}=(U_1,\dots, U_p)^\intercal \overset{\text{approx}}{\sim} MVN(\mathbf{0}, \mathcal{I})  \end{align} and so \begin{align} \mathbf{U}^\intercal \mathcal{I}^{-1} \mathbf{U} \overset{\text{approx}}{\sim} \chi^2(p).\label{eqn:scoremultiv}\end{align}
+
+\begin{example}[Normal distribution]
+Let $Y_1, \dots, Y_n$ be independent $N(\mu, \sigma^2)$ random variables where $\sigma^2$ is assumed to be known. The log-likelihood function is
+ \begin{align}l = -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i -\mu)^2 -n \log(\sqrt{2\pi \sigma^2}).\label{eqn:infnormal}
+ \end{align}
+ The score statistic is \begin{align}U=\frac{dl}{d\mu}= \frac{1}{\sigma^2}\sum (Y_i -\mu) = \frac{n}{\sigma^2} (\bar{Y}-\mu).\label{eqn:scorenormal}\end{align}
+It can be seen that the expectation of $U$ is $0$ since $E(Y_i)=\mu$.
+The variance of $U$ is
+ \begin{align} \mathcal{I} = var{U}= \frac{1}{\sigma^4}\sum var{Y_i}=\frac{n}{\sigma^2}. \label{eqn:varnormal}\end{align}
+ Therefore \begin{align}\frac{U}{\sqrt{\mathcal{I}}}= \frac{\bar{Y}-\mu}{\sigma / \sqrt{n}} \overset{\text{approx}}{\sim}N(0,1).\label{eqn:scoredistnormaluniv} \end{align} In fact, this is an exact result since $\bar{Y} \sim N(\mu, \sigma^2/n)$.
+Also, \begin{align} \mathbf{U}^\intercal \mathcal{I}^{-1} \mathbf{U}= \frac{U^2}{\mathcal{I}} = \frac{(\bar{Y}-\mu)^2}{\sigma^2/n} \sim \chi^2(1).\label{eqn:scoredistnormalmultiv}\end{align}
+This sampling distribution can be used obtain interval estimates for $\mu$ of the form $\bar{y} \pm 1.96 \sigma /\sqrt{n} $ where $\sigma^2$ is assumed to be known.
+\end{example}
+
+\begin{example}[Binomial distribution]
+For $Y \sim Bin(n,p)$, the log-likelihood function is
+ \begin{align}l(p; y) = y \log p+(n-y) \log(1-p)+ \log \binom{n}{y}.\label{eqn:binomialloglik}\end{align}
+ The score statistic is \begin{align}U=\frac{dl}{dp}= \frac{Y}{p}-\frac{n-Y}{1-p} = \frac{Y-np}{p(1-p)},\label{eqn:scorebinomial}
+ \end{align}
+   and the expectation of $U$ is $0$ since $E(Y)=np$.
+Also, $var{Y}=np(1-p)$, so \begin{align}\mathcal{I}=var{U} = \frac{1}{p^2(1-p)^2} var{Y}=\frac{n}{p(1-p)}.\label{eqn:infbinomial}\end{align}
+Therefore a large sample approximation for $U$ is \begin{align}\frac{U}{\sqrt{\mathcal{I}}} = \frac{Y-np}{\sqrt{np(1-p)}} \overset{\text{approx}}{\sim} N(0,1).\label{eqn:scoredistbinom}\end{align}
+This is the normal approximation to the binomial distribution (without a continuity correction). It can be used to obtain approximate confidence intervals for $p$.
+\end{example}
+
+# Sampling distribution of the MLE
+To obtain an asymptotic distribution of the MLE in a generalized linear model, we need to consider some Taylor series expansions of the log-likelihood and its derivatives.\\
+
+\textbf{Reminder:} The \textbf{Taylor series expansion} of a function $f(x)$ about a value $t$ is given by $f(x)= f(t)+ (x-t) \left. \frac{df}{dx} \right|_{x=t}+ \frac{1}{2} (x-t)^2 \left. \frac{d^2f}{dx^2} \right|_{x=t} + \dots$ provided that $x$ is near $t$.\\
+
+
+Let's begin with an approximation for the log-likelihood:
+Consider the first three terms of the expansion \begin{align*}l(\beta) & \approx l(\hat{\beta})+ (\beta-\hat{\beta}) \left. \frac{dl}{d\beta} \right|_{\beta=\hat{\beta}}+ \frac{1}{2} (\beta-\hat{\beta})^2 \left. \frac{d^2l}{d\beta^2} \right|_{\beta=\hat{\beta}} \\ & \approx l(\hat{\beta}) + (\beta-\hat{\beta}) U(\hat{\beta}) +  \frac{1}{2} (\beta-\hat{\beta})^2 U'(\hat{\beta})\end{align*}
+
+Replacing $U'=d^2l/ d\beta^2$ by its expected value, $E(U')=-\mathcal{I}$, the approximation becomes  $l(\beta) \approx l(\hat{\beta}) + (\beta-\hat{\beta}) U(\hat{\beta}) -  \frac{1}{2} (\beta-\hat{\beta})^2 \mathcal{I}(\hat{\beta}).$
+
+ For a vector $\boldsymbol{\beta}$ of parameters this generalizes to \begin{align} l(\boldsymbol{\beta}) \approx l(\hat{\boldsymbol{\beta}}) + (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathbf{U}(\hat{\boldsymbol{\beta}}) -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}})(\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}). \label{eqn:likelihoodexp} \end{align}
+
+Similarly for the score function with a single parameter $\beta$ the Taylor series expansion is \begin{align*}U(\beta) & \approx U(\hat{\beta})+ (\beta-\hat{\beta})U'(\hat{\beta}).\end{align*}
+Approximating $U'$ by its expectation $E(U')=-\mathcal{I}$ this becomes
+\begin{align*}U(\beta) & \approx U(\hat{\beta})- (\beta-\hat{\beta})\mathcal{I}(\hat{\beta}).\end{align*}
+For a vector $\boldsymbol{\beta}$ of parameters this generalizes to \begin{align} U(\boldsymbol{\beta}) \approx U(\hat{\boldsymbol{\beta}}) -\mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}).\label{eqn:scoreexp}\end{align}
+
+Equation (\ref{eqn:scoreexp}) can be used to obtain the sampling distribution of the MLE $\hat{\boldsymbol{\beta}}$.  Since $U(\hat{\boldsymbol{\beta}})=\mathbf{0}$, we have  $ U(\boldsymbol{\beta}) \approx  -\mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}) \Rightarrow (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta}) = \mathcal{I}^{-1} \mathbf{U} $ assuming $\mathcal{I}$ is not singular. Taking the expectation (regarding $\mathcal{I}$ as a constant), we have that asymptotically $\hat{\boldsymbol{\beta}}- \boldsymbol{\beta}=\mathbf{0}$ since $E(\mathbf{U})=0$. Thus $E(\hat{\boldsymbol{\beta}})=\boldsymbol{\beta}$ (asymptotically) and hence the MLE is asymptotically unbiased.
+ The variance-covariance matrix for $\hat{\boldsymbol{\beta}}$ is $E\left[(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})^\intercal  \right]= \mathcal{I}^{-1} E(\mathbf{U}\mathbf{U}^\intercal) \mathcal{I}^{-1} = \mathcal{I}^{-1}$ since $E(\mathbf{U}\mathbf{U}^\intercal)=\mathcal{I}$ and $(\mathcal{I}^{-1})^\intercal =\mathcal{I}^{-1}$ since $\mathcal{I}$ is symmetric.
+Then by equation (\ref{eqn:approxnormgeneral}), the asymptotic sampling distribution for $\hat{\boldsymbol{\beta}}$ is
+  \begin{align}
+   (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta}) \overset{\text{approx}}{\sim} \chi^2(p) \label{eqn:waldchi}   \end{align} or equivalently \begin{align}\hat{\boldsymbol{\beta}} \overset{\text{approx}}{\sim} MVN(\boldsymbol{\beta}, \mathcal{I}^{-1}).\label{eqn:waldnormal}\end{align}
+
+
+   \begin{definition}[Wald statistic]
+The \textbf{Wald statistic}, also known as the \textbf{z-statistic}, for each of the model parameters $\left \lbrace \beta_j\right \rbrace,~j=1,\dots,p$, is equal to the coefficient estimate, $\hat{\beta}_j$, over its  standard error, $se(\hat{\beta})_j$.
+\end{definition}
+
+Under the null hypothesis $H_0: \beta_j=0$, and using the asymptotic normality result (\ref{eqn:waldnormal}), we can see that under $H_0$ the Wald statistic is approximately distributed as standard normal. This allows us to perform the \textbf{Wald test}, which compares the z-statistic to the upper percentile of a standard normal distribution.
+
+%In the one-dimensional case, what this says is that the MLE $\hat{\beta}\overset{\text{approx}}{\sim} N(\beta, \mathcal{I}^{-1})$.
+
+\begin{example}[MLE for the normal linear model]
+Consider the model $E(Y_i)= \mu_i = \mathbf{x}_i^\intercal \boldsymbol{\beta}$ where $Y_i \sim N(\mu_i, \sigma^2)$  for $i =1, \dots, n$ and $\boldsymbol{\beta}$ is a $p$-dimensional vector of parameters. This is a GLM with the identity link. Since $\eta_i =g(\mu_i)=\mu_i$ we have $g'(\mu_i)=1$. The elements of the information matrix therefore are $\mathcal{I}_{jk}=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{var{Y_i} (g'(\mu_i))^2} =\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\sigma^2}$ Hence \begin{align}
+              \mathcal{I} =\frac{1}{\sigma^2} \mathbf{X}^\intercal \mathbf{X} \label{eqn:informationnormal}
+             \end{align}
+Similarly
+ $\eta_i+z_i = \mu_i+ (y_i-\mu_i) g'(\mu_i)=y_i$
+ The estimating equation  $\mathbf{X}^\intercal \mathbf{W} \mathbf{X} \hat{\boldsymbol{\beta}}^{(m)}= \mathbf{X}^\intercal \mathbf{W} (\etab+\mathbf{z}) $ thus simplifies to  $\frac{1}{\sigma^2}\mathbf{X}^\intercal \mathbf{X} \hat{\boldsymbol{\beta}}=\frac{1}{\sigma^2} \mathbf{X}^\intercal \mathbf{y} \Rightarrow \hat{\boldsymbol{\beta}}=(\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{y}. $
+ If we write the normal linear model as
+  $ \mathbf{y} \sim MVN ( \mathbf{X}\boldsymbol{\beta}, \sigma^2 \mathbf{I})$ where $ \mathbf{I}$ is the $n\times n$ identity matrix, we have that $E(\hat{\boldsymbol{\beta}}) = E[(\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{y}]=  (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{X}\boldsymbol{\beta} = \boldsymbol{\beta}, $
+ so $\hat{\boldsymbol{\beta}}$ is an unbiased estimator of $\boldsymbol{\beta}$.
+
+ To obtain the variance-covariance matrix for $\hat{\boldsymbol{\beta}}$ we use $$(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta}) &= (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{y}-\boldsymbol{\beta} \\                                                                       &=    (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal (\mathbf{y}-\mathbf{X}\boldsymbol{\beta}) $$ 
+ 
+ Hence,
+ \begin{align*}
+ & E[(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})  (\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})^\intercal] \\
+ & = (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal E[(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^\intercal]\mathbf{X}  (\mathbf{X}^\intercal \mathbf{X})^{-1}\\ & = (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal var{\mathbf{y}}  \mathbf{X}  (\mathbf{X}^\intercal \mathbf{X})^{-1}  \\   &= \sigma^2      (\mathbf{X}^\intercal \mathbf{X})^{-1}\\
+ &= \mathcal{I}^{-1} \hspace{5cm} \text{ by (\ref{eqn:informationnormal})} \end{align*}
+In this case, the exact sampling distribution of $\hat{\boldsymbol{\beta}}$ is $N(\boldsymbol{\beta}, \mathcal{I}^{-1})$ or equivalently $(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta}) \sim \chi^2(p)$.
+\end{example}
+
+##Deviance and its sampling distribution 
+
+To assess the adequacy of a model of interest, we compare it with the \textbf{saturated} (or \textbf{full}) model, which has the maximum number of parameters that can be estimated. For data with $n$ observations, $y_1,\dots, y_n$, each with a different parameter in $\mathbf{X}^\intercal \boldsymbol{\beta}$, the saturated  model can be specified with $n$ parameters. If we have replicates, the maximum number of parameters in the saturated model can be less than $n$. Let $m$ be the maximum number of parameters that can be estimated, and $\boldsymbol{\beta}_{\max}$ and $\hat{\boldsymbol{\beta}}_{\max}$ be the corresponding parameter vector and MLE. Let $L(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})$ be the likelihood evaluated at $\hat{\boldsymbol{\beta}}_{\max}$, that is the likelihood for the full model. Let $L(\hat{\boldsymbol{\beta}};\mathbf{y})$ be the maximum value of the likelihood for a model of interest. The \textbf{likelihood ratio} $ \lambda=\frac{L(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})}{L(\hat{\boldsymbol{\beta}};\mathbf{y})}$ provides a measure of how well the model of interest fits compared with the full model.
+In practice, we often use the logarithm of the likelihood ratio:
+ $\log \lambda = l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\hat{\boldsymbol{\beta}};\mathbf{y})$
+ Large values of $\log \lambda$ suggest that the model of interest is a poor description of the data relative to the full model. How large a value of $\log \lambda$? To answer this question we need to obtain a critical region using the sampling distribution of $\log \lambda$. In fact, we will work with the quantity $2\log \lambda$, which is called the \textbf{deviance}.
+ \begin{definition}[Deviance] The deviance, $D$, is defined as  $D=2\log \lambda =2[ l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\hat{\boldsymbol{\beta}};\mathbf{y})]. $ \end{definition}
+
+Recall the Taylor series expansion for the log-likelihood (\ref{eqn:likelihoodexp}): $(\boldsymbol{\beta}) \approx l(\hat{\boldsymbol{\beta}}) + (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal U(\hat{\boldsymbol{\beta}}) -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}})(\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}) $
+Since $\hat{\boldsymbol{\beta}}$ is the MLE, $U(\hat{\boldsymbol{\beta}})=\mathbf{0}$ and hence this becomes  $l(\boldsymbol{\beta})- l(\hat{\boldsymbol{\beta}}) \approx  -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}).$
+Therefore, the statistic $2[ l(\hat{\boldsymbol{\beta}};\mathbf{y})-l(\boldsymbol{\beta};\mathbf{y})] \approx  (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})$ will be approximately $\chi^2(p)$.
+For the deviance, write \begin{align*}D&=2[ l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\hat{\boldsymbol{\beta}};\mathbf{y})]\\
+ &=2[ l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\boldsymbol{\beta}_{\max};\mathbf{y})]\\
+ & \hspace{1cm} -2[ l(\hat{\boldsymbol{\beta}};\mathbf{y})-l(\boldsymbol{\beta};\mathbf{y})]+2 \left[ l(\boldsymbol{\beta}_{\max};\mathbf{y})-l(\boldsymbol{\beta};\mathbf{y}) \right]    .                    \end{align*}
+ $2[ l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\boldsymbol{\beta}_{\max};\mathbf{y})]$ has the $\chi^2(m)$ distribution, where $m$ is the number of parameters in the full (saturated) model.
+ $2[ l(\hat{\boldsymbol{\beta}};\mathbf{y})-l(\boldsymbol{\beta};\mathbf{y})]$ is $\chi^2(p)$, where $p$ is the number of parameters in the model of interest.
+ $v=2 \left[ l(\boldsymbol{\beta}_{\max};\mathbf{y})-l(\boldsymbol{\beta};\mathbf{y}) \right]$ is a constant which should be close to zero if the model of interest fits the data almost as well as the full model.
+ Therefore the approximate distribution of the deviance, $D$, is $\chi^2(m-p, v)$, where $v$ is the non-centrality parameter (see Chapter 1).
+
+\begin{example}[Deviance for a binomial model]
+Suppose $Y_1, \dots, Y_n$ are independent with $Y_i \sim Bin(n_i, p_i)$ for $i=1,\dots, n$.  The log-likelihood is  \begin{align}l(\boldsymbol{\beta}; \mathbf{y}) = \sum_{i=1}^n \left[y_i \log p_i-y_i \log(1-p_i)+ n_i \log(1-p_i) +\log \binom{n_i}{y_i} \right] \label{eqn:binomloglik} \end{align}
+For the full model the $p_i$'s are all different, so $\boldsymbol{\beta}=(p_1, \dots, p_n)^\intercal$. Since $\hat{p}_i=y_i/n_i$, this gives
+  \begin{align}l(\hat{\boldsymbol{\beta}}_{\max}; \mathbf{y}) &= \sum \left[y_i \log \left(\frac{y_i}{n_i}\right)-y_i \log\left(\frac{n_i-y_i}{n_i}\right)  + n_i \log\left(\frac{n_i-y_i}{n_i}\right) +\log \binom{n_i}{y_i} \right].\label{eqn:binomloglikfullmodel}\end{align}
+For any model with $p<n$ parameters, the MLE of $p_i$ is $\hat{p}_i$ and the fitted values are $\hat{y_i}=n_i \hat{p_i}$.  This gives
+  \begin{align}l(\hat{\boldsymbol{\beta}}; \mathbf{y}) &= \sum_{i=1}^n \left[y_i \log \left(\frac{\hat{y}_i}{n_i}\right)-y_i \log\left(\frac{n_i-\hat{y}_i}{n_i}\right)+n_i \log\left(\frac{n_i-\hat{y}_i}{n_i}\right) +\log \binom{n_i}{y_i} \right].\end{align}
+Thus, the deviance is \begin{align}
+               D&=2[ l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\hat{\boldsymbol{\beta}};\mathbf{y})]= 2\sum_{i=1}^n \left[ y_i \log\left( \frac{y_i}{\hat{y}_i}\right)+ (n_i - y_i)  \log\left( \frac{n_i-y_i}{n_i-\hat{y}_i}\right) \right]. \label{eqn:binomdev}
+              \end{align}
+\end{example}
+\begin{example}[Deviance for a normal linear model]
+Suppose $Y_1, \dots, Y_n$ are independent with $Y_i \sim N(\mu_i, \sigma^2)$ and $E(Y_i)= \mu_i=\mathbf{x}^\intercal_i  \boldsymbol{\beta}$ for $i=1,\dots, n$ .
+ The log-likelihood function is
+ \begin{align}l(\boldsymbol{\beta}; \mathbf{y}) = -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i -\mu_i)^2 -\frac{1}{2}n \log(2\pi \sigma^2).\label{eqn:normalloglik}\end{align}
+For the saturated model, we have $n$ parameters $\mu_1, \dots, \mu_n$ and the maximum value of the log-likelihood becomes
+ \begin{align}l(\hat{\boldsymbol{\beta}}_{\max}; \mathbf{y}) =  -\frac{1}{2}n \log(2\pi \sigma^2). \label{eqn:normloglikfullmodel}\end{align}
+ For any other model with $p<n$ parameters, the MLE of $\boldsymbol{\beta}$ is $\hat{\boldsymbol{\beta}} = (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{y}.$
+The corresponding maximized log-likelihood function is
+ \begin{align}l(\hat{\boldsymbol{\beta}}; \mathbf{y}) = -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i -\mathbf{x}_i^\intercal \hat{\boldsymbol{\beta}})^2 -\frac{1}{2}n \log(2\pi \sigma^2).\end{align}
+ The deviance then is \begin{align}
+               D&=2[ l(\hat{\boldsymbol{\beta}}_{\max};\mathbf{y})-l(\hat{\boldsymbol{\beta}};\mathbf{y})]= \frac{1}{\sigma^2}\sum_{i=1}^n \left( y_i-\mathbf{x}_i^\intercal \hat{\boldsymbol{\beta}}\right)^2
+                =\frac{1}{\sigma^2} \sum_{i=1}^n \left( y_i-\hat{\mu}_i\right)^2. \label{eqn:normaldev}
+              \end{align}
+In the case when $E(Y_i)=\mu$ (null model), we have $\hat{\mu}_i=\hat{\mu}=\bar{y}$ and
+\begin{align*}
+  D =\frac{1}{\sigma^2} \sum_{i=1}^n \left( y_i-\bar{y}\right)^2.
+\end{align*}
+Note the relationship to the sample variance $S^2$:
+$ S^2 = \frac{1}{n-1}\sum_{i=1}^n \left( y_i-\bar{y}_i\right)^2=\frac{\sigma^2 D}{n-1}.$
+
+The distribution of the sample variance is given by $(n-1)S^2/\sigma^2 \sim \chi^2(n-1),$ so $D \sim \chi^2(n-1).$
+More generally, when $\mu_i=\mathbf{x}_i^\intercal \hat{\boldsymbol{\beta}}$, we have
+\begin{align*}
+  D =\frac{1}{\sigma^2} \sum_{i=1}^n \left( y_i-\mathbf{x}_i^\intercal \hat{\boldsymbol{\beta}}\right)^2=\frac{1}{\sigma^2} (\mathbf{y}-\mathbf{X} \hat{\boldsymbol{\beta}})^\intercal (\mathbf{y}-\mathbf{X} \hat{\boldsymbol{\beta}}).
+\end{align*}
+Since the MLE is $\hat{\boldsymbol{\beta}}= (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{y}$, the term $(\mathbf{y}-\mathbf{X} \hat{\boldsymbol{\beta}})$ can be written as
+\begin{align*}\mathbf{y}-\mathbf{X} \hat{\boldsymbol{\beta}} &= \mathbf{y}-\mathbf{X} (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{y}\\
+ &= [\mathbf{I} - \mathbf{X} (\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal]\mathbf{y}=[\mathbf{I}-\mathbf{H}]\mathbf{y}
+\end{align*} where $\mathbf{I}$ is the identity matrix and $\mathbf{H}= \mathbf{X}(\mathbf{X}^\intercal \mathbf{X})^{-1} \mathbf{X}^\intercal$ is the \textbf{hat} matrix.
+Therefore
+\begin{align*}
+  D &=\frac{1}{\sigma^2} (\mathbf{y}-\mathbf{X} \hat{\boldsymbol{\beta}})^\intercal (\mathbf{y}-\mathbf{X} \hat{\boldsymbol{\beta}})\\
+  &=\frac{1}{\sigma^2}\left([\mathbf{I}-\mathbf{H}]\mathbf{y}\right)^\intercal [\mathbf{I}-\mathbf{H}]\mathbf{y}\\
+  &= \frac{1}{\sigma^2} \mathbf{y}^\intercal (\mathbf{I}-\mathbf{H})\mathbf{y}
+\end{align*}
+since $\mathbf{H}$ is idempotent; that is $\mathbf{H}^\intercal = \mathbf{H}$ and $\mathbf{H}\mathbf{H}=\mathbf{H}$.
+$ D  = \dfrac{1}{\sigma^2} \mathbf{y}^\intercal (\mathbf{I}-\mathbf{H}) \mathbf{y}$ is a quadratic form, with rank equal to the rank of the matrix $\mathbf{I}-\mathbf{H}$.
+The rank of $\mathbf{I}$ is $n$ and that of $\mathbf{H}$ is $p$, so the rank of $\mathbf{I}-\mathbf{H}$  is $n-p$. (For more details consult your Linear Models/Regression Modelling course notes.)
+
+According to the results on distributions related to the normal (see Chapter 1),  $D$ has a non-central chi-squared distribution with $n-p$ degrees of freedom and non-centrality parameter equal to $(\mathbf{X} \boldsymbol{\beta})^\intercal (\mathbf{I}-\mathbf{H})(\mathbf{X} \boldsymbol{\beta})/ \sigma^2$.
+However, $(\mathbf{I}-\mathbf{H})\mathbf{X}=\mathbf{0}$, so the chi-squared distribution is actually central.
+So the (exact) distribution of $D$ is $\chi^2(n-p)$.
+If the model fits the data well, then $D \sim \chi^2(n-p)$, and the expected value of $D$ will be $n-p$, since the expectation of a chi-squared random variable is equal to its degrees of freedom. From the expression $D =\frac{1}{\sigma^2} \sum_{i=1}^n \left( y_i-\hat{\mu}_i\right)^2,$ we can obtain an estimate of $\sigma^2$:
+ $\tilde{\sigma}^2=\frac{ \sum_{i=1}^n \left( y_i-\hat{\mu}_i\right)^2}{n-p}.$
+\end{example}
+
+\begin{example}[Deviance for a Poisson model]
+Let $Y_1, \dots, Y_n$ be independent random variables with $Y_i \sim Po(\lambda_i)$.
+Then the log-likelihood function is \begin{align}l(\boldsymbol{\beta}; \mathbf{y}) = \sum y_i \log \lambda_i - \sum \lambda_i -\sum \log (y_i!).\label{en:poissonloglik}\end{align}
+For the full model $\boldsymbol{\beta}_{\max}= (\lambda_1,\dots, \lambda_n)^\intercal$, $\hat{\lambda}_i=y_i$, and the maximum value of the log-likelihood is
+  \begin{align}l(\hat{\boldsymbol{\beta}}_{\max}; \mathbf{y}) = \sum y_i \log y_i - \sum y_i -\sum \log (y_i!).\label{eqn:poissonloglikfullmodel}\end{align}
+Suppose that for the model of interest with $p<n$ parameters the MLE, $\hat{\boldsymbol{\beta}}$, can be used to obtain $\hat{\lambda}_i$ and hence fitted values $\hat{y}_i=\hat{\lambda}_i$ (because $E(Y_i)=\lambda_i$).
+ For the model of interest the maximum value of the log-likelihood is
+  \begin{align}l(\hat{\boldsymbol{\beta}}; \mathbf{y}) = \sum y_i \log \hat{y}_i - \sum \hat{y}_i -\sum \log (y_i!).\end{align}
+  Hence, the deviance is
+  \begin{align}D= 2 [l(\hat{\boldsymbol{\beta}}_{\max}; \mathbf{y}) -l(\hat{\boldsymbol{\beta}}; \mathbf{y}) ]= 2 \left[\sum y_i \log\left(\frac{y_i} {\hat{y}_i}\right)-\sum (y_i-\hat{y_i}) \right] \label{eqn:devpoisson}\end{align}
+ For most models $\sum y_i=\sum \hat{y_i}$, so the deviance can be written as
+  \begin{align}D=2 \sum y_i \log\left(\frac{y_i} {\hat{y}_i}\right)= 2 \sum o_i \log\left(\frac{o_i} {e_i}\right),\end{align}
+  where $o_i$ denotes the observed value and $e_i$ the expected value of $y_i$.
+ The deviance can be computed from the data and compared with the $\chi^2(n-p)$ distribution.
+Recall the Poisson regression data from Example 3.2:
+ \begin{center}
+\begin{tabular}{crrrrrrrrrr}
+\hline
+$y_i$ & 2 & 3 & 6 & 7 & 8 & 9 & 10& 12 & 15\\
+$x_i$ & -1 & -1 & 0 & 0 &0 & 0 & 1 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+  where a straight line of the form $y=\beta_1 + \beta_2 x$ was fitted.
+  The fitted values are $\hat{y}_i=\hat{\beta}_1 + \hat{\beta}_2 x_i$ where $\hat{\beta}_1 =7.45163$ and $\hat{\beta}_2= 4.93530$.
+ The deviance is $1.8947$, which is small compared with $n-p=7$, indicating a good fit.
+\end{example}
+
+## Hypothesis testing
+
+We can test hypotheses about the $p$-dimensional parameter vector $\boldsymbol{\beta}$ by using the Wald statistic and the asymptotic distribution of the MLE as described in Section 4.1.2. Alternatively we can compare \textbf{nested} models $M_0$ and $M_1$ using the difference of their deviances.
+Consider $H_0: \boldsymbol{\beta}= \boldsymbol{\beta}_0 = (\beta_1, \dots, \beta_q)^\intercal$ corresponding to $M_0$ and $H_1: \boldsymbol{\beta}= \boldsymbol{\beta}_0 = (\beta_1, \dots, \beta_p)^\intercal$ corresponding to $M_1$ with $q<p<n$.
+ Test $H_0$ against $H_1$ by considering \begin{align*} D_0-D_1& =2[l(\hat{\boldsymbol{\beta}}_{\max}; \mathbf{y}) -l(\hat{\boldsymbol{\beta}}_0; \mathbf{y})]-2[l(\hat{\boldsymbol{\beta}}_{\max}; \mathbf{y}) -l(\hat{\boldsymbol{\beta}}_1; \mathbf{y})] \\ &=2[ l(\hat{\boldsymbol{\beta}}_1; \mathbf{y}) -l(\hat{\boldsymbol{\beta}}_0; \mathbf{y})]\end{align*}
+ If both models describe the data well then $D_0 \sim \chi^2(n-q)$, $D_1 \sim \chi^2(n-p)$ and $D_0-D_1 \sim \chi^2(p-q)$.
+ If $M_1$ describes the data well but $M_0$ does not, then $D_0-D_1$ will be larger than expected for a value from $\chi^2(p-q)$.
+ So, reject $H_0$ if $D_0-D_1> \chi^2(1-\alpha; p-q)$ that is, if the difference in deviances exceeds the upper $100\times \alpha \%$ point of the $\chi^2(p-q)$ distribution.
+
+\begin{example}[Normal linear model]
+Consider the model $E(Y_i)=\mu_i= \mathbf{x}_i^\intercal \boldsymbol{\beta}, \hspace{1cm} Y_i \sim N(\mu_i, \sigma^2)$ where the $Y_i, i=1,\dots, n$ are independent.
+Suppose that model $M_1$ has $p$ parameters and model $M_0$ has $q$ parameters and that the fitted values from each model are denoted by $\hat{\mu}_i(1)$ and  $\hat{\mu}_i(0)$ respectively.
+ Then
+ $ D_0 =\frac{1}{\sigma^2} \sum_{i=1}^n \left[ y_i-\hat{\mu}_i(0)\right]^2$ and
+ $ D_1 =\frac{1}{\sigma^2} \sum_{i=1}^n \left[ y_i-\hat{\mu}_i(1)\right]^2.$
+ Assuming that model $M_1$ fits the data well, we have $D_1 \sim \chi^2(n-p)$. If also $M_0$ fits the data well, then $D_0 \sim \chi^2(n-q)$ and $D_0-D_1 \sim \chi^2(p-q)$.
+ Since the deviance for the normal model involves the unknown parameter $\sigma^2$, use the ratio
+  \begin{align*}
+   F&=\frac{(D_0-D_1)/(p-q)}{D_1/(n-p)}\\ &= \frac{\left\lbrace \sum_{i=1}^n \left[ y_i-\hat{\mu}_i(0)\right]^2-\sum_{i=1}^n \left[ y_i-\hat{\mu}_i(1)\right]^2 \right\rbrace/(p-q)}{\sum_{i=1}^n \left[ y_i-\hat{\mu}_i(1)\right]^2/(n-p)}
+  \end{align*}
+which should be distributed as $F(p-q,n-p)$ if $H_0$ holds.
+\end{example}
+
+\begin{example}[Inference for birthweight v. gestational age data]
+Recall Example 1.3 on birthweight as a function of gestational age.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[totalheight=0.8\textwidth,angle=0]{birthweight}
+\caption{Birthweight against gestational age for boys (solid circles) and girls (open circles)} \label{fig:birthweight}
+\end{figure}
+
+$M_0$ is the model under $H_0$, specified as
+$E(Y_{jk}) = \mu_{jk}=\alpha_j + \beta x_{jk} ;  \hspace{1cm} Y_{jk} \sim N(\mu_{jk},\sigma^2)$
+$M_1$ is the model under $H_1$, specified as:
+$E(Y_{jk}) = \mu_{jk}=\alpha_j + \beta_j x_{jk}; \hspace{1cm}  Y_{jk} \sim N(\mu_{jk},\sigma^2)$
+
+where the $Y_{jk}$ are independent for $j=1,2$ and $k=1,\dots, 12$.
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+ Model  & Min. Sum of Squares & No. parameters & DF\\
+ \hline
+ $M_0$ & $\hat{S}_0=658770.8$ & 3& 24-3=21\\
+  $M_1$& $\hat{S}_1=652424.5$ &4 & 24-4=20\\
+ \hline
+\end{tabular}
+\end{center}
+
+The deviances are related to the sums of squares:
+  $\hat{S}_0= \sigma^2 D_0 \Rightarrow D_0=\hat{S}_0/\sigma^2 \text{ and similarly } D_1=\hat{S}_1/\sigma^2$
+Therefore $ F=\frac{(658770.8-652424.5)/1}{652424.5/20}=0.19 $ which is not significant when compared to the $F(1,20)$ distribution.
+\end{example}
+
+# Summary
+Key points from this chapter:
+
+*  Approximate (asymptotic/large sample) distribution for the score
+*  Approximate (asymptotic/large sample) distribution for the MLE
+*  Terminology: full (saturated, maximal) model; null (minimal) model; model of interest (something in-between)
+*  Maximized log-likelihood for full model, model of interest, null model
+*  Definition of deviance, deviance for model of interest, deviance for null model
+*  Approximate (asymptotic/large sample) distribution for the deviance of a model of interest under the hypothesis that the model is a good fit
+*  What is different about the normal linear model and why don't we use the deviance directly for goodness of fit/hypothesis tests?
+*  Hypothesis tests about model parameters: Wald tests and tests based on deviances: what are the relevant null hypotheses, test statistics and distributions involved? Can you perform both types of tests for a given example?
+

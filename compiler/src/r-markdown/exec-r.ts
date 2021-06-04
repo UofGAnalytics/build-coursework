@@ -31,7 +31,7 @@ export async function executeRCode(code: string) {
   return new Promise<string>((resolve, reject) => {
     exec(execString, (err, response) => {
       // console.log('ERROR', err);
-      // console.log('RESPONSE', `"${response}"`);
+      console.log('RESPONSE', `"${response}"`);
       if (err) {
         reject(formatError(err, execString));
       } else {
@@ -65,20 +65,24 @@ function addLinePrefix(str: string) {
 }
 
 function formatResponse(out: string) {
+  const response = out.replace(/NULL\s*$/, '');
+
   // if output is text it will print an empty SVG after, so remove it
-  if (containsEmptySvg(out)) {
-    const response = out.slice(0, out.indexOf('<?xml'));
-    return addLinePrefix(response);
-  }
+  // if (response.includes('<g id="surface1">\n</g>')) {
+  //   const result = response.slice(0, response.indexOf('<?xml'));
+  //   return addLinePrefix(result);
+  // }
 
   // if the output is SVG, remove the xml declaration at the top
-  if (out.includes('<svg')) {
-    return out.slice(out.indexOf('<svg'));
+  const idx = response.indexOf('<svg');
+  if (idx !== -1) {
+    return response.slice(idx);
   }
 
-  return addLinePrefix(out);
-}
+  // output is html table
+  if (response.indexOf('<table') !== -1) {
+    return response;
+  }
 
-function containsEmptySvg(out: string) {
-  return out.includes('<g id="surface1">\n</g>');
+  return addLinePrefix(response);
 }

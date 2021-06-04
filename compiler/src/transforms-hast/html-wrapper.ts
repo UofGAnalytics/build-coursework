@@ -14,7 +14,16 @@ export function htmlWrapper(titles: UnitTitles, mdast: Node) {
     const iconDefs = createDefs();
     return {
       type: 'root',
-      children: [iconDefs, hamburgerIcon, sidebar, main],
+      children: [
+        {
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            id: 'root',
+          },
+          children: [iconDefs, hamburgerIcon, sidebar, main],
+        },
+      ],
     };
   };
 }

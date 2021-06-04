@@ -11,8 +11,11 @@ export type UnitYaml = {
   content: FileRef[];
 };
 
-export type Unit = UnitYaml & {
-  markdown: VFile[];
+export type Unit = {
+  name: string;
+  title: string;
+  parts: FileRef[];
+  files: VFile[];
   titles: UnitTitles;
 };
 

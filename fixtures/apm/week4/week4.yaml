@@ -1,0 +1,6 @@
+name: "Week 4"
+title: "Models for nominal/ordinal response"
+golive: "+1w"
+content:
+  - type: text
+    src: week4mat.Rmd

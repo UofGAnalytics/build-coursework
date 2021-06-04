@@ -20,7 +20,7 @@ export async function cacheToFile({
   execFn,
   json,
 }: Options) {
-  if (ctx.cacheDir === null) {
+  if (ctx.options.noCache === true) {
     return execFn(key);
   }
 

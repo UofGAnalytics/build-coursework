@@ -9,8 +9,9 @@ import { VFile } from 'vfile';
 import { texPdfToSvg } from '../latex/pdf-to-svg';
 import { Context } from '../types';
 import { cacheToFile } from '../utils/cache-to-file';
+import { getAssetHast } from '../utils/get-asset-hast';
 import { failMessage } from '../utils/message';
-import { readFile } from '../utils/utils';
+import { readFile, rehypeParser } from '../utils/utils';
 
 export function embedAssets(ctx: Context) {
   async function embed(node: Node, file: VFile) {
@@ -22,6 +23,8 @@ export function embedAssets(ctx: Context) {
         case '.jpg':
         case '.gif':
           return embedImage(node, ctx);
+        case '.svg':
+          return embedPlotSvg(node, ctx);
         case '.pdf':
           return embedTexPdfSvg(node);
         default:
@@ -53,6 +56,19 @@ async function embedImage(node: Node, ctx: Context) {
   };
 }
 
+async function embedPlotSvg(imgNode: Node, ctx: Context) {
+  const src = getImageSrc(imgNode);
+  const contents = await readFile(src);
+  const idx = contents.indexOf('<svg');
+  const svg = idx === -1 ? contents : contents.slice(idx);
+  const svgNode = getAssetHast(svg);
+  const svgProps = svgNode.properties as Record<string, string>;
+  const imgProps = imgNode.properties as Record<string, string>;
+  const properties = { ...svgProps, ...imgProps };
+  delete properties.src;
+  Object.assign(imgNode, svgNode, { properties });
+}
+
 function getImageSrc(node: Node) {
   const properties = (node.properties || {}) as { src: string };
   if (!properties.src) {
@@ -69,9 +85,8 @@ async function getImage(src: string, ctx: Context) {
       key: src,
       execFn: getImageDataFromWeb,
     });
-  } else {
-    return readFile(src, 'base64');
   }
+  return readFile(src, 'base64');
 }
 
 async function getImageDataFromWeb(src: string) {

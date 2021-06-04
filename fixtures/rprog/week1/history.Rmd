@@ -1,12 +1,12 @@
 ## About computers and computing
 
-Before we take a look at R coding in more detail, let's take at computing in general. Data science wouldn't exist if computer weren't that powerful. 
+Before we take a look at R coding in more detail, let's take at computing in general. Data science wouldn't exist if computer weren't that powerful.
 
 ### A brief history of computing
 
 ###[video, videoid="mjDbSsKkVdc", duration="3m52s"]A brief history of computing
 
-## Computer have become powerful
+## Computer have become powerful2
 The advances in computational power and data storage are the drivers behind the ascent of Data Science and Analytics. In this section we look at two simple examples illustrating how powerful desktop computers are nowadays. Don't worry too much about the details of the R code at this stage.
 
 #### Matrix multiplication
@@ -38,7 +38,7 @@ The enormous arithmetic power of modern computers can lead to the wrong impressi
 
 The following examples should act as a warning not to blindly trust a computer and as a reminder to be careful when using a computer to perform even basic arithmetic.
 
-### Isn't addition commutative (i.e. the order of terms usually doesn't matter)? 
+### Isn't addition commutative (i.e. the order of terms usually doesn't matter)?
 All of us know that $10^{20}-10^{20} + 1=1$. Using R we obtain the same result:
 
 ```{r, echo=TRUE}
@@ -50,7 +50,7 @@ Of course $1 + 10^{20}-10^{20}=1$ as well, as this is the same sum, just with th
 ```{r, echo=TRUE}
 1+10^20-10^20
 ```
-None of us would have made this mistake, as we would see at once that the sum of $10^{20}$ and $-10^{20}$ is $0$, thus the answer must be $1$. The computer processes this sum from left to right, and for the computer $1+10^{20}\approx 10^{20}$, as $1$ is very small compared to $10^{20}$. In fact the next smallest number a computer can represent is $99,999,999,999,999,983,616$, which is much further away from $10^{20}-1$ than $10^{20}$ itself. Subtracting $10^{20}$ then yields the wrong result $0$. In other words, addition is not necessarily commutative on a computer, so the order of the terms might matter. 
+None of us would have made this mistake, as we would see at once that the sum of $10^{20}$ and $-10^{20}$ is $0$, thus the answer must be $1$. The computer processes this sum from left to right, and for the computer $1+10^{20}\approx 10^{20}$, as $1$ is very small compared to $10^{20}$. In fact the next smallest number a computer can represent is $99,999,999,999,999,983,616$, which is much further away from $10^{20}-1$ than $10^{20}$ itself. Subtracting $10^{20}$ then yields the wrong result $0$. In other words, addition is not necessarily commutative on a computer, so the order of the terms might matter.
 
 The reason behind this is that a computer only has finite precision, so we cannot represent arbitrarily large numbers, and there are "gaps" between the numbers. Like most other software, R uses [IEEE 754](http://en.wikipedia.org/wiki/IEEE_754) double precision floating point numbers. Floating point numbers are the computer implementation of scientific notation (like "$3\cdot 10^{-9}$"), i.e. the significant and the exponent are stored separately. Storing the exponent separately makes the decimal point "float". The largest number that can be represented this way is $2^{1024}\approx 1.7977\cdot 10^{308}$, which is large enough for most purposes. If a computation results in a value larger than this, a so-called arithmetic overflow occurs. In the past, this typically caused the program to abort. However, in IEEE 754 arithmetic and thus in R, the result is simply set to \texttt{+Inf} (or \texttt{-Inf}).
 
@@ -66,7 +66,7 @@ This is in no way a problem that is unique to R. In the above example, Excel obt
 ### More supposedly simple arithmetic
 
 You are used to rounding errors from your calculators. For example both on a computer and on a calculator $\frac{5}{6} - \frac{1}{6}\cdot 5$ is not $0$:
- 
+
 ```{r, echo=TRUE}
 5/6 - 1/6 * 5
 ```
@@ -79,7 +79,7 @@ The result is almost (but only almost) $0$. Again, we would have expected the co
 Almost all modern computers (as opposed to calculators) internally use a binary system instead of the decimal system we are used to. In binary representation, the digits of $0.1$ are periodic
 
 $$
-0.1 = 0\times 1 + 0 \times \frac12 + 0 \times \frac14 + 0\times\frac18 + 1 \times \frac1{16} + 1 \times \frac{1}{32} 
+0.1 = 0\times 1 + 0 \times \frac12 + 0 \times \frac14 + 0\times\frac18 + 1 \times \frac1{16} + 1 \times \frac{1}{32}
 + 0 \times \frac1{64} + 0 \times \frac1{128} + 1 \times \frac1{256} + 1 \times \frac1{512}\dots
 $$
 
@@ -89,7 +89,7 @@ i.e. on a computer 0.1 (decmial) is actually 0.000110011\dots (binary). So on a 
 Explain why $0.3$ is $0.01001100110\ldots$ in binary representation.
 #####[answer]
 $$
-0.3 = 0\times 1 + 0 \times \frac12 + 1 \times \frac14 + 0\times\frac18 + 0 \times \frac1{16} + 1 \times \frac{1}{32} 
+0.3 = 0\times 1 + 0 \times \frac12 + 1 \times \frac14 + 0\times\frac18 + 0 \times \frac1{16} + 1 \times \frac{1}{32}
 + 1 \times \frac1{64} + 0 \times \frac1{128} + 0 \times \frac1{256} + 0 \times \frac1{512}\dots
 $$
 #####[/answer]
@@ -103,7 +103,7 @@ To quote from the book *The Elements of Programming Style* by Kernighan and Plau
 
 > $10.0$ times $0.1$ is hardly ever $1.0$.
 
-For this reason, pocket calculators perform all their arithmetic in base 10 (even though this is a lot less efficient than base-2 arithmetic) so that school children are not tripped up by these issues. 
+For this reason, pocket calculators perform all their arithmetic in base 10 (even though this is a lot less efficient than base-2 arithmetic) so that school children are not tripped up by these issues.
 
 The take-home message of these examples is that we should always expect small numerical errors and never test whether two numbers are exactly equal, but rather test whether their difference is quite small (say less than $10^{-8}$).
 
@@ -122,7 +122,7 @@ Data analysts and statisticians can also run into similar numerical problems. Fr
 The authors had used too lenient convergence criteria incorrectly suggesting that the model had already converged.
 
 
-Don't worry too much about these issues for now, but beware that if you are not careful one day you will get tripped up by one of these issues. You will come across one or the other oddity which is due to numerical problems during the course or later on in your life as an R programmer. 
+Don't worry too much about these issues for now, but beware that if you are not careful one day you will get tripped up by one of these issues. You will come across one or the other oddity which is due to numerical problems during the course or later on in your life as an R programmer.
 
 <!--[if PDF]>
 \newpage

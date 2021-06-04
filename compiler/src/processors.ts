@@ -11,6 +11,7 @@ import stringify from 'rehype-stringify';
 // @ts-expect-error
 import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
+import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import math from 'remark-math';
 import markdown from 'remark-parse';
@@ -27,11 +28,14 @@ import unified from 'unified';
 import { Node } from 'unist';
 import { VFile } from 'vfile';
 
+import templateCss from '../../template/build/template.css';
+import templateJs from '../../template/build/template.js2';
 import { codeMod } from './code-mod';
-import { getTemplateCss, getTemplateJs } from './env';
+// import { getTemplateCss, getTemplateJs } from './env';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
+import { knitr } from './r-markdown/knitr';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
@@ -43,18 +47,30 @@ import { responsiveTables } from './transforms-mdast/responsive-tables';
 // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
+import { getAssetHast } from './utils/get-asset-hast';
 import { createSvg } from './utils/icons';
 
 // import { inspect } from './utils/utils';
 
-export async function markdownParser(file: VFile) {
-  file.contents = codeMod(file.contents as string);
-  const processor = unified().use(markdown).use(directive).use(math).use(gfm);
+export async function markdownParser(file: VFile, ctx: Context) {
+  const md = await knitr(file.contents as string, ctx);
+  file.contents = codeMod(md);
+
+  const processor = unified()
+    .use(markdown)
+    .use(directive)
+    .use(math)
+    .use(gfm)
+    .use(frontmatter);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
 
-export async function customTransforms(mdast: Node, ctx: Context, file: VFile) {
+export async function customTransforms(
+  mdast: Node,
+  ctx: Context,
+  file: VFile
+) {
   const processor = unified().use(embedAssetUrl).use(youtubeVideos);
   return processor.run(mdast, file);
 }
@@ -73,14 +89,16 @@ export async function linter(mdast: Node, ctx: Context, file: VFile) {
 }
 
 export async function customCombinedTransforms(mdast: Node, ctx: Context) {
-  const linkIcon = await createSvg('link-icon');
+  const linkIcon = createSvg('link-icon');
   const processor = unified()
     .use(slug)
-    .use(headings, { content: linkIcon, linkProperties: { className: 'link' } })
+    .use(headings, {
+      content: linkIcon,
+      linkProperties: { className: 'link' },
+    })
     .use(responsiveTables)
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
-    // .use(inspect)
     .use(boxouts)
     .use(images);
   // .use(moveAnswersToEnd);
@@ -88,9 +106,16 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
   return processor.run(mdast);
 }
 
-export async function htmlCompiler(mdast: Node, ctx: Context, unitIdx: number) {
+export async function htmlCompiler(
+  mdast: Node,
+  ctx: Context,
+  unitIdx: number
+) {
   const { titles } = ctx.course.units[unitIdx];
-  const processor = unified().use(remark2rehype).use(format).use(stringify);
+  const processor = unified()
+    .use(remark2rehype)
+    .use(format)
+    .use(stringify);
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx); // TODO: try to get this inside custom transforms
@@ -103,17 +128,23 @@ export async function htmlCompiler(mdast: Node, ctx: Context, unitIdx: number) {
   if (!ctx.options.noDoc) {
     processor.use(doc, {
       title: titles.docTitle,
-      style: `\n${await getTemplateCss()}\n`,
-      script: `\n${await getTemplateJs()}\n`,
+      style: `\n${templateCss}\n`,
+      script: `\n${templateJs}\n`,
     });
   }
 
-  const transformed = await processor.run(mdast);
+  const hast = await processor.run(mdast);
 
-  return processor.stringify(transformed);
+  const html = processor.stringify(hast);
+
+  return { hast, html };
 }
 
-export async function pdfHtmlCompiler(mdast: Node, ctx: Context, unitIdx: number) {
+export async function pdfHtmlCompiler(
+  mdast: Node,
+  ctx: Context,
+  unitIdx: number
+) {
   // TODO: pdf cover
   // const processor = unified().use(moveAnswersToEnd);
   // const transformed = await processor.run(mdast);

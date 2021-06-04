@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $scrollbarWidth: 15px;
 $scrollbarPadding: 5px;
 
@@ -13,7 +15,7 @@ $scrollbarPadding: 5px;
   background: var(--bg);
 }
 *::-webkit-scrollbar-thumb {
-  border-radius: $scrollbarWidth / 2;
+  border-radius: math.div($scrollbarWidth, 2);
   border: $scrollbarPadding solid;
   background-color: var(--textColor);
   border-color: var(--bg);

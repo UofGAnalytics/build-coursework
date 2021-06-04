@@ -21,16 +21,9 @@ code {
     color: var(--boxoutFadedTextColor);
     background: transparent;
 
-    &.output {
-      &.error {
-        color: var(--errorColor);
-      }
-      svg {
-        display: block;
-        width: 100%;
-        height: auto;
-        margin-top: 1rem;
-      }
+    &.error {
+      background: var(--errorColor);
+      color: white;
     }
   }
 }
@@ -53,7 +46,7 @@ html.theme-light {
   }
 
   .token.namespace {
-    opacity: .7;
+    opacity: 0.7;
   }
 
   .token.property,
@@ -121,11 +114,11 @@ html.theme-dark {
   }
 
   .token.punctuation {
-    opacity: .7;
+    opacity: 0.7;
   }
 
   .token.namespace {
-    opacity: .7;
+    opacity: 0.7;
   }
 
   .token.property,

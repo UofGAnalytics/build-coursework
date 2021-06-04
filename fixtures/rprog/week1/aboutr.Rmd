@@ -56,6 +56,9 @@ R is however a typed language, once defined, variables have types, so trying to 
 ```r
 1+"a"
 ```
+```{r, echo=FALSE, error=TRUE}
+1+"a"
+```
 produces an error message, while it would give `"1a"` in some other programming languages (for example JavaScript).
 
 #### R is object-oriented

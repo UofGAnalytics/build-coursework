@@ -1,0 +1,8 @@
+name: "Week 2"
+title: "Introduction to generalised linear models"
+golive: "+1w"
+content:
+  - type: text
+    src: week2introGLM.Rmd
+#  - type: text
+#    src: week2GLMtheory.Rmd

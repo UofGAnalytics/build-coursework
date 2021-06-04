@@ -12,7 +12,12 @@ table {
   margin: 0.5rem 0 2rem;
   background: var(--boxoutBg);
 
-  th, td {
+  .boxout & {
+    background: var(--bg);
+  }
+
+  th,
+  td {
     border: 2px solid var(--boxoutHighlightColor);
     padding: 0.5rem 2rem 0.5rem 1rem;
     text-align: left;
@@ -23,13 +28,15 @@ table {
   th {
     border-top-width: 0;
   }
-  th:first-child, td:first-child {
+  th:first-child,
+  td:first-child {
     border-left-width: 0;
   }
   tr:last-child td {
     border-bottom-width: 0;
   }
-  th:last-child, td:last-child {
+  th:last-child,
+  td:last-child {
     border-right-width: 0;
   }
 

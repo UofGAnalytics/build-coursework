@@ -1,3 +1,5 @@
+import os from 'os';
+
 // @ts-expect-error
 import toVFile from 'to-vfile';
 import { Parent } from 'unist';
@@ -22,8 +24,8 @@ export async function testProcessor(md: string, options: Options = {}) {
   const unit = {
     name: 'Week Test',
     title: 'Test Unit',
-    content: [{ src: '' }],
-    markdown: [file],
+    parts: [{ src: '' }],
+    files: [file],
   };
 
   const titles = getUnitTitles({
@@ -33,7 +35,8 @@ export async function testProcessor(md: string, options: Options = {}) {
   });
 
   const ctx = {
-    cacheDir: null,
+    dirPath: '',
+    cacheDir: os.tmpdir(),
     buildDir: null,
     course: {
       ...course,
@@ -41,6 +44,7 @@ export async function testProcessor(md: string, options: Options = {}) {
     },
     options: {
       noDoc: true,
+      noWrapper: true,
       noSyntaxHighlight: true,
       noReport: true,
       noEmbedAssets: true,
@@ -50,12 +54,9 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   const hasFailingMessage = createHasFailingMessage(ctx);
 
-  try {
-    const { mdast, html } = await buildUnit(ctx, 0);
-    return { hasFailingMessage, file, html, mdast };
-  } catch (err) {
-    return { hasFailingMessage, file, html: '', mdast: {} as Parent };
-  }
+  const { mdast, html, hast } = await buildUnit(ctx, 0);
+
+  return { hasFailingMessage, file, html, mdast, hast };
 }
 
 export function createHtml(str: string) {

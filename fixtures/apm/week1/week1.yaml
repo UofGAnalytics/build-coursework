@@ -1,0 +1,8 @@
+name: "Week 1"
+title: "Introduction to Advanced Predictive Models"
+golive: "0w"
+content:
+ # - type: text
+ #   src: week1_2.Rmd
+  - type: text
+    src: week1mat.Rmd

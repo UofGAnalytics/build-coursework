@@ -1,0 +1,761 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment=NA, warning = FALSE, message = FALSE)
+library(ggplot2)
+library(GGally)
+library(gridExtra)
+library(lme4)
+library(faraway)
+library(kableExtra)
+data(pulp)
+
+gpa <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/gpa.csv"))
+gpa_lm <- lm(gpa ~ occasion, data=gpa)
+gpa_ranint<-lmer(gpa ~ occasion + (1|student), data=gpa)
+gpa_rc<-lmer(gpa ~ occasion + (1+occasion|student), data=gpa)
+gpa_rc_uncor <- lmer(gpa ~ occasion + (1|student)+ (0+occasion|student), data=gpa)
+# transparent theme
+Rmkd_theme <- theme_light()+
+        theme(panel.background = element_rect(fill = "transparent", colour = NA),
+              plot.background = element_rect(fill = "transparent", colour = NA),
+              panel.border = element_rect(fill = NA, colour = "black", size = 1),
+              legend.background = element_rect(fill = "transparent", colour = NA))
+theme_set(Rmkd_theme)
+
+g_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
+
+```
+# Models for correlated data
+
+In the time series part of this course we saw how we can model correlated observations where the correlation occurs due to the ordering in time. For the last part of the course we will focus on correlated observations where the correlation structure can take different forms. We will begin this week with models for continuous responses, and generalise to models for discrete responses in Week 10.
+
+
+The main class of models used for correlated continuous responses is the class of **linear mixed models**. We will introduce the main features of these models through an example. A nice visualisation of some of the same concepts can also be found [here](http://mfviz.com/hierarchical-models/).
+
+
+##[video,videoid="760rAfwuwwE", duration="15m39s"] Random coefficient models -- College GPA example
+
+<!-- Note that the estimates are the same, not similar as I mistakenly say around 12:50 in the video! -->
+
+###[example] College GPA over time
+
+200 students' college GPA was recorded on six occasions: each semester for three years. The dataset `gpa.csv` also contains information on each student's gender, high school GPA, and hours of work for each semester.
+
+
+```{r, results='hide'}
+gpa <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/gpa.csv"))
+head(gpa)
+```
+
+<!-- FIX THE WIDTH -->
+```{r, echo=FALSE}
+knitr::kable(head(gpa), format = "markdown", padding=2, font_size = 2) 
+```
+
+We are interested in modelling the GPA as a function of time, so let us begin by looking at the scatterplot of the data.
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+ggplot(gpa, aes(x=occasion, y=gpa))+geom_point(alpha=0.9, color="#7a0177")
+```
+
+
+There is a positive association between GPA and occasion, suggesting that the GPA increases with time on average. We can model this relationship using a linear model as follows:
+
+```{r}
+gpa_lm <- lm(gpa ~ occasion, data=gpa)
+summary(gpa_lm)
+```
+
+The fitted line can be superimposed on the scatterplot as shown below:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+gpa_fit<- data.frame(x=c(1:6), 
+                     y=gpa_lm$coefficients[1]+ gpa_lm$coefficients[2]*c(1:6))
+ggplot(gpa, aes(x=occasion, y=gpa)) + geom_point(alpha=0.9, color="#7a0177") + 
+       geom_line(data = gpa_fit, aes(x, y), col="#feb24c")
+```
+
+There are a few issues with this modelling approach. Firstly, it assumes that we have 1200 independent observations from a model of the form $y= \beta_0+\beta_1 x +e$ where the errors $e$ are independent $N(0,\sigma^2)$. This is not quite right, as we have multiple observations per student and it would be reasonable to expect that they are correlated. This is why the following plot might be a better depiction of the data than the scatterplot we saw earlier.
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+ggplot(gpa, aes(x=occasion, y=gpa))+ geom_point(alpha=0.9, color="#7a0177") +
+       geom_path( aes(group=student), alpha=0.3, col="#ae017e")
+```
+
+As it turns out, failing to take into account the correlation between measurements from the same student results in biased standard errors for the $\beta$ estimates (the simulation study in the notes from Week 8 illustrates this). What's more, the linear regression model does not allow us to explore the student effect, which might be interesting in its own right.
+
+To remedy this we can introduce some correlation for observations coming from the same student. Let us write this down more precisely. Let $y_{ij}$ be the GPA of the $i$th student on the $j$th occasion and let $x_{ij}=1,2,3,4,5,6$ denote the occasion. We can consider a model of the form
+
+$$y_{ij}=\beta_0 +b_{0i} +\beta_1 x_{ij}+ e_{ij}$$
+where the $b_{0i}$ are independent $N(0, \sigma_0^2)$ and the $e_{ij}$ are independent $N(0, \sigma^2)$ and $b_{0i}$ and $e_{ij}$ are independent of each other.
+
+The term $b_{0i}$ is the **random effect** corresponding to the $i$th student. If we rewrite the model as $$y_{ij}=b_i^* + \beta_1x_{ij}+e_{ij}$$ we can see that the terms $b_i^* \sim N(\beta_0, \sigma^2_0)$ are **random intercepts** in the regression model, each corresponding to a different student. They are centered around $\beta_0$, the intercept of the linear regression, with added variability represented by the variance parameter $\sigma^2_0$. 
+
+The random intercept model above is an example of a **linear mixed model** which is a linear model that contains both **fixed** and **random** effects. Fixed effects are effects we wish to estimate explicitly, while random effects are effects that introduce variability. So for example here we wish to estimate the coefficient of occasion to understand how GPA changes with time, but we would not want to estimate separate regression coefficients for each student. Instead, we view the 200 students in this example as a random sample from a larger population of students, and we are hoping that the inference will hold for the general population.
+
+Note also the convention to use greek letters for the fixed effects $\beta_0$ and $\beta_1$ and roman letters for the random effects $b_{0i}$ and $e_{ij}$.
+
+Fitting this random intercept model in R requires use of the function `lmer` from `library(lme4)`.  Note the way in which we specify the random effect in the model by using brackets and declaring the grouping variable (here this is `student`).
+
+```{r}
+gpa_ranint <- lmer(gpa ~ occasion + (1|student), data=gpa)
+summary(gpa_ranint)
+```
+
+The output gives 
+
+* the fixed effects, i.e. the coefficient estimates for $\beta_0$ and $\beta_1$, which are the same as the ones obtained from using `lm()`, and 
+
+* the random effects, for which we estimate the variance parameters. 
+
+There are two variances estimated here: $\sigma_0^2$, corresponding to the student, and $\sigma^2$ (Residual), corresponding to the error. The standard deviation column in the output is simply the square root of the variance. So by modelling the data in this way we take into account the fact that there is correlation in the data due to multiple observations per student, and we also quantify the between-student variability.
+
+One relevant quantity to compute is the **intraclass correlation coefficient** which can be estimated by $\dfrac{\hat{\sigma^2_0}}{\hat{\sigma^2_0}+\hat{\sigma^2}}$.
+
+From the output this is:
+
+```{r}
+0.06372/(0.06372+0.05809)
+```
+which is interpreted as "the correlation between any two observations coming from the same student is about 0.52".
+
+Another thing to note about the output is that it does not contain $p$-values, as these can be based on different approximations depending on the design of the study. We can get some indication of the significance of the model parameters by obtaining approximate confidence intervals as shown below, although this approach too is an approximation. You can try different methods of computing the intervals, *e.g.* `method="boot"` for bootstrap (default is `"profile"`):
+
+```{r}
+round(confint(gpa_ranint, oldNames=FALSE),3)
+round(confint(gpa_ranint, oldNames=FALSE, method="boot"),3)
+```
+
+We can also predict the random effect for each student using the `ranef()` function from `lme4`.
+
+```{r}
+round(head(ranef(gpa_ranint)$student),3)
+```
+
+By adding these to the $\beta$ estimate for the intercept, we get individual intercepts for each student. 
+
+```{r}
+gpa_ranint@beta[1]
+round(head(gpa_ranint@beta[1]+ranef(gpa_ranint)$student),3)
+```
+
+This is what the `coef()` function returns:
+
+```{r}
+round(head(coef(gpa_ranint)$student),3)
+```
+
+This allows us to plot the predicted regression line for each student. This is shown for two individual students in the plot below (pink and purple points and dashed lines), along with the overall regression line $y=\hat{\beta}_0 +\hat{\beta}_1 x$ in yellow. Notice that the individual regression lines are parallel to the overall regression line.
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+p1<-predict(gpa_ranint)
+p2<-predict(gpa_lm)
+predictions <- data.frame(x=c(1:6), s1_m=p1[1:6], s2_m=p1[7:12], l=p2[7:12], 
+                          gpa_1=gpa$gpa[1:6], gpa_2=gpa$gpa[7:12])
+ggplot(predictions, aes(x=x, y=gpa_1)) + 
+    geom_point(color="#f768a1", alpha=0.8) +  
+    geom_line(aes(y=s1_m), colour="#f768a1", linetype=2)+
+    geom_point(aes(x=x,y=gpa_2), colour="#7a0177",alpha=0.8) + 
+    geom_line(aes(y=s2_m), colour="#7a0177", linetype=2) + 
+    geom_line(aes(y=l), colour="#feb24c") + xlab("Occasion") + ylab("GPA") 
+```
+
+We may wish to explore whether the coefficient of occasion should also be allowed to vary for each student in a more general **random coefficient model**. This model will take the form 
+
+$$y_{ij}=\beta_0 +b_{0i} +\beta_1 x_{ij}+ b_{1i} x_{ij} + e_{ij}$$
+
+where, as before, the $b_{0i}$ are independent $N(0, \sigma_0^2)$, the $b_{1i}$ are independent $N(0, \sigma_1^2)$, and the $e_{ij}$ are independent $N(0, \sigma^2)$. 
+We further assume that each of $b_{0i}$ and $b_{1i}$ is independent of $e_{ij}$ but that the two are allowed to be correlated with each other with $\mathrm{Cov}(b_{0i},b_{1i})=\sigma_{01}$ and corresponding correlation $\mathrm{Corr}(b_{0i},b_{1i})=\rho_{01}$.
+
+In R, this model can be fitted using the following code:
+
+```{r}
+gpa_rc<-lmer(gpa ~ occasion + (1+occasion|student), data=gpa)
+summary(gpa_rc)
+```
+
+Notice that in the random effects part of the output we now have variance component estimates
+
+* $\hat{\sigma}_0^2=0.0525$ for the random intercept term $b_{0i}$,
+
+* $\hat{\sigma}_1^2=0.0045$ for the random clope term $b_{1i}$,
+
+* $\hat{\sigma}^2=0.0424$ for the error term $e_{ij}$, 
+
+as well as $\hat{\rho}_{01}=-0.38$, which is an estimate for $\mathrm{Corr}(b_{0i},b_{1i})$.
+
+One question we may ask ourselves is which model we should prefer: random intercepts only, or random slopes and intercepts? And if we have both a random slope and intercept, should they be correlated or uncorrelated?
+
+Let us fit the model with uncorrelated random effects for slope and intercept and compare it to the model in which these are correlated:
+
+```{r}
+gpa_rc_uncor <- lmer(gpa ~ occasion + (1|student)+ (0+occasion|student), 
+             data=gpa)
+summary(gpa_rc_uncor)
+anova(gpa_rc_uncor,gpa_rc)
+```
+
+The $p$-value for the likelihood ratio test performed using `anova()` is small, suggesting that the model with correlated slope and intercept is a better fit to the data.
+
+We can also look at the confidence intervals for model parameters to see whether the variance for the slope random effect is significantly different from zero. From the output below it seems the slope random effect is significantly different from zero since the confidence interval is entirely positive: (0.057,0.078). 
+
+```{r}
+round(confint(gpa_rc, oldNames=FALSE),3)
+```
+
+Finally we can predict from this model using the prediction of the random effect of each student:
+
+```{r}
+round(head(ranef(gpa_rc)$student),3) # random effects
+
+round(head(coef(gpa_rc)$student),3) # random coefficients
+```
+
+Let us now plot the predicted lines for the first two students along with the overall regression line as before:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+p1<-predict(gpa_rc)
+p2<-predict(gpa_lm)
+predictions <- data.frame(x=c(1:6), s1_m=p1[1:6], s2_m=p1[7:12], s2_l=p2[7:12],
+                          gpa_1=gpa$gpa[1:6], gpa_2=gpa$gpa[7:12]  )
+ggplot(predictions, aes(x=x, y=gpa_1)) + 
+    geom_point(color="#f768a1", alpha=0.8) +  
+    geom_line(aes(y=s1_m), colour="#f768a1", linetype=4)+
+    geom_point(aes(x=x,y=gpa_2), colour="#7a0177",alpha=0.8) + 
+    geom_line(aes(y=s2_m), colour="#7a0177", linetype=4) + 
+    geom_line(aes(y=s2_l), colour="#feb24c") + xlab("Occasion") + ylab("GPA") 
+```
+In this model each individual student's prediction (dashed lines) differs from the population line (solid yellow line) by a random amount both in the intercept and the slope.
+
+
+In fact, the predicted line for an individual student can be viewed as a weighted average of 
+
+1. the regression line that we would have obtained by using just that student's data, and 
+
+2. the population line. 
+
+This is shown in the following plot for the first student:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+p1<-predict(gpa_rc)
+p2<-predict(gpa_lm)
+p3 <- predict(lm(gpa~occasion, data=gpa[1:6,]))
+predictions <- data.frame(x=c(1:6), s1_m=p1[1:6], s1_l=p2[1:6], s1_i=p3[1:6],
+                          gpa_1=gpa$gpa[1:6])
+ggplot(predictions, aes(x=x, y=gpa_1)) + 
+    geom_point(color="#f768a1", alpha=0.8) +  
+    geom_line(aes(y=s1_m), colour="#f768a1", linetype=4)+
+    geom_line(aes(y=s1_l), colour="#feb24c") +
+    geom_line(aes(y=s1_i), colour="#fc4e2a") + xlab("Occasion") + ylab("GPA") 
+```
+
+The predicted line from the random coefficient model (pink dashed line) is somewhere between the population line (solid yellow line) and the individual student's regression line (solid orange line). This property is called **shrinkage**.
+
+###[/example]
+
+
+###[task]
+The file [pigweights.csv](http://www.stats.gla.ac.uk/~tereza/rp/pigweights.csv) contains weight measurements of 48 pigs over nine successive weeks. Let $y_{ij}$ be the weight of the $i$th pig on week $j$. The following models are considered for these data.
+
+* $M_0$: no random subject effects
+
+* $M_1$: random intercept for each subject
+
+* $M_2$: independent random intercept and slope for each subject
+
+* $M_3$: correlated random intercept and slope for each subject
+
+(a) Write down each of the models in mathematical notation and then fit them in R using function `lmer()` from `library(lme4)`.
+
+(b) Which model would you choose for these data and why?
+
+(c) Using your selected model, predict the weight of:
+
+    (i) pig number 16
+    (ii) another pig, not included in this dataset
+
+
+####[answer]
+(a) Suppose we have data $(x_{ij},Y_{ij})$ where $i$ labels subjects. Here $Y_{ij}$ is the weight of the $i$th pig on the $j$th week and $x_{ij}$ is the week, taking values $1,2,3\dots, 9$.
+
+The most general random coefficient model for $Y_{ij}$ given $x_{ij}$ is of the form
+$$Y_{ij} = \beta_0 + \beta_1x_{ij} + b_{0i} + b_{1i}x_{ij} + e_{ij},$$
+
+where $\beta_0$ , $\beta_1$ are unknown parameters; $b_{0i}, b_{1i}$ are random effects; and $e_{ij}$ is the error term.
+
+* Assumptions under model $M_3$: $e_{ij}$ independent $N(0,\sigma^2)$, $b_{0i}$ independent $N(0,\sigma_0^2)$,  $b_{1i}$ independent $N(0,\sigma_1^2)$ and $\text{Corr}(b_{0i},b_{1i})=\rho_{01} \neq 0$. Random variables $b_{0i}$ are independent of $e_{ij}$ and $b_{1i}$ are independent of $e_{ij}$.
+
+* Assumptions under model $M_2$: Same as for $M_3$ except that now $\text{Corr}(b_{0i},b_{1i})=0$.
+
+* Assumptions under model $M_1$, with equation $$Y_{ij} = \beta_0 + \beta_1x_{ij} + b_{0i} + e_{ij}$$
+
+Same as for $M_3$ except that now $b_{1i}=0$ so there are no random slopes and no corresponding distributional assumptions involving $b_{1i}$.
+
+* Assumptions under model $M_0$, with equation $$Y_{ij} = \beta_0 + \beta_1x_{ij} + e_{ij}$$
+Same as for $M_3$ except that now $b_{0i}=b_{1i}=0$. This is a simple linear regression model with the only random term being the error term $e_{ij}$..
+
+To fit the models in R, let's start by reading in and plotting the data:
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+pig.weights <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/pigweights.csv"))
+ggplot(pig.weights, aes(x=num.weeks, y=weight))+ geom_point(alpha=0.5, color="#08589e") +
+       geom_path(aes(group=id.num), alpha=0.3, col="#2b8cbe") + xlab("week number")
+```
+
+The models are fitted in R using the following code. Note the model specification for Model $M_3$, allowing for correlated random slopes and intercepts, and $M_2$, assuming that they are uncorrelated.
+
+```{r}
+wm0 <- lm(weight ~ num.weeks, data=pig.weights)
+summary(wm0)
+
+wm1 <- lmer(weight ~ 1 + num.weeks +(1|id.num), data=pig.weights)
+summary(wm1)
+
+wm2 <- lmer(weight ~ num.weeks + (1|id.num) + (0+num.weeks|id.num), data=pig.weights)
+summary(wm2)
+
+wm3 <- lmer(weight ~ 1 + num.weeks +(1+num.weeks|id.num), data=pig.weights)
+summary(wm3)
+
+```
+
+(b) To compare models we can use the `anova()` function, although some caution is needed for testing hypotheses of the type $H_0: \sigma^2_1=0$. If we get a small $p$-value suggesting that the random slope is significant, that's fine, but if we get a large $p$-value, we cannot be sure that this is because the random slope effect is not significant or because the test is underpowered.
+
+```{r echo=4:20}
+wm1 <- lmer(weight ~ 1 + num.weeks + (1|id.num), data=pig.weights)
+wm2 <- lmer(weight ~ num.weeks + (1|id.num) + (0 + num.weeks|id.num), data=pig.weights)
+wm3 <- lmer(weight ~ 1 + num.weeks + (1 + num.weeks|id.num), data=pig.weights)
+
+anova(wm3,wm2)
+
+anova(wm2,wm1)
+```
+
+First we test $H_0: \rho_{01}=0$ by comparing Models $M_2$ and $M_3$. The $p$-value is large, so we don't reject $H_0$. We can drop the assumption of correlated random slopes and intercepts and go with Model $M2$.
+
+To test $H_0: \sigma_1^2=0$ we compare Models $M_1$ and $M_2$. If $H_0$ is not rejected, we only need a random intercept, hence Model $M1$ should be preferred. Here the $p$-value is very small suggesting that random slopes are needed and therefore we go with Model $M_2$. We will use Model $M_2$ for predictions.
+
+<!-- The within-pig correlation at two different times can be estimated by -->
+<!--  $\frac{\hat{\sigma}^2_}{\hat{\sigma}^2_B+\hat{\sigma}^2}$. (This turns out to be equal to 0.775, indicating considerable correlation.) -->
+
+
+(c) (i) The best prediction for the $i$th pig in the study will include the prediction for its random effects. For $i=16$ and $x_{ij}=1,\dots,9$ we can obtain these as:
+
+```{r}
+p1<-predict(wm2, newdata=data.frame(id.num=16, num.weeks=1:9))
+p1
+```
+(ii) The best prediction for a new pig is given by the fixed effect term in the model: $\hat{\beta}_0+\hat{\beta}_1x_{ij}=19.35561+ 6.20990 x_{ij}$. This can also be obtained using the simple linear regression model output.
+
+```{r}
+p2<-predict(wm0, newdata=data.frame(num.weeks=1:9))
+p2
+```
+
+We can visualise these predictions as follows:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+predictions <- data.frame(x=1:9, p1=p1, p2=p2)
+ggplot(pig.weights, aes(x=num.weeks, y=weight))+ geom_point(alpha=0.5, color="#08589e") +
+    xlab("week number") + 
+    geom_path(data=predictions, aes(x=x, y=p1), col="#7bccc4", linetype=4) +
+    geom_path(data=predictions, aes(x=x, y=p2), col="#a8ddb5", linetype=5)
+```
+####[/answer]
+###[/task]
+
+
+# General form of a linear mixed model
+
+We can write a linear model as $$\mathbf{y}=\mathbf{X}\boldsymbol{\beta} +\mathbf{e}.$$ A **linear mixed model** is given by $$\mathbf{y}=\mathbf{X}\boldsymbol{\beta} +\mathbf{Z}\mathbf{u}+\mathbf{e}$$
+where $\mathbf{X}$ and $\mathbf{Z}$ are given matrices and \begin{align*}
+E\left[ \begin{array}{c} \mathbf{u}\\ \mathbf{e}\end{array} \right]=\left[ \begin{array}{c} \mathbf{0}\\ \mathbf{0}\end{array} \right] , ~   \text{Var} \left[ \begin{array}{c} \mathbf{u}\\ \mathbf{e}\end{array} \right]=\left[ \begin{array}{cc} \mathbf{G} & \mathbf{0}\\ \mathbf{0} & \mathbf{R}\end{array} \right] \end{align*}                               
+
+We assume that $\mathbf{u} \sim N(\mathbf{0},\mathbf{G})$ and $\mathbf{e} \sim N(\mathbf{0},\mathbf{R})$ independently of each other.
+
+In general we can write \[\mathbf{y} \sim N(\mathbf{X}\boldsymbol{\beta}, \mathbf{Z} \mathbf{G} \mathbf{Z}^\intercal + \mathbf{R})=N(\mathbf{X}\boldsymbol{\beta},\mathbf{V})\] or
+$$\mathbf{y}=\mathbf{X}\boldsymbol{\beta} +\mathbf{e}^*$$ where $\mathbf{e}^* = \mathbf{Z} \mathbf{u}+\mathbf{e}$.
+
+This is a linear model with correlated errors since $$\mathrm{Var}(\mathbf{e}^*)=\mathbf{V}=\mathbf{Z} \mathbf{G} \mathbf{Z}^\intercal + \mathbf{R}.$$
+
+In Example 1, we had $\mathbf{R}=\sigma^2\mathbf{I}$ where $\mathbf{I}$ is the identity matrix. The correlation for observations from the same student comes from the matrix $\mathbf{G}$ which contains terms for the variance components related to the student effect. 
+
+<!-- The combined variance-covariance matrix $\mathbf{V}$ is block-diagonal, with observations from different students being uncorrelated and observations from the same student being correlated. -->
+
+###[supplement] Covariance structures
+
+An alternative way to specify a linear mixed model so that the observations are correlated with each other is to omit the term $\mathbf{Z}\mathbf{u}$ from the model and introduce the correlation directly within matrix $\mathbf{R}$ instead. In this case $\mathbf{R}$ will be block-diagonal with each block corresponding to each subject/unit. For instance for the college GPA data, the blocks would have dimension $6 \times 6$ and they would represent the six GPA values at each occasion for each student. 
+
+Several covariance structures can be assumed, such as 
+
+* **exchangeable**, which assumes the same correlation between any two values from the same subject/unit, regardless of time distance between the observations, 
+
+* **AR(1)** which assumes that only adjacent observations are correlated with each other, and so on.
+
+In R, it is possible to implement this type of covariance structure using `library(nlme)`. Note that this functionality is **not** available in `lme4`.
+###[/supplement]
+
+##[supplement] Parameter estimation
+
+**Estimation of fixed effects**:
+
+One way to estimate the coefficients in a linear mixed model is maximum likelihood estimation. For a given $\mathbf{V}$, the **generalised least squares (GLS)** estimator of $\boldsymbol{\beta}$ is $$\tilde{\boldsymbol{\beta}}= (\mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{y}.$$
+
+The estimator $\tilde{\boldsymbol{\beta}}$ is the **maximum likelihood estimator (MLE)** and the **uniformly minimum variance unbiased estimator (UMVUE)**. It maximises the log-likelihood $$-\frac{1}{2}\log |\mathbf{V}|-\frac{1}{2}(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^\intercal\mathbf{V}^{-1} (\mathbf{y}-\mathbf{X}\boldsymbol{\beta}) +\text{const}$$ for the normal model.
+
+**Variance component estimation**: Maximum likelihood can be used to estimate $\boldsymbol{\beta}$ as well as variance components. The maximum likelihood estimate of $$\mathbf{V}=\mathrm{Var}(\mathbf{y})=\mathbf{Z} \mathbf{G} \mathbf{Z}^\intercal + \mathbf{R}$$ is based on the model $$\mathbf{y} \sim N(\mathbf{X} \boldsymbol{\beta}, \mathbf{V}).$$
+The log-likelihood of $\mathbf{y}$ under this model is $$l(\boldsymbol{\beta},\mathbf{V})=-\frac{1}{2}\log |\mathbf{V}|-\frac{1}{2}(\mathbf{y}-\mathbf{X}\boldsymbol{\beta})^\intercal\mathbf{V}^{-1} (\mathbf{y}-\mathbf{X}\boldsymbol{\beta}) +\text{const}$$ and the MLE of $(\boldsymbol{\beta},\mathbf{V})$ is the one that maximises this expression. For any fixed $\mathbf{V}$, $l(\boldsymbol{\beta},\mathbf{V})$ is maximised over $\boldsymbol{\beta}$ by $$\tilde{\boldsymbol{\beta}}= (\mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{y}.$$
+
+Substituting this back into the expression for the log-likelihood, we obtain the *profile log-likelihood* for $\mathbf{V}$:\begin{align*}l_P(\mathbf{V})&=-\frac{1}{2}\log |\mathbf{V}|-\frac{1}{2}(\mathbf{y}-\mathbf{X}\tilde{\boldsymbol{\beta}})^\intercal\mathbf{V}^{-1} (\mathbf{y}-\mathbf{X}\tilde{\boldsymbol{\beta}}) +\text{const}\\
+&=-\frac{1}{2}\log |\mathbf{V}|-\frac{1}{2}\mathbf{y}^\intercal\mathbf{V}^{-1}[\mathbf{I}-\mathbf{X}(\mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{X})^{-1} \mathbf{X}^\intercal \mathbf{V}^{-1}]\mathbf{y} +\text{const}\end{align*}
+This can be maximised for the parameters in $\mathbf{V}$.
+
+However there is a problem with the maximum likelihood approach: it does not adjust for the degrees of freedom lost for estimation. The simplest illustration of this is the following: Consider $X_1,\dots,X_n$ independent $N(\mu, \sigma^2)$. The sample variance is $$s^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i-\bar{X})^2$$ which takes into account the one degree of freedom lost in estimating the mean. In contrast, the variance estimate using the maximum likelihood approach is $$\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n (X_i-\bar{X})^2,$$ with no adjustment for the degree of freedom due to the estimation of the mean.
+
+For this reason, **Restricted Maximum Likelihood (REML)** is the preferred method of estimation in linear mixed models. This maximises the likelihood of linear combinations of the elements of $\mathbf{y}$ that do not depend on $\boldsymbol{\beta}$. The resulting criterion function is the **restricted log-likelihood** $$l_R(\mathbf{V})=l_P(\mathbf{V})-\frac{1}{2}\log |\mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{X}|.$$
+
+REML works as follows. Starting with $$\mathbf{y}=\mathbf{X}\boldsymbol{\beta} +\mathbf{Z}\mathbf{u}+\mathbf{e}$$ we find all independent linear combinations of the response, $\mathbf{k}$ such that $\mathbf{k}^\intercal\cdot \mathbf{X}=0$.
+Then $$\mathbf{k}^\intercal\cdot \mathbf{y}=\mathbf{k}^\intercal\cdot \mathbf{X}\boldsymbol{\beta} +\mathbf{k}^\intercal\cdot\mathbf{Z}\mathbf{u}+\mathbf{k}^\intercal\cdot\mathbf{e}$$ and taking $\mathbf{K}$ to be the matrix with columns $\mathbf{k}$ we have $$\mathbf{K} \mathbf{y}=(\mathbf{K} \mathbf{Z}) \mathbf{u} + (\mathbf{K}\mathbf{e)}.$$
+Thus $$\mathbf{K} \mathbf{y} \sim  N(\mathbf{0}, \mathbf{K}^\intercal \mathbf{V} \mathbf{K})=N(\mathbf{0}, \mathbf{K}^\intercal \mathbf{Z}\mathbf{G}\mathbf{Z}^\intercal \mathbf{K}+ \mathbf{K}^\intercal \mathbf{R}\mathbf{K})$$ and the maximum likelihood approach can be used to estimate variance components based on the likelihood of $\mathbf{K} \mathbf{y}$.
+Since there are no longer fixed effects to estimate, we do not 'lose' degrees of freedom.
+
+REML can also be viewed as **Residual** Maximum Likelihood as it is equivalent to:
+
+* finding the least squares estimates of $\boldsymbol{\beta}$ from regressing $\mathbf{y}$ on $\mathbf{X}$ (ignoring random effects);
+* taking the residuals;
+* using maximum likelihood on the residuals.
+
+##[/supplement]
+
+Let us look at another example of fitting a linear mixed model in R.
+
+###[example]
+In this example we will use the `pulp` data from `library(faraway)`, which contains data from an experiment to test the paper brightness depending on a shift operator. The data has 20 observations with `bright` as the response and `operator` as the explanatory categorical variable taking values `a-d`.
+
+```{r}
+library(faraway)
+data(pulp)
+head(pulp)
+
+```
+
+We can fit the following model with `operator` as a random effect:
+
+$$y_{ij}= \mu + a_i  + e_{ij}$$
+where
+
+* $y_{ij}$ is the paper brightness measured by the $i$th operator, $i=1,\dots,4$ and $j=1,\dots,5$ replicates per operator
+
+* $\mu$ is the overall mean
+
+* $a_i$ is the random effect associated with the $i$th operator
+
+* $e_{ij}$ is the experimental error.
+
+The code to fit the model in R is as follows:
+
+```{r}
+library(lme4)
+mmod <- lmer(bright ~ 1+(1|operator), data=pulp)
+summary(mmod)
+```
+
+The intraclass correlation coefficient is given by 
+
+```{r}
+0.06808/(0.06808+0.10625)
+```
+
+so the correlation between brightness measurements from the same operator is estimated to be 0.39.
+
+The main question of interest is whether there is significant variability due to the operator. We can visualize this in the following plot:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+ggplot(pulp, aes(x=bright, y=operator))+ geom_point(alpha=0.5, color="#ec7014") +
+       geom_path(aes(group=operator), alpha=0.3, col="#fec44f")
+```
+
+If we were to treat the `operator` effect as fixed, we would get the following linear model:
+
+<!-- ```{r, echo=FALSE} -->
+<!-- knitr::kable(head(pulp), format="markdown", padding=2) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- op <- options(contrasts=c("contr.sum", "contr.poly")) -->
+<!-- lmod <- aov(bright ~ operator , data=pulp) -->
+<!-- summary(lmod) -->
+<!-- ``` -->
+
+```{r}
+lmod <- lm(bright ~ operator, data=pulp)
+summary(lmod)
+anova(lmod)
+```
+This gives a significant operator effect with a $p$-value of 0.023.
+
+Would we conclude the same from the mixed model? Let us look at the confidence interval for the operator standard deviation:
+
+```{r}
+round(confint(mmod,method="boot",oldNames=FALSE),3)
+```
+
+This includes zero, although we are not sure if that's because the variance component is truly zero or because of poor approximations. It is possible to use a parametric bootstrap approach to get a more accurate test of $H_0:\sigma^2=0$, see Section 8.2 of [Faraway](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng) for details. 
+
+<!-- Fitting a mixed model using ML: -->
+
+<!-- ```{r} -->
+<!-- smod <- lmer(bright ~ 1+(1|operator), data=pulp, REML=FALSE) -->
+<!-- summary(smod) -->
+<!-- ``` -->
+
+<!-- Likelihood ratio test: -->
+
+<!-- ```{r} -->
+<!-- nullmod <- lm(bright~ 1, data=pulp) -->
+<!-- as.numeric(2*(logLik(smod)-logLik(nullmod))) -->
+<!-- pchisq(2.5684,1, lower=FALSE) -->
+<!-- ``` -->
+<!-- Can we trust the $\chi^2$ approximation? -->
+
+<!-- Parametric bootstrap: -->
+
+<!-- ```{r} -->
+<!-- lrstat <- numeric(1000) -->
+<!-- for (i in 1:1000) { -->
+<!-- y <- unlist(simulate(nullmod)) -->
+<!-- bnull <- lm(y ~ 1) -->
+<!-- balt <- lmer(y ~ 1 + (1|operator), data=pulp, REML=FALSE) -->
+<!-- lrstat[i] <- as.numeric(2*(logLik(balt)-logLik(bnull))) -->
+<!-- } -->
+
+<!-- # p-value: -->
+<!-- mean(lrstat >2.5684) -->
+<!-- ``` -->
+
+<!-- The effect is significant at 5\% level. -->
+
+<!-- In this example, the $p$-value obtained from the parametric bootstrap approach is similar to that from the fixed effects model. However, the hypotheses for fixed and random effects are different. Broadly speaking, it is easier to conclude that there is an effect in a fixed effects model where the conclusion only applies to the levels fo the factor used in the experiment. The conclusion about random effects generalizes to a larger population, hence stronger evidence is required to obtain significance. -->
+<!-- \section{Tests using REML} -->
+
+<!-- \begin{frame} -->
+<!-- \frametitle{Restricted likelihood ratio tests} -->
+<!--  \begin{itemize} -->
+<!--   \item The maximum restricted log-likelihood  \[l_R(\mathbf{V})=l_P(\mathbf{V})-\frac{1}{2}\log |\mathbf{X}^\intercal \mathbf{V}^{-1} \mathbf{X}|\] can be used instead of the log-likelihood to form a likelihood ratio test statistic.  -->
+<!--     \item This statistic can only be used to compare models with the same mean structure, i.e. the same fixed effects part.  -->
+<!--     \item It cannot be used, for instance, to compare two nested models that only differ in the fixed effects. -->
+<!--  \end{itemize} -->
+<!-- \end{frame} -->
+
+
+<!-- ```{r} -->
+<!-- library(faraway) -->
+<!-- data(pulp) -->
+
+<!-- # Obtain the ANOVA decomposition for the one-way layout: -->
+<!-- lmod <- aov(bright ~ operator , data=pulp) -->
+<!-- summary(lmod) -->
+
+<!-- mmod <- lmer(bright ~ 1+(1|operator), data=pulp) -->
+<!-- summary(mmod) -->
+
+<!-- smod <- lmer(bright ~ 1+(1|operator), data=pulp, REML=FALSE) -->
+<!-- summary(smod) -->
+
+<!-- # Likelihood ratio tests: -->
+<!-- nullmod <- lm(bright~ 1, data=pulp) -->
+
+<!-- as.numeric(2*(logLik(smod)-logLik(nullmod))) -->
+
+<!-- pchisq(2.5684,1, lower=FALSE) -->
+
+<!-- # Parametric bootstrap -->
+
+<!-- lrstat <- numeric(1000) -->
+<!-- for (i in 1:1000) { -->
+<!--   y <- unlist(simulate(nullmod)) -->
+<!--   bnull <- lm(y ~ 1) -->
+<!--   balt <- lmer(y ~ 1 + (1|operator), data=pulp, REML=FALSE) -->
+<!--   lrstat[i] <- as.numeric(2*(logLik(balt)-logLik(bnull))) -->
+<!--   } -->
+
+<!-- # p-value: -->
+<!--   mean(lrstat >2.5684) -->
+
+<!-- # Prediction of random effects: -->
+<!-- ranef(mmod)$operator -->
+
+<!-- #EBLUPs: -->
+<!-- fixef(mmod)+ranef(mmod)$operator -->
+
+
+Finally we can check the linearity and normality assumptions through the usual residual plots, *e.g.* 
+
+```{r, fig.width=6, fig.height=3.8, fig.align='center'}
+
+# Diagnostic plots:
+
+par(mfrow=c(1,2))
+qqnorm(resid(mmod), main="")
+qqline(resid(mmod))
+plot(fitted(mmod), resid(mmod), xlab="Fitted", ylab="Residuals")
+abline(0,0)
+```
+The plots indicate no particular problems. If we had more than four operators, we could also look at the normality of the group level effects, but with so few groups this is not possible.
+###[/example]
+
+## When should a factor be modelled as a random effect?
+
+In Example 2, the operator variable was treated as a random effect. What is the justification for this? 
+
+A categorical variable in a regression model is considered a random effect if its levels can be thought of as samples from a larger population. A typical example is the subject effect in a study with repeated observations for each subject. In such studies we are not usually interested in estimating the mean of every subject, but we do want to take into account the variability introduced in the model by the fact that we do have different subjects. Other examples of effects that may be considered as random are the following:
+
+* In studying the effectiveness of a new treatment for cancer with data is collected from several hospitals, ``hospital" can be considered as a random effect. The assumption here is that the hospitals participating in the study are only a sample of a larger population of hospitals, and that the results of the analysis will generalise to the wider population of hospitals.
+
+* In a survey of student attitudes, if a few universities are randomly selected to be surveyed, then "university" can be considered as a random effect, as we would expect the results of the survey to generalise to all universities in the UK. On the other hand, if we had data from the Universities of Glasgow and Edinburgh and we were interested in how these two compare, we would treat "university" as a fixed effect and we would estimate means for each. In this case, any conclusions from the modelling would only apply to these two universities and would not generalise to a wider population.
+
+###[task]
+A nutritionist is interested in estimating the average sugar content of breakfast cereal sold in the UK. She randomly selects ten brands of cereal from a list of all different brands sold in the largest supermarkets. Four boxes are bought of each brand and the sugar content (percent sugar) for each box is measured. 
+
+(a) Is the cereal brand here a fixed or a random effect? 
+
+(b) Write down a possible model for these data, stating your assumptions.
+
+####[answer]
+
+(a) As the brands are a random selection from the population of all brands sold in the UK, we can treat "brand" as a random effect. This way, we can estimate how much variability there is in the sugar content from brand to brand.
+
+(b) Let $y_{ij}$  be the percent sugar content for the $j$th box of the $i$th cereal brand, $i=1,\dots,10$ and $j=1,2,3,4$. A possible model for the sugar content is
+
+$$y_{ij}=\mu+a_i +e_{ij}$$ where $\mu$ is the mean sugar content, the $a_i$ are independent $N(0,\sigma^2_A)$ random variables, the $e_{ij}$ are independent $N(0,\sigma^2)$ errors and the $a_i$ and $e_{ij}$ are independent of each other.
+
+####[/answer]
+###[/task]
+
+###[task]
+An experiment was conducted in order to compare the effects of two insect repellent products in warding off mosquitoes the chemical DEET and a skin product called "Skin so soft" (SSS). Twenty-four volunteers were recruited and they were randomly divided into three equal-sized groups. Three locations, in an area frequented by mosquitoes, were selected randomly and each of the groups was allocated to a location. At each location, one half of the volunteers had DEET spread on their right arm and the other half had "Skin so soft" spread on their right arm, and the volunteers were well spread out. The volunteers allowed mosquitoes to bite their exposed arms for 15 minutes and the number and severity of bites were recorded and converted into a severity score (higher meaning a worse biting experience). The data are stored in the file [`bites.csv`](http://www.stats.gla.ac.uk/~tereza/rp/bites.csv).
+
+(a) Identify the factors in this experiment. Is each factor fixed or random? Are the factors crossed (do we have data for each combination of the factors?) or nested (does each level of Factor B only occur within one level of Factor A)?
+
+(b) Write down a possible model for the biting severity data, stating clearly your assumptions.
+
+(c) Fit the model in R and use it to assess whether the two mosquito repellents produce, on average, systematically different biting severity scores.
+
+####[answer]
+(a) The factors in this experiment are `product` (fixed) and `location` (random). The factors are crossed (we have observations from all six combinations of product and location).
+
+(b) Let $y_{ijk}$  be the biting severity score for the $k$th volunteer at the $j$th location using the $i$th product where $i=1,2$ for DEET and SSS respectively, $j=1,2,3$ and $k=1,2,3,4$. A possible model for the severity score data is
+
+$$y_{ijk}=\mu+\alpha_i + b_j +(\alpha b)_{ij}+e_{ijk}$$ where $\sum_{i=1}^2 \alpha_i=0$,  $b_j$ independent $N(0,\sigma^2_B)$,  $(\alpha b)_{ij}$ independent $N(0, \sigma_{AB}^2)$ and $e_{ijk}$ independent $N(0,\sigma^2)$ are all mutually independent.
+
+(c) Let us first read in and plot the data:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+bites <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/bites.csv"))
+head(bites)
+bites$location <- as.factor(bites$location)
+ggplot(bites, aes(x=score, y=product))+
+    geom_point(aes(shape = location, color=location)) +
+    geom_path(aes(group=product, color=location)) +
+    facet_wrap(~location)
+```
+The severity score appears to be lower for SSS on average, with some variability by location.
+
+We fit a model with a random effect for the location and a random effect for the interaction between product and location.
+
+<!-- Then we fit a model without the interaction term. -->
+
+```{r}
+bm1 <- lmer(score ~ product+(1|location)+(1|product:location), data=bites)
+summary(bm1)
+confint(bm1, oldNames=FALSE) 
+```
+
+<!-- We can obtain confidence intervals for the parameters of the two models: -->
+
+<!-- ```{r} -->
+<!-- confint(bm1, oldNames=FALSE) -->
+<!-- confint(bm2, oldNames=FALSE) -->
+<!-- ``` -->
+
+<!-- It looks like the interaction term could be dropped, in which case we can interpret the confidence interval as follows: -->
+
+The `product` effect is significant with DEET (product 1) having a higher severity score than SSS by  somewhere between 1.6 and 3.2 units on average.
+
+It is not clear if the variability due to location and due to the interaction of product and location is significant, and one could experiment with dropping the interaction term and comparing models using an appropriate test. However, in this case we are interested in testing for a difference in the means of the fixed effect adjusting for any extra variability introduced by the random effect, so the emphasis is on the interpretation of the `product` coefficient.
+
+<!-- Conclusion: In the wider population users of DEET have a higher mean severity score than users of SSS by somewhere between 1.6 and 7.9 units (point estimate 4.75 units) -->
+
+####[/answer]
+###[/task]
+
+# Hierarchical models
+
+###[example]
+In Example 1, we studied the relationship between GPA and occasion but we also have other variables in the data. Gender and high school GPA are group-level variables (at the student level) and job status is at the observation (occasion) level. This is what we call a **hierarchical** or **multilevel** structure. Adding the two student-level variables to the model from Example 1 will result in the multilevel model $$y_{ij}=\beta_0 +b_{0i} +\beta_1 x_{ij}+ b_{1i} x_{ij} + \beta_2v_{i}+\beta_3w_{i}+e_{ij}$$ where
+$v_i$ is the gender and $w_i$ is the high school GPA of the $i$th student. You can think of these as a modification to the intercept of the regression line we had computed earlier.
+
+Fitting the model in R is as simple as adding these terms as fixed effects:
+
+```{r}
+gpa_multil<-lmer(gpa ~ occasion + sex + highgpa + (1+occasion|student), data=gpa)
+summary(gpa_multil)
+```
+
+
+Computing the confidence intervals for the parameters, we see that both are significant:
+```{r}
+round(confint(gpa_multil, oldNames=FALSE),3)
+```
+
+###[/example]
+
+###[task]
+Section 8.8 of [Faraway](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng) gives a detailed analysis of a multilevel dataset. Reproduce the analysis making sure you can indentify the different levels and variables associated with them.
+
+###[/task]
+
+
+## Additional resources on linear mixed models
+
+###[weblink,target="", icon=book]
+
+**Chapter 8** of [**Extending the Linear Model with R** by J. Faraway](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng):
+
+Section 8.1 on estimation has more details on how REML works. Section 8.2 on inference gives the basics on *testing the fixed effects* and *testing the random effects*. Section 8.8 goes over an example of a hierarchical model.
+
+**Chapter 9** of [**Extending the Linear Model with R** by J. Faraway](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng) discusses longitudinal data (multiple observations from the same subject/unit over time).
+
+**Chapter 5** of [**Mixed effects models and extensions in ecology with R** by Zuur et al.](https://glasgow.summon.serialssolutions.com/#!/search?bookMark=ePnHCXMw42LgTQStzc4rAe_hSmGGzJCCTlUH348J2q1rYgps5nPARkJAc2HmBoacDKa-mRWpKQrQhQwK4KtgihWAHWoF8IAwaPSoWCEzTyEVfJ5zpQJopFIhiIeBJQ_YW-NmUHBzDXH20AW1OtPzy-Ohwx_xScAKGnwIizERSgDQtDej)
+
+Sections 5.1-5.3 describe the linear mixed model and show examples of models with random effects (random intercept and random slope).
+
+Sections 5.4-5.9 discuss correlation structures, REML estimation and selection and validation for mixed effects models.
+
+
+**Chapter 7** of [**Regression: models, methods and applications** by Fahrmeir et al](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2991222) describes the theory of linear mixed models and also provides an introduction to Bayesian linear mixed models.
+
+
+**Chapter 10** of [**Modern Applied Statistics with S** by Venables & Ripley](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939998)
+
+Sections 10.1-10.2 describe linear mixed effect models with a focus on application and experimental design.
+
+###[/weblink]
+
+
+## Week 9 learning outcomes
+
+By the end of this week, you should be able to:
+
+* recognise when there is correlation in the responses of a linear model and why it is important to take it into account when fitting a model
+
+* identify factors as fixed or random and crossed or nested according to the design of the study and the questions of interest
+
+* fit linear mixed models in R including random coefficient models
+
+* fit hierarchical (multilevel) models in R
+
+* predict from linear mixed models, both for subjects/units from the dataset and also for new observations.
+

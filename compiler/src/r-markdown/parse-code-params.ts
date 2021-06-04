@@ -56,5 +56,11 @@ function parseOptionValue(mixed: string | undefined) {
   if (!Number.isNaN(Number(mixed))) {
     return Number(mixed);
   }
+  if (mixed[0] === "'" && mixed[mixed.length - 1] === "'") {
+    return mixed.slice(1, -1);
+  }
+  if (mixed[0] === '"' && mixed[mixed.length - 1] === '"') {
+    return mixed.slice(1, -1);
+  }
   return mixed;
 }

@@ -1,0 +1,1511 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment=NA, warning = FALSE, message = FALSE)
+library(ggplot2)
+library(GGally)
+library(gridExtra)
+library(ggfortify)
+library(forecast)
+
+# transparent theme
+Rmkd_theme <- theme_light()+
+        theme(panel.background = element_rect(fill = "transparent", colour = NA),
+              plot.background = element_rect(fill = "transparent", colour = NA),
+              panel.border = element_rect(fill = NA, colour = "black", size = 1),
+              legend.background = element_rect(fill = "transparent", colour = NA))
+theme_set(Rmkd_theme)
+
+g_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
+
+```
+# Introduction
+
+Last week we introduced the two main classes of time series processes for stationary time series data, autoregressive and moving average processes. This week we will introduce an autoregressive moving average (ARMA) process that may be appropriate if neither an AR nor an MA process succeeds in removing the short-term correlation. Then we will introduce the autoregressive integrated moving average (ARIMA) approach for non-stationary time series data. Finally, we will learn how to forecast (predict) the value of a time series at future points in time.
+
+# More general time series processes
+
+In [Week 7](http://moodle2.gla.ac.uk/pluginfile.php/1513396/mod_resource/content/2/week7.pdf) we discussed the two most important models for stationary time series data, autoregressive and moving average processes. For most data sets these models will be an adequate representation of the short-term correlation, with autoregressive correlation occurring more often than moving average. However, occasionally you may meet data that are not well represented by either of these time series processes, an example of which is shown below.
+
+##[video,videoid="IFLsjNONAgw", duration="10m25s"] Autoregressive moving average processes
+
+
+###[example]
+Consider the following data which appear to be stationary but contain short-term correlation.
+
+```{r, echo = FALSE, fig.height=5, fig.width=5, fig.align='center'}
+## Simulate ARMA(1,1) data
+set.seed(9)
+data <- arima.sim(model=list(ar=0.7, ma=0.9), n=1000, sd=1)
+
+# Plotting
+p <- autoplot(data, main="Time plot") + geom_line( colour="#4a1486")
+pacf <- autoplot(acf(data, plot = FALSE), main="",ylab="ACF") 
+ppacf <- autoplot(pacf(data, plot = FALSE), main="", ylab="PACF")
+
+grid.arrange(p, pacf, ppacf, nrow=3)
+```
+
+
+The ACF and PACF suggest that neither an AR not an MA process is appropriate, but as these are the only models we know, we fit them to the data to see how well they remove the short-term correlation. We chose the order ($p$ and $q$) as the lowest values that removed the majority of the correlation, which resulted in an AR(6) model or an MA(5) model as shown below.
+
+
+```{r,echo = 2:20, fig.width=6, fig.height=6, fig.align='center'}
+set.seed(9)
+## Fit AR and MA models to the data
+model.ma <- arima(data, order=c(0,0,5))
+model.ar <- arima(data, order=c(6,0,0))
+
+# Plotting
+p1 <- autoplot(model.ma$residuals, main="", ylab="MA(5) residual series") + 
+      geom_line(colour="#4a1486")
+p2 <- autoplot(model.ar$residuals, main="", ylab="AR(6) residual series") + 
+      geom_line(colour="#ae017e")
+p1acf <- autoplot(acf(model.ma$residuals, plot = FALSE), 
+                  ylab="ACF", main="")
+p2acf <- autoplot(acf(model.ar$residuals, plot = FALSE), 
+                  ylab="ACF", main="")
+p1pacf <- autoplot(pacf(model.ma$residuals, plot = FALSE), 
+                  ylab="PACF", main="")
+p2pacf <- autoplot(pacf(model.ar$residuals, plot = FALSE), 
+                  ylab="PACF", main="")
+
+grid.arrange(p1, p2, p1acf, p2acf, p1pacf, p2pacf, nrow=3)
+```
+
+
+Neither of these models fit the data perfectly, and both use high order processes ($p=6$ and $q=5$ respectively), which include a relatively large number of parameters. This emphasises two important points:
+
+1. Even if the correlation structure does not look like an AR($p$) or an MA($q$) process, fitting these models with large enough $p$ and $q$ will remove the majority of the correlation. Therefore it is better to model correlation with the wrong time series process than not to model it at all.
+
+2. However,  AR($p$) or MA($q$) processes are not always appropriate models for short-term correlation.
+
+###[/example]
+
+In this section we discuss a wider class of processes that encompass both AR($p$) and MA($q$) processes as special cases. The first type of process we describe is for modelling stationary data, while the second class can additionally model long-term trends.
+
+Recall that an AR($p$) process is given by
+
+\begin{eqnarray}
+X_{t}&=&\alpha_{1}X_{t-1}+\ldots+\alpha_{p}X_{t-p}+Z_{t}\nonumber\\
+X_{t}-\alpha_{1}X_{t-1}-\ldots-\alpha_{p}X_{t-p}&=&Z_{t}\nonumber\\
+(1-\alpha_{1}B-\alpha_{2}B^{2}-\ldots-\alpha_{p}B^{p})X_{t}&=&Z_{t}\nonumber\\
+\phi(B)X_{t}&=&Z_{t}\nonumber
+\end{eqnarray}
+
+while an MA($q$) process is given by
+
+\begin{eqnarray}
+X_{t}&=&Z_{t}+\lambda_{1}Z_{t-1}+\ldots+\lambda_{q}Z_{t-q}\nonumber\\
+&=&(1+\lambda_{1}B+\ldots+\lambda_{q}B^{q})Z_{t}\nonumber\nonumber\\
+&=&\theta(B)Z_{t}\nonumber
+\end{eqnarray}
+
+We generalise these time series models by combining them together.
+
+
+###[definition] Autoregressive moving average process
+
+An **autoregressive moving average process of order $(p,q)$** denoted ARMA($p,q$) is given by
+
+\begin{eqnarray}
+X_{t}&=&\alpha_{1}X_{t-1}+\ldots+\alpha_{p}X_{t-p} + Z_{t} + \lambda_{1}Z_{t-1}+\ldots+\lambda_{q}Z_{t-q}\nonumber\\
+&=&\sum_{j=1}^{p}\alpha_{j}X_{t-j}+\sum_{j=1}^{q}\lambda_{j}Z_{t-j} + Z_{t}\nonumber
+\end{eqnarray}
+
+and is a combination of an AR($p$) process and an MA($q$) process. Using the backshift operator the model can be re-written as
+
+\begin{eqnarray}
+X_{t}&=&\sum_{j=1}^{p}\alpha_{j}X_{t-j}+\sum_{j=1}^{q}\lambda_{j}Z_{t-j}+Z_{t}\nonumber\\
+X_{t}-\sum_{j=1}^{p}\alpha_{j}X_{t-j}&=&\sum_{j=1}^{q}\lambda_{j}Z_{t-j}+Z_{t}\nonumber\\
+(1-\alpha_{1}B-\ldots-\alpha_{p}B^{p})X_{t}&=&(1+\lambda_{1}B+\ldots+\lambda_{q}B^{q})Z_{t}\nonumber\\
+\phi(B)X_{t}&=&\theta(B)Z_{t}\nonumber
+\end{eqnarray}
+###[/definition]
+
+An ARMA($p,q$) model is a more flexible representation of short-term correlation than using an AR($p$) or an MA($q$) process alone.
+
+###[example]
+The data in this example can be modelled by an ARMA(1,1) process
+
+$$X_{t}=\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}$$
+
+using the R code:
+
+```{r,echo = 2:20, fig.width=6, fig.height=6, fig.align='center'}
+set.seed(9)
+model.arma <- arima(data, order=c(1,0,1))
+
+# Plotting
+p <- autoplot(model.arma$residuals, ylab="ARMA(1,1) residual series", main="") + 
+    geom_line( colour="#4a1486")
+pacf <- autoplot(acf(model.arma$residuals, plot = FALSE),
+                  ylab="ACF", main="")
+ppacf <- autoplot(pacf(model.arma$residuals, plot = FALSE),  
+                  ylab="PACF", main="")
+grid.arrange(p, pacf, ppacf, nrow=3)
+```
+
+
+###[/example]
+
+## Mean of an ARMA($p,q$) process
+
+The mean of an ARMA($p,q$) process can be calculated in the same way as for an AR($p$) process, using the following result.
+
+###[theorem]
+Any ARMA($p,q$) process can be written as an infinite sum of a purely random process, i.e. an MA($\infty$) process. That is
+
+$$X_{t}=\sum_{j=1}^{p}\alpha_{j}X_{t-j}+\sum_{j=1}^{q}\lambda_{j}Z_{t-j}+Z_{t}=\sum_{j=0}^{\infty}\beta_{j}Z_{t-j}$$
+
+for some coefficients  $\beta_{j}$.
+###[/theorem]
+
+
+###[supplement] Variance and autocorrelation function
+
+Calculating the variance and autocorrelation function for an ARMA($p,q$) process can be done by assuming the process is stationary and deriving the Yule-Walker equations. However, this becomes algebraically messy for even small values of $p$ and $q$. Therefore we illustrate the calculation for the ARMA(1,1) process
+
+$$X_{t}=\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}$$
+
+The variance is calculated as follows.
+
+\begin{eqnarray}
+X_{t}&=&\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}\nonumber\\
+X_{t}^{2}&=&\alpha X_{t-1}X_{t}+\lambda Z_{t-1}X_{t}+Z_{t}X_{t}\nonumber\\
+E(X_{t}^{2})&=&\alpha E(X_{t-1}X_{t})+\lambda E(Z_{t-1}X_{t})+E(Z_{t}X_{t})\nonumber\\
+\mathrm{Var}(X_{t})&=&\alpha \gamma_{1}+\lambda E(Z_{t-1}X_{t})+E(Z_{t}X_{t})\nonumber
+\end{eqnarray}
+
+where the last line holds true because $E(X_{t})=0$, so that $\mathrm{Var}(X_{t})=E(X_{t}^2)$. This also means that $\gamma_{1}=\mathrm{Cov}(X_{t-1}X_{t})=E(X_{t-1}X_{t})$. The latter two expectations are straightforward to calculate if we recall that
+
+$$E(Z_{t}Z_{t-k})=0~\forall ~k>0\hspace{1cm}\mbox{and}\hspace{1cm}E(Z_{t}X_{t-k})=0~\forall ~k>0$$
+
+which are true because $Z_{t}$ is a purely random process. Then
+
+\begin{eqnarray}
+E(Z_{t}X_{t})&=&E(Z_{t}\{\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}\})\nonumber\\
+&=&E(Z_{t}^{2})\nonumber\\
+&=&\sigma^{2}_{z}\nonumber
+\end{eqnarray}
+
+and
+
+\begin{eqnarray}
+E(Z_{t-1}X_{t})&=&E(Z_{t-1}\{\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}\})\nonumber\\
+&=&\alpha E(Z_{t-1}X_{t-1})+\lambda E(Z_{t-1}^{2})\nonumber\\
+&=&\alpha\sigma^{2}_{z} + \lambda\sigma^{2}_{z}\nonumber
+\end{eqnarray}
+
+Therefore  we get that
+
+\begin{eqnarray}
+\mathrm{Var}(X_{t})&=&\alpha \gamma_{1}+\lambda (\alpha\sigma^{2}_{z} + \lambda\sigma^{2}_{z})+\sigma^{2}_{z}\nonumber\\
+&=&\alpha \gamma_{1}+\sigma^{2}_{z}(\lambda^{2}+\lambda\alpha+1)\nonumber
+\end{eqnarray}
+
+The autocorrelation function at lag 1 is calculated in the same way,
+
+\begin{eqnarray}
+X_{t}&=&\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}\nonumber\\
+X_{t-1}X_{t}&=&\alpha X_{t-1}^{2}+\lambda X_{t-1}Z_{t-1}+X_{t-1}Z_{t}\nonumber\\
+E(X_{t-1}X_{t})&=&\alpha E(X_{t-1}^{2})+\lambda E(X_{t-1}Z_{t-1})+E(X_{t-1}Z_{t})\nonumber\\
+\gamma_{1}&=&\alpha \gamma_{0}+\lambda \sigma^{2}_{z}\nonumber
+\end{eqnarray}
+
+Dividing by $\gamma_{0}=\mathrm{Var}(X_{t})$ gives the autocorrelation function at lag 1
+
+
+\begin{eqnarray}
+\rho_{1}&=&\alpha+\frac{\lambda\sigma^{2}_{z}}{\gamma_{0}}\nonumber\\
+&=&\alpha+\frac{\lambda\sigma^{2}_{z}}{\alpha \gamma_{1}+\sigma^{2}_{z}(\lambda^{2}+\lambda\alpha+1)}\nonumber
+\end{eqnarray}
+
+
+The lag $\tau$ autocorrelation function for any $\tau>1$ is calculated analogously as
+
+\begin{eqnarray}
+X_{t}&=&\alpha X_{t-1}+\lambda Z_{t-1}+Z_{t}\nonumber\\
+X_{t-\tau}X_{t}&=&\alpha X_{t-\tau}X_{t-1}+\lambda X_{t-\tau}Z_{t-1}+X_{t-\tau}Z_{t}\nonumber\\
+E(X_{t-\tau}X_{t})&=&\alpha E(X_{t-\tau}X_{t-1})+\lambda E(X_{t-\tau}Z_{t-1})+E(X_{t-\tau}Z_{t})\nonumber\\
+\gamma_{\tau}&=&\alpha \gamma_{\tau-1}\nonumber
+\end{eqnarray}
+
+Therefore the autocorrelation function is given by
+
+$$\rho_{\tau}=\alpha \rho_{\tau-1}$$
+
+
+which is the same Yule-Walker equation as an AR(1) process. Therefore we have
+
+
+\begin{eqnarray}
+\rho_{0}&=&1\nonumber\\
+\rho_{1}&=&\alpha+\frac{\lambda\sigma^{2}_{z}}{\alpha \gamma_{1}+\sigma^{2}_{z}(\lambda^{2}+\lambda\alpha+1)}\nonumber\\
+\rho_{2}&=&\alpha^{2}+\frac{\alpha\lambda\sigma^{2}_{z}}{\alpha \gamma_{1}+\sigma^{2}_{z}(\lambda^{2}+\lambda\alpha+1)}\nonumber
+\end{eqnarray}
+
+and so on. The autocorrelation function for a higher order ARMA($p,q$) process can be calculated using the same method, although it becomes increasingly messy.
+
+###[/supplement]
+
+## Stationarity and invertibility
+
+We know that an MA($q$) process is always stationary and an AR($p$) process is always invertible. Therefore an ARMA($p,q$) process
+
+$$\phi(B)X_{t}=\theta(B)Z_{t}$$
+
+* is stationary if the AR($p$) part is stationary, i.e. if the roots of the AR($p$) characteristic polynomial  $\phi(B)$ have modulus larger than one;
+
+* is invertible if the MA($q$) part is invertible, i.e. if the roots of the MA($q$) characteristic polynomial  $\theta(B)$ have modulus larger than one.
+
+\pagebreak
+
+###[example]
+
+Consider the ARMA(1,1) process
+
+$$X_{t}=2X_{t-1}-0.4Z_{t-1}+Z_{t}$$
+
+which can be re-written as
+
+$$X_{t}(1-2B)=Z_{t}(1-0.4B)$$
+
+The characteristic equation for the AR part is $\phi(B)=1-2B=0$, which has a single root $B=0.5<1$. Therefore the process is not stationary. The characteristic equation for the MA part is $\theta(B)=1-0.4B=0$, which has a single root $B= 2.5>1$. Therefore the process is invertible.
+###[/example]
+
+###[task]
+For the following ARMA($p,q$) models write down the characteristic equations and determine whether each process is stationary/invertible.
+
+* $X_{t}=5X_{t-1}+Z_{t}-0.2Z_{t-1}$
+
+* $X_{t}=X_{t-1}+Z_{t}-X_{t-2}+0.1Z_{t-1}$
+
+<!-- * $X_{t}=0.4X_{t-1}+Z_{t}-0.9Z_{t-1}+0.3Z_{t-2}$ -->
+
+####[answer]
+The characteristic polynomials are:
+
+* $\phi(B)=1-5B$ and $\theta(B)=1-0.2B$.
+
+* $\phi(B)=1-B+B^{2}$ and $\theta(B)=1+0.1B$.
+
+<!-- * $\phi(B)=1-0.4B$ and $\theta(B)=1-0.9B+0.3B^{2}$. -->
+
+For the first process the characteristic equation for the AR part is $\phi(B)=1-5B=0$, which has a single root $B=0.2<1$. Therefore the process is not stationary. The characteristic equation for the MA part is $\theta(B)=1-0.2B=0$, which has a single root $B= 5>1$. Therefore the process is invertible.
+
+For the second process the characteristic equation for the AR part is $\phi(B)=1-B+B^2=0$, which has roots $B=\frac{1\pm\sqrt{-3}}{2}$ with modulus equal to 1. Therefore the process is not stationary. The characteristic equation for the MA part is $\theta(B)=1+0.1B=0$, which has a single root $B= -10$ with modulus greater than 1. Therefore the process is invertible.
+
+####[/answer]
+###[/task]
+
+## Model identification
+
+AR($p$) and MA($q$) processes are straightforward to identify from the ACF and PACF functions as follows.
+
+* If the ACF is significantly different from zero for only the first $q$ lags (for small $q$), then an MA($q$) model is appropriate.
+
+* If the PACF is significantly different from zero for only the first $p$ lags (for small $p$), then an AR($p$) model is appropriate.
+
+We can summarise the features or ACF and PACF plots for AR, MA and ARMA processes in the following table:
+
+| **Process**| **ACF**                   | **PACF**                  |
+|:-----------|:--------------------------|:--------------------------|
+| AR($p$)    | Tails off as exponential decay or damped sine wave | Cuts off after lag $p$ |
+| MA($q$)    | Cuts off after lag $q$         |   Tails off as exponential decay or damped sine wave |
+| ARMA($p,q$)| Tails off  after lag $(q-p)$   |   Tails off after lag $(p-q)$ |
+
+
+<!-- The pattern for ARMA means that identifying an ARMA model is not that easy. The data in the Example 1 are simulated from an ARMA(1,1) process. -->
+<!-- , and are shown below again. -->
+
+
+<!-- ```{r, echo = FALSE, fig.height=6, fig.width=6, fig.align='center'} -->
+<!-- # Simulate ARMA(1,1) data -->
+<!-- set.seed(9) -->
+<!-- data <- arima.sim(model=list(ar=0.7, ma=0.9), n=1000, sd=1) -->
+<!-- # Plotting -->
+<!-- library(gridExtra) -->
+<!-- p <- autoplot(data, main="Time plot") + geom_line( colour="#4a1486") -->
+<!-- pacf <- autoplot(acf(data, plot = FALSE), main="ACF") -->
+<!-- ppacf <- autoplot(pacf(data, plot = FALSE),  main="PACF") -->
+
+<!-- grid.arrange(p, pacf, ppacf, nrow=3) -->
+<!-- ``` -->
+
+The pattern for ARMA means that identifying an ARMA model is not that easy. The data in the Example 1 are simulated from an ARMA(1,1) process. Notice that neither the ACF or PACF give any clues as to the appropriate type of time series process. All they tell us is that it is not an AR($p$) process or an MA($q$) process. Furthermore, you may hope that if you fit an AR(1) process to these data the residuals will look like an MA(1) process and if you fit an MA(1) process the residuals would resemble an AR(1) process, but as the graphs below show this is not the case.
+
+
+
+```{r, echo=2:20, fig.width=6, fig.height=6, fig.align='center'}
+set.seed(9)
+# Fit an AR(1) model to the data
+model.ar1 <- arima(data, order=c(1,0,0))
+model.ar1
+
+# Plotting
+p <- autoplot(model.ar1$residuals, main="AR(1) residual series") + 
+              geom_line(colour="#4a1486")
+pacf <- autoplot(acf(model.ar1$residuals, plot = FALSE), 
+                ylab="ACF", main="")
+ppacf <- autoplot(pacf(model.ar1$residuals, plot = FALSE),  
+                   ylab="PACF", main="")
+grid.arrange(p, pacf, ppacf, nrow=3)
+```
+
+
+```{r, echo=2:20, fig.width=6, fig.height=6, fig.align='center'}
+set.seed(9)
+# Fit an MA(1) model to the data
+model.ma1 <- arima(data, order=c(0,0,1))
+model.ma1
+
+# Plotting
+p <- autoplot(model.ma1$residuals, main="MA(1) residual series") + 
+              geom_line(colour="#4a1486")
+pacf <- autoplot(acf(model.ma1$residuals, plot = FALSE), 
+                ylab="ACF", main="")
+ppacf <- autoplot(pacf(model.ma1$residuals, plot = FALSE),  
+                   ylab="PACF", main="")
+grid.arrange(p, pacf, ppacf, nrow=3)
+```
+
+### Notes
+
+1. Model identification for an ARMA($p,q$) process where $p,q>0$ is difficult.
+
+2. First determine if the ACF and PACF resemble either an MA($q$) or an AR($p$) process.
+
+3. If not then adopt a trial and error approach, starting with the simplest model (i.e. an ARMA(1,1)) and increasing the complexity until the correlation has been removed.
+
+<!-- \pagebreak -->
+
+###[task]
+How would you go about finding an appropriate ARMA($p,q$) model for the time series processes $X$ and $Y$ with ACF and PACF plots shown below?
+
+```{r echo=FALSE,  fig.align='center', out.width='100%'}
+knitr::include_graphics('ARMA.pdf')
+```
+
+####[answer]
+The ACFs and PACFs do not look like either an AR($p$) process or an MA($q$) process, which makes identification difficult. A good approach in this case is to fit a simple ARMA($p,q$) model, *e.g.* ARMA(1,1), and see if that removes the correlation. In fact, both time series processes $X$ and $Y$ were generated from different ARMA(1,1) models.
+
+####[/answer]
+###[/task]
+
+<!-- ###[supplement] Parameter estimation -->
+
+<!-- Parameter estimation for an ARMA($p,q$) process is also not straightforward, and can be implemented using a similar conditional least squares algorithm to that used for an MA($q$) process. The details are omitted here, but it is a simple extension of the algorithm discussed in the context of a moving average process. This is also the algorithm used by R to estimate the parameters in an ARMA($p,q$) model. -->
+<!-- ###[/supplement] -->
+
+# Non-stationary models
+
+So far, we have modelled trend and seasonal variation first, before representing the residuals with a short-term correlation model. This is the approach most commonly adopted in time series modelling, because it allows the shape of the trend and seasonal variation to be estimated, before representing the correlation structure with a fairly simple time series model.
+
+An alternative approach is to model the trend, seasonal variation and correlation simultaneously. However, although such an approach has been widely used, it simply removes the trend rather than modelling it. Therefore, if capturing the shape of the trend or seasonal variation is the goal of the analysis, this approach is not appropriate.
+
+The class of non-stationary time series models described here combine ARMA($p,q$) models and differencing. Recall in [Week 6](http://moodle2.gla.ac.uk/pluginfile.php/1508882/mod_resource/content/3/week6.pdf) that one way to eliminate a trend in a non-stationary time series $X_{t}$, is to calculate its first order difference
+
+$$Y_t = \nabla X_t = (1 - B)X_t = X_t - X_{t-1}.$$
+
+Usually, first or second order differences are enough to obtain a stationary series $\{Y_t\}$, but in general we can difference $d$ times:
+
+$$Y_t = \nabla^d X_t = (1-B)^d X_t.$$
+
+Combining this operator with an ARMA($p,q$) process leads to the following general class of models.
+
+###[definition] Autoregressive integrated moving average process
+
+$\{X_t\}$ is an **autoregressive integrated moving average process of order ($p,d,q$)**, denoted ARIMA($p,d,q$) if the $d^{th}$ order differenced process
+
+$$Y_t = \nabla^d X_t =(1-B)^d X_t$$
+
+is an ARMA($p,q$) process. An ARIMA($p,d,q$) process can be written most easily in terms of characteristic polynomials. If we write the ARMA($p,q$) process for $Y_{t}$ as
+
+$$\phi(B) Y_t = \theta(B) Z_t$$
+
+then as $Y_{t}=(1-B)^d X_t$, an ARIMA($p,d,q$) process can be written as
+
+$$\phi(B) (1-B)^d X_t = \theta(B) Z_t.$$
+###[/definition]
+
+
+## Notes
+
+* The characteristic polynomial for the AR part of the ARIMA model is equal to $\phi^*(B) = \phi(B) (1-B)^d$, which has $d$ roots that equal 1. Hence an ARIMA($p,d,q$) process cannot be stationary unless $d=0$.
+
+* The parameter $d$ controls the number of times the process is differenced, and must be a non-negative integer.
+
+* When $d=0$ we have an ARMA($p,q$) model, i.e. ARIMA($p, 0, q$) = ARMA($p,q$).
+
+<!-- ###[example] -->
+
+<!-- For an ARIMA(0,1,0) process the characteristic polynomials are given by $\phi(B)=1$ and $\theta(B)=1$, meaning that the full model is given by -->
+
+<!-- \begin{eqnarray} -->
+<!-- (1-B)X_{t}&=&Z_{t}\nonumber\\ -->
+<!-- X_{t}-X_{t-1}&=&Z_{t}\nonumber\\ -->
+<!-- X_{t}&=&X_{t-1}+Z_{t}\nonumber -->
+<!-- \end{eqnarray} -->
+
+<!-- which is a random walk process. Note that the AR(1) process $X_{t}=\alpha X_{t-1}+Z_{t}$ is also a random walk process when $\alpha=1$. -->
+<!-- ###[/example] -->
+
+<!-- ###[example] -->
+<!-- For an ARIMA(0,0,0) process the characteristic polynomials are given by $\phi(B)=1$ and $\theta(B)=1$, meaning that the full model is given by -->
+
+<!-- \begin{eqnarray} -->
+<!-- (1-B)^{0}X_{t}&=&Z_{t}\nonumber\\ -->
+<!-- X_{t}&=&Z_{t}\nonumber -->
+<!-- \end{eqnarray} -->
+
+<!-- which is a purely random process. -->
+<!-- ###[/example] -->
+
+###[example]
+For an ARIMA(1,1,1) process the characteristic polynomials are given by $\phi(B)=1-\alpha B$ and $\theta(B)=1+\lambda B$, meaning that the full model is given by
+
+\begin{eqnarray}
+(1-\alpha B)(1-B)X_{t}&=&(1+\lambda B)Z_{t}\nonumber\\
+(1-B-\alpha B + \alpha B^{2})X_{t}&=&\lambda Z_{t-1}+Z_{t}\nonumber\\
+X_{t}&=&(1+\alpha)X_{t-1}-\alpha X_{t-2} +\lambda Z_{t-1}+Z_{t}\nonumber
+\end{eqnarray}
+
+So an ARIMA(1,1,1) model is essentially a non-stationary ARMA(2,1) model.
+###[/example]
+
+###[task]
+Consider the ARIMA time series process
+
+$$(1-B)(1-0.2B)X_{t}=(1-0.5B)Z_{t}$$
+
+* What type of process is defined here (i.e. what are $p, d, q$)?
+* Write out the model in terms of $X_{t}$.
+* Is this process stationary?
+
+####[answer]
+This is an ARIMA(1,1,1) process.
+
+In terms of $X_{t}$ the model is given by
+
+\begin{eqnarray}
+(1-B)(1-0.2B)X_{t}&=&(1-0.5B)Z_{t}\nonumber\\
+(1-1.2B+0.2B^{2})X_{t}&=&Z_{t} - 0.5Z_{t-1}\nonumber\\
+X_{t} - 1.2X_{t-1} + 0.2X_{t-2}&=&Z_{t} - 0.5Z_{t-1}\nonumber\\
+X_{t} &=&1.2X_{t-1} - 0.2X_{t-2}- 0.5Z_{t-1} + Z_{t}\nonumber
+\end{eqnarray}
+
+This process is not stationary, because the characterisitic equation for the AR($p$) part has a root equal to one (as it is differenced once). Therefore it cannot be stationary.
+####[/answer]
+###[/task]
+
+###[task]
+Consider an ARIMA$(0,2,1)$ process.
+
+* Write out the model in backshift (B) notation.
+* Expand this equation and write the model in terms of $X_{t}$.
+
+####[answer]
+In backshift notation the model is given by
+
+$$(1-B)^{2}X_{t}=(1+\lambda B)Z_{t}.$$
+
+In terms of $X_{t}$ this model is given by
+
+\begin{eqnarray}
+(1-B)(1-B)X_{t}=(1+\lambda B)Z_{t}\nonumber\\
+(1-2B + B^{2})X_{t}&=&+\lambda Z_{t-1} + Z_{t}\nonumber\\
+X_{t}-2X_{t-1}+ X_{t-2}&=&+\lambda Z_{t-1} + Z_{t}\nonumber\\
+X_{t}&=&2X_{t-1} -X_{t-2} +\lambda Z_{t-1} + Z_{t}\nonumber
+\end{eqnarray}
+
+####[/answer]
+
+###[/task]
+
+###[task]
+Consider the following ARIMA processes.
+
+* ARIMA(1,0,0)
+* ARIMA(0,0,2)
+* ARIMA(0,1,0)
+
+Which of these are stationary?
+
+####[answer]
+ARIMA$(1,0,0)$: We cannot tell as it has an AR(1) component, so its stationarity will depend on the value of the lag one autocorrelation function.
+
+ARIMA$(0,0,2)$: This is a purely a moving average process, and is therefore stationary.
+
+ARIMA$(0,1,0)$: This has been differenced and is therefore not stationary.
+####[/answer]
+
+###[/task]
+
+
+## Model identification
+
+To model trend and correlation in a single model using a non-stationary ARIMA($p,d,q$) process the following four step approach seems reasonable.
+
+
+1. **Choose $d$**: Plot the time series and its correlogram, and determine whether the data contain a trend and hence need to be differenced. If there is no trend then choose $d=0$, otherwise difference the data and plot the differenced data. If this looks stationary then choose $d=1$, otherwise difference again and plot the second differences. Repeat this process until the data are stationary. Typically $d=1$ or $d=2$ should be enough to obtain a stationary time series.
+
+2. **Choose $p$ and $q$**: Plot the ACF and PACF of the $d$th order differences, and determine the appropriate ARMA($p,q$) model.
+
+3. **Estimate the parameters**: Use the `arima()` function in R to estimate the parameters of the ARIMA process.
+
+4. **Residual diagnosis**: Look at the time plot, ACF and PACF plot of the residuals and determine whether they contain any remaining trend, seasonal variation or short-term correlation. If the residuals resemble a purely random process then stop, otherwise return to stage one and change either $p$, $d$ or $q$.
+
+
+###[example]
+Below you see realisations of an ARIMA(1,1,0) (left column) and ARIMA(0,1,1) (right column) processes. Note the data are non-stationary and have a trend. Therefore the ACF is not informative regarding the presence or absence of short-term correlation.
+
+```{r, echo=2:20, fig.width=6, fig.height=6, fig.align='center'}
+set.seed(9)
+# Simulate ARIMA(1,1,0) and ARIMA(0,1,1) data
+data1 <- arima.sim(model=list(ar=c(0.7), order=c(1,1,0)), n=1000, sd=1)
+data2 <- arima.sim(model=list(ma=c(0.7), order=c(0,1,1)), n=1000, sd=1)
+
+# Plotting
+p1 <- autoplot( data1, main="ARIMA(1,1,0) Residual series") + 
+      geom_line( colour="#4a1486")
+
+p2 <- autoplot( data2, main="ARIMA(0,1,1) Residual series") +
+      geom_line( colour="#ae017e")
+
+p1acf <- autoplot( acf(data1, plot = FALSE), main="ARIMA(1,1,0) ACF")
+p2acf <- autoplot( acf(data2, plot = FALSE), main="ARIMA(0,1,1) ACF")
+
+p1pacf <- autoplot( pacf(data1, plot = FALSE), main="ARIMA(1,1,0) PACF")
+p2pacf <- autoplot( pacf(data2, plot = FALSE), main="ARIMA(0,1,1) PACF")
+
+grid.arrange( p1, p2, p1acf, p2acf, p1pacf, p2pacf, nrow=3)
+```
+###[/example]
+
+
+###[example]
+In this example, we look at a time series of monthly crude oil prices from 1986-2008 and we want to see if we can model the trend and correlation using an ARIMA($p,d,q$) model.
+
+```{r}
+crude <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/crude_oil.csv"))
+price <- crude$spot_price_fob
+```
+
+The graphs below show the original data which is clearly not stationary. Taking the first order difference seems to make the series stationary with zero mean. Therefore $d=1$ appears to be adequate.
+```{r fig.width=6, fig.height=6, fig.align='center'}
+diff1 <-diff(price, differences = 1)
+par( mfrow=c(2,1), mar=c(4,4,1,1))
+plot(price, type="l", xlab = "Month", ylab = "Spot Price FOB ($ per Barrel)", 
+     lwd=2, col="#b10026")
+plot(diff1, type="l", xlab = "Month", ylab = "First order difference",
+     lwd=2, col="#fc4e2a")
+```
+The ACF and PACF of the first order differences are given below, and show that there is still some short term correlation left: both the ACF and PACF show siginificant correlation at lag 1.
+
+```{r}
+p1<- autoplot(acf(diff1, plot=FALSE), main="ACF for differenced series")
+p2<- autoplot(pacf(diff1, plot=FALSE), main="PACF for differenced series")
+grid.arrange(p1,p2, nrow=2)
+```
+
+We could now fit either an AR(1) or an MA(1) to this data to remove the short term correlation remaining after differencing the series, so we could fit either an ARIMA(1,1,0) or an ARIMA(0,1,1) to the original data.
+
+```{r}
+arima110 <- arima(price, order = c(1,1,0))
+arima011 <- arima(price, order = c(0,1,1))
+p1<- autoplot(acf(arima110$residuals, plot=FALSE), main="ACF for ARIMA(1,1,0)")
+p2<- autoplot(pacf(arima110$residuals, plot=FALSE), main="PACF for ARIMA(1,1,0)")
+p3<- autoplot(pacf(arima011$residuals, plot=FALSE), main="ACF for ARIMA(0,1,1)")
+p4<- autoplot(pacf(arima011$residuals, plot=FALSE), main="PACF for ARIMA(0,1,1)")
+grid.arrange(p1,p3,p2,p4, nrow=2)
+```
+The residuals from both models appear to resemble a purely random process with no correlation, so both models seem to be appropriate. In general, if there are multiple candidate models to choose from, one could use model selection criteria to choose the best one. In this scenario, if we look at the AIC, the ARIMA(1,1,0) model seems to be marginally better than the ARIMA(0,1,1) model.
+
+```{r}
+arima110$aic
+arima011$aic
+```
+
+
+###[/example]
+
+
+<!-- **Wrote the code myself but I can't seem to get the same results as in Duncan's lecture notes** -->
+<!-- ###[example] -->
+<!-- Recall again the daily respiratory admissions data for Glasgow between 2000 and 2007. Here we model the trend and correlation using an ARIMA($p,d,q$) model. The graphs below show the original data and the first order differences, the latter appear to be stationary with zero mean. Therefore $d=1$ appears to be adequate. -->
+
+<!-- ```{r fig.width=6, fig.height=6, fig.align='center'} -->
+<!-- resp <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/resp.csv")) -->
+
+<!-- # convert to "Date"" type variable -->
+<!-- resp$Date <- as.Date(as.character(resp$Date), format="%Y%m%d") -->
+
+<!-- diff.1 <- data.frame(d=diff(resp$admissions_glasgow, differences = 1),  -->
+<!--                      ind=resp$Date[-1]) -->
+
+<!-- p1 <- ggplot(resp, aes(Date, admissions_glasgow)) +  -->
+<!--       geom_point(color="#b10026", alpha=0.4) + -->
+<!--       scale_x_date(date_labels = "%b-%Y", date_breaks = "2 year") + -->
+<!--       xlab("Time index") + ylab("Respiratory admissions") +  -->
+<!--       ggtitle("Original data") -->
+
+<!-- p2 <- ggplot(diff.1, aes(y=d, ind)) +  -->
+<!--       geom_point(color="#fc4e2a", alpha=0.4) +  -->
+<!--       scale_x_date(date_labels = "%b-%Y", date_breaks = "2 year") + -->
+<!--       xlab("Time index") + ylab("Lag 1 difference") +  -->
+<!--       ggtitle("First order differences") -->
+
+
+<!-- grid.arrange(p1,p2, nrow=2) -->
+<!-- ``` -->
+
+
+<!-- The ACF and PACF of the first order differences are given below, and show that the differencing process has induced negative correlation into the data. -->
+
+<!-- ```{r, fig.width=6, fig.height=6, fig.align='center'} -->
+<!--  diffacf <- autoplot( acf(diff.1[,1], plot = FALSE),  -->
+<!--                       main="ACF for differencing process")  -->
+<!-- diffpacf <- autoplot( pacf(diff.1[,1], plot = FALSE),  -->
+<!--                       main="PACF for differencing process") -->
+
+<!-- grid.arrange(diffacf, diffpacf, nrow=2) -->
+<!-- ``` -->
+
+<!-- An MA(1) process appears to be an appropriate model so we fit an ARIMA($0,1,1$) to the original data. This provides the following residuals. -->
+
+<!-- ```{r, fig.width=6, fig.height=6, fig.align='center' } -->
+<!-- arma011 <- arima(resp$admissions_glasgow, order=c(0,1,1)) -->
+<!-- arma011acf <- autoplot( acf(arma011$residuals, plot = FALSE),  -->
+<!--                         main="ACF for residual serires")  -->
+<!-- arma011pacf <- autoplot( pacf(arma011$residuals, plot = FALSE),  -->
+<!--                          main="PACF for residual series") -->
+
+<!-- grid.arrange(diffacf, diffpacf, nrow=2) -->
+
+<!-- ``` -->
+
+<!-- These residuals appear to resemble a purely random process with no correlation, so the ARIMA($0,1,1$) model appears to be appropriate. -->
+<!-- ###[/example] -->
+
+<!-- ###[task] -->
+
+<!-- ###[/task] -->
+
+###[task]
+Find a suitable ARIMA model for the `Nile` data, which gives measurements of the annual flow of the river Nile at Aswan in the period 1871–1970. For more information on the dataset type `?Nile` in R.
+####[answer]
+Start by plotting the data:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+plot(Nile, main="")
+```
+There is a decreasing trend in the series, so we difference once to see if it can be removed.
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+dNile <- diff(Nile)
+autoplot(dNile, main="First order difference")
+```
+
+The differenced series appears stationary. Now look at the ACF and PACF plots to choose a suitable model to remove the short-term correlation:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+diffacf <- autoplot( acf(dNile, plot = FALSE),  main="ACF for differencing process")
+diffpacf <- autoplot( acf(dNile, plot = FALSE),  main="PACF for differencing process")
+grid.arrange(diffacf, diffpacf, nrow=2)
+```
+A large ACF at lag 1 and a PACF that tails off to zero suggest an MA(1) model for this series, which would suggest an ARIMA(0,1,1) for the original `Nile` data.
+
+```{r}
+fitNile <- arima(Nile, order=c(0,1,1))
+fitNile
+```
+
+Finally check the residual series for any remaining short-term correlation:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+resacf <- autoplot( acf(fitNile$residuals, plot = FALSE), main="ACF for residuals of ARIMA(0,1,1)")
+respacf <- autoplot( pacf(fitNile$residuals, plot = FALSE), main="PACF for residuals of ARIMA(0,1,1)")
+grid.arrange(resacf, respacf, nrow=2)
+```
+It looks like that the short-term correlation has been removed.
+
+####[/answer]
+###[/task]
+
+\pagebreak
+
+# Forecasting
+
+Our final topic in this brief introduction to time series analysis is forecasting.
+
+##[video,videoid="Gr9uRCK9fSI", duration="08m02s"] Time series forecasting
+
+Forecasting is also called prediction, and involves predicting the value of a time series at future points in time. This makes it a very hard task, and all predictions should be accompanied with a measure of uncertainty. The majority of forecasting methods are based on a statistical model, so if the model is not appropriate, then the forecasts will be useless. Even if an appropriate model is fitted, it does not mean the forecasts will be reasonable. However, despite these reservations forecasting is vitally important, and is often the sole goal of a time series analysis.
+A few examples of problems which require forecasting are given below.
+
+- Decisions about hiring / firing staff at a company will depend on predictions of future profits.
+- Supermarkets need to predict food sales for the next week so they can decide how much to order.
+- Environmental scientists are currently trying to forecast global temperature for the next 100 years to predict the effects of global warming.
+- City traders want to predict the value of stocks and shares tomorrow so they can decide whether to buy or sell to make a profit.
+- Governments need to predict the changing shifts in population demographics (e.g. how many old  /young people) so that adequate provision for schools and nursing homes can be made.
+
+A number of methods for predicting future observations are available, and we describe three of them here. But first a word of warning. Forecasting involves predicting the future and is hence very difficult. Do not simply believe that any forecast you see will be accurate.
+
+## General problem
+A time series has been observed at $n$ time points $(x_{1},\ldots,x_{n})$, and predictions are required for the series at times $n+1$, $n+2$, etc.
+
+We denote the **$k$-step ahead forecast** of $x_{n+k}$ given data $(x_{1},\ldots,x_{n})$  by $x_{n}(k)$, so that $x_{n}(1)$ is the prediction of $x_{n+1}$ based on data up to and including time $n$.
+
+ The **forecast error** is given by
+
+$$e_{n}(k)=x_{n+k}-x_{n}(k)$$
+
+  and is the amount by which the forecast differs from the true observation (once it has become available). The amount of uncertainty in a forecast is measured by the size of its error variance, $\mathrm{Var}(e_{n}(k))$, with larger values meaning the forecast is less reliable.
+
+  To evaluate the performance of a forecasting method on a given data set, we calculate 1 step ahead forecasts $x_{1}(1),\ldots, x_{n-1}(1)$, and measure the discrepancy to the observed values $x_{2},\ldots,x_{n}$ using the **root mean square prediction error**
+
+
+$$\mbox{RMSPE}=\sqrt{\frac{1}{n-1}\sum_{k=1}^{n-1}e_{k}(1)^{2}}=\sqrt{\frac{1}{n-1}\sum_{k=1}^{n-1}(x_{k+1}-x_{k}(1))^{2}}$$
+
+
+Here we compare three methods of forecasting, regression, exponential smoothing and ARIMA models.
+
+
+## Regression
+One approach is to ignore the temporal correlation in the observed data, and predict the next value of the time series based on linear regression methods. This method will only produce good forecasts if the time series being predicted has a strong trend and seasonal component compared to the amount of random variation and short-term correlation. For the additive time series model
+
+$$X_{t}=m_{t}+s_{t}+e_{t}$$
+
+  the trend and seasonal variation are represented by
+
+$$m_{t}+s_{t}=\textbf{z}_{t}^\intercal\boldsymbol{\beta}$$
+
+  a linear regression model as described in chapter 2. The $1$ step ahead prediction  is then given by
+
+$$x_{n}(1)=\mathbf{z}_{n+1}^\intercal\mathbf{\hat{\beta}}$$
+
+
+where $\mathbf{\hat{\beta}}$ is the vector of regression parameter estimates and $\mathbf{z}_{n+1}^\intercal$ are the covariate values at time $n+1$. Approximate 95$\%$ prediction intervals can be calculated from linear model theory as
+
+
+$$\mathbf{z}_{n+1}^\intercal\mathbf{\hat{\beta}}\pm 1.96\sqrt{\hat{\sigma}^{2}
+(1+\mathbf{z}_{n+1}^\intercal(Z^\intercal Z)^{-1}\mathbf{z}_{n+1})}$$
+
+where $\hat{\sigma}^{2}$ is the estimated residual variance from the linear model, and $Z$ is the matrix of regression variables for all $n$ time points.
+
+
+###[example]
+Consider the daily respiratory admissions data presented in Week 6. One of the trend models for these data was
+
+
+$$X_{t}=\beta_{0}+\beta_{1}t+\beta_{2}\sin(2\pi t/365)+\beta_{3}\cos(2\pi t /365) + e_{t}$$
+
+which modelled the regular seasonal pattern with a period of a year and a linear trend. The graph below shows the last year of these data, together with predictions for the first 100 days in 2008 using the model above. Note in this case how wide the prediction intervals are, because the seasonal pattern is overwhelmed by random variation. Thus the predictions are not likely to be very accurate.
+
+
+The R code used to fit the model is given below.
+
+```{r, fig.width=6, fig.height=5, fig.align='center' }
+# Fit a sinusoidal model
+data <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/resp.csv"))
+x <- data[ ,2]
+n <- length(x)
+t <- 1:n
+Z <- cbind(t, sin(2*pi*t/365), cos(2*pi*t/365))
+z1 <- Z[ ,1]
+z2 <- Z[ ,2]
+z3 <- Z[ ,3]
+model <- lm(x~z1+z2+z3)
+
+# Predict the next 100 time points
+t.predict <- (n+1):(n+100)
+Z.predict <- data.frame(t.predict, sin(2*pi*t.predict/365), cos(2*pi*t.predict/365))
+model.predict <- predict(model, newdata=data.frame(z1 = Z.predict[ , 1],
+z2=Z.predict[ ,2], z3=Z.predict[ ,3]), se.fit = TRUE, interval="prediction")
+
+# Plot the predictions 
+plot(1:465,c(model$fitted.values[2558:n], model.predict$fit[ ,1]), type="l", lwd=2,
+     xlab="Day", ylab="Admissions", ylim=c(10,70), 
+     main="Predictions for 100 days", col="#fc4e2a")
+points(1:365, data[2558:n ,2], pch=19, col=alpha("#b10026",0.7))
+lines(366:465, model.predict$fit[ ,2], lty=2, col="#fd8d3c", lwd=2)
+lines(366:465, model.predict$fit[ ,3], lty=2, col="#fd8d3c", lwd=2)
+
+```
+###[/example]
+
+###[example]
+Consider the air traffic data, which can be modelled using a seasonal indicator variable for quarter and a linear trend. The graph below shows the data together with predictions for the next four quarters. Note that in this case the data are dominated by trend and seasonal variation, and have relatively little unexplained variation. Therefore the prediction intervals are narrow, suggesting the predictions will be fairly accurate.
+
+```{r fig.width=6, fig.height=5, fig.align='center'}
+library(zoo)
+airtraffic<-read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/airtraffic.csv"))
+# Create a quarterly date variable
+airtraffic$Date <- as.yearqtr(paste(airtraffic$Year, airtraffic$Quarter), 
+                              format="%Y %q")
+
+x <- airtraffic[ ,3]
+quarter <- rep(1:4,8)
+time <- 1:32
+model <- lm(x~time+as.factor(quarter))
+
+time.predict<- 33:36
+model.predict<- predict(model, newdata=data.frame(time<- time.predict, quarter=1:4), 
+                        se.fit = TRUE, interval="prediction")
+
+plot(c(1:36), c(model$fitted.values, model.predict$fit[ ,1]), type="l", 
+     ylim=c(13000, 32000), ylab="Passengers", main="Prediction for 1 year", 
+     xlab="Quarter", col="#fc4e2a", lwd=2)
+points(x, pch=19, col=alpha("#b10026",0.7))
+lines(33:36, model.predict$fit[ ,2], col="#fd8d3c", lwd=2, lty=2)
+lines(33:36, model.predict$fit[ ,3], col="#fd8d3c", lwd=2, lty=2)
+```
+
+###[/example]
+
+###[example]
+Consider the following linear trend model
+
+$$X_{t}=10 + 2 t + \epsilon_{t}\hspace{1cm}t=1,\ldots,10$$
+
+
+where $\hat{\mathbf{\beta}}=(10,2)$ and $\hat{\sigma}^{2}=1$. The design matrix is given by
+
+
+$$Z=\left(\begin{array}{cc}
+1& 1\\
+1&2\\
+\vdots&\vdots\\
+1&10\\
+\end{array}\right)$$
+
+Calculate a prediction and 95$\%$ interval for time 11 where $\mathbf{z}_{11}^\intercal=(1,11)$.
+
+
+The prediction is given by
+
+$$x_{10}(1)~=~\mathbf{z}_{11}^\intercal\mathbf{\hat{\beta}}~=~ 1 \times 10 + 11 \times 2~=~32$$
+
+
+To calculate the standard error we have that
+
+$$Z^\intercal Z=\left(\begin{array}{cc}10 &55\\55 & 385\end{array}\right)
+\hspace{2cm}\mbox{and}\hspace{2cm}
+(Z^\intercal Z)^{-1}=\left(\begin{array}{cc}0.46667 &-0.06667\\-0.06667 & 0.01212\end{array}\right)$$
+
+Therefore we have that 
+
+$$\mathrm{Var}(x_{10}(1))~=~\hat{\sigma}^{2}(1+\mathbf{z}_{11}^\intercal(Z^\intercal Z)^{-1}\mathbf{z}_{11})=1.4665$$
+
+and the 95$\%$ prediction interval is given by
+
+\begin{eqnarray}
+\mathbf{z}_{n+1}^\intercal\hat{\boldsymbol{\beta}}&\pm& 1.96\sqrt{\hat{\sigma}^{2}
+(1+\mathbf{z}_{n+1}^\intercal(Z^\intercal Z)^{-1}\mathbf{z}_{n+1})}\nonumber\\
+32&\pm& 1.96\times \sqrt{1.4665}\nonumber\\
+32&\pm& 2.374\nonumber\\
+(29.63&,&34.37)\nonumber
+\end{eqnarray}
+###[/example]
+
+## Exponential smoothing
+
+Exponential smoothing is a simple procedure that does not assume a parametric model for the data, and is similar to moving average smoothing discussed in [Week 6](http://moodle2.gla.ac.uk/pluginfile.php/1508882/mod_resource/content/3/week6.pdf). It makes one step ahead forecasts of the form
+
+$$\hat{x}_{n}(1)=c_{0}x_{n}+c_{1}x_{n-1}+c_{2}x_{n-2}+\ldots+c_{n-1}x_{1}$$
+
+where the coefficients $(c_{0},\ldots,c_{n-1})$ are called weights and must sum to one so that the prediction is of the correct size. In addition, the weights decrease as the observations move further away from the time point being predicted, i.e $c_{0}\geq c_{1} \geq\ldots\geq c_{n-1}$. The weights used in exponential smoothing are as follows.
+
+###[definition]
+Given data $(x_{1},\ldots,x_{n})$, the one step ahead forecast using **exponential smoothing** is given by
+
+$$\hat{x}_{n}(1)=\alpha x_{n}+\alpha(1-\alpha)x_{n-1}+\alpha(1-\alpha)^{2}x_{n-2}+\ldots+\alpha(1-\alpha)^{n-1}x_{1}$$
+
+where $\alpha\in[0,1]$ is a smoothing parameter.
+###[/definition]
+
+**Notes**
+
+ - If $\alpha$ is close to one, predictions are based on only the last few observations.
+ - If $\alpha$ is close to zero, predictions are based on a large number of previous observations.
+ - If the series has infinite length then the weights sum to 1 as required. To see this note that  $c_{i}=\alpha(1-\alpha)^{i}$ and
+
+
+\begin{eqnarray}
+\sum_{i=0}^{\infty}c_{i}&=&\sum_{i=0}^{\infty}\alpha(1-\alpha)^{i}\nonumber\\
+&=&\alpha\sum_{i=0}^{\infty}(1-\alpha)^{i}\nonumber\\
+&=&\alpha\times\frac{1}{1-(1-\alpha)}\nonumber\\
+&=&1\nonumber
+\end{eqnarray}
+
+For finite $n$, the sum of the coefficients is approximately 1 because for large enough $n$, $c_{n}=\alpha(1-\alpha)^{n}\approx0$.
+
+The one step ahead forecast can be written recursively as follows
+
+\begin{eqnarray}
+\hat{x}_{n}(1)&=&\alpha x_{n}+\alpha(1-\alpha)x_{n-1}+\alpha(1-\alpha)^{2}x_{n-2}+\ldots+\alpha(1-\alpha)^{n-1}x_{1}\nonumber\\
+&=&\alpha x_{n}+(1-\alpha)[\alpha x_{n-1}+\alpha(1-\alpha)x_{n-2}+\ldots+\alpha(1-\alpha)^{n-2}x_{1}]\nonumber\\
+&=&\alpha x_{n}+(1-\alpha)\hat{x}_{n-1}(1)\nonumber
+\end{eqnarray}
+
+making it straightforward computationally to update the forecasts in light of new data. To start the process, we set $\hat{x}_{1}(1)=x_{2}$.
+
+
+**Choosing $\alpha$**
+  Calculate the root mean square prediction error for a range of $\alpha$ values, and choose the one that minimises this quantity. That is, for each candidate value of $\alpha$
+
+- Calculate $\hat{x}_{1}(1),\ldots,\hat{x}_{n-1}(1)$ using the recursive formula described above.
+- Calculate the root mean square prediction error
+
+$$\mbox{RMSPE}=\sqrt{\frac{1}{n-1}\sum_{k=1}^{n-1}(x_{k+1}-x_{k}(1))^{2}}$$
+
+  Then choose the value of $\alpha$ that minimises this quantity.
+
+**Measuring uncertainty**
+  For exponential smoothing it has been shown that an approximate $95\%$ prediction interval for $x_{n}(1)$ is given by
+
+
+$$\hat{x}_{n}(1)\pm1.96\sqrt{\mathrm{Var}(e_{n}(1)})$$
+
+where $\mathrm{Var}(e_{n}(1))$ can be approximated as the variance of the forecast errors $e_{1}(1),e_{2}(1),\ldots,e_{n-1}(1)$, i.e
+
+$$\mathrm{Var}(e_{n}(1))=\frac{1}{n-2}\sum_{i=1}^{n-1}(e_{i}(1)-\bar{e})^{2}$$
+
+with $\bar{e}=\sum_{i=1}^{n-1}e_{i}(1)/(n-1)$. 
+
+###[example]
+
+The one-step ahead forecast for the air traffic data is given below. The prediction and uncertainty interval from the regression approach is given by 20818.29 (19235.76, 22400.83), which is markedly different from the values given below for exponential smoothing. Note also that the uncertainty intervals for exponential smoothing are much wider.
+
+```{r echo=4:10}
+library(forecast)
+airtraffic <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/airtraffic.csv"))
+x <- airtraffic[ ,3]
+predict <- ses(x, h=4, level=95, fan=FALSE)
+summary(predict)
+```
+
+In the above code we used the function `ses` from `library(forecast)`, which is appropriate for stationary time series. If our series is non-stationary we can use a more sophisticated version of exponential smoothing, called a *triple exponential model* or *Holt-Winters exponential smoothing* which can be fit using the function `ets()` from `library(forecast)`. We will not go into detail about the technical aspects of this model, but we will see how it can be applied to the air traffic example. 
+
+First of all, let us note that using `ets(ts,model="ANN")` is the same as using `ses(ts)` because we are specifying an additive error (first letter is "A"), no trend (second letter is "N") and no seasonality (third letter is "N"):
+
+```{r echo=5:20, fig.width=6, fig.height=5, fig.align='center'}
+library(forecast)
+airtraffic <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/airtraffic.csv"))
+x <- airtraffic[ ,3]
+predict1 <- ets(ts(x, freq=4),model="ANN")
+f1 <- forecast(predict1)
+plot(f1)
+```
+
+To allow for additive trend and seasonality we use:
+
+```{r echo=5:20, fig.width=6, fig.height=5, fig.align='center'}
+library(forecast)
+airtraffic <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/airtraffic.csv"))
+x <- airtraffic[ ,3]
+predict2 <- ets(ts(x, frequency=4),model="AAA")
+f2 <- forecast(predict2)
+plot(f2)
+```
+
+
+###[/example]
+
+
+<!-- ###[example] -->
+<!-- Given the time series $\mathbf{x}=(1,2,4,4,6,5,7,9,9,10)$, calculate $x_{10}(1)$ using only the last 5 observations  for $\alpha=0.1, 0.5$ and $0.9$. -->
+
+
+<!-- $$\alpha=0.1\hspace{0.5cm}x_{10}(1)=0.1\times 10 + 0.1(1-0.1)\times 9 + 0.1(1-0.1)^{2}\times 9 -->
+<!-- + 0.1(1-0.1)^{3}\times 7 + 0.1(1-0.1)^{4}\times 5~=~3.38$$ -->
+
+<!-- $$\alpha=0.5\hspace{0.5cm}x_{10}(1)=0.5\times 10 + 0.5(1-0.5)\times 9 + 0.5(1-0.5)^{2}\times 9 -->
+<!-- + 0.5(1-0.5)^{3}\times 7 + 0.5(1-0.5)^{4}\times 5~=~8.89$$ -->
+
+<!-- $$\alpha=0.9\hspace{0.5cm}x_{10}(1)=0.9\times 10 + 0.9(1-0.9)\times 9 + 0.9(1-0.9)^{2}\times 9 -->
+<!-- + 0.9(1-0.9)^{3}\times 7 + 0.9(1-0.9)^{4}\times 5~=~9.90$$ -->
+
+
+<!-- Note that as we are only using the last 5 observations to compute the forecasts, the prediction when $\alpha=0.1$ is artificially low. -->
+
+<!-- ###[/example] -->
+
+
+
+## Forecasting from AR($p$) models
+The remainder of this section describes how to forecast from ARIMA models, beginning with an AR($p$) model. We assume the time series being predicted is stationary with zero mean, as any trend or seasonal variation can be predicted using the regression methods described above. It can be shown that given a time series $(x_{1},\ldots,x_{n})$, the $k$-step ahead forecast that is optimal in a mean square error sense is:
+
+$$\hat{x}_{n}(k)=E(X_{n+k}|X_{n},X_{n-1},\ldots,X_{1})$$
+
+the conditional expectation of $X_{n+k}$ given the existing values of the series. Forecasting using regression methods also uses exactly this conditional expectation.
+
+
+### AR(1) forecasting
+Suppose the time series $(x_{1},\ldots,x_{n})$ is represented by an AR(1) process $X_{t}=\alpha X_{t-1}+Z_{t}$. Then the one step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(1)&=&E(X_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\alpha X_{n}+Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\alpha E(X_{n}|X_{n},X_{n-1},\ldots,X_{1})+E(Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\alpha x_{n}\nonumber
+\end{eqnarray}
+
+where $x_{n}$ is the observed value of the series at time $n$ and $E(Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})=0$. The two-step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(2)&=&E(X_{n+2}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\alpha X_{n+1}+Z_{n+2}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\alpha E(X_{n+1}|X_{n},X_{n-1},\ldots,X_{1})+E(Z_{n+2}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\alpha^{2} x_{n}\nonumber
+\end{eqnarray}
+
+Iterating the above procedure gives the $k$-step ahead forecast as
+
+$$\hat{x}_{n}(k)=\alpha^{k}x_{n}$$
+
+
+The forecast error variance at one step ahead is given by
+
+\begin{eqnarray}
+\mathrm{Var}(e_{n}(1))&=&\mathrm{var}(X_{n+1}-\hat{x}_{n}(1))\nonumber\\
+&=&\mathrm{Var}(\alpha X_{n}+Z_{n+1} -\alpha X_{n})\nonumber\\
+&=&\mathrm{Var}(Z_{n+1})\nonumber\\
+&=&\sigma^{2}_{z}\nonumber
+\end{eqnarray}
+
+
+and at two steps ahead it is
+
+\begin{eqnarray}
+\mathrm{Var}(e_{n}(2))&=&\mathrm{Var}(X_{n+2}-\hat{x}_{n}(2))\nonumber\\
+&=&\mathrm{Var}(\alpha X_{n+1}+Z_{n+2} -\alpha \hat{x}_{n}(1))\nonumber\\
+&=&\mathrm{Var}(Z_{n+2})+\alpha^{2}\mathrm{Var}(X_{n+1}-\hat{x}_{n}(1))\nonumber\\
+&=&\sigma^{2}_{z}(1+\alpha^{2})\nonumber
+\end{eqnarray}
+
+This process can also be iterated to give
+
+$$\mathrm{Var}(e_{n}(k))=\sigma^{2}_{z}(1+\alpha^{2}+\ldots+\alpha^{2k})=\sigma^{2}_{z}\frac{1-\alpha^{2k}}{1-\alpha^{2}}$$
+
+because it is the sum of a geometric progression with finitely many terms. Approximate 95$\%$ prediction intervals are now straightforward to calculate as
+
+$$\hat{x}_{n}(k)\pm 1.96\sqrt{\mathrm{Var}(e_{n}(k)})$$
+
+
+### AR($p$) forecasting
+  For an AR(p) process $X_{t}=\alpha_{1} X_{t-1}+\ldots+\alpha_{p}X_{t-p}+Z_{t}$,  the one step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(1)&=&E(X_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\alpha_{1}X_{n}+\ldots+\alpha_{p}X_{n-p+1}+Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\alpha_{1}x_{n}+\ldots+\alpha_{p}x_{n-p+1}\nonumber
+\end{eqnarray}
+
+
+Then for any $k$, the $k$-step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(k)&=&E(X_{n+k}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\alpha_{1}X_{n+k-1}+\ldots+\alpha_{p}X_{n+k-p}+Z_{n+k}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\alpha_{1}E(X_{n+k-1}|X_{n},X_{n-1},\ldots,X_{1})+\ldots+\alpha_{p}E(X_{n+k-p}|X_{n},X_{n-1},\ldots,X_{1})\nonumber
+\end{eqnarray}
+
+Two cases occur for these conditional expectations
+
+
+1. If $X_{n+k-j}$ has been observed, then $E(X_{n+k-j}|X_{n},X_{n-1},\ldots,X_{1})$ is equal to its observed value, $x_{n+k-j}$.
+
+2. If $X_{n+k-j}$ is a future value, then $E(X_{n+k-j}|X_{n},X_{n-1},\ldots,X_{1})$ has already been forecast as one of $\hat{x}_{n}(1),\ldots,\hat{x}_{n}(k-1)$.
+
+  The error variance for the $k$-step ahead forecast has the general form
+
+$$\mathrm{Var}(e_{n}(k))=\sigma^{2}_{z}\sum_{i=0}^{k-1}\theta_{i}^{2}$$
+
+  where $\theta_{0}=1$, and the remaining $\theta_{i}$ are algebraically nasty to determine. Prediction intervals can be calculated using the same formula as for the AR(1) model.
+
+
+####[example]
+The graph below shows a simulated AR(1) process of length 100, with 20 future predictions together with prediction intervals. Note how the forecasts fall to zero as $k$ increases from 1 to 20.
+
+
+The R code to implement this prediction is given below.
+
+```{r, fig.width=6, fig.height=5, fig.align='center'}
+set.seed(9)
+x <- arima.sim(model=list(ar=0.8), n=100)
+model <- arima(x, order=c(1,0,0), include.mean=FALSE)
+predict.ar1 <- predict(model, n.ahead = 20, se.fit = TRUE)
+predict.lci <- predict.ar1$pred - 1.96*predict.ar1$se
+predict.uci <- predict.ar1$pred + 1.96*predict.ar1$se
+
+plot(1:120, c(x, predict.ar1$pred), type="l", xlab="Time", ylab="Data", 
+     lwd=2, ylim=c(-7,7), main="Forecast for an AR(1) series")
+lines(101:120, predict.ar1$pred, col="#fc4e2a", lwd=2)
+lines(101:120, predict.lci, lty=2, col="#fd8d3c", lwd=2)
+lines(101:120, predict.uci, lty=2, col="#fd8d3c", lwd=2)
+
+```
+####[/example]
+
+
+####[example]
+Consider an AR(1) time series process $X_{t}=0.9X_{t-1}+Z_{t}$, where $\hat{\sigma}^{2}_{z}=1$ and $x_{n}=20$. Calculate the one- and two-step ahead forecasts and the associated error variances.
+
+The forecasts are given by
+
+$$\hat{x}_{n}(1)~=~\alpha x_{n}~=~0.9\times 20~=~18$$
+
+$$\hat{x}_{n}(2)~=~\alpha^{2} x_{n}~=~0.9^{2}\times 20~=~16.2$$
+
+and the error variances are
+
+$$\mathrm{Var}(e_{n}(1))~=~\hat{\sigma}^{2}_{z}~=~1\hspace{1cm}\mbox{and}\hspace{1cm}
+\mathrm{Var}(e_{n}(2))~=~\hat{\sigma}^{2}_{z}(1+\alpha^{2})~=~1.81$$
+
+####[/example]
+
+####[example]
+Consider an AR(1) time series process $X_{t}=0.1X_{t-1}+Z_{t}$, where $\hat{\sigma}^{2}_{z}=1$ and $x_{n}=20$. Calculate the one- and two-step ahead forecasts and the associated error variances.
+
+The forecasts are given by
+
+$$\hat{x}_{n}(1)~=~\alpha x_{n}~=~0.1\times 20~=~2$$
+
+$$\hat{x}_{n}(2)~=~\alpha^{2} x_{n}~=~0.1^{2}\times 20~=~0.2$$
+
+  and the error variances are
+
+$$\mathrm{Var}(e_{n}(1))~=~\hat{\sigma}^{2}_{z}~=~1\hspace{1cm}\mbox{and}\hspace{1cm}
+\mathrm{Var}(e_{n}(2))~=~\hat{\sigma}^{2}_{z}(1+\alpha^{2})~=~1.01$$
+
+####[/example]
+
+**Notes**
+
+ - As the lag 1 coefficient gets smaller the forecasts get closer to zero.
+ - As the lag 1 coefficient gets smaller the two-step ahead forecast error gets smaller.
+
+
+
+### Forecasting from MA($q$) models
+Forecasting with an MA($q$) model is similar to forecasting with an AR($p$) model, as the former is also based on the conditional expectation
+
+
+$$\hat{x}_{n}(k)=E(X_{n+k}|X_{n},X_{n-1},\ldots,X_{1})$$
+
+
+We begin the section by focusing on an MA(1) model.
+
+
+### MA(1) forecasts
+For the MA(1) model $X_{t}=\lambda Z_{t-1}+Z_{t}$, the one step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(1)&=&E(X_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\lambda Z_{n}+Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\lambda E(Z_{n}|X_{n},X_{n-1},\ldots,X_{1}) + E(Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\lambda z_{n}\nonumber
+\end{eqnarray}
+
+
+The last line is true because
+
+\begin{itemize}
+\item $X_{n},X_{n-1},\ldots,X_{1}$ do not depend on $Z_{n+1}$, and hence 
+
+$$E(Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})~=~E(Z_{n+1})~=~0$$
+
+\item In contrast, $X_{n}$ depends on $Z_{n}$ so
+
+$$E(Z_{n}|X_{n},X_{n-1},\ldots,X_{1})~\neq~E(Z_{n})~=~0$$
+
+$Z_{n}$ cannot be observed directly but it can be estimated as follows. Re-write the MA(1) process as, $Z_{t}=X_{t}-\lambda Z_{t-1}$ and assuming that $Z_{0}=0$, $Z_{t}$ can be estimated iteratively from $t=1,\ldots,n$ by replacing $X_{t}$ by its observed value $x_{t}$.
+\end{itemize}
+
+
+For $k>1$ the $k$-step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(k)&=&E(X_{n+k}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\lambda Z_{n+k-1}+Z_{n+k}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&0\nonumber
+\end{eqnarray}
+
+
+The forecast error variance at one step ahead is given by
+
+\begin{eqnarray}
+\mathrm{Var}(e_{n}(1))&=&\mathrm{Var}(X_{n+1}-\hat{x}_{n}(1))\nonumber\\
+&=&\mathrm{Var}(\lambda Z_{n}+Z_{n+1} -\lambda Z_{n})\nonumber\\
+&=&\mathrm{Var}(Z_{n+1})\nonumber\\
+&=&\sigma^{2}_{z}\nonumber
+\end{eqnarray}
+
+while for $k>1$ it is given by
+
+
+\begin{eqnarray}
+\mathrm{Var}(e_{n}(k))&=&\mathrm{Var}(X_{n+k}-\hat{x}_{n}(k))\nonumber\\
+&=&\mathrm{Var}(X_{n+k})\nonumber\\
+&=&\sigma^{2}_{z}(1+\lambda^2)\nonumber
+\end{eqnarray}
+
+
+Then 95$\%$ prediction intervals can be calculated as before using the formula
+
+$$\hat{x}_{n}(k)\pm 1.96\sqrt{\mathrm{Var}(e_{n}(k))}$$
+
+
+### MA($q$) forecasts
+  Forecasts from an MA(q) model work in the same way as those from an MA(1) model. The one step ahead forecast is given by
+
+\begin{eqnarray}
+\hat{x}_{n}(1)&=&E(X_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&E(\lambda_{1}Z_{n}+\ldots+\lambda_{q}Z_{n-q+1}+Z_{n+1}|X_{n},X_{n-1},\ldots,X_{1})\nonumber\\
+&=&\lambda_{1}z_{n}+\ldots+\lambda_{q}z_{n-q+1}\nonumber
+\end{eqnarray}
+
+where as before the current and past values of $Z_{t}$ are calculated recursively from the MA($q$) equation
+
+$$Z_{t}=X_{t}-\lambda_{1}Z_{t-1}-\ldots-\lambda_{q}Z_{t-q}$$
+
+with the initial conditions $Z_{0}=Z_{-1}=\ldots=Z_{-q+1}=0$. The general $k$-step ahead forecast is calculated in an identical way, where current and past values of $Z_{t}$ are estimated from the data, while future values are set to zero. Therefore the forecast is given by
+
+\begin{equation*}
+  \hat{x}_n(k) =
+  \begin{cases}
+    \lambda_k z_n + \cdots + \lambda_q z_{n+k-q} & \text{if $k\leq q$} \\
+    0 & \text{if $k > q$}.
+  \end{cases}
+\end{equation*}
+
+
+It is straightforward to show that the $k$-step ahead error variance is given by
+
+
+\begin{equation*}
+  e_n(k) =
+  \begin{cases}
+     \sigma^{2}_{z}[1+\sum_{i=1}^{k-1}\lambda_{i}^{2}]& \text{if $k\leq q$} \\
+    \sigma^{2}_{z}[1+\sum_{i=1}^{q}\lambda_{i}^{2}] & \text{if $k > q$}.
+  \end{cases}
+\end{equation*}
+
+####[example]
+The graph below shows a simulated MA(3) process of length 100, with 20 future predictions together with prediction intervals. Note how the forecasts fall to zero for $k>3$, which was shown algebraically earlier.
+
+```{r, fig.height=5, fig.width=6, fig.align='center'}
+set.seed(9)
+x <- arima.sim(model=list(ma=0.4, 0.5, 0.4), n=100)
+
+model <- arima(x, order=c(0,0,3), include.mean=FALSE)
+
+# Prediction
+predict.ar1 <- predict(model, n.ahead = 20, se.fit = TRUE)
+predict.lci <- predict.ar1$pred - 1.96*predict.ar1$se
+predict.uci <- predict.ar1$pred + 1.96*predict.ar1$se
+
+# Plotting
+plot(1:120, c(x, predict.ar1$pred), type="l", xlab="Time", ylab="Data", 
+     lwd=2, main="Forecast for an MA(3) series")
+lines(101:120, predict.ar1$pred, col="#fc4e2a", lwd=2)
+lines(101:120, predict.lci, lty=2, col="#fd8d3c", lwd=2)
+lines(101:120, predict.uci, lty=2, col="#fd8d3c", lwd=2)
+
+```
+
+
+####[/example]
+
+####[example]
+Consider modelling the short time series $\mathbf{x}=(3,8,2,5,6)$  with an MA(1) time series process $X_{t}=0.7Z_{t-1}+Z_{t}$, where $\hat{\sigma}^{2}_{z}=1$. Calculate the one- and two-step ahead forecasts $x_{5}(1)$ and $x_{5}(2)$ as well as their associated error variances.
+
+To calculate the forecasts we need to recursively estimate $Z_{1},\ldots,Z_{5}$, assuming that $z_{0}=0$. This gives
+
+$$z_{1}=3,\hspace{0.5cm}z_{2}=5.9,\hspace{0.5cm}z_{3}=-2.13, \hspace{0.5cm}z_{4}=6.491, 
+\hspace{0.5cm}z_{5}=1.4563$$
+
+$$\hat{x}_{5}(1)~=~\lambda z_{5}~=~0.7\times 1.4563~=~1.01941$$
+
+$$\hat{x}_{n}(2)~=~0$$
+
+and the error variances are
+
+$$\mathrm{Var}(e_{n}(1))~=~\hat{\sigma}^{2}_{z}~=~1\hspace{1cm}\mbox{and}\hspace{1cm}
+\mathrm{Var}(e_{n}(2))~=~\hat{\sigma}^{2}_{z}(1+\lambda)~=~1.49$$
+
+####[/example]
+
+
+## Forecasting time series with trend, seasonality and correlation
+
+There are a number of ways to forecast a time series that contains trend and seasonal variation in addition to short-term correlation. The method we consider in this course is a natural combination of regression and ARMA($p,q$) models. For the time series model
+
+$$X_{t}=m_{t}+s_{t}+e_{t}$$
+
+we represent the trend and seasonal variation by
+
+$$m_{t}+s_{t}=\textbf{z}_{t}^\intercal\boldsymbol{\beta}$$
+
+
+while the residuals are given by
+
+$$e_{t}^{*}=X_{t}-\textbf{z}_{t}^\intercal\hat{\boldsymbol{\beta}}$$
+
+and are modelled by a stationary ARMA($p,q$) process. Then the $k$ step ahead forecast is given by
+
+$$\hat{x}_{n}(k)=\textbf{z}_{n+1}^\intercal\hat{\boldsymbol{\beta}} + e_{n}^{*}(k)$$
+
+where the stationary process $e_{n}^{*}(k)$ is predicted using an AR($p$), MA($q$) or ARMA($p,q$) model.
+
+
+###[example]
+The graph below shows a simulated AR(1) process with a linear trend of length 100, with 20 future predictions together with prediction intervals.
+
+
+The R code to implement this prediction is given below.
+
+```{r, fig.height=5, fig.width=6, fig.align='center'}
+set.seed(9)
+time <- 1:100
+time.predict <- 101:120
+x <- arima.sim(model=list(ar=0.8), n=100) + 30 + 0.1*time
+model.ar1 <- arima(x, order=c(1,0,0), xreg=time, include.mean=TRUE)
+
+# Prediction
+predict.ar1 <- predict(model.ar1, n.ahead = 20, newxreg = time.predict, se.fit = TRUE)
+ar1.LCI <- predict.ar1$pred - 1.96*predict.ar1$se
+ar1.UCI <- predict.ar1$pred + 1.96*predict.ar1$se
+
+# Plotting
+plot(1:120, c(x, predict.ar1$pred), type="l", xlab="Time", ylab="Data", 
+     ylim=c(30,47), lwd=2, main="Forecast for AR(1) with linear trend")
+lines(101:120, predict.ar1$pred, col="#fc4e2a", lwd=2)
+lines(101:120, ar1.LCI, lty=2, col="#fd8d3c", lwd=2)
+lines(101:120, ar1.UCI, lty=2, col="#fd8d3c", lwd=2)
+```
+
+###[/example]
+
+###[task]
+Use some of the methods described above to forecast the next few values for the `Nile` time series data.
+
+####[answer]
+We can start by using the ARIMA model fitted in Task 6. 
+
+```{r, fig.width=6, fig.height=5, fig.align='center'}
+library(forecast)
+fitNile <- arima(Nile, order=c(0,1,1))
+forecast(fitNile, 3)
+plot(forecast(fitNile, 10), xlab="Year", ylab="Annual Flow")
+```
+
+We can also try exponential smoothing. For instance, not specifying `model=ZZZ` gets a "best fit" by optimizing a likelihood-based criterion:
+
+```{r, fig.width=6, fig.height=5, fig.align='center'}
+library(forecast)
+fitetsNile <- ets(Nile)
+forecast(fitetsNile, 3)
+plot(forecast(fitetsNile, 10), xlab="Year", ylab="Annual Flow")
+```
+
+Finally using a regression approach, we get the following:
+
+```{r, fig.width=6, fig.height=5, fig.align='center'}
+# Fit a  linear model
+n <- length(Nile)
+t <- 1:n
+model <- lm(Nile~t)
+
+# Predict the next 10 time points
+t.predict <- (n+1):(n+10)
+model.predict <- predict(model, newdata=data.frame(t=t.predict), se.fit = TRUE, interval="prediction")
+
+plot(seq(from=1871, to=1981, length=110),c(model$fitted.values, model.predict$fit[,1]),
+     ylim=c(420, 1400), xlab="Year", ylab="Annual Flow",
+       type="l", col="#b10026")
+points(seq(from=1871, to=1970, length=n), Nile, pch=19, col=alpha("#b10026",0.7))
+lines(1971:1980, model.predict$fit[,2], lty=2, col="#fd8d3c")
+lines(1971:1980, model.predict$fit[,3], lty=2, col="#fd8d3c")
+```
+####[/answer]
+###[/task]
+
+###[task]
+The file [`globaltemp.csv`](http://www.stats.gla.ac.uk/~tereza/rp/globaltemp.csv) gives the global temperature anomaly (annual-mean surface air temperature deviation from the 1951-1980 mean) obtained from meteorological station data. Use the `NoSmoothing` column to obtain a forecast for the next 30 years.
+
+####[answer]
+Read in the data and plot the time series and its correlogram.
+```{r, fig.width=6, fig.height=5, fig.align='center'}
+temp <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/globaltemp.csv"))
+
+plot(temp$Year, temp$NoSmoothing, xlab="Year", ylab="Temperature Anomaly", type="l")
+
+acf(temp$NoSmoothing)
+```
+
+```
+
+There is an obvious trend. Automatic exponential smoothing gives the following forecast.
+
+```{r, echo=2:20, fig.width=6, fig.height=5, fig.align='center'}
+temp <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/globaltemp.csv"))
+
+ets.fit <- ets(temp$NoSmoothing)
+
+plot(forecast(ets.fit, 30))
+```
+
+```{r, echo=2:20, fig.width=6, fig.height=5, fig.align='center'}
+temp <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/globaltemp.csv"))
+
+arima.fit <- arima(temp$NoSmoothing, order=c(0,1,1))
+
+plot(forecast(arima.fit))
+```
+
+
+####[/answer]
+
+###[/task]
+
+## Additional resources on ARMA/ARIMA processes and forecasting
+
+###[weblink,target="", icon=book]
+
+[**Time Series Analysis with Applications in R by Cryer and Chan**](http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2727391):
+
+* **Chapter 5**: Models for nonstationary time series
+* **Chapter 9**: Forecasting
+
+
+[**Time Series Analysis and Its Applications: With R Examples by Shumway and Stoffer**](https://glasgow.summon.serialssolutions.com/#!/search?bookMark=ePnHCXMw42LgTQStzc4rAe_hSmFm4DIGRrMpaIYPNHEIbJBYAItLI0MO-EiIBbDRbGDEyaAJ2vWgABoVSi1WgJ3JoQDsUCt4lgAFkCZ0eRhY8oA9NG4GBTfXEGcPXVBLMz2_PB465BGfBOylm5qArvkjQgkA7q4zFA):
+
+**Chapter 3**: ARIMA Models (includes ARMA, ARIMA and discusses forecasting) 
+
+Additional resources covering exponential smoothing methods for data with trend or seasonal variation can be found at this [link](http://uc-r.github.io/ts_exp_smoothing).
+
+###[/weblink]
+
+
+## Week 8 learning outcomes
+
+By the end of this week, you should be able to:
+
+* recognise when AR or MA processes might not be adequate and explore ARMA processes as an alternative
+
+* fit ARMA processes in R to model short-term correlation
+
+* fit ARIMA processes to remove trend/seasonal patterns and model short-term correlation
+
+* forecast future values of a time series using regression methods
+
+* forecast future values of a time series using exponential smoothing
+
+* forecast future values of a time series using an ARIMA model.
+
+

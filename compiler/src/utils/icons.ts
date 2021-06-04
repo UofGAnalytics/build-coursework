@@ -1,5 +1,7 @@
 import { Node } from 'unist';
 
+import hamburgerSvg from '../../assets/hamburger-icon.svg';
+import linkSvg from '../../assets/link-icon.svg';
 import { getAssetHast } from './get-asset-hast';
 
 type Svg = {
@@ -8,10 +10,13 @@ type Svg = {
   children: Node[];
 };
 
-const svgs: Svg[] = [];
+const svgs: Svg[] = [
+  createStoredSvg('hamburger-icon', hamburgerSvg),
+  createStoredSvg('link-icon', linkSvg),
+];
 
-export async function createSvg(name: string) {
-  const { id, viewBox } = await getSvg(name);
+export function createSvg(name: string) {
+  const { id, viewBox } = getSvg(name);
   return {
     type: 'element',
     tagName: 'svg',
@@ -49,19 +54,20 @@ export function createDefs() {
   };
 }
 
-async function getSvg(id: string) {
-  const used = svgs.find((o) => o.id === id);
-  if (used !== undefined) {
-    return used;
-  }
-  const hast = await getAssetHast(`${id}.svg`);
+function createStoredSvg(id: string, svg: string) {
+  const hast = getAssetHast(svg);
   const children = hast.children as Node[];
   const properties = hast.properties as Record<string, string>;
   const viewBox = properties.viewBox as string;
+  return { id, viewBox, children };
+}
 
-  const svg: Svg = { id, viewBox, children };
-  svgs.push(svg);
-  return svg;
+function getSvg(id: string) {
+  const stored = svgs.find((o) => o.id === id);
+  if (stored === undefined) {
+    throw new Error(`svg icon not found: ${id}`);
+  }
+  return stored;
 }
 
 function createGroup({ id, children }: Svg) {

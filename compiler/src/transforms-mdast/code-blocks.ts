@@ -4,11 +4,8 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
-import { executeRCode } from '../r-markdown/exec-r';
 import { parseCodeParams } from '../r-markdown/parse-code-params';
 import { Context } from '../types';
-import { cacheToFile } from '../utils/cache-to-file';
-import { rehypeParser } from '../utils/utils';
 
 export function codeBlocks(ctx: Context) {
   return async (tree: Node, file: VFile) => {
@@ -25,77 +22,46 @@ export function codeBlocks(ctx: Context) {
 }
 
 async function customCode(node: Node, ctx: Context, file: VFile) {
-  const { language, options, value } = parseCodeParams(node);
+  // const { language, options, value } = parseCodeParams(node);
+  const language = parseLanguage(node);
+  const meta = (node.meta || '') as string;
   node.type = 'custom-code';
   node.data = {
     hName: 'div',
     hProperties: {
       className: 'code-wrapper',
     },
-  };
-
-  const children = [
-    {
-      type: 'element',
-      tagName: 'code',
-      properties: {
-        className: language === '' ? [] : [language],
-      },
-      children: ctx.options.noSyntaxHighlight
-        ? [
-            {
-              type: 'text',
-              value,
-            },
-          ]
-        : refractor.highlight(value, language.toLowerCase()),
-    },
-  ];
-
-  if (language === 'r' && options.eval !== false) {
-    try {
-      const output = await cacheToFile({
-        ctx,
-        prefix: 'r',
-        key: value,
-        execFn: executeRCode,
-      });
-
-      const trimmed = output.trim();
-      if (trimmed !== '') {
-        const response = rehypeParser.parse(trimmed).children as Node[];
-        children.push({
-          type: 'element',
-          tagName: 'code',
-          properties: {
-            className: ['output'],
-          },
-          children: response,
-        });
-      }
-    } catch (err) {
-      const errMessage = err.message as string;
-      children.push({
+    hChildren: [
+      {
         type: 'element',
-        tagName: 'code',
-        properties: {
-          className: ['output', 'error'],
-        },
+        tagName: 'pre',
         children: [
           {
-            type: 'text',
-            value: errMessage,
+            type: 'element',
+            tagName: 'code',
+            properties: {
+              className: [meta],
+            },
+            children:
+              ctx.options.noSyntaxHighlight || language === ''
+                ? [
+                    {
+                      type: 'text',
+                      value: node.value,
+                    },
+                  ]
+                : refractor.highlight(node.value, language),
           },
         ],
-      });
-    }
-  }
+      },
+    ],
+  };
+}
 
-  node.data.hChildren = [
-    {
-      type: 'element',
-      tagName: 'pre',
-      children,
-    },
-  ];
+function parseLanguage(node: Node) {
+  const lang = (node.lang || '') as string;
+  if (lang === 'plaintext') {
+    return '';
+  }
+  return lang.toLowerCase();
 }

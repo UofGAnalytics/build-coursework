@@ -22,5 +22,9 @@ module.exports = {
       displayName: { name: 'template', color: 'magenta' },
       testMatch: ['<rootDir>/template/**/?(*.)test.ts?(x)']
     }
-  ]
+  ],
+  moduleNameMapper: {
+    "\\assets/(.*)": "<rootDir>/test-utils/file-mock.js",
+    "\\template/build/(.*)": "<rootDir>/test-utils/file-mock.js",
+  },
 };
