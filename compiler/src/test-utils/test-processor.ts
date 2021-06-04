@@ -2,7 +2,6 @@ import os from 'os';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
-import { Parent } from 'unist';
 import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';

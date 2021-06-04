@@ -71,12 +71,12 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
     mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
   );
 
-  // if (!ctx.options.noReport) {
-  //   printReport(files, ctx);
-  // }
-  // if (reportHasFatalErrors(files, ctx)) {
-  //   throw new Error('Validation failed');
-  // }
+  if (!ctx.options.noReport) {
+    printReport(files, ctx);
+  }
+  if (reportHasFatalErrors(files, ctx)) {
+    throw new Error('Validation failed');
+  }
 
   // combine mdast trees
   const mdast = combineMdastTrees(mdasts);

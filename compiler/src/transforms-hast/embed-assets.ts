@@ -11,7 +11,7 @@ import { Context } from '../types';
 import { cacheToFile } from '../utils/cache-to-file';
 import { getAssetHast } from '../utils/get-asset-hast';
 import { failMessage } from '../utils/message';
-import { readFile, rehypeParser } from '../utils/utils';
+import { readFile } from '../utils/utils';
 
 export function embedAssets(ctx: Context) {
   async function embed(node: Node, file: VFile) {

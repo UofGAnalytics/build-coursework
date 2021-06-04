@@ -47,7 +47,6 @@ import { responsiveTables } from './transforms-mdast/responsive-tables';
 // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
-import { getAssetHast } from './utils/get-asset-hast';
 import { createSvg } from './utils/icons';
 
 // import { inspect } from './utils/utils';

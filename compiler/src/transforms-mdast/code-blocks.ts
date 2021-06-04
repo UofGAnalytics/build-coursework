@@ -4,7 +4,6 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
-import { parseCodeParams } from '../r-markdown/parse-code-params';
 import { Context } from '../types';
 
 export function codeBlocks(ctx: Context) {

@@ -1,5 +1,3 @@
-import { Parent } from 'unist';
-
 import {
   createHtml,
   testProcessor,
@@ -7,7 +5,7 @@ import {
 
 describe('codeBlocks', () => {
   it('should share state with other codeblocks', async () => {
-    const { html, mdast } = await testProcessor(`
+    const { mdast } = await testProcessor(`
       \`\`\`{r}
       a <- c(1, 4, 2)
       a

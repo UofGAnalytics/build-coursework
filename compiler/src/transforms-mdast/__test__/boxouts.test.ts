@@ -5,7 +5,7 @@ import {
 
 describe('example', () => {
   it('should render an example boxout', async () => {
-    const { html, mdast } = await testProcessor(`
+    const { html } = await testProcessor(`
       :::example
       An example of *this*!
       :::

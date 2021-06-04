@@ -1,14 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "target": "es6",
-    "moduleResolution": "node",
-    "declaration": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "resolveJsonModule": true,
+    "jsx": "react",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
     "strict": true,
+    "target": "es5",
+    "types": ["node", "jest"]
   },
   "exclude": [
     "node_modules"

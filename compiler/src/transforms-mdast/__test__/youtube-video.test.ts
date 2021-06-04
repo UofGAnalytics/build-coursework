@@ -1,7 +1,4 @@
-import {
-  createHtml,
-  testProcessor,
-} from '../../test-utils/test-processor';
+import { testProcessor } from '../../test-utils/test-processor';
 
 describe('youtubeVideos', () => {
   it('should render youtube videos', async () => {
