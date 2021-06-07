@@ -5,6 +5,7 @@ export type Options = {
   noWrapper?: boolean;
   noSyntaxHighlight?: boolean;
   noReport?: boolean;
+  reportOnlyErrors?: boolean;
   noEmbedAssets?: boolean;
   noCache?: boolean;
   week?: number;

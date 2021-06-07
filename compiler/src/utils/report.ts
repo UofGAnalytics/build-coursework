@@ -3,6 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import figures from 'figures';
 import { VFile } from 'vfile';
+import { VFileMessage } from 'vfile-message';
 
 import { Context } from '../types';
 import { MessageStatus } from './message';
@@ -24,13 +25,16 @@ type ReportMessage = {
 };
 
 export function printReport(files: VFile[], ctx: Context) {
+  const { reportOnlyErrors } = ctx.options;
+
   for (const file of files) {
-    console.log(`\n${getFilePath(file.path as string)}`);
-    for (const message of file.messages) {
-      const status = message.status as MessageStatus;
-      const position = chalk.grey(`${message.line}:${message.column}`);
-      const reason = formatReason(message.reason, status);
-      console.log(`${formatStatus(status)}  ${position}  ${reason}`);
+    const messages = reportOnlyErrors
+      ? failingMessages(file.messages)
+      : file.messages;
+
+    if (messages.length !== 0) {
+      console.log(`\n${getFilePath(file.path as string)}`);
+      messages.map(printMessage);
     }
   }
 }
@@ -40,6 +44,17 @@ export function reportHasFatalErrors(files: VFile[], ctx: Context) {
     file.messages.every((message) => message.status !== MessageStatus.fail)
   );
   return !passed;
+}
+
+function failingMessages(messages: VFileMessage[]) {
+  return messages.filter((o) => o.status === MessageStatus.fail);
+}
+
+function printMessage(message: VFileMessage) {
+  const status = message.status as MessageStatus;
+  const position = chalk.grey(`${message.line}:${message.column}`);
+  const reason = formatReason(message.reason, status);
+  console.log(`${formatStatus(status)}  ${position}  ${reason}`);
 }
 
 function getFilePath(filePath: string) {

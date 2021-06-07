@@ -73,9 +73,9 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
 
   if (!ctx.options.noReport) {
     printReport(files, ctx);
-  }
-  if (reportHasFatalErrors(files, ctx)) {
-    throw new Error('Validation failed');
+    if (reportHasFatalErrors(files, ctx)) {
+      throw new Error('Validation failed');
+    }
   }
 
   // combine mdast trees
