@@ -64,5 +64,5 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@main
         with:
-          name: ${{ runner.os }-node${{ runner.node-version }}-r${{ runner.r-version }}-results
+          name: ${{ runner.os }}-node${{ runner.node-version }}-r${{ runner.r-version }}-results
           path: check
