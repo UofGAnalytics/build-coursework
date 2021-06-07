@@ -28,3 +28,4 @@ https://www.dyslexiefont.com
 ### Prior art
 
 https://github.com/coursebuilder-ncl/makecourse
+https://github.com/r-lib/actions
