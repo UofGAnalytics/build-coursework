@@ -32,24 +32,24 @@ jobs:
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-yarn-
+          key: ${{ runner.os }}-node${{ runner.node-version }}-yarn${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-node${{ runner.node-version }}-yarn
 
       - name: Install node modules
         run: yarn --frozen-lockfile --prefer-offline
 
       # R
-      - name: Setup R v${{ matrix.config.r-version }}
+      - name: Setup R v${{ runner.r-version }}
         uses: r-lib/actions/setup-r@v1
         with:
-          r-version: ${{ matrix.config.r-version }}
+          r-version: ${{ runner.r-version }}
 
       - name: Cache Renv packages
         uses: actions/cache@v2
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: r-${{ hashFiles('renv.lock') }}
-          restore-keys: r-
+          key: ${{ runner.os }}-node${{ runner.r-version }}-r${{ hashFiles('renv.lock') }}
+          restore-keys: ${{ runner.os }}-node${{ runner.r-version }}-r
 
       - name: Install R packages
         run: |
@@ -61,8 +61,8 @@ jobs:
       - run: yarn test
 
       - name: Upload artifacts
-        if: failure()
+        if: ${{ failure() }}
         uses: actions/upload-artifact@main
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          name: ${{ runner.os }-node${{ runner.node-version }}-r${{ runner.r-version }}-results
           path: check
