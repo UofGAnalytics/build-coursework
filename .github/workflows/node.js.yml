@@ -35,7 +35,7 @@ jobs:
 
       - run: yarn --frozen-lockfile --prefer-offline
       - run: yarn workspace template build
-      - run: Rscript -e "install.packages('knitr')"
+      - run: Rscript -e "install.packages('knitr', lib='./')"
 
       - run: yarn check-types
       - run: yarn test
