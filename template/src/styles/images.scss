@@ -1,0 +1,16 @@
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+figure {
+  figcaption {
+    padding-top: 0.5rem;
+    font-style: italic;
+    color: var(--fadedTextColor);
+    .caption-count {
+      color: var(--highlightColor);
+    }
+  }
+}

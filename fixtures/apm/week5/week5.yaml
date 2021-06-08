@@ -1,0 +1,6 @@
+name: "Week 5"
+title: "Models for counts"
+golive: "+1w"
+content:
+  - type: text
+    src: week5mat.Rmd

@@ -1,0 +1,22 @@
+@use "sass:math";
+
+$scrollbarWidth: 15px;
+$scrollbarPadding: 5px;
+
+*::-webkit-scrollbar {
+  width: $scrollbarWidth;
+}
+* {
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+  scrollbar-color: var(--textColor) var(--bg);
+}
+*::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: math.div($scrollbarWidth, 2);
+  border: $scrollbarPadding solid;
+  background-color: var(--textColor);
+  border-color: var(--bg);
+}

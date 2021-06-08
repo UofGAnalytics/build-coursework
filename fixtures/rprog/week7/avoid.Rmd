@@ -1,0 +1,75 @@
+## Avoiding loops
+```{r, echo=FALSE}
+library(compiler)
+x <- enableJIT(3)
+```
+
+###[video, videoid="R1rwOCUUebA", duration="10m32s"]Avoiding loops
+
+Loops are relatively slow in R. Code usually runs faster and can become more legible when avoiding loops. R's vectorised nature makes this particularly easy.
+
+###[example]The sum of two vectors
+Suppose we want to calculate the sum of two vectors `x` and `y` of length 100,000.
+```{r}
+n <- 1e5
+x <- rnorm(n)
+y <- rnorm(n)
+```
+
+The easiest and fastest way is to exploit that R can add vectors together using the operator `+`.
+```{r}
+system.time(z <- x + y)
+```
+
+Using a loop to set the entries `z` one-by-one is a lot slower:
+```{r}
+system.time( {
+  z <- numeric(n)                  # Create vector of correct size
+  for (i in 1:n)                   # Set entries one-by-one
+    z[i] <- x[i]+y[i]
+} )
+```
+
+An even less efficient approach would consist of creating a vector `z` of (initially) zero length, and then appending the newly computed $z_i$ one by one.
+```{r}
+system.time( {
+  z <- c()
+  for (i in 1:n)
+    z <- c(z, x[i]+y[i])
+} )
+```
+This is awfully slow. The reason why this approach is so slow is that in every iteration `z` is replaced by a new vector. Memory for the new vector needs to be allocated, the current vector `z` needs to be copied into the new vector `z`, and finally the old vector `z` needs to be deleted from the memory. 
+
+Our code would be equally slow if we were sloppy when initialising the vector `z` and create a vector of zero length. This is valid as R increases the size of the vector as needed, but brings with it the same issues of having to repeatedly copy the vector as it is being extended.
+```{r}
+system.time( {
+  z <- c()                           # Create an empty vector and let R extend it
+  for (i in 1:n)                     # Set entries one-by-one
+      z[i] <- x[i]+y[i]
+})
+```
+###[/example]
+
+We will now look at a less straightforward example showcasing how using vector-based operations and subsetting can speed up code (and yield more compact code).
+
+###[example]Increments
+Suppose we compute the vector of increments $d_i=x_{i+1}-x_i$. Our first approach uses a loop.
+```{r}
+system.time( {
+    n <- length(x)
+    d <- numeric(n-1)
+    for (i in 1:(n-1))
+        d[i] <- x[i+1] - x[i]
+} )
+```
+We cannot simply set `d` to the difference of `x` and `x`, as we subtract $x_{i}$ from $x_{i+1}$. Essentially we need to offset the two copies of `x` before we subtract them. We can do this using
+```{r}
+system.time( {
+    n <- length(x)
+    d <- x[-1] - x[-n]
+} )
+```
+which is a lot faster. (The previous video explains this trick in more detail).
+###[/example]
+
+\newpage

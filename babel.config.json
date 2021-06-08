@@ -3,5 +3,13 @@
     ["@babel/preset-env", { "targets": { "node": "current" } }],
     "@babel/preset-typescript"
   ],
-  "plugins": ["@babel/plugin-proposal-object-rest-spread"]
+  "plugins": [
+    "@babel/plugin-proposal-object-rest-spread",
+    [
+      "babel-plugin-inline-import",
+      {
+        "extensions": [".svg", ".css", ".js2"]
+      }
+    ]
+  ]
 }

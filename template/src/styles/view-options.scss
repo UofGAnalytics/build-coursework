@@ -1,0 +1,132 @@
+#view-options-toggle {
+  margin: 0 2rem 2rem;
+  cursor: pointer;
+}
+
+// show/hide view options
+#view-options {
+  display: none;
+  user-select: none;
+}
+html.view-options-open {
+  #toc {
+    display: none;
+  }
+  #view-options {
+    display: block;
+  }
+}
+
+#view-options {
+  padding: 0 calc(2rem - 15px) 2rem 2rem;
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: rgb(var(--primaryColor));
+  }
+  ul {
+    padding: 1rem 0 2rem;
+    li {
+      list-style: none;
+    }
+  }
+}
+
+ul#themes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+
+  li {
+    padding: 0.75rem 0.5rem 0.5rem;
+    height: 3rem;
+    border-radius: 0.3rem;
+    line-height: 1.4;
+    cursor: pointer;
+    &.selected {
+      box-shadow: 0 0 0 0.2rem var(--boxoutBg), 0 0 0 calc(0.2rem + 2px) rgb(var(--primaryColor));
+    }
+    &.light {
+      background: white;
+      color: black;
+    }
+    &.dark {
+      background: #111;
+      color: white;
+    }
+    &.yellow-on-black {
+      background: black;
+      color: #ebd90e;
+    }
+    &.black-on-yellow {
+      background: #ebd90e;
+      color: black;
+    }
+    &.black-on-red {
+      background: #de7777;
+      color: black;
+    }
+    &.black-on-blue {
+      background: #64a8e1;
+      color: black;
+    }
+  }
+}
+
+ul#fonts {
+  li {
+    border: 2px solid rgba(var(--primaryColor), 0.2);
+    margin-bottom: 0.5rem;
+    border-radius: 0.3rem;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    &.selected {
+      border-color: rgba(var(--primaryColor), 1);
+    }
+  }
+}
+
+ul#readability {
+  // font-family: $font-default;
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .label {
+    flex: 1;
+  }
+  .btn {
+    $diameter: 1.5rem;
+    display: inline-block;
+    width: $diameter;
+    line-height: 1.1rem;
+    box-sizing: border-box;
+    text-align: center;
+    border: 2px solid rgba(var(--primaryColor), 0.2);
+    border-radius: 0.2rem;
+    padding: 0 0.3rem 0.1rem;
+    margin-left: 0.5rem;
+    font-weight: 500;
+    font-size: 0.8rem;
+    cursor: pointer;
+    &.reset {
+      width: auto;
+      border-color: transparent;
+      &:not(.disabled) {
+        background: var(--errorColor);
+        color: white;
+      }
+      &.disabled {
+        background: rgba(var(--primaryColor), 0.1);
+      }
+    }
+    &.disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+}

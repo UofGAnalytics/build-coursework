@@ -1,0 +1,13 @@
+name: 'Week 1'
+title: 'Introduction to Computing and R'
+golive: '+0d'
+content:
+  - type: text
+    src: aboutcourse.Rmd
+  - type: text
+    src: aboutr.Rmd
+  - type: text
+    src: history.Rmd
+  - type: text
+    src: calculator.Rmd
+## Add R as a calculator and add simple function definitions to it

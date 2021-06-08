@@ -1,0 +1,104 @@
+## About R
+
+### History
+S is a statistical programming language developed by John M. Chambers and others in the late 1970s and early 1980s at Bell Labs. According to John Chambers, the aim of the software was "to turn ideas into software, quickly and faithfully." The S engine was licensed to and finally purchased by Insightful (now acquired by TIBCO), which sell a value-added version called S-Plus (now marketed as Spotfire S+), which contains a graphical user interface. S-Plus used to dominate the high-end market (academic and industrial research).
+
+R is an implementation of the S programming language, which is in many respects superior to the original S system. R was originally written by two researchers at the University of Auckland (New Zealand), Ross Ihaka and Robert Gentleman, but is now maintained by the R Core Team. R is [free software](http://en.wikipedia.org/wiki/Free_software), you can obtain it for free ("free as in free beer"), and the source code of R is freely available, so (if you want) you can study how R works internally and modify it as you like ("free as in free speech"). R is extensible and a large selection of extensions packages can be obtained from [CRAN](http://cran.r-project.org/).
+
+### Why use a command-line programme?
+R is essentially a command-line programme, i.e. you control R by typing commands. Whilst command-line programs were ubiquitous until the mid-1990s, most software nowadays uses menu-driven graphical user interfaces (GUI), like Word, Excel or SPSS. Why should we then use an ``old-fashioned'' command-line programme in the 21st century?
+
+Menu-driven software works very well when used for a limited set of tasks. However, if one includes the R packages on CRAN, R can carry out several hundred thousands of different tasks. These can simply not be arranged in a menu in any meaningful way. In addition, most menu-driven software is very inflexible: you can often only use it in the way the authors have designed it to be used.
+
+Command-line based programmes are much more flexible, you can do things no one has done or even thought of before by writing your own programs. You can write them from scratch or re-use some of the functions already provided. Some menu-driven software (like e.g. SPSS) offer the option of using macros. However these macros are often very clumsy and less elegant than R code.
+
+Integrated development environment like RStudio have many features that make coding in R a lot less daunting.
+
+
+### Why use R?
+These days, R and Python are *the* platforms for Data Science. No other language, not even SQL, is coming close to the market share of R and Python in Data Science.
+
+Reasons for R's dominant position are a very good graphics engine and the large number of extension packages (more than 15,000), so there are only few statistical methods not implemented in R. Though R as a language is not the most elegant (especially compared to more recent languages such as [Julia](https://julialang.org/), but there is a suite of R packages (['tidyverse'](https://www.tidyverse.org/)) which we will look at in this course and which provide very elegant tools for data manipulation and visualisation. Other languages lack such elegant solutions, though some aspects of the "philosophy" of tidyverse have now been ported to other languages, notably Python.
+
+### When not to use R
+
+R is however not always the most suitable tool: there are many situations in which one should think about alternatives which might be better suited for the task at hand.
+
+- In terms of performance R is certainly not one of the fastest languages around. For this reason R functions can make use of compiled FORTRAN, C or C++ o code, but writing code in these "low-level" languages can be time-consuming.
+- R needs to store the entire workspace in memory, so unless you have large amount of memory, R will struggle with truly big data sets. However, R can interface big data systems such as [Spark](https://spark.apache.org/), in which case R only references the data, which in turn is stored in Spark.
+- If close integration with production systems is desired, R might not be the ideal tool, though packages like [plumber](https://www.rplumber.io/) have made it a lot easier to create external interfaces for R code.
+- Over the years, Python has become the preferred choice in the Machine Learning community. Python is the native interface for many key machine learning libraries such as [scikit-learn](https://scikit-learn.org/stable/), [PyTorch](https://pytorch.org) or [Tensorflow](https://www.tensorflow.org/). So if you task require high-performance Machine Learning libraries, Python is likely to be your better choice.
+- Though [Shiny](https://shiny.rstudio.com/) provides an easy-to-use way of creating interative web apps, creating highly-interactive visualisations is difficult just using R. You might want to consider libraries such as [d3](https://d3js.org/) in this case.
+
+
+### Comparing R to other programming languages
+
+#### R is an interpreted language
+In an [interpreted language](http://en.wikipedia.org/wiki/Interpreted_language) like R, programme code is executed step-by-step, without (explicitly invoked) prior translation to machine code ("compilation"), as would be required for languages such as C, C++ or Java.
+
+Interpreted languages are typically easier to debug as code can easily be run interactively on a line-by-line basis. However there typically is a performance penalty involved. Compiled languages are typically a lot faster. This is why many operations in R such as matrix multiplication are under the hood implemented in Fortran or C.
+
+Like many interpeted languages, R nowadays has a [just-in-time compiler (JIT)](http://stat.ethz.ch/R-manual/R-devel/library/compiler/html/compile.html), which can translate the commands to be executed into an intermediate binary format, which is quicker to execute. However, this process is almost invisible to the user.
+
+#### R is a dynamically-typed language
+Programming languages like C, C+ or Java require all variables to have a declared type before they can be used. If we want to assign the value 12 to a variable in a C programme we have to use
+``` C
+int var ;     // Declare the variable var to be an integer.
+var = 1;
+// We won't be allowed to set var to a character var="a"
+```
+This is not necessary in R. In this sense, R is like for example Python or Javascript. It will decide at run time what type to use for a variable, so we can simply set
+```r
+var <- 1
+var <- "a"
+```
+R is however a typed language, once defined, variables have types, so trying to run
+```r
+1+"a"
+```
+```{r, echo=FALSE, error=TRUE}
+1+"a"
+```
+produces an error message, while it would give `"1a"` in some other programming languages (for example JavaScript).
+
+#### R is object-oriented
+In R and other [object-oriented languages](http://en.wikipedia.org/wiki/Object_oriented_programming), data constructs can behave differently depending on their type. For example, the R method `summary` provides a summary for an object and the method `plot` plots an object. What these methods will actually do depends on what type of object they are invoked for. R's object orientation is a lot less visible than that of other programming languages, so many users don't even notice it.
+
+#### R is garbage-collected
+Just like in Java or Python, R looks after the memory management for you. Objects that are no longer referred to will be automatially removed from the memory ("garbage-collected").
+
+
+### Useful books about R
+
+###[weblink, target="http://r4ds.had.co.nz/", icon="book"]R for Data Science (G Grolemund and H Wickham)
+Hadley Wickham is Chief Scientific Officer of RStudio and has written some very popular R packages (ggplot2, tidyr, dplyr, ...). The book is [available for free online](http://r4ds.had.co.nz/).
+###[/weblink]
+
+###[weblink, target="http://adv-r.had.co.nz/", icon="book"]Advanced R (H Wickham)
+Another excellent book by Hadley Wickham, which is [available for free online](http://adv-r.had.co.nz/).
+###[/weblink]
+
+###[weblink, target="", icon="book"]A First Course in Statistical Programming in R (W J Braun and D J Murdoch)
+This is a very good introduction to Programming in R. It is unfortunately not av'ailable as an ebook from the library.
+###[/weblink]
+
+###[weblink, target="", icon="book"]Introductory Statistics with R (P Daalgard)
+This book is both a good introduction to Statistics and R and [available as an ebook from the University Library for student learners](https://glasgow.summon.serialssolutions.com/#!/search?bookMark=ePnHCXMw42JgAfZbU5khE6Og45_AK9eA1RToWltTEw7YAIgBeN-uMSeDnCdoTTbodNP8okoF0D4ayBHFCqCRSIUgbgYFN9cQZw9dUHMyPb88HjquEZ9kBGwYmlgYgW4mIKgEAHEUKiI).
+###[/weblink]
+
+###[weblink, target="https://csgillespie.github.io/efficientR/", icon="book"]Efficient R programming (C Gillespie and R Lovelace)
+This is a good book, but probably not aimed at beginners. It is [available for free online](https://csgillespie.github.io/efficientR/).
+###[/weblink]
+
+###[weblink, target="https://cran.r-project.org/doc/manuals/r-release/R-intro.html/"]An Introduction to R
+The [introduction](https://cran.r-project.org/doc/manuals/r-release/R-intro.html/) from the [R manual on CRAN](https://cran.r-project.org/manuals.html) is also worth a look.
+###[/weblink]
+
+###[weblink, target="https://datacamp.com/"]Datacamp
+Finally, [Datacamp](https://datacamp.com) is worth mentioning. Datacamp offer [online training courses on R](https://www.datacamp.com/courses/free-introduction-to-r) (and Python).
+###[/weblink]
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

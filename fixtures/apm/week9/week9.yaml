@@ -1,0 +1,6 @@
+name: "Week 9"
+title: "Linear Mixed Models"
+golive: "+1w"
+content:
+  - type: text
+    src: week9mat.Rmd

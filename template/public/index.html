@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="theme-light">
 
 <head>
   <meta charset="utf-8">
@@ -11,7 +11,24 @@
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <%= content %>
+  </div>
+  <div id="modal">
+    <div id="modal-bg"></div>
+    <div id="modal-wrapper">
+      <div id="modal-close"></div>
+      <div id="modal-content">
+        <div class="form-block">
+          <label for="select-theme">Select theme</label>
+          <select id="select-theme">
+            <option value="theme-light">Light</option>
+            <option value="theme-dark">Dark</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
   <%= htmlWebpackPlugin.tags.bodyTags %>
 </body>
 

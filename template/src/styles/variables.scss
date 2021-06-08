@@ -1,0 +1,113 @@
+$blue: #003865;
+$cobalt: #0075b0;
+$skyblue: #005398;
+$slate: #4f5961;
+$leaf: #00843d;
+$moss: #385a4f;
+$sandstone: #7a6855;
+$burgundy: #7d2239;
+$pillarbox: #b30c00;
+$lavender: #5b4d94;
+$thistle: #951272;
+$rust: #be4d00;
+
+$turqoise: #00b5d1;
+$rose: #b06c96;
+$pumpkin: #ffb948;
+$sunshine: #ffdc36;
+$mocha: #aa8066;
+
+@function toRGB($color) {
+  @return red($color) + ", " + green($color) + ", " + blue($color);
+}
+
+// default theme (light)
+:root {
+  --bg: white;
+  --textColor: #333;
+  --fadedTextColor: #888;
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$cobalt};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: #{$blue};
+  --boxoutBg: #f2f2f2;
+  --boxoutHighlightColor: #e2e2e2;
+  --boxoutFadedTextColor: #444;
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
+}
+
+html.theme-dark {
+  --bg: #111;
+  --textColor: #ccc;
+  --fadedTextColor: #666;
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$cobalt};
+  --primaryColor: 255, 255, 255;
+  --highlightColor: #{$sandstone};
+  --boxoutBg: #222;
+  --boxoutHighlightColor: #333;
+  --boxoutFadedTextColor: #999;
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
+}
+
+html.theme-yellow-on-black {
+  --bg: #111;
+  --textColor: #ebd90e;
+  --fadedTextColor: #{darken(#ebd90e, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$rose};
+  --primaryColor: #{toRGB(#ebd90e)};
+  --highlightColor: #ebd90e;
+  --boxoutBg: #222;
+  --boxoutHighlightColor: #333;
+  --boxoutFadedTextColor: #{darken(#ebd90e, 20%)};
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
+}
+
+html.theme-black-on-yellow {
+  --bg: #ebd90e;
+  --textColor: #000;
+  --fadedTextColor: #{lighten(#000, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$thistle};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: black;
+  --boxoutBg: #{darken(#ebd90e, 3%)};
+  --boxoutHighlightColor: #{darken(#ebd90e, 8%)};
+  --boxoutFadedTextColor: #{lighten(#000, 30%)};
+  --taskBg: #{rgba($burgundy, 0.2)};
+  --taskFg: #{$burgundy};
+}
+
+html.theme-black-on-red {
+  --bg: #de7777;
+  --textColor: black;
+  --fadedTextColor: #{lighten(#000, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$pumpkin};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: black;
+  --boxoutBg: #{darken(#de7777, 3%)};
+  --boxoutHighlightColor: #{darken(#de7777, 10%)};
+  --boxoutFadedTextColor: #{lighten(#000, 20%)};
+  --taskBg: #{rgba($blue, 0.1)};
+  --taskFg: #{$blue};
+}
+
+html.theme-black-on-blue {
+  --bg: #64a8e1;
+  --textColor: black;
+  --fadedTextColor: #{lighten(#000, 20%)};
+  --errorColor: #{$pillarbox};
+  --linkColor: #{$sunshine};
+  --primaryColor: 0, 0, 0;
+  --highlightColor: black;
+  --boxoutBg: #{darken(#64a8e1, 5%)};
+  --boxoutHighlightColor: #{darken(#64a8e1, 15%)};
+  --boxoutFadedTextColor: #{lighten(#000, 20%)};
+  --taskBg: #{rgba($thistle, 0.1)};
+  --taskFg: #{$thistle};
+}

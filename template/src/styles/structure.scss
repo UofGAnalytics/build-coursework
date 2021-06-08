@@ -1,0 +1,80 @@
+html {
+  background: var(--bg);
+}
+
+body {
+  color: var(--textColor);
+}
+
+.hamburger-icon {
+  $diam: 1.3rem;
+  position: absolute;
+  width: $diam;
+  height: $diam;
+  fill: var(--highlightColor);
+  top: 3.1rem;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .logo > & {
+    right: 1rem;
+  }
+
+  #root > & {
+    position: fixed;
+    left: 2rem;
+  }
+}
+
+aside {
+  position: fixed;
+  height: 100%;
+  width: 18rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: var(--boxoutBg);
+  transition: margin-left 0.2s;
+
+  scroll-behavior: smooth;
+  scrollbar-color: var(--boxoutHighlightColor) var(--boxoutBg);
+  &::-webkit-scrollbar-track {
+    background: var(--boxoutBg);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--boxoutBg);
+    border-color: var(--boxoutBg);
+    transition: background-color 0.2s;
+  }
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--boxoutHighlightColor);
+    }
+  }
+
+  html.hide-sidebar & {
+    margin-left: -18rem;
+  }
+}
+
+main {
+  flex: 1;
+  overflow: auto;
+  margin-left: 18rem;
+  transition: margin-left 0.2s;
+  padding-left: 15px;
+
+  html.hide-sidebar & {
+    margin-left: 0rem;
+  }
+
+  & > .wrapper {
+    width: 88%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

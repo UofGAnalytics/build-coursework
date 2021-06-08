@@ -1,0 +1,22 @@
+title: R Programming
+type: course
+public: true
+moodleid: 0
+catalog: STATS5078
+authors: Craig Alexander and Ludger Evers
+academic_year: 2020-21
+start_date: 30/09/2020
+units:
+  - src: week1/week1.yaml
+# - src: week2/week2.yaml
+# - src: week3/week3.yaml
+# - src: week4/week4.yaml
+# - src: week5/week5.yaml
+# - src: week6/week6.yaml
+#  - src: week7/week7.yaml
+#  - src: week8/week8.yaml
+#  - src: week11/week11.yaml
+# - src: week9/week9.yaml
+#   - src: week10/week10.yaml
+#   - src: week11/week11.yaml
+#   - src: week12/week12.yaml

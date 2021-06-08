@@ -1,0 +1,33 @@
+.logo {
+  position: relative;
+  padding: 2.25rem 2rem 3rem;
+
+  .logo-wrapper {
+    display: flex;
+    align-items: center;
+    width: 70%;
+  }
+
+  .crest {
+    width: 25%;
+    margin-right: 10%;
+
+    path.dark-only {
+      opacity: 0;
+      html.theme-dark &,
+      html.theme-yellow-on-black & {
+        opacity: 1;
+      }
+    }
+  }
+
+  .uofg {
+    width: 60%;
+    path {
+      html.theme-dark &,
+      html.theme-yellow-on-black & {
+        fill: white;
+      }
+    }
+  }
+}

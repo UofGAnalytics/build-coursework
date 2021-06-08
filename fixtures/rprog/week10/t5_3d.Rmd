@@ -1,0 +1,49 @@
+---
+title: Flights out of NYC
+params:
+   day: 4
+   month: 7
+---
+# Flights on `r params$day`/`r params$month`/2013
+
+```{r,include=FALSE}
+library(nycflights13)
+library(dplyr)
+flights.day <- flights %>%
+                    filter(day==params$day, month==params$month, year==2013) 
+n.flights <- flights.day %>% nrow()
+```
+
+
+On 01/01/2013, `r n.flights` flights left NYC.
+
+## Most frequent destinations
+
+```{r, echo=FALSE}
+library(knitr)
+flights.day %>%
+    group_by(dest) %>%
+    summarize(n.flights=n()) %>%
+    arrange(desc(n.flights)) %>%
+    slice(1:10) %>%
+    left_join(airports, by=c("dest"="faa")) %>%
+    transmute(Code=dest, Name=name, Flights=n.flights) %>%
+    kable()
+```
+
+## Map of destinations
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggmap)
+segdata <- flights.day %>%
+               group_by(origin, dest) %>%
+               summarize(n.flights=n()) %>%
+               left_join(airports, by=c("origin"="faa")) %>% 
+               left_join(airports, by=c("dest"="faa"),
+                         suffix=c("","_dest"))
+map <- get_map(location = c(lon = -97.5, lat = 40), zoom=4)
+ggmap(map) +
+    geom_point(aes(lon, lat), data=airports, alpha=0.25) +
+    geom_segment(aes(lon, lat, xend=lon_dest, yend=lat_dest, alpha=n.flights),
+                 data=segdata)
+```

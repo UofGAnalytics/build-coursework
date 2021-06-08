@@ -1,0 +1,15 @@
+name: "Week 3"
+title: "Basic Data Management in R"
+golive: "+2w"
+content:
+  - type: text
+    src: dataframes.Rmd
+  - type: text
+    src: manipulating.Rmd
+  - type: text
+    src: merging.Rmd
+  - type: text
+    src: dataio.Rmd
+  - type: text
+    src: review.Rmd
+# Add date handling via lubridate

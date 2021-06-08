@@ -1,0 +1,133 @@
+## Welcome to the course
+
+###[video, videoid="AClLyj_Oczc", duration="3m13s"] Welcome to R Programming
+
+
+### Topics covered in this course
+- Week 1: Introduction to R and Computing
+- Week 2: R Basics
+- Week 3: Data Management in R
+- Week 4: Efficient Data Management in R (Tidyverse)
+- Week 5: R Graphics
+- Week 6: Advanced R Graphics using ggplot2
+- Week 7: Control Structures
+- Week 8: Functions
+- Week 9: Developing data-driven Webapps using Shiny
+- Week 10: Automated Reporting using knitr
+- Week 11: Objected-Oriented Programming in R
+- Additional material: Numerical Methods in R
+
+
+### Intended Learning Outcomes
+
+By the end of this course you will be able to:
+
+- recognise and make appropriate use of different types of data structures;
+- use R to create figures and graphs;
+- identify and implement appropriate control structures to solve a particular programming problem;
+- design and write functions in R and implement simple iterative algorithms;
+- structure complex programming problems into functional units and implement these;
+- carry out extended programming tasks and produce clearly annotated listing of their code;
+- author reports with embedded code using technologies such as Sweave or knitr; and
+- develop and deploy R Shiny apps.
+
+### Assessment
+
+This course has three different types of assessment.
+
+- There will be three assignments for this course, made available every three weeks, each worth 20\%.
+- Assignments 1 and 3 will consist of a take home assignment which will contain a  small number of programming tasks.
+- Assignment 2 will be a time-limited assignment. This assignment can be taken at any time between the release date and the due date. The assignment will consist of a series of smal programming tasks. Once you begin the assignment, you will have 3 hours to submit your solutions to the tasks from when you first access the assignment.
+- There will also be a project (also worth 20%), during which you will work on a bigger, more loosely specified task.
+- Finally, there will be an oral mini viva (also worth 20%), done via Skype for Business in December. The mini viva will take 60 minutes. At the beginning, you will be emailed a set of short tasks which you will work on. After 45 minutes you will need to submit what you have done and we will discuss your submitted code in the remaining 15 minutes. If you live in a country in which Skype for Business is not available please let us know and we will make alternative arrangements.
+
+This course has no final degree exam.
+
+\newpage
+#### Assessment and Feedback Calendar
+
+|Assessment  | Weight | Handed Out | Due in | Feedback by|
+|-----|---|-----|-----|-----|
+|Assignment 1 | 20% | October 14th | November 4th | November 19th|
+|Assignment 2 | 20% | November 4th | November 25th | December 10th|
+|Assignment 3 | 20% | November 25th | December 16th | January 7th|
+|Project      | 20% | December 9th | January 20th | January 28th|
+|Mini viva    | 20% ||||
+
+The mini vivas will be scheduled between December 2nd and December 20th. You will be able to book appointments for these from early November.
+
+## Software requirements
+
+### R
+
+You need to have access to [R](https://www.r-project.org/) for this course. You can download R for free from [CRAN](https://cran.r-project.org/) or download [Microsoft R Open](https://mran.microsoft.com/open) from [MRAN](https://mran.microsoft.com/download).
+
+R is available for Windows, Mac OS and Linux as well as some less common platforms.
+
+####[weblink, target="https://cran.r-project.org/"]CRAN
+You can download the standard version of R from [CRAN](https://cran.r-project.org/).
+####[/weblink]
+
+####[background]Downloading and installing R for Windows
+To download the Windows installer of R, just enter the following URL (or click on the clink).
+
+https://cran.r-project.org//bin/windows/base/release.html
+
+This will download the most installer for the most recent version of R. Alternatively, you can go to the main CRAN page, https://cran.r-project.org/, and then click on "Download R for Windows", click on "base" and then on "Download R x.y.z for Windows" (where x.y.z is the current version number of R).
+
+You can then run the installer, accepting all default settings.
+####[/background]
+
+####[weblink, target="https://mran.microsoft.com/download/"]MRAN
+Alternatively, you can download [Microsoft R Open](https://mran.microsoft.com/open) from [MRAN](https://mran.microsoft.com/download). Microsoft R Open contains some performance improvements over standard R (and uses a "frozen" package repositorty), but is otherwise 100% identical to CRAN R.
+####[/weblink]
+
+### RStudio
+It is recommended that you also download and install [RStudio Desktop](https://www.rstudio.com/products/rstudio/download/), a powerful [integrated development environment (IDE)](https://en.wikipedia.org/wiki/Integrated_development_environment) for R. RStudio contains a much better code editor. It has, for example, [syntax highlighting](https://en.wikipedia.org/wiki/Syntax_highlighting), i.e. it will automatically display your code in different colours to make it easier and quicker to read the code. Even though other IDEs, such as [Eclipse](http://www.walware.de/goto/statet), [Visual Studio Code](https://code.visualstudio.com/),  or [Emacs](https://ess.r-project.org/) can also be used with R, RStudio is by far the most popular among R users.
+
+RStudio is just a front-end for R, so to be able make use of RStudio, you need to also have R installed.
+
+####[weblink, target="https://www.rstudio.com/products/rstudio/download/"]RStudio Desktop
+RStudio Desktop Open Source is available for free from [RStudio](https://rstudio.com).
+####[/weblink]
+
+####[background] Installing RStudio for Windows
+
+
+####[/background]
+
+
+## Useful books
+
+###[weblink, target="http://r4ds.had.co.nz/", icon="book"]R for Data Science (G Grolemund and H Wickham)
+Hadley Wickham is Chief Scientific Officer of RStudio and has written some very popular R packages (ggplot2, tidyr, dplyr, ...). The book is [available for free online](http://r4ds.had.co.nz/).
+###[/weblink]
+
+###[weblink, target="http://adv-r.had.co.nz/", icon="book"]Advanced R (H Wickham)
+Another excellent book by Hadley Wickham, which is [available for free online](http://adv-r.had.co.nz/).
+###[/weblink]
+
+###[weblink, target="", icon="book"]A First Course in Statistical Programming in R (W J Braun and D J Murdoch)
+This is a very good introduction to Programming in R. It is unfortunately not available as an ebook from the library.
+###[/weblink]
+
+###[weblink, target="", icon="book"]Introductory Statistics with R (P Daalgard)
+This book is both an introduction to Statistics and R and [available as an ebook from the University Library](https://glasgow.summon.serialssolutions.com/#!/search?bookMark=ePnHCXMw42JgAfZbU5khE6Og45_AK9eA1RToWltTEw7YAIgBeN-uMSeDnCdoTTbodNP8okoF0D4ayBHFCqCRSIUgbgYFN9cQZw9dUHMyPb88HjquEZ9kBGwYmlgYgW4mIKgEAHEUKiI).
+###[/weblink]
+
+###[weblink, target="https://csgillespie.github.io/efficientR/", icon="book"]Efficient R programming (C Gillespie and R Lovelace)
+This is a good book, but probably not aimed at beginners. It is [available for free online](https://csgillespie.github.io/efficientR/).
+###[/weblink]
+
+###[weblink, target="https://cran.r-project.org/doc/manuals/r-release/R-intro.html/"]An Introduction to R
+The [introduction](https://cran.r-project.org/doc/manuals/r-release/R-intro.html/) from the [R manual on CRAN](https://cran.r-project.org/manuals.html) is also worth a look.
+###[/weblink]
+
+###[weblink, target="https://datacamp.com/"]Datacamp
+Finally, [Datacamp](https://datacamp.) is worth mentioning. Datacamp offer [online training courses on R](https://www.datacamp.com/courses/free-introduction-to-r) (and Python).
+###[/weblink]
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

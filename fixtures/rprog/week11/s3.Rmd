@@ -1,0 +1,596 @@
+## S3 classes
+
+###[video, videoid="itM2PqxyN8Q"] S3 classes
+
+### Comparison to other paradigms
+
+The standard model for OOP in R is what are called S3 classes (named after the version of S which first introduced them). The S3 model is different from how most other programming languages implement objects and classes. 
+
+S3 is based on generic functions, where most other programming languages use a member-function-based (sometimes called message-passing) approach. If you want to call the method `predict` for an object `model`, using `data=newdata` as additional argument, you would use
+```{r eval=FALSE}
+predict(model, data=newdata)
+```
+in R. If `model` is of the class `lm`, R translates this call into a call to the function
+```{r eval=FALSE}
+predict.lm(model, data=newdata).
+```
+
+However, in Python you would use
+```{python eval=FALSE}
+model.predict(data=newdata)
+```
+with C++, Java and Javascript using a similar syntax.
+
+Another difference between S3 classes and more conventional paradigms for OOP is that R's S3 class system does not have formal class definitions and thus class methods are not defined as part of the class definition, but simply as stand-alone functions. It is just their name of the form `functionname.classname` that gives away that the function is a class method.
+
+S3 is an extremely lightweight and ad hoc approach, which is sufficient for most of what we want to do in R. Objects are typically created when fitting a model. Once a model is fitted, the user just queries the model without modifying the object any further. S3 objects are ideally suited for this scenario. When using classes and objects in a more general context, S3 can be rather limiting. Luckily, R has alternative models for OOP, which are in that case better suited. We will look at one of them, R6, [later on](ref://oop_r6).
+
+
+
+### Creating objects
+
+We can make (almost) any R object an instance of the class `classname` by setting
+```{r eval=FALSE}
+class(object) <- "classname"
+```
+In most cases `object` will be a list. All the above line of code does is adding an attribute `class` (set to `"classname"`) to the object, so that R can recognise the object as an instance of the class `classname`. 
+It is our responsibility to make sure that the object behaves as one would expect of an object on this class. R will do no checking for us (we'll come back to this later on).
+
+We can also use the function `class` to find out of what class an object is.
+```{r}
+class(dplyr::starwars)
+```
+We can see that an object can have more than one class. In that case the classes are listed from the more specific to the more generic. We'll come back to that later on.
+
+We can use the function `inherits` to check whether an object is of a given class.
+```{r}
+inherits(dplyr::starwars,"tbl_df")
+```
+
+####[example, label=s3exrect1]
+Suppose we want to create a class `rectangle` which contains the width, height and position of the centre of a rectangle. 
+```{r}
+#' "Constructor" function for creating rectangle objects
+#' @param width width of the rectangle
+#' @param height height of the rectangle (by default equal to the width)
+#' @param centre vector of length 2 giving position of centre
+#' @return ao object of the class rectangle
+rectangle <- function(width, height=width, centre=c(0,0)) {
+    object <- list(width=width, height=height, centre=centre)
+    class(object) <- "rectangle"
+    object
+}
+```
+We can create a new rectangle using
+```{r}
+s <- rectangle(1)             # Create a square of width and height 1
+s
+```
+`s` is nothing other than a list, with an additional attribute `"class"` containing the class name.
+####[/example]
+
+### Generic methods
+We have already seen that the S3 approach to object oriented programming is based on generic functions. A generic function is a function that does not perform any operations other than what is called "method dispatch": if the first argument is of class `classname` and the function is called `fun`, then the dispatch mechanism calls the function `fun.classname` passing on all of its arguments.
+If the first argument is of more than one class the dispatch mechanism goes through the vector of classnames until it finds a function `fun.classname`. If it does not find one it will try `fun.generic` and, failing that, produce an error message.
+
+#### Implementing existing generic methods
+
+If we want to implement the method `fun` for an object of class `classname` we have to define a function 
+```{r}
+fun.classname <- function(object, ...) {
+  # Implementation goes here
+}
+```
+The list of arguments should mirror the one used by the generic method. 
+
+"Standard" generic methods implemented by many S3 classes are `print`, `summary`, `plot`, `predict`, `residuals`, `coef` or `coefficients`. The `print` method is special: it controls how objects are printed in the console.
+
+#####[example, label=s3exrect2]
+Suppose we want to provide a `summary` method for objects of the class rectangle we have defined in ref://s3exrect1. For this we have to define a function called `summary.rectangle`.
+```{r}
+#' @method summary rectangle
+summary.rectangle <- function(object) {
+    cat(paste0("A rectangle of width ", object$width,
+               " and height ",  object$height,
+               ", located at (", object$centre[1],
+               ",", object$centre[2],")\n"))
+}
+```
+
+We can then run
+```{r}
+summary(s)
+```
+Note that we just need to run `summary(s)`. We do not have to use `summary.rectangle(s)`. Because `s` is of the class `rectange` `summary(s)` will call the function `summary.rectangle` for us.
+#####[/example]
+
+#####[supplement]Obtaining S3 methods for classes
+Sometimes the implementation of a method for a given class is not exported from packages, so `fun.classname` might not show the function implementing `fun` for class `classname`. In that case you can use `getS3method("fun", "classname")` to show the code implementing this method.
+#####[/supplement]
+
+#### Defining new generic methods
+The S3 framework also allows for defining new generic methods. The key to a generic method is a call to `UseMethod("functionname")` in its body.
+```{r}
+genericmethodname <- function(object, ...) {
+    UseMethod("genericmethodname")
+}
+```
+#####[example, label=s3exrect3]
+Suppose we want to create a new generic method called `draw` with an implementation for our class `rectangle` from ref://s3exrect1 and ref://s3exrect2.
+
+```{r}
+#' Draw a shape 
+#' @param object shape to be drawn
+#' @param ... additional details (colour etc.)
+draw <- function(object, ...) {
+    UseMethod("draw")
+}
+
+#' @method draw rectangle
+draw.rectangle <- function(object, ...) {
+    coords <- with(object, {
+        cbind(centre[1]+width/2*c(-1,1,1,-1),
+              centre[2]+height/2*c(-1,-1,1,1))
+    })
+    polygon(coords, ...)
+}
+```
+
+We can now add the rectangle `s` from the previous examples to the current plot using
+```{r, eval=FALSE}
+draw(s)
+```
+which R will translate to 
+```{r, eval=FALSE}
+draw.rectangle(s)
+```
+#####[/example]
+
+### Inheritance 
+
+Due to its informal nature, S3 has no clean implementation of inheritance. However, if one assigns a vector of classes to an object, this can mimic the effects of inheritance. We have to list the classes from the more specific to the more general, i.e. for two classes the subclass comes before the superclass. 
+
+#####[example, label=s3exrect4]
+Suppose that in addition to the class `rectangle` from ref://s3exrect1 to ref://s3exrect3 we also have a class `octagon` with objects  created using
+```{r}
+#' "Constructor" function for creating octagon objects.
+#' @param width with of the octagon.
+#' @param height height of the octagon (default: identical to width).
+#' @param corner width/height of the cut off corners that turn a rectangle
+#'               into a octagon (relative to width and height). Defaults to
+#'               0.2929.
+#' @param centre vector of length 2 giving the centre of the octagon.
+#'               Defaults to (0,0).
+#' @return an object of the class octagon
+octagon <- function(width, height=width, corner=.2929, centre=c(0,0)) {
+    object <- list(width=width, height=height, corner=corner,
+                   centre=centre)
+    class(object) <- "octagon"
+    object
+}
+
+#' @method draw octagon
+draw.octagon <- function(object, ...) {
+   coords <- with(object, {
+       a <- c(-0.5, -0.5+corner, 0.5-corner, 0.5)
+       cbind(centre[1]+width*c(a, -a),
+             centre[2]+height*c(a[3:4],a[4:1],a[1:2]))
+   })
+   polygon(coords, ...)
+}
+```
+Both `draw` methods consist of two parts. The first part creates a set of coordinates for the vertices, whereas the second part draws a polygon using the coordinates. The second part is identical for rectangles and octagons suggesting that we could set up a superclass `shape` which has `rectangle` and `octagon` as subclasses. The `draw` method could then be implemented at `shape` level with the creation of the coordinates happening at `rectangle` and `octagon` level. To signal to R that rectangles and octagons are also shapes, we add `shape` to the class.
+
+```{r}
+#' "Constructor" function for creating rectangle objects
+#' @param width width of the rectangle
+#' @param height height of the rectangle (by default equal to the width)
+#' @param centre vector of length 2 giving position of centre
+#' @return ao object of the classes rectangle and shape
+rectangle <- function(width, height=width, centre=c(0,0)) {
+    object <- list(width=width, height=height, centre=centre)
+    class(object) <- c("rectangle", "shape")
+    object
+}
+
+#' "Constructor" function for creating octagon objects.
+#' @param width with of the octagon.
+#' @param height height of the octagon (default: identical to width).
+#' @param corner width/height of the cut off corners that turn a rectangle
+#'               into a octagon (relative to width and height). Defaults to
+#'               0.2929.
+#' @param centre vector of length 2 giving the centre of the octagon.
+#'               Defaults to (0,0).
+#' @return an object of the class octagon
+octagon <- function(width, height=width, corner=.2929, centre=c(0,0)) {
+    object <- list(width=width, height=height, corner=corner,
+                   centre=centre)
+    class(object) <- c("octagon", "shape")
+    object
+}
+
+#' Create a matrix of coordinates of vertices for a shape
+#' @param object shape
+#' @return a matrix of two columns containing the coordinates
+makecoords <-  function(object) {
+  UseMethod("makecoords")
+}
+
+#' @method makecoords rectangle
+makecoords.rectangle <- function(object) {
+    with(object, {
+        cbind(centre[1]+width/2*c(-1,1,1,-1),
+              centre[2]+height/2*c(-1,-1,1,1))
+    })
+}
+
+#' @method makecoords octagon
+makecoords.octagon <- function(object) {
+   with(object, {
+       a <- c(-0.5, -0.5+corner, 0.5-corner, 0.5)
+       cbind(centre[1]+width*c(a, -a),
+             centre[2]+height*c(a[3:4],a[4:1],a[1:2]))
+   })
+}
+
+#' Draw a shape 
+#' @param object shape to be drawn
+#' @param ... additional details passed on to polygon (colour etc.)
+draw <- function(object, ...) {
+    UseMethod("draw")
+}
+
+#' @method draw shape
+draw.shape <- function(object) {
+    coords <- makecoords(object)
+    polygon(coords, ...)
+}
+```
+
+We can now draw a square and an octagon on an empty plot canvas using 
+```{r, fig.width=4}
+plot(NULL, xlim=0:1, ylim=0:1, xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+s <- rectangle(0.1, centre=c(0.2,0.2))
+o <- octagon(0.3, centre=c(0.5,0.5))
+draw(s, col="yellow")
+draw(o, col="blue")
+```
+
+This example illustrates one of the key strengths of object orientation. We only need to know that we can use the generic method `draw` to draw shapes. If we know that `s` and `o` are shapes we can draw them using `draw(s)` and `draw(o)`. We don't need to worry about what types of shape `s` and `o` are, as long as they are a valid shape. Object-orientation makes it very easy to conceal details of the implementation and provide users with a simple and clean interface -- this is often referred to as "encapsulation". 
+
+The generic method `predict`, which computes predictions for many models, is a nice example of this: It doesn't matter what exact type of model the model is and what the detailed algorithm for calculating predictions is, `predict` will do everything for us. In ref://naivebayesex below we will implement a simple machine learning model and code a custom predict method.
+#####[/example]
+
+####[task]
+In week 2 we have looked at how to compute the repayments when taking out a loan of £9,000 over 20 years with an interest rate of 15%. 
+
+We have used the code below to compute the monthly payments as well as the split of the payments into capital repayment and interest.
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+n <- 20                                # term of the loan
+loan <- 9000                           # amount
+interest.rate <- 0.15                  # effective annual interest rate
+v <- 1 / (1+interest.rate)             # effective annual discount factor
+payment <- loan * (1-v) / (v*(1-v^n))  # yearly payments
+k <- 1:n                               # create vector with all possible k
+alpha <- v^(n+1-k)                     # split factors
+capital <- alpha * payment             # capital repayments
+interest <- (1-alpha) * payment        # interest part
+data <- data.frame(Year=1:n, rbind(data.frame(Type="Capital repayment",
+      	                                      Payment=capital),
+                                   data.frame(Type="Interest",
+                                              Payment=interest)))
+library(ggplot2)
+ggplot(data=data) + geom_col(aes(Year, Payment, fill=Type))
+```
+
+Reorganise the code as set out below.
+
+- Create a function `loan`, which takes the amount of the loan, the interest rate and the duration the loan is taken out for as arguments and which returns an object of the class `loan`.
+- Create a `print` method for the class `loan`, that prints the amount, interest rate, duration and yearly repayments.
+- Create a ` plot` method which produces the above plot.
+
+
+#####[answer]
+We start by defining the "constructor" function and implement a print and plot method.
+```{r}
+#' Calculate repayments for a loan
+#' @param loan amount of the loan
+#' @param n duration until loan should be repaid
+#' @param interest.rate interest rate (not as a percentage)
+#' @return object of the class loan
+loan <- function(loan, n, interest.rate) {
+    v <- 1 / (1+interest.rate)             # effective annual discount factor
+    payment <- loan * (1-v) / (v*(1-v^n))  # yearly payments
+    object <- list(loan=loan, n=n, interest.rate=interest.rate,
+                   v=v, payment=payment)
+    class(object) <- "loan"
+    object
+}
+
+#' @method print loan
+print.loan <- function(object) {
+    if (!inherits(object, "loan"))
+        stop("Function only works for an object of class loan")
+    cat(paste0("A loan of £",round(object$loan, 2)," taken out over ",object$n,
+               " years at an interest rate of ",signif(object$interest.rate*100, 3),
+               "%.\nThe resulting yearly repayments are £",round(object$payment,2),
+               ".\n"))
+}
+
+#' @method plot loan
+plot.loan <- function(object) {
+     if (!inherits(object, "loan"))
+        stop("Function only works for an object of class lob")  
+     k <- 1:object$n                        # create vector with all possible k
+     alpha <- object$v^(object$n+1-k)       # split factors
+     capital <- alpha * object$payment      # capital repayments
+     interest <- (1-alpha) * object$payment # interest part
+     data <- data.frame(Year=1:object$n, rbind(data.frame(Type="Capital repayment",
+                                                    Payment=capital),
+                                         data.frame(Type="Interest",
+                                                    Payment=interest)))
+     require(ggplot2)
+     ggplot(data=data) + geom_col(aes(Year, Payment, fill=Type))  
+}
+```
+```{r}
+l <- loan(9000, 20, 0.15)
+```
+```{r eval=FALSE}
+l
+```
+```{r echo=FALSE}
+print(l)
+```
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+plot(l)
+```
+#####[/answer]
+####[/task]
+
+####[supplement]S3 has no built-in checks and protections
+R does not stop us from doing stupid things. We can for example pretend that a data frame is a model fit from a linear model:
+```{r error=TRUE}
+test <- data.frame(x=rnorm(10))       # Create a toy data frame
+class(test)
+class(test) <- "lm"                   # Rogue code relabelling it as lm object
+class(test)
+```
+R does not check whether `test` is a valid `lm` object. However trying to get predictions out of our fake linear model will fail.
+```{r error=TRUE}
+predict(test)
+```
+Similarly I can take a proper `lm` object and remove some of its components
+```{r error=TRUE}
+model <- lm(dist~speed, data=cars)   # Fit linear models
+model$coefficients <- NULL           # Sabotage the coefficients
+```
+Again R hasn't stopped me. However my `model` is now so broken that I can't use it properly any more.
+```{r error=TRUE}
+predict(model)
+```
+
+Other programming languages have much stricter systems that would never ever allow something like this. R however doesn't protect you from yourself: there is almost never a reason why you should change the class of an object (other than when you create it) or meddle with one, so just don't do these things and you will be fine. 
+####[/supplement]
+
+
+####[supplement]S4
+R also has a more advanced class system, called S4 (again named after the S version which first introduced them), implemented in the built-in package `methods`. S4 has two main advantages over S3.
+
+- S3 methods can dispatch only based on their first argument: depending on the class of the first argument R will choose an appropriate method to call. For S3 methods, R will however not look at the class of the second argument.
+However, S4's dispatch mechanism can take the classes of any argument into account ("multiple dispatch"). A prominent package making use of this feature of S4 is the package `Matrix` implementing sparse matrices: there are many different ways of storing  sparse matrices (implemented in different classes). When multiplying two sparse matrices we need to look at the class of both arguments and then choose the appropriate method.
+- S4 classes have formal class definitions and thus offer protection against the meddling with objects we have just tried out for S3. 
+
+There is however a price to pay for this. Writing S4 classes requires much more effort, thus it is best to only use them when you cannot achieve what you want using S3 classes.
+
+From a user's point of view, the main difference is that fields in an S4 object are accessed using `object@element` rather than `object$element`, as used for S3 objects. 
+####[/supplement]
+
+### Case study
+
+####[example, label=naivebayesex]Naïve Bayes classifier
+In this example we will build a class for a naïve Bayes classifier for categorical data. 
+
+Consider a problem where we want to predict a categorical variable $y_i$ from a set of categorical covariates ("features") $x_{i1},\ldots,x_{ip}$, where training data is available for $i=1,\ldots,n$ observations.
+
+We want to use the training data to estimate the probability
+$P(Y_i=y_i|X_{i1}=x_{i1},\ldots,X_{ip}=x_{ip})$. You have seen in *Probability and Stochastic Models* or in *Probability and Sampling Fundamentals* that we can use Bayes theorem to write
+
+$$
+P(Y_i=y_i|X_{i1}=x_{i_1},\ldots,X_{ip}=x_{ip}) \propto
+P(Y_i=y_i)P(X_{i1}=x_{i_1},\ldots,X_{ip}=x_{ip}|Y_i=y_i)
+$$
+We have omitted the denominator as it is just a normalisation constant, which we can calculate numerically later on.
+
+You have seen in *Probability and Stochastic Models* or in *Probability and Sampling Fundamentals* that
+$$
+\begin{array}{rcl}
+P(X_{i1}=x_{i1},\ldots,X_{ip}=x_{ip}|Y_i=y_i)
+&=&P(X_{i1}=x_{i1}|Y_i=y_{i})P(X_{i2}=x_{i2}|X_{i1}=x_{i1},Y_i=y_{i})\cdots\\
+&&\qquad \cdot
+ P(X_{ip}=x_{ip}|X_{i1}=x_{i1},\ldots X_{i,p-1}=x_{i,p-1}, Y_i=y_{i})
+ \end{array}
+$$
+
+The naïve Bayes classifier, sometimes also called idiot's Bayes, makes the (typically incorrect) assumption that given $Y_i$ the $X_{ij}$ are conditionally independent and thus
+
+$$
+P(X_{i1}=x_{i1},\ldots,X_{ip}=x_{ip}|Y_i=y_i)
+=P(X_{i1}=x_{i1}|Y_i=y_{i})P(X_{i2}=x_{i2}|Y_i=y_{i})\cdots P(X_{ip}=x_{ip}|Y_i=y_{i})
+$$
+
+This way we do not have to model how the different $X_{ij}$ relate to each other within one class. This simplifies the modelling task substantially. 
+
+Exploiting this assumption we obtain
+$$
+{P}(Y_i=y_i|X_{i1}=x_{i_1},\ldots,X_{ip}=x_{ip})\propto{P}(Y_i=y_i)P(X_{i1}=x_{i1}|Y_i=y_{i}) P(X_{i2}=x_{i2}|Y_i=y_{i})\cdots P(X_{ip}=x_{ip}|Y_i=y_{i})
+$$
+we thus need to estimate the "prior" probability of class $y_{i}$ as well as the probabilities $P(X_{ij}=x_{ij}|Y_i=y_{i})$.
+
+If the response and all covariates are categorical, we can estimate these probabilities simply by the proportions in the training data.
+
+In most cases the above assumption of conditional independence is not justified. In that case one can show that the naïve Bayes classifier estimates more extreme probabilities, i.e. it is more confident in its predictions than what it should be.
+
+You will learn more about naïve Bayes classifiers in *Predictive Modelling* and *Data Mining and Machine Learning I*.
+
+We will start by writing the function that estimates the naïve Bayes model
+```{r}
+naivebayes <- function(x, y, prior, smooth=1) {
+    # Make sure x is a data frame
+    x <- as.data.frame(x)
+    # Make sure response and all covariates are factors
+    if (!is.factor(y) || !all(vapply(x,is.factor,logical(1))))
+        stop("x and y must be factors")
+    # Check x and y have same number of observations
+    if (length(y)!=nrow(x))
+        stop("x and y do not have the same number of observations")
+    # Use marginal as prior of y if none specified
+    if (missing(prior)) {
+        # Get marginal distribution of y
+        ydist <- as.numeric(table(y))
+        prior <- as.numeric(table(y)/length(y))
+    }
+    if (is.null(names(prior)))
+        names(prior) <- levels(y)    
+    # Get conditional distributions of x given y
+    # proceeds through x column by column
+    # We use lapply as lapply is guaranteed to return a list
+    xdists <- lapply(x, function(xcol) {
+        # Get joint distribution of column xcol and y
+        # Add smooth to avoid estimated probabilities of 0 
+        xtab <- xtabs(~y+xcol) + smooth
+        # Get marginal distribution of y (+smooth)
+        ymarg <- rowSums(xtab)
+        # Conditional is joint divided by marginal
+        sweep(xtabs(~y+xcol),1,ymarg,"/")
+    })
+    # Assemble fitted model
+    result <- list(xdists=xdists, prior=prior, y=y, x=x)
+    # Make object of class "naivebayes"
+    class(result) <- "naivebayes"
+    result
+}
+```
+
+We will illustrate the model using spam detection as an example. Many systems for spam detection (SpamAssassin, the spam detection within Thunderbird etc.) are based on naïve Bayes classifiers, as these are quick to train and can cope with a very large number of features.
+
+If you load
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/spam.RData"))
+```
+you have a data frame `spam` in your workspace. The first column indicates whether the text message is spam or ham (i.e. not spam). The second column contains the message itself. The remaining columns contain indicators whether the text message contains some key words.
+
+We can now train the naïve Bayes classifier using
+```{r}
+model <- naivebayes(spam[,-(1:2)], spam$spam)
+```
+
+When we enter `model` into R, it floods the screen by printing the entire object. We can avoid this by providing a custom print method.
+```{r}
+print.naivebayes <- function(model) {
+    if (!inherits(model, "naivebayes"))
+        stop("model must be of the class naivebayes.")
+    cat(paste0("A naïve Bayes model with ",length(model$xdists),
+               " covariates (features) trained on ",length(model$y),
+               " observations.\n"))
+}
+```
+Now the object is printed in a more concise way
+```{r eval=FALSE}
+model
+```
+```{r echo=FALSE}
+print(model)
+```
+We can still access all the elements (even though they are not shown when printing). For example, we still can access the prior using
+```{r}
+model$prior
+```
+
+Next, we will implement a `predict` method, so that we can decide whether we should flag text messages as spam.
+
+The predict method takes the fitted model as first argument and allows the user to optionally specify new data. The argument `probabilities` lets the user choose whether to return the probabilities for each outcome class, or just the name of the most likely class. 
+```{r}
+predict.naivebayes <- function(model, newdata, probabilities=FALSE) {
+    if (!inherits(model, "naivebayes"))
+        stop("model must be of the class naivebayes.")
+    # If the user does not provide newdata set it to model$x
+    if (missing(newdata))
+        newdata <- model$x
+    if (!is.data.frame(newdata))
+        newdata <- as.data.frame(newdata)
+    # Start with prior probabilities
+    prob <- matrix(rep(model$prior, each=nrow(newdata)), nrow=nrow(newdata))
+    # Copy in names of outcomes
+    colnames(prob) <- names(model$prior)
+    # Multiply by p(x_j|y)
+    for (j in names(model$xdists)) {
+        prob <- prob * t(model$xdists[[j]][,newdata[,j]])
+    }
+    probs <- sweep(prob, 1, rowSums(prob), "/")
+    # Return probabilities if user has requested this
+    if (probabilities)
+        return(probs)
+    # Otherwise return most likely class
+    class.idx <- apply(probs, 1, which.max)
+    # Translate indices to labels
+    ylabels <- names(model$prior)
+    ylabels[class.idx]
+}
+```
+We can now predict from our model.
+```{r}
+predictions <- predict(model)
+```
+To see how good our model is we look at the so-called confusion matrix, which is just a cross classification table of the predictions and the actual observations.
+```{r}
+actual <- model$y
+xtabs(~actual+predictions)
+```
+We want to see large numbers on the diagonal, where predicted class and actual class agree. Our classifier gave the correct results for `r signif(100*sum(diag(xtabs(~predictions+actual)))/length(actual),3)`% of the messages, which is, given how simple the model was, not bad.
+
+We can wrap up this code as a `summary` method. 
+```{r}
+summary.naivebayes <- function(model) {
+    if (!inherits(model, "naivebayes"))
+        stop("model must be of the class naivebayes.")
+    cat("Confusion matrix (training data):\n")
+    actual <- model$y
+    predictions <- predict(model)
+    xtab <- xtabs(~actual+predictions)
+    print(xtab)
+    misclass <- 1-sum(diag(xtab))/sum(xtab)
+    cat("\nMisclassification rate (training data): ",
+        signif(100*misclass, 3),"%\n")
+    for (i in 1:nrow(xtab)) {
+        misclassi <- sum(xtab[i,-i])/sum(xtab[i,])
+        cat(paste0(signif(100*misclassi,3),"% of ",rownames(xtab)[i],
+                   " incorrectly classified.\n"))
+    }
+}
+```
+We use the function `signif` to print the numbers more nicely.
+
+We can then run `summary`.
+```{r}
+summary(model)
+```
+
+Ideally we should not assess the method on the data we have trained it with. The data frame `spam_test` contains 1,000 unseen test cases, which allows us to assess the performance of our model more honestly.
+```{r}
+predictions <- predict(model,spam_test)
+actual <- spam_test$spam
+xtabs(~actual+predictions)
+```
+On the test data, the naïve Bayes classifier gave the correct results for `r signif(100*sum(diag(xtabs(~predictions+actual)))/length(actual),3)`% of the messages.
+
+Naïve Bayes classifiers are however not ideal for spam detection. A message containing "hot girls" is almost certainly spam, whereas the words "hot" and "girls" on their own are more innocent. However this goes against the conditional independence assumption we have made above to simplify calculations. Thus the naïve Bayes classifier cannot take such considerations into account.
+
+####[/example]
+
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->
+

@@ -1,0 +1,80 @@
+## Examples
+In this section we return to some of the examples from last week and reproduce them in `ggplot2`.
+```{r,echo=FALSE}
+library(ggplot2)
+library(dplyr)
+load(url("http://www.stats.gla.ac.uk/~levers/rp/w5.RData"))
+```
+
+###[example]The bivariate Gaussian density
+We start by creating a data frame with three columns, `x`, `y` and `z`, which holds the value of the bivariate Gaussian density.
+```{r}
+x <- seq(-2, 2, len=50)
+y <- seq(-2, 2, len=50)
+data <- expand.grid(x=x, y=y) %>%
+    mutate(z=dnorm(x)*dnorm(y))
+```
+In contrast to the classical plotting functions `ggplot2` needs the input data in "long", rather than "wide" format, so there is no need to call `spread` as we did last week.
+```{r}
+ggplot(data=data) +
+    aes(x=x, y=y) + 
+    geom_raster(aes(fill=z), interpolate=TRUE) +
+    geom_contour(aes(z=z)) +
+    coord_fixed()                # Make sure plot uses equal scales,
+                                 # so that circles are actually circles
+                                 # and not ellipsoids
+```
+###[/example]
+
+###[example]Fisher's iris data
+In this example we look at again the sepal length and width from Fisher's famous iris data.
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+species.means <- iris %>%             # Get species means for centroid
+                     group_by(Species) %>%
+                     summarise_all(mean)
+
+ggplot(data=iris) +
+    geom_point(aes(x=Sepal.Length, y=Sepal.Width, colour=Species)) +
+    geom_point(data=species.means,
+               aes(x=Sepal.Length, y=Sepal.Width, colour=Species), size=3, shape=4)
+```
+In this example we could also use the function `stat_ellipse`, which draws confidence ellipsoids around data.
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+ggplot(data=iris) +
+	aes(x=Sepal.Length, y=Sepal.Width, colour=Species) +
+    geom_point() +
+    stat_ellipse()
+```
+###[/example]
+
+
+###[example]House prices in the UK
+In this example we will use the house price data from last week.
+
+The data is in "wide" format. To be able to use the data in `ggplot` we first need to translate it into "long" format using the function `gather` from `tidyr`.
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+library(tidyr)
+hp <- hp %>% gather(Region, Price, -Year)
+ggplot(data=hp) +
+    geom_line(aes(x=Year, y=Price, colour=Region))
+```
+We could have also used `qplot` in this case.
+```r
+qplot(Year, Price, data=hp, geom="line",colour=Region)
+```
+###[/example]
+
+
+###[example]Diamonds data (revisited)
+There are a large number of observations in the `diamond` data from ref://ggplottask1, making the plot difficult to read as we cannot see how many observations were plotted on top of each other. It might be better to plot the density of the data, rather than individual observations.
+```{r, dev.args=list(pointsize=10), fig.width=10, fig.height=6, out.width="\\textwidth"}
+ggplot(data=diamonds) +
+    aes(x=carat, y=price) +
+    stat_density_2d(geom = "raster", aes(fill = ..density..), contour = FALSE) +
+    scale_fill_distiller(palette="PuBuGn", direction=1, trans="sqrt") +
+    facet_wrap(~color) 
+```
+###[/example]
+
+
+\newpage

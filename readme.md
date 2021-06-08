@@ -18,3 +18,24 @@ https://github.com/tamuratak/latex-utensils
 ### Markdown to LaTeX compiler
 
 https://github.com/zestedesavoir/zmarkdown/tree/master/packages/rebber
+
+### Accessibility
+
+https://github.com/ajrgodfrey/BrailleR
+https://stem-enable.github.io/Accessibility-of-maths-e-resources/index.html
+https://www.dyslexiefont.com
+
+### Prior art
+
+https://github.com/coursebuilder-ncl/makecourse
+https://github.com/r-lib/actions
+
+## Windows installation
+
+Install [nvm-windows](https://github.com/coreybutler/nvm-windows).
+
+```
+nvm install 12
+nvm use 12
+node -v
+```

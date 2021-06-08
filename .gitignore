@@ -1,5 +1,7 @@
 build/
+cache/
 yarn-error.log
 node_modules
 .RData
+.RDataTmp
 Rplots.pdf

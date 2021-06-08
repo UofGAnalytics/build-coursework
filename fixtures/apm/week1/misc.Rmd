@@ -1,0 +1,343 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Introduction to advanced predictive models: motivating case studies
+
+
+## Introduction
+
+
+In this course we will extend the theory of linear regression models, covered in [Predictive Modelling](http://moodle2.gla.ac.uk/course/view.php?id=12738) and [Learning from data](http://moodle2.gla.ac.uk/course/view.php?id=12736). Before we start with the theory and applications of advanced predictive models, we will introduce some examples where advanced predictive modeling techniques are needed. Througout this course, we will show you how to deal with applications where the linear model is not appropriate. 
+
+
+## Short recap
+
+
+Possibly the simplest scenario of a predictive model is that when we want to estimate a model that predicts a response variable based on existing predictor variables which display a linear relationship to the variable of interest (you have covered a lot of similar examples in *Predictive Modelling*). 
+
+###[example] Birthweight - linear model
+
+
+The data in this example consists of the *birthweight* (in grams) and *gestational age* (in weeks) for 12 boys (*sex* = 1) and 12 girls (*sex* = 2). We will remind you how to fit a linear model on this data.
+
+First we read in the data set:
+
+```{r, results = 'hide'}
+bw <- read.table("birthweight.txt", header = TRUE)
+bw
+```
+ 
+ 
+```{r, echo = FALSE, results = 'asis' }
+library (xtable)
+print (xtable( bw , caption = "Birthweight data set"), comment = FALSE)
+``` 
+
+We can visualize the data using a scatterplot of *birthweight* and *gestational age* with different plotting symbols and colours for boys and girls. Based on this plot we can say that there appears to be a linear, moderately positive relationship between `birthweight` and `gestational age` for both groups. It also seems that, on average, boys seem to display a higher birthweight than girls.
+
+```{r, echo = FALSE, results ='hide'}
+library(ggplot2)
+```
+
+```{r, fig.cap = " Gestational age and birthweight for boys and girls.", fig.height=4 }
+p1 <- ggplot ( bw, aes( bw$gestage, bw$birthweight) )
+p1 + geom_point( aes( colour = factor(bw$sex), shape = factor(bw$sex)), size = 3) +
+     xlab ( "Gestational age (weeks)") +
+     ylab ( "Birthweight (grams)") + 
+     guides( colour = guide_legend("Sex"), 
+             shape = guide_legend("Sex"), 
+             labels = c("boys", "girls"))
+```
+
+
+We start by fitting a linear model with *birthweight* ($Y_{jk}$) as a response variable and *gestational age* ($x_{jk}$) and *sex* as explanatory/predictor variables. We can use the `lm` function to fit this linear model in R. This model assumes different intercepts and common slopes for boys ($j=1$) and girls ($j=2$):
+$$E(Y_{ij}) = \mu_{jk} = \alpha_j + \beta x_{jk}; ~~~ \text{where}~ Y_{jk} \sim N(\mu_{jk}, \sigma^2),~k=1,...,12, ~ j=1,2$$
+
+
+```{r, results = 'hide'}
+m0 <- lm( birthweight ~ gestage + sex, data = bw)
+summary(m0)
+```
+
+
+``` {r, results = 'asis', echo = FALSE}
+library (xtable)
+print (xtable( summary( m0 ), caption = "Null model estimates"), comment = FALSE)
+```
+
+From the output for the null model, `m0`, we can obtain our parameter estimates as follows:
+
+* common slope for boys and girls: $\hat{\beta}$ = `m0$coefficients[2]` = `r round(m0$coefficients[2], 3)`
+* intercepts: 
+
+    + for boys: $\hat{\alpha}_1$ = `m0$coefficients[1] + m0$coefficients[3]` = `r round( m0$coefficients[1] + m0$coefficients[3] , 3)`
+
+    + for girls: $\hat{\alpha}_2$ = `m0$coefficients[1] + 2 * m0$coefficients[3]` = `r round( m0$coefficients[1] + 2 * m0$coefficients[3], 3)`
+
+
+We can visualize this regression model, which in this case should consist of two paralell lines (different intercepts and common slope for boys and girls), by plotting the data and fitted regression lines (Figure 2):
+
+```{r, fig.cap = " A linear model fit with different intercepts and same slope for boys and girls.", fig.height=4}
+
+m0_p <- data.frame (bw, 
+                    s =  c(m0$coefficients[2], m0$coefficients[2]), 
+                    i =  c(m0$coefficients[1] + m0$coefficients[3], 
+                           m0$coefficients[1] + 2 * m0$coefficients[3]))
+
+p2 <- ggplot ( m0_p, aes( bw$gestage, bw$birthweight)) 
+p2 + geom_point( aes( colour = factor(bw$sex), shape = factor(bw$sex)), size = 3) +
+     geom_abline( aes(slope = m0_p$s[1] , intercept =  m0_p$i[1], colour = factor(1))) +
+     geom_abline( aes(slope = m0_p$s[2] , intercept =  m0_p$i[2], colour = factor(2))) +
+     xlab ( "Gestational age (weeks)") + 
+     ylab ( "Birthweight (grams)")  + 
+     guides( colour = guide_legend("Sex"), 
+             shape = guide_legend("Sex"), 
+             labels = c("boys", "girls")) 
+ 
+```
+
+###[/example]
+
+###[task]
+Given the equation of the linear model and the slope and intercept coefficients, how would you write down the model equations? 
+
+*Hint: the model will consists of two parallel lines, so it would be easier if you specify one equation for each group (boys/girls)*
+###[/task]
+
+
+## Generalized linear models
+
+What do we do when our reponse variable is not so *normal* looking? The answer is: it depends!
+
+In situations where the *respose variable* represents proportions or binary outcomes, the standard linear model cannot be used, and this is one of the motivations for developing a wider class of linear models called **generalized linear models**. You have covered examples of regression models applied to binary data in *Predictive modeling* in the context of classification, where the *logistic regression model* was used to predict the category to which an observation belongs. Some examples of response variables with binary outcomes are:
+
+
+* success/failure
+* admit/do not admit
+* divorced/not divorced
+* alive/dead
+* effective/defective
+* pass/fail
+* present/absent
+* yes/no
+
+We demonstrate the failure of the standard linear model on an example as follows:
+
+
+###[example] Possum classification - logistic regression model
+
+
+This data set records variables of common brushtail possums found in various Australian regions (source: OpenIntro Statistics). We consider 104 brushtail possums from two regions in Australia, where the possums may be considered a random sample from the population. The first region is Victoria, which is in the eastern half of Australia and traverses the southern coast. The second region consists of New South Wales and Queensland, which make up eastern and northeastern Australia. The outcome variable, called `population`, takes value 1 when a possum is from Victoria and 0 when it is from New South Wales or Queensland. See Figure 3 for scatterplots of the variables recorded.
+
+```{r, results='hide', message=FALSE}
+possum <- read.table('possum.txt', header = TRUE )
+head( possum )
+attach( possum )
+```
+```{r, echo = FALSE, results = 'asis' }
+library (xtable)
+print (xtable( head( possum ) , caption = "Possum data set"), comment = FALSE)
+``` 
+
+
+```{r, fig.cap = "Variables in the `possum` data set", warning=FALSE, message=FALSE, fig.height=4}
+
+ggplot (possum, aes(x = skullW, y = pop, colour = sex, alpha = 0.4)) + 
+    geom_point() + geom_jitter(width = 0.1, height = 0.01) + 
+    xlab("Skull width") + ylab("Region") + guides( colour = "legend", alpha = "none") +
+    scale_y_discrete(labels = c('Victoria','Not Victoria'))
+```
+
+```{r, echo = FALSE }
+detach(possum)
+``` 
+
+Our aim is to build a model to differentiate between the possums in Victoria (region 1) and New South Wales & Queensland (region 2) based on the variables provided.
+
+In this exmaple, we can use logistic regression to differentiate between possums in the two regions. We use `population` as the outcome variable and we have five other variables in the dataset that we can use as predictors : `sex` (an indicator for a possum being male), `head_length`, `skull_width`, `total_length`, and `tail_length`. 
+
+Why should we not just use a standard linear model? One of the reasons is that the predicted values of the response can take any values according to the form of the regression model equation, whereas the response variable can only take the values 1 (Victoria) or 0 (not Victoria). 
+
+Since this is clearly a classification problem, it is more intuitive to solve this problem by modeling the *probability of a possum belonging to the Victoria region*, and using a function that will map the values of probability in the real number domain. This can be achieved using **logistic regression**, an extension of the standard linear model for binary outcome data, where the probability of success is described based on explanatory variables. We will cover this topic in more detail in Weeks 3-4.
+
+###[/example] 
+
+Another type of response variable that we might encounter in practice represents count data (*number of...*) . In this scenario, we can use a **count regression** model to explain this response using available predictor variables. Examples include modeling:
+
+* the *number* of incoming calls in a call center
+* the *number* of earthquakes
+* the *number* of people suffering from a certain disease
+* the *number* of accidents in an intersection etc.
+
+
+###[example] Galapagos islands - Poisson regression model
+
+For 30 Galapagos islands the number of plant species found in each was recorded, along with several geographical variables.
+The dataset gala is available from `library(faraway)` in R and contains the following variables: 
+
+* *Species*, the number of species found on the island, 
+* *Endemics*, the number of endemic species, 
+* *Area*, the area of the island (km2), 
+* *Elevation*, the highest elevation of the island (m), 
+* *Nearest*, the distance from the nearest island (km), 
+* *Scruz*, the distance from Santa Cruz island (km), 
+* *Adjacent*, the area of the adjacent island (square km).
+
+```{r, results = 'asis', echo = FALSE}
+library (xtable)
+library(faraway)
+print ( xtable (gala, caption = "Galapagos islands plant species dataset"), comment = FALSE)
+```
+
+```{r, results = 'hide', fig.height=6, fig.width=12, message=FALSE, fig.cap= "Variables in the Galapagos plant species dataset", echo = FALSE}
+library(ggplot2)
+library(GGally)
+library(gridExtra)
+
+gala
+ggpairs(gala, upper = list(continuous='points'), lower = list(continuous='cor'))
+```
+
+In week 5 of this course, we will teach you how to fit Poisson/count regression models using R. In this example, the *number of species* will be the response variable and the rest of the geographical variable will be used as explanatory/predictor variable.
+
+###[/example] 
+
+###[task]
+Looking at the plot of variables in the *Galapagos islands* dataset, what can you comment about the relationships between variables? Are these relationships linear? Would you apply a linear regression model to this data?
+###[/task]
+
+## Time series data
+
+Another context in which we can extend the standard linear model when we are dealing with *time series models*. A time series is a single set of data whose observations are ordered in time. The important difference with time series data is that the observations relate to a single quantity measured at a number of points in time. Therefore observations that are close in time are likely to be correlated and not independent. As a result, the majority of statistical models you have met are not appropriate for modeling time series data, because they assume the observations are independent. In this context, regression analysis is often considered for modeling trend and seasonal variation.
+
+Time series data are found in a wide variety of application areas, examples of which include:
+
+* Environmental: yearly average temperature levels, daily CO2 levels in the atmo- sphere.
+* Economic: Daily value of the FTSE share index, the UK`s yearly gross domestic product (GDP), monthly levels of unemployment.
+* Medical: Daily number of deaths in Glasgow due to heart attack, size of the monthly transplant waiting list.
+* Educational: Number of students obtaining degrees from Glasgow university per year, weekly attendance at my lectures.
+* Business: Monthly sales figures for a leading supermarket, number of chocolate bars made per week by Cadburys.
+* Leisure: Number of goals scored in the Premier league each week of the season, number of people going to the cinema per week.
+
+
+###[example] Minimum temperatures in Glagow - time series data
+
+In this example daily minimum temperature levels in Glasgow have been recorded between 2005 and 2007. 
+
+```{r, results = 'hide'}
+temp <- read.csv("temperature.csv", header = TRUE)
+head( temp)
+```
+
+```{r, echo = FALSE, results = 'asis' }
+library (xtable)
+print (xtable( head( temp ) , caption = "Temperature data set"), comment = FALSE)
+``` 
+
+We can plot the temperature levels against time to form an initial impression of what the data looks like.
+```{r, fig.height=4}
+ggplot(temp, aes(x = Day, y = Temperature)) + geom_line() +
+  xlab("Date") + ylab("Minimum temperature (Celsius)")
+```
+###[/example] 
+
+
+###[task]
+Looking at the plot of minimum temperatures, what patterns (we call these *trends*) do you notice? Do any patterns repeat periodically (is there a *seasonal* trend)? Thinking back at the simple linear model and its assumptions, would you say the data in this example data is *independent*?
+###[/task]
+
+
+We will look at this type of data in more details in Weeks 6-8. 
+
+
+
+## Mixed effects models 
+
+Some data has a grouped, nested or hierarchical structure. Repeated measures, longitudinal and multilevel data consist of several observations taken on the same individual or group. This induces a correlation structure in the error. Mixed effect models allow the modeling of such data.
+
+Grouped data arise in almost all areas of statistical application. Sometimes the grouping structure is simple, where each case belongs to single group and there is only one grouping factor. However, more complex datasets have a hierarchical or nested structure or include longitudinal or spatial elements. All such data share the common feature of correlation of observations within the same group and so analyses that assume independence of the observations will be inappropriate. The use of random effects is one common and convenient way to model such grouping structure.
+
+A *fixed effect* is an unknown constant that we try to estimate from the data. Fixed effect parameters are commonly used in linear and generalized linear models. In contrast, a *random effect* is a random variable. It does not make sense to estimate a random effect; instead, we try to estimate the parameters that describe the distribution of this random effect. A *mixed effects* model contains both fixed and random effects.
+
+###[example] Understanding the differences between **fixed** and **random** effects
+
+Consider an experiment to investigate the effect of several drug treatments on a sample of patients. Typically, we are interested in specific drug treatments and so we would treat the drug effects as **fixed**. However, it makes most sense to treat the patient effects as **random**. It is often reasonable to treat the patients as being randomly selected from a larger collection of patients whose characteristics we would like estimate. Furthermore, we are not particularly interested in these specific patients, but in the whole population of patients. A random effects approach to modeling effects is more ambitious in the sense that it attempts to say something about the wider population beyond the particular sample.
+###[/example]
+
+
+The following example also illustrates a scenario where we could use a *mixed effects model*.
+
+###[example] Irrigation methods and crop varieties 
+
+In an agricultural field trial, the objective was to determine the effects of two crop varieties and four different irrigation methods. Eight fields were available, but only one type of irrigation may be applied to each field. The fields may be divided into two parts with a different variety planted in each half. The whole plot factor is the method of irrigation, which should be randomly assigned to the fields. Within each field, the variety is randomly assigned.
+
+```{r}
+library( faraway)
+library( gridExtra)
+data(irrigation)
+
+p1 <- ggplot(irrigation, aes(x=variety, y=yield, fill = irrigation )) + 
+    geom_bar( stat = "identity", position = "dodge" )
+
+p2 <- ggplot(irrigation, aes(x=variety, y=yield, fill = field )) + 
+    geom_bar( stat = "identity", position = "dodge" )
+
+grid.arrange(p1, p2, nrow = 1)
+```
+
+###[/example]
+
+
+###[task]
+Which of these variables would you consider as fixed effects and which ones would be random effects?
+###[/task]
+
+
+We will cover the theoretical aspects and some applications of mixed effects models in Weeks 9-10.
+
+
+## Conclusion
+
+What do all these examples have in common - the assumptions of the regular linear model are being violated, and so the standard linear model cannot be applied. Throughout this course we will tackle a variety of scenarios that occur in practice that can be approached with extensions of the linear model.
+
+
+## Week 1 learning outcomes
+
+* Understand the scope of advanced predictive modeling.
+
+
+### Task answers
+
+
+
+###[answers] 
+
+**Task 1**
+
+Our model consists of two parallel lines with the following equations:
+
+* for boys: 
+  $$ \text{birthweight} = -1610.283 + 120.894 \times \text{gestational age}$$
+  
+* for girls: 
+  $$ \text{birthweight} = -1773.322 + 120.894 \times \text{gestational age}$$
+
+
+**Task 2**
+
+
+
+
+**Task 3**
+The patterns we see in the time series data are what we would expect from temperature data: there appears to be a yearly cycle with higher temperatures in summer and lower in winter (this would be the seasonal component of the time series). Notice there is also a lot of variability in the minimum temperatures from day-to-day, indicating a fairly erratic weather pattern. 
+
+
+
+**Task 4**
+
+The irrigation and variety are fixed effects, but the field is clearly a random effect. We must also consider the interaction between field and variety, which is necessarily also a random effect because one of the two components is random.
+
+###[/answers]

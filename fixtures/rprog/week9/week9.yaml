@@ -1,0 +1,19 @@
+#
+# Next year: Add bonus material from t5.Rnw
+# (capturing clicks in plots)
+#
+name: "Week 9"
+title: "Building interactive webapps using Shiny"
+golive: "+9w"
+content:
+  - type: text
+    src : overview.Rmd
+  - type: text
+    src: ui.Rmd
+  - type: text
+    src: datadriven.Rmd
+  - type: text
+    src: reactivity.Rmd
+  - type: text
+    src: review.Rmd
+    

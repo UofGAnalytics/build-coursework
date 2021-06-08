@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Martel:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader&display=swap');
+
+// ------------------------
+// font -------------------
+// ------------------------
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+    'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.75;
+  text-rendering: geometricPrecision;
+  color: #222;
+
+  &.font-serif main {
+    font-family: 'Newsreader';
+  }
+  &.font-monospace main {
+    font-family: monospace;
+  }
+
+  &.font-default,
+  &.font-serif {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .boxout .title {
+      font-family: 'Martel', serif;
+    }
+  }
+}
+
+main {
+  font-size: calc(1rem * var(--fontSize));
+  // transition: font-size 0.2s;
+}
+
+// ------------------------
+// global -----------------
+// ------------------------
+
+p {
+  margin-bottom: 1em;
+}
+
+a {
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--linkColor);
+}
+
+// ------------------------
+// titles -----------------
+// ------------------------
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.boxout .title {
+  font-weight: 700;
+  margin: 1.5em 0 1em;
+}
+
+h1 {
+  color: rgb(var(--primaryColor));
+}
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--highlightColor);
+}
+
+h1 {
+  font-size: 3.3em;
+  margin: 0.6em 0 1.45em;
+}
+h1 span {
+  display: block;
+  font-size: 0.4em;
+  opacity: 0.4;
+  margin-top: -0.5em;
+}
+
+h2 {
+  font-size: 2.5em;
+  margin: 1em 0 0.5em;
+}
+
+h3 {
+  font-size: 1.5em;
+  margin: 3em 0 0.5em;
+}
+
+h4 {
+  font-size: 1.25em;
+  margin-top: 2em;
+}
+
+h2 + h3,
+h3 + h4,
+h4 + h5,
+h5 + h6 {
+  margin-top: 0;
+}
+
+h2 + .boxout,
+h3 + .boxout,
+h4 + .boxout,
+h5 + .boxout {
+  margin-top: 0;
+}
+
+// link icon on hover
+h2,
+h3,
+h4,
+h5,
+h6 {
+  $diam: 0.6em;
+  $spacing: 0.5em;
+  .link {
+    display: inline-block;
+    vertical-align: middle;
+    width: $diam + $spacing;
+    height: $diam;
+    margin-top: -0.15em;
+    margin-left: ($diam + $spacing) * -1;
+    opacity: 0;
+    transition: opacity 0.2s;
+    .icon {
+      display: block;
+      width: $diam + $spacing;
+      height: $diam;
+      fill: rgb(var(--primaryColor));
+    }
+  }
+
+  &:hover {
+    .link {
+      opacity: 0.5;
+    }
+  }
+}
+
+// ------------------------
+// list -------------------
+// ------------------------
+
+ul {
+  padding: 0rem 2rem 1rem;
+}
+li:not(:last-child) {
+  padding-bottom: 0.5rem;
+}
+
+// ------------------------
+// tag --------------------
+// ------------------------
+
+#view-options-toggle,
+.boxout .type,
+.answer-trigger {
+  display: inline-block;
+  padding: 0.3rem 0.8rem 0.25rem;
+  font-size: 0.8rem;
+  line-height: 1.5rem;
+  font-weight: bold;
+  color: rgba(var(--primaryColor), 1);
+  background: rgba(var(--primaryColor), 0.1);
+  border-radius: 0.2rem;
+  user-select: none;
+  transition: background 0.2s;
+  &:hover {
+    background: rgba(var(--primaryColor), 0.2);
+  }
+}

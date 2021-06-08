@@ -1,0 +1,6 @@
+name: "Week 10"
+title: "Models for correlated discrete responses"
+golive: "+1w"
+content:
+  - type: text
+    src: week10mat.Rmd

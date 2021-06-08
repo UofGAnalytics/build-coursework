@@ -1,0 +1,16 @@
+name: "Week 7"
+title: "Control Structures"
+golive: "+5w"
+content:
+  - type: text
+    src: if.Rmd
+  - type: text
+    src: loops.Rmd
+  - type: text
+    src: ifelse.Rmd
+  - type: text
+    src: avoid.Rmd
+  - type: text
+    src: review.Rmd
+    
+    

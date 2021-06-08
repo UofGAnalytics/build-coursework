@@ -1,0 +1,24 @@
+svg.pdftex {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: white;
+  // path {
+  //   stroke: white;
+  // }
+  // tspan {
+  //   fill: white;
+  // }
+}
+
+.math svg {
+  max-width: 100%;
+}
+
+.math-inline {
+  vertical-align: middle;
+  font-size: 0.9em;
+  svg {
+    max-width: 100%;
+  }
+}

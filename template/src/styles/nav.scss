@@ -1,0 +1,33 @@
+aside {
+  nav {
+    li {
+      list-style: none;
+      padding: 0;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    // h2s
+    & > ul {
+      padding: 0 calc(2rem - 15px) 2rem 2rem;
+      & > li {
+        padding-bottom: 1.5rem !important;
+        // & > p > a {
+        //   color: var(--asideTocH2);
+        // }
+      }
+    }
+
+    // h3s
+    ul ul {
+      padding: 0.5rem;
+      a {
+        color: var(--boxoutFadedTextColor);
+        font-weight: 400;
+      }
+    }
+  }
+}

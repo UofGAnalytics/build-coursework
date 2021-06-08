@@ -1,0 +1,28 @@
+---
+title: Flights out of NYC on 01/01/2013
+---
+
+```{r,include=FALSE}
+library(nycflights13)
+library(dplyr)
+flights.day <- flights %>%
+                    filter(day==1, month==1, year==2013) 
+n.flights <- flights.day %>% nrow()
+```
+
+
+On 01/01/2013, `r n.flights` flights left NYC.
+
+## Most frequent destinations
+
+```{r, echo=FALSE}
+library(knitr)
+flights.day %>%
+    group_by(dest) %>%
+    summarize(n.flights=n()) %>%
+    arrange(desc(n.flights)) %>%
+    slice(1:10) %>%
+    left_join(airports, by=c("dest"="faa")) %>%
+    transmute(Code=dest, Name=name, Flights=n.flights) %>%
+    kable()
+```

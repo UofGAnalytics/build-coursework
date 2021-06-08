@@ -1,0 +1,342 @@
+## Defining your own functions
+<!--
+Next year: add redefining `+`
+-->
+
+
+###[video, videoid="R_h7IntJ6QU", duration="17m15s"]Defining your own functions
+
+### Why should I write my own functions?
+
+Functions are one of the most important concepts in programming.
+Functions allow you to structure complex code.
+
+The idea behind functions is to break a complex problem into blocks of code,
+each of which is self-contained and performs a specified subtask.
+
+Once we have established that a function performs the specified subtask
+correctly, we only need to remember how to use the function. We do not
+need to remember the details of how we implemented the subtask. For
+example, when you use the function `dnorm` you only need to know that it
+computes the p.d.f. of the $\textsf{N}(\mu,\sigma^2)$ distribution, but
+you do not need to know how it does it.
+
+The three main advantages of using functions are:
+
+-   Functions structure your code, thus making reading and maintaining
+    the code much easier.
+
+-   Functions enable the reuse of code and thus help reducing the
+    duplication of code. Duplication of code (i.e. copying and pasting
+    of code from one task to another) is generally considered to be bad
+    programming style. Rather than copying your code you should write a
+    function that implements the common task and then call this function
+    for each task. This approach is not only more efficient and less
+    error-prone, but also avoids the so-called "update anomaly": If you
+    find an error in duplicated code, you have to remember where you
+    copied the code to, and correct every copy of the code. If however
+    you had used a function, you would only need to fix the function.
+	
+- Functions can be "unit-tested". We can test whether the function "does what it says on the tin" before we integrate into a more complex project.
+
+Furthermore, using a structured approach also makes implementing complex
+tasks much easier.
+
+### How to write your own functions
+
+The syntax for defining functions in R is
+```r
+function.name <- function(argument1, argument2, ...) {
+    statement1
+    ...
+    statementn 
+}
+```
+
+####[example]Drawing a circle
+A circle can be drawn in R using the following commands
+```r
+plot(c(-1,1), c(-1,1), type="n")   # Set up canvas
+x <- 0                             # x-coordinate of centre
+y <- 0                             # y-coordinate of centre
+r <- 1                             # Radius
+t <- seq(0, 2*pi, length=250)   
+lines(x+r*cos(t), y+r*sin(t))      # Draw circle
+```
+Suppose you want to draw four circles. Instead of repeating the above commands four times you might want to define a function `circle`. This function should have three arguments: x-coordinate, y-coordinate, and radius:
+```{r}
+circle <- function(x, y, r) {
+  t <- seq(0, 2*pi, length=250)     
+  lines(x+r*cos(t), y+r*sin(t))
+}
+```
+Now we can draw four circles using
+```{r, dev.args=list(pointsize=8)}
+plot(c(-1,1), c(-1,1), type="n")                 # Set up a canvas
+circle(-0.5, -0.5, r=0.5)
+circle(-0.5,  0.5, r=0.5)
+circle( 0.5, -0.5, r=0.5)
+circle( 0.5,  0.5, r=0.5)
+```
+The circles look more like ovals. This is because the scales of the x axis and of the y axis are not equal. If we had used `eqscplot` from `MASS` instead of `plot`, the circles would have been perfect circles. 
+####[/example]
+
+
+You can specify default values for some of the arguments using `argument=expression` in the list of arguments. If the user does not provide this argument, the default value (determined by `expression`) is used. 
+
+The default value can be a function of other arguments given to the function. Essentially, R evaluates arguments lazily (i.e. only if and when they are needed inside the function body), so  when R evaluates `argument` for the first time, it must be able to evaluate `expression`. 
+
+
+####[example]Drawing a circle (continued)
+In our function `circle` we might want to set the radius by default to 1.
+```{r}
+circle <- function(x, y, r=1) {
+  t <- seq(0, 2*pi, length=250)
+  lines(x+r*cos(t), y+r*sin(t))
+}
+```
+####[/example]
+
+The special argument `...` captures all arguments that are not matched otherwise. It is very useful to pass on additional arguments to a function that you call inside a function without having to worry about the details of these arguments.
+
+####[example]Drawing a circle (continued)
+Suppose we want to use the function `circle` to draw circles in different colours and using different line types and widths using arguments like `col`, `lty` and `lwd`. We can then pass on these arguments when we call the `lines` command. 
+
+Rather than specifying all possible parameters that can be used to customise lines, we can simply use the special argument `...`.
+```{r}
+circle <- function(x, y, r=1, ...) {
+  t <- seq(0, 2*pi, length=250)
+  lines(x+r*cos(t), y+r*sin(t), ...)
+}
+```
+Now we can draw the circles in different colours and line widths:
+```{r, dev.args=list(pointsize=8)}
+plot(c(-1,1), c(-1,1), type="n")                 # Set up a canvas
+circle(-0.5, -0.5, r=0.5, col="red", lwd=2)
+circle(-0.5,  0.5, r=0.5, col="orange")
+circle( 0.5, -0.5, r=0.5, col="green")
+circle( 0.5,  0.5, r=0.5, col="yellow", lwd=2)
+```
+####[/example]
+
+####[task]
+Set up a "canvas" using
+```r
+plot(c(-3,3), c(-3,3), type="n")
+```
+and set the variables
+```r
+x <- 0
+y <- 0
+width <- 4
+```
+Use the function `rect` to draw a square with bottom left corner $(\texttt{x}-\texttt{width}/2, \texttt{y}-\texttt{width}/2)$ and top right corner $(\texttt{x}+\texttt{width}/2, \texttt{y}+\texttt{width}/2)$.
+
+Turn (some of) your code into a function `square` that takes the arguments `x`, `y` and `width` and that draws a square with bottom left corner $(\texttt{x}-\texttt{width}/2, \texttt{y}-\texttt{width}/2)$ and top right corner $(\texttt{x}+\texttt{width}/2, \texttt{y}+\texttt{width}/2)$. Additional arguments (such as `col` or `lty`) provided on to your function `square` should be passed on to `rect`.
+
+Use your function to draw three squares in different colours with centre at $(0,0)$ and widths 2, 4, and 6. 
+#####[answer]
+We can define the function square as follows.
+```{r}
+square <- function(x, y, width, ...) {
+  rect(x-width/2, y-width/2, x+width/2, y+width/2, ...)
+}
+```
+We can then draw the three rectangles using
+```{r, dev.args=list(pointsize=8)}
+plot(c(-3,3), c(-3,3), type="n")
+square(0, 0, 6, col="black")
+square(0, 0, 4, col="yellow")
+square(0, 0, 2, col="green")
+```
+
+#####[/answer]
+####[/task]
+
+### Returning objects
+Often we want functions not only to perform certain tasks, but also to return a value (e.g. the result of a calculation). We can return values using the function `return(object)`. The function `return` terminates the function and returns `object`. When we return `object` from the function we can "capture" this value from outside the function and store it in a variable. If we do not assign the returned result from a function to a variable it will be printed on the screen.
+
+If we do not use `return`, then R returns the value of the last statement of the function body.
+
+####[example]Stirling's formula
+Suppose we want to write a function that computes Stirling's approximation to $n!$, which is $\displaystyle \sqrt{2\pi n} n^n \exp(-n)$. 
+```{r}
+stirling <- function(n) {
+  approx <- sqrt(2*pi*n) * n^n * exp(-n)
+  return(approx)
+}
+```
+Actually, there is no need to use \texttt{return} in the above example, as an R function will always return the value of the last statement. Thus we could have used as well
+```{r}
+stirling <- function(n) {
+  sqrt(2*pi*n) * n^n * exp(-n)
+}
+```
+We can now calculate the Stirling approximation to $10!$ using
+```{r}
+stirling(10)
+```
+As the function `stirling` now returns a value, we can assign its result to a variable.
+```{r}
+exact <- factorial(10)     # Store exact result in exact
+exact
+approx <- stirling(10)     # Store Stirling's approximation in approx
+approx
+exact-approx               # Print the error of the approximation
+```
+####[/example]
+
+Lists are typically used to return more than one value or object.
+
+####[example]Stirling's formula (revisited)
+Suppose we want to write a function `stirling.bounds` that
+returns the bounds for $n!$ obtained from the double inequality
+$$\sqrt{2\pi n}n^n\exp\left(-n + \frac{1}{12n+1}\right)< n! <
+\sqrt{2\pi n}n^n\exp\left(-n + \frac{1}{12n}\right).$$ The function
+should return both bounds. We can do this using a list with two entries
+`lower` and `upper`.
+```{r}
+stirling.bounds <- function(n) {
+  approx <- sqrt(2*pi*n) * n^n * exp(-n)
+  list(lower=approx * exp(1/(12*n+1)),
+       upper=approx * exp(1/(12*n)))
+}
+```
+We can then calculate the bounds for $10!$ using
+```{r}
+stirling.bounds(10)
+```
+We can calculate the difference between the upper and the lower bound using
+```{r}
+bounds <- stirling.bounds(10)       # Store result (a list) in variable bounds
+bounds$upper-bounds$lower           # Compute difference between bounds
+```
+####[/example]
+
+####[task]
+Write an R function `all.means` that returns for a given vector `x` the arithmetic mean $\frac{\sum_{i=1}^n x_i}{n}$, the harmonic mean $\displaystyle \frac{n}{\sum_{i=1}^n \frac{1}{x_i}}$, and the geometric mean $\displaystyle \sqrt[n]{\prod_{i=1}^n x_i}$. The function should return a list with the elements `arithmetic`, `harmonic`, and `geometric`.
+
+Hint: You might find the function `prod`, which computes the product of a vector, helpful when calculating the harmonic mean.
+
+#####[answer]
+We start by defining functions which calculate the harmonic mean and the geometric mean.
+```{r}
+#' Compute the harmonic mean
+#' @param x numeric vector containing the data
+#' @return the harmonic mean of x
+harmonic.mean <- function(x) {   
+  n <-length(x)
+  n / sum(1/x)
+}
+
+#' Compute the geometric mean
+#' @param x numeric vector containing the data
+#' @return the geometric mean of x
+geometric.mean <- function(x) {
+  n <- length(x)
+  prod(x)^(1/n)
+}
+```
+We then combine these two functions and `mean` into the function `all.means`:
+```{r}
+#' Compute the arithmetic, geometric and harmonic mean
+#' @param x numeric vector containing the data
+#' @return a list containing the arithmetic, geometric and harmonic mean of x
+all.means <- function(x) {
+  n <- length(x)
+  list(arithmetic = mean(x),
+       harmonic = harmonic.mean(x),
+       geometric = geometric.mean(x))
+}
+```
+#####[/answer]
+####[/task]
+
+Inside a function you can use all the control structures we have learned about last week (`if`, loops, ...).
+
+###[task]
+ Write an R function `quadratic` which computes the real-valued solutions of the quadratic equation
+$$
+ax^2+bx+c=0
+$$
+Your function should take $a$, $b$, and $c$ as arguments and should return the unique solutions to the above quadratic equation. 
+
+- Your function should start with computing the discriminant $\Delta=b^2-4ac$.
+- If $\Delta<0$, then the quadratic equation has no solution. In this case, return a vector of length 0.
+- If $\Delta=0$, then the quadratic equation has exactly one ("double") solution, $\displaystyle -\frac{b}{2a}$. In this case return this value only.
+- If $\Delta>0$, then the quadratic equation has two solutions, $\displaystyle -\frac{b+\sqrt{\Delta}}{2a}$ and $\displaystyle -\frac{b-\sqrt{\Delta}}{2a}$. In this case return a vector of length two containing both solutions.
+
+What happens if $a=0$? Can you also handle this case correctly?
+####[answer]
+The case $a=0$ corresponds to a linear equation (as the coefficient in front of the quadratic term is zero), so the solution is given by $-\frac{c}{b}$.
+```{r}
+#' Solve quadratic equation ax^2 + bx + c = 0
+#' @param coefficient of the quadratic term (scalar)
+#' @param coefficient of the linear term (scalar)
+#' @param coefficient of the intercept term (scalar)
+#' @return the real solution(s) as a vector of length 0, 1 or 2. 
+quadratic <- function(a, b, c) {
+  if (abs(a)<1e-10) {             # Linear case (for really small a the quadratic
+                                  # formula is unstable, so we use the linear one)
+     return(-c/b)
+  }
+  delta <- b^2 - 4*a*c            # Discriminant
+  if (abs(delta)<1e-10) {         # Exactly one solution (allowing for rounding errors)
+    return(-b/(2*a))
+  }
+  if (delta>0) {                  # Two real solutions
+    sol1 <- -(b+sqrt(delta)) / (2*a)
+    sol2 <- -(b-sqrt(delta)) / (2*a)
+    return(c(sol1, sol2))
+  }
+  return(c())                     # Otherwise no solution
+}
+```
+####[/answer]
+
+###[/task]
+
+
+####[supplement]Invisible returns
+Sometimes we want a function to return some values *only* if its output is assigned to another variable. For instance a function may potentially return a large vector or list which we do not wish to be printed on the console. To achieve this one can use the function `invisible`, i.e. use `return(invisible(object))` rather than just `return(object)`.
+
+Consider the following toy example.
+```{r}
+f <- function(x) {
+    return(invisible(x^2))
+}
+
+f(2)                 # prints nothing ...
+a <- f(2)            # ... but we can assign the output to a variable ...
+a                    # ... which we can then print
+```
+####[/supplement]
+
+###[supplement]Documenting functions
+Few functions are fully self-explanatory, so it is always a good idea to document them. At the very least you should put a comment before the function definition (or at the top of the function body) describing what the function does. 
+
+If you use the syntax used by the R package [roxygen2](https://cran.r-project.org/web/packages/roxygen2/) it is very easy to later convert your comment into the R documentation files required for R packages. `roxygen2` has been inspired by  the [doxygen](http://www.doxygen.org/) tool for C++, which is similar to the [Javadoc](https://en.wikipedia.org/wiki/Javadoc) format for documenting Java classes. The example below illustrates the format.
+```{r}
+#' Compute Stirling's approximation to the factorial
+#' @param n numeric vector for which to calculate the Stirling approximation
+#' @return the Stirling approximation to $n!$.
+#' @details This function is a naive implementation of the formula and for
+#'          large n numerically not stable
+stirling <- function(n) {
+  sqrt(2*pi*n) * n^n * exp(-n)
+}
+```
+More information is available in  the [package vignette](https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html) and in the chapter [Object documentation](http://r-pkgs.had.co.nz/man.html) from [Hadley Wickham's book on R packages](http://r-pkgs.had.co.nz/).
+###[/supplement]
+
+###[weblink, target="http://r4ds.had.co.nz/functions.html", icon="book"]Background reading: Chapter 19 of R for Data Science
+Chapter 19 of *R for Data Science* gives an introductory overview over functions in R.
+###[/weblink]
+
+###[weblink, target="http://adv-r.had.co.nz/Functions.html", icon="book"]Background reading: Advanced R
+The chapter on functions from *Advanced R* is worth a read if you want to delve little deeper into how functions work in R.
+###[/weblink]
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

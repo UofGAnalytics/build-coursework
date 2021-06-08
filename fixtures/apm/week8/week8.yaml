@@ -1,0 +1,6 @@
+name: "Week 8"
+title: "ARMA and ARIMA processes; Forecasting in time series"
+golive: "+1w"
+content:
+  - type: text
+    src: week8mat.Rmd

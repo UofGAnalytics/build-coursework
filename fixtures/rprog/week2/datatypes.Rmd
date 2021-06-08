@@ -1,0 +1,159 @@
+## Other data types in R
+
+### Character strings
+So far we have considered vectors which were either numerical or logical. In this section we will look at character strings.
+
+Character strings in R are defined using double or single quotes.
+```{r}
+string <- "A string in single quotes"
+another.string <- 'This time defined using single quotes'
+```
+####[supplement]Line breaks and escaped characters
+A new line can be inserted into a string using `\n`.
+```{r}
+string.with.newline <- "Text\nText on a new line"
+```
+Quotes and backslash must be "escaped" when used inside strings.
+```{r}
+string.with.escapes <- "This \" is a quote and this \\ is a single backslash"
+```
+####[/supplement]
+
+Strings can be printed using `print`. As an example (or just the variable name)
+```{r}
+string
+```
+Use the function `cat` to print the string as it is
+```{r}
+cat(string)
+```
+
+R has a variety of built-in functions for manipulating strings. It is however easier to use the functions from the package [stringr](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html).
+
+For example, two strings can be concatenated using the function `str_c` (the equivalent base R function is `paste`).
+```{r}
+library(stringr)
+str_c("Two strings", "put together", sep=" - ")
+```
+
+####[supplement]An operator for string concatenation
+In contrast to many other programming languages R has no built-in operator for concatenating strings. However, R lets you define your own operators: you can define your own as follows.
+```{r}
+"%.%" <- function(lhs, rhs) {
+  str_c(lhs, rhs)
+}
+left <- "Two strings"
+mid <- " - "
+right <- "put together"
+left %.% mid %.% right
+```
+If you are wondering about the use of percent signs in the operator, R requires this to make sure it is being recognised as an operator.
+####[/supplement]
+
+Note that you cannot use character vectors for any sort of arithmetic. For example
+```{r, error=TRUE}
+"120" + "5"
+```
+You are unlikely to do this deliberately, but you might come across it if R treats a supposedly numerical variable as a character string because of at least one non-numerical entry.
+
+Comparisons between character strings use lexicographic ordering, i.e. they are compared based on where they would be in a dictionary. For example
+```{r}
+"apple">"pear"
+```
+However character strings containing numbers are compared in an unexpected way
+```{r}
+"120" > "5"
+```
+In lexicographic ordering "5" comes after "120" (as only the first digit "1" matters).
+
+
+### Factors
+Factors are a variant on that theme and designed to be used with categorical variables. The main difference between a factor and a character vector is that factors are only allowed to take a pre-defined set of values ("levels").
+
+Any vector can be converted to a factor using the function \texttt{factor}. It has the additional (optional) arguments \texttt{levels} and \texttt{labels} which can be used to set the labels printed when a vector is displayed. 
+```{r}
+x <- c(1, 4, 2, 4, 1, 3, 1, 2, 4)
+X <- factor(x, levels=1:5, labels=c("one", "two", "three", "four", "five"))
+X
+```
+In our example, the factor `X` is only allowed to take the values `"one"`, `"two"`, `"three"`, `"four"` and `"five"` (the level `"five"` is currently not being used). Thus we can set for example 
+```{r}
+X[1] <- "five"
+X
+```
+We cannot set the first entry to `"six"`. `"six"` is not in the set of allowed labels.
+```{r}
+X[1] <- "six"
+X
+```
+In order to be able to set the first entry to `"six"` we need to first expand the set of levels.
+```{r}
+levels(X) <- c(levels(X), "six")
+X[1] <- "six"
+X
+```
+
+To turn `X` back into its original numerical format we can use the function `unclass`.
+```{r}
+unclass(X)
+```
+
+### Converting between data types
+
+You can convert between different data types by using `as.<target-datatype>`. For example you can convert 
+```{r}
+x <- pi                  # x is numeric
+x <- as.character(x)     # now x is a character string
+x <- as.numeric(x)       # x is numeric again (but we lost some digits)
+```
+Often R will convert between different types automatically. The most common data types are
+
+| Data type | Conversion function | Description |
+|-----------|-----------|-----------------------|
+|numeric    |`as.numeric`|Floating point numbers|
+|integer    |`as.integer`|Integer numbers       |
+|logical    |`as.logical`|`TRUE` or `FALSE`     |
+|character  |`as.character`| Character string   |
+|factor     |`as.factor`   | Factor             |
+
+
+### Missing values 
+R uses the special value `NA` to indicate that a value is missing. It is different from `NaN`, which is "not a number", i.e. a value for which the calculations have gone wrong.
+
+You cat set a value to `NA` by simply assigning it the value `NA`.
+```{r}
+x <- 1:4
+x[4] <- NA
+x
+```
+
+Calculations (arithmetic, summary functions, etc.) involving `NA`s have the result set to `NA` as well: the result depends on the value that is not available.
+```{r}
+mean(x)
+```
+If you want R to omit the missing values you can either use
+```{r}
+mean(na.omit(x))
+```
+or
+```{r}
+mean(x, na.rm=TRUE)
+```
+The former is more generic as not every function support the additional argument of `na.rm=TRUE`.
+
+Use the function `is.na` to test whether a value is missing.
+```{r}
+is.na(x)
+```
+You cannot use `==` to test whether a value is missing
+```{r}
+x==NA
+```
+The comparison just results in `NA`, use `is.na` instead.
+
+
+
+
+<!--[if PDF]>
+\newpage
+<![endif]-->

@@ -1,0 +1,246 @@
+## Data manipulation
+
+In this section we will now look at various R functions for manipulating data frames. This week we look at the functions available in base R. Next week, we look at the more elegant and powerful functions from [tidyverse](https://www.tidyverse.org/).
+
+In this section we work with a toy data set called `chol`, which you can load into R
+using
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/chol.RData"))
+```
+The data set contains (simulated) blood fat measurements from a small number of  patients.
+
+### Adding new columns
+
+####[video, videoid="XJE9x9qW0zk", duration="3m58s"]Transformations
+
+Suppose we want to add to our data set a new column called `log.hdl.ldl` which contains the logarithm of the ratio of HDL and LDL cholesterol.
+
+Using what we have seen so far we could use
+```{r}
+chol <- cbind(chol, log.hdl.ldl=log(chol[,"hdl"]/chol[,"ldl"]))
+```
+or
+```{r}
+chol[,"log.hdl.ldl"] <- log(chol[,"hdl"]/chol[,"ldl"])
+```
+or 
+```{r}
+chol$log.hdl.ldl <- log(chol$hdl/chol$ldl)
+chol
+```
+The first two commands work for data frames and matrices whereas the last one only works for data frames.
+
+All of the above commands look slightly messy and use the name of the dat aset more than once, which is a potential source of mistakes when you want to change the name of the data set in the future.
+
+It is generally better to use the functions `transform`. Its main advantage is that we do not need to put `chol$` everywhere.
+```{r}
+chol <- transform(chol, log.hdl.ldl=log(hdl/ldl))
+```
+
+
+### Removing columns
+
+You can use the subsetting techniques for matrices to remove columns. For example,
+```{r}
+chol <- chol[,-3]
+```
+removes the column `trig` (third column). Alternatively, you could use list-style syntax:
+```r
+chol[[3]] <- NULL
+```
+or
+```r
+chol$trig <- NULL
+```
+
+####[supplement]NULL
+The null object in R is `NULL`. You can test whether an object is null by using `is.null(object)`.  However, `object==NULL` does *not* work.
+####[/supplement]
+
+
+
+###[label="datasubsetting"]Subsetting data sets / Selecting observations
+
+<!-- ####[video, videoid="z8ut7bOTtOc", duration=""]Subsetting data -->
+
+
+Data frames can be subset just like matrices. For example, to remove all patients who have never smoked and store the result in a data frame called `chol.smoked` we can use
+```{r}
+chol.smoked <- chol[chol$smoke!="no",]
+chol.smoked
+``` 
+Because there is a missing value in the smoking status, the new data set starts with a row of missing values. This is due to the fact that `chol$smoke!="no"` has as third entry `NA`.
+```{r}
+chol$smoke!="no"
+```
+For every `NA` in the condition, R will put a row of `NA`'s at the top of the data set.
+
+We then have to remove the row(s) with missing values, which is best done using the function `na.omit`
+```{r}
+chol.smoked <- na.omit(chol.smoked)
+```
+
+We can subset the data frame in one go when we use the function `subset`. Just like `transform` it provides a cleaner solution because it does not require us to use `chol$` in the condition. 
+```{r}
+chol.smoked <- subset(chol, smoke!="no")
+chol.smoked
+```
+
+\newpage
+####[task]
+
+Create a data frame `chol.lowhdl` containing the data for patients with a HDL cholesterol of less than 40 mg/dl.
+
+#####[answer]
+<!--[if PDF]>\mbox{ }<![endif]-->
+```{r}
+chol.lowdl <- subset(chol, hdl<40)
+chol.lowdl
+```
+#####[/answer]
+
+####[/task]
+
+### Sorting data sets
+
+The function `order` can be used to sort an entire data set by one column. The data frame chol can be sorted by the age of the patient using
+```{r}
+permut <- order(chol$age)      # Create the permutation order by age
+chol <- chol[permut,]          # Apply this permutation to the entire data set
+chol
+```
+We will see more elegant code for sorting data sets when we look at tidyverse next week.
+
+####[supplement]Attaching data frames
+To access the column `height` in the data frame `kids` we have to use `kids$height` (or one of the above equivalent statements). Sometimes it would be easier just to refer to it as `height` (without the `kids$`) as we have done inside `transform` or `subset`. This can be done using the function `attach`. After calling
+```{r, echo=FALSE}
+kids <- rbind(Sarah=data.frame(age=4, weight=15, height=101),
+              John=data.frame(age=11, weight=28, height=132))
+```
+```{r}
+attach(kids)
+```
+we can access the columns of `kids` as if they were variables, i.e. we can use
+```{r}
+weight / (height/100)^2
+```
+instead of
+```{r}
+kids$weight / (kids$height/100)^2
+```
+To undo the effects of \texttt{attach} simply use
+```r
+detach(kids)
+```
+
+However, `attach` behaves in an unexpected way if you try to change any of the variables of a data frame you have already attached. The problem with `attach`'ed data is that it exists in R twice. Once as inside the data frame (where it was before you called `attach`) and once as a variable in your current environment. R does however *not* link those two. If you change one of them, the other one does *not* get updated automatically.
+ 
+Suppose we now want to change the weight from kgs to pounds, i.e. divide it by 
+0.45359237. If you now use
+```{r}
+weight <- weight / 0.45359237
+```
+to change the unit, you have changed the unit only for the `attach`'ed variable.
+```{r}
+weight
+kids$weight
+```
+`weight` contains the weight in pounds, whereas `kids$weight` still contains the "old" weight in kgs.
+```{r}
+
+```
+If we had used
+```{r}
+kids$weight <- kids$weight / 0.45359237
+```
+the opposite would have happened. `weight` would have contained the old version (in kgs), and only `kids$weight` would have contained the new version (in pounds). In other words, whatever we do, we will end up with inconsistent data.
+
+Thus, it is probably a good idea to avoid using `attach`. If you use `attach` remember this important rule: Never manipulate `attach`'ed data!
+
+The function `with` is a safer alternative to `attach`. We could use
+```{r}
+with( kids, {
+  weight <- weight / 0.45359237
+} )
+```
+to transform the column `weight` from kgs to pounds. In scripts using `with` is actually clearer than `attach`. However in the interactive console, `with` is slightly more awkward to use. Note that in this example it would have been easiest to use `transform`.
+```{r}
+kids <- transform(kids, weight=weight / 0.45359237)
+```
+```{r, echo=FALSE}
+detach(kids)
+```
+####[/supplement]
+
+####[task]
+The data frame `cia` contains data about almost all countries taken from the [CIA World Factbook](https://www.cia.gov/library/publications/the-world-factbook/).
+
+You can load the data frame into R using
+```{r}
+load(url("http://www.stats.gla.ac.uk/~levers/rp/cia.RData"))
+```
+
+We will use the following columns.
+
+|Variable    |Content                        |
+|------------|-------------------------------|
+|`Country`   | Name of the country |
+|`Continent` | Geographic region the country is located in |
+|`Population`| Population |
+|`Life` | Life expectancy at birth in years |
+|`GDP` | Gross domestic product in USD |
+|`MilitaryExpenditure` | Military expenditure in USD |
+
+(a) Delete all observations for which the population is missing. You might find the functions `is.na` or `complete.cases` useful. (You can get R to show the help for these functions by entering `?is.na` or `?complete.cases`).
+
+(b) Which countries have a population of less than 10,000 inhabitants?
+
+(c) Which countries have a military expenditure of at least 8\% of the GDP?
+
+(d) Ignoring missing values, what is the combined GDP of all European countries?
+
+(e) Create a new column `GDPPerCapita`, which contains the per capita GDP (`GDP`) divided by `Population`. Also create a new column `MilitaryExpPerCapita`, which contains the per capita military expenditure `MilitaryExpenditure` divided by `Population`).
+
+(f) Which country has the highest life expectancy? 
+
+(g) Which ten countries have the highest life expectancy?
+
+#####[answer]
+You can use the following R code.
+
+```{r}
+#-- Part (a) -------------------------------------
+cia <- subset(cia, !is.na(Population))       
+
+#-- Part (b) -------------------------------------
+subset(cia, Population<1e4)
+
+#-- Part (c) -------------------------------------
+subset(cia, MilitaryExpenditure>0.08*GDP)$Country
+
+#-- Part (d) -------------------------------------
+cia.europe <- subset(cia, Continent=="Europe" & !is.na(GDP))
+sum(cia.europe$GDP)
+
+#-- Alternative answer to part (d) ---------------
+sum(subset(cia, Continent=="Europe")$GDP, na.rm=TRUE)
+
+#-- Part (e) -------------------------------------
+cia <- transform(cia, GDPPerCapita=GDP/Population, 
+                      MilitaryExpPerCapita=MilitaryExpenditure/Population)
+
+#-- Part (f)--------------------------------------
+cia[order(cia$Life, decreasing=TRUE)[1],]
+
+#-- Alternative answer to part (f) ---------------
+cia[which.max(cia$Life),]
+
+#-- Part (g) -------------------------------------
+cia[order(cia$Life, decreasing=TRUE)[1:10],]
+```
+
+#####[/answer]
+
+####[/task]
+
+\newpage

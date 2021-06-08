@@ -1,0 +1,20 @@
+name: "Week 6"
+title: "Advanced R Graphics using ggplot2"
+golive: "+4w"
+content:
+  - type: text
+    src: overview.Rmd
+  - type: text
+    src: qplot.Rmd
+  - type: text
+    src: ggplot.Rmd
+  - type: text
+    src: modifying.Rmd
+  - type: text
+    src: examples.Rmd
+  - type: text
+    src: review.Rmd
+  - type: text
+    src: bonus.Rmd
+    
+    
