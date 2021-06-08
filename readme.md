@@ -29,3 +29,13 @@ https://www.dyslexiefont.com
 
 https://github.com/coursebuilder-ncl/makecourse
 https://github.com/r-lib/actions
+
+## Windows installation
+
+Install [nvm-windows](https://github.com/coreybutler/nvm-windows).
+
+```
+nvm install 12
+nvm use 12
+node -v
+```
