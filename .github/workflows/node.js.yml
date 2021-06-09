@@ -54,8 +54,8 @@ jobs:
 
       - name: Install R packages
         run: |
-          R -e 'install.packages("renv")'
-          R -e 'renv::restore()'
+          R -e "install.packages('renv')"
+          R -e "renv::restore()"
 
       - run: yarn workspace template build
       - run: yarn check-types
