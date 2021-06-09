@@ -3,30 +3,30 @@ import { exec } from 'child_process';
 import { Context } from '../types';
 
 export async function knitr(rMarkdown: string, ctx: Context) {
-  const rMarkdownStdin = `tee <<"EOF"\n${rMarkdown}\nEOF\n`;
+  // const rMarkdownStdIn = `tee <<"EOF"\n${rMarkdown}\nEOF\n`;
+  const rMarkdownStdIn = `@"\n${rMarkdown}\n"@`;
 
   const inlineKnitr = `
     library(knitr)
 
-    input <- file("stdin", "r")
+    input <- file('stdin', 'r')
     content <- readLines(input)
 
     opts_chunk$set(
-      dev="svglite",
-      fig.path="${ctx.cacheDir}/"
+      dev='svglite'
     )
 
     knit(
       text=content,
-      output="",
+      output='',
       quiet=TRUE
     )
   `;
 
-  const command = `(${rMarkdownStdin}) | Rscript -e '${inlineKnitr}'`;
+  const command = `(${rMarkdownStdIn}) | Rscript -e "${inlineKnitr}"`;
 
   return new Promise<string>((resolve, reject) => {
-    exec(command, (err, response) => {
+    exec(command, { shell: 'powershell.exe' }, (err, response) => {
       if (err) {
         // console.log('ERROR', err);
         reject(err);
