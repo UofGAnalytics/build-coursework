@@ -1,32 +1,23 @@
 import { exec } from 'child_process';
+import path from 'path';
+
+import { VFile } from 'vfile';
 
 import { Context } from '../types';
 
-export async function knitr(rMarkdown: string, ctx: Context) {
-  // const rMarkdownStdIn = `tee <<"EOF"\n${rMarkdown}\nEOF\n`;
-  const rMarkdownStdIn = `@"\n${rMarkdown}\n"@`;
+export async function processKnitr(files: VFile[], ctx: Context) {
+  return Promise.all(
+    files.map(async (file) => {
+      file.contents = await knitr(file.path as string, ctx);
+      return file;
+    })
+  );
+}
 
-  const inlineKnitr = `
-    library(knitr)
-
-    input <- file('stdin', 'r')
-    content <- readLines(input)
-
-    opts_chunk$set(
-      dev='svglite'
-    )
-
-    knit(
-      text=content,
-      output='',
-      quiet=TRUE
-    )
-  `;
-
-  const command = `(${rMarkdownStdIn}) | Rscript -e "${inlineKnitr}"`;
-
+async function knitr(filePath: string, ctx: Context) {
+  const fullPath = path.join(process.cwd(), filePath);
   return new Promise<string>((resolve, reject) => {
-    exec(command, { shell: 'powershell.exe' }, (err, response) => {
+    exec(`Rscript knitr.R ${fullPath}`, (err, response) => {
       if (err) {
         // console.log('ERROR', err);
         reject(err);

@@ -13,7 +13,10 @@ const watcherOptions = {
 rebuildAndRecompile();
 
 chokidar
-  .watch(['./compiler/src', './compiler/assets'], watcherOptions)
+  .watch(
+    ['./compiler/src', './compiler/assets', './compiler/knitr.R'],
+    watcherOptions
+  )
   .on('all', debounce(rebuildAndRecompile, 300));
 
 chokidar

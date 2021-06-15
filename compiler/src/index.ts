@@ -8,6 +8,7 @@ import {
   linter,
   markdownParser,
 } from './processors';
+import { processKnitr } from './r-markdown/knitr';
 import { Context, Options } from './types';
 import { printReport, reportHasFatalErrors } from './utils/report';
 import {
@@ -57,8 +58,10 @@ async function createUnit(ctx: Context, unitIdx: number) {
 export async function buildUnit(ctx: Context, unitIdx: number) {
   const { files } = ctx.course.units[unitIdx];
 
+  const markdowns = await processKnitr(files, ctx);
+
   const mdasts = await Promise.all(
-    files.map((file) => markdownParser(file, ctx))
+    markdowns.map((file) => markdownParser(file, ctx))
   );
 
   // transforms in parallel with reports back to original files
