@@ -67,9 +67,7 @@ module.exports = {
       {
         test: /\.s?css$/,
         use: [
-          isProd
-            ? MiniCssExtractPlugin.loader
-            : 'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
           "sass-loader",
         ]
@@ -94,9 +92,9 @@ module.exports = {
   }
 };
 
-function template({ css, js }) {
+function template({ css, js2 }) {
   const cssTags = generateCSSReferences({ files: css })
-  const jsTags = generateJSReferences({ files: js })
+  const jsTags = generateJSReferences({ files: js2 })
   const content = fs.readFileSync(htmlFilePath, 'utf-8')
   return `
     <!DOCTYPE html>
