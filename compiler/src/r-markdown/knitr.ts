@@ -15,12 +15,15 @@ export async function processKnitr(files: VFile[], ctx: Context) {
 }
 
 async function knitr(filePath: string, ctx: Context) {
-  const fullPath = path.join(process.cwd(), filePath);
-  const cmd = `Rscript knitr.R ${fullPath} ${ctx.cacheDir}`;
+  const rFile = path.join(process.cwd(), 'compiler', 'knitr.R');
+  const cmd = `Rscript ${rFile} ${filePath} ${ctx.cacheDir}`;
   return new Promise<string>((resolve, reject) => {
-    exec(cmd, (err, response) => {
-      if (err) {
-        // console.log('ERROR', err);
+    exec(cmd, (err, response, stdErr) => {
+      if (stdErr) {
+        console.error('STDERR', stdErr);
+        reject(stdErr);
+      } else if (err) {
+        console.error('ERROR', err);
         reject(err);
       } else {
         const res = formatResponse(response);

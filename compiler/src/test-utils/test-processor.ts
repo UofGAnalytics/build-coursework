@@ -1,4 +1,5 @@
 import os from 'os';
+import path from 'path';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
@@ -6,13 +7,19 @@ import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';
 import { Options } from '../types';
+import { writeFile } from '../utils/utils';
 import { createHasFailingMessage } from './has-message';
 import { buildUnit } from '..';
 
 export async function testProcessor(md: string, options: Options = {}) {
+  const tempDir = os.tmpdir();
+  const fileName = Math.random().toString(36).substr(2, 5);
+  const filePath = path.join(tempDir, fileName + '.Rmd');
+
+  await writeFile(filePath, unindentString(md));
+
   const file = toVFile({
-    path: 'fake-path/fake.md',
-    contents: createHtml(md),
+    path: filePath,
   }) as VFile;
 
   const course = {
@@ -35,7 +42,7 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   const ctx = {
     dirPath: '',
-    cacheDir: os.tmpdir(),
+    cacheDir: tempDir,
     buildDir: null,
     course: {
       ...course,
