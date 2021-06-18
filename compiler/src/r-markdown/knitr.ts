@@ -15,14 +15,11 @@ export async function processKnitr(files: VFile[], ctx: Context) {
 }
 
 async function knitr(filePath: string, ctx: Context) {
-  // TODO: this passes tests (run from workspace root)
-  // but not in other scenarios
-  // const rFile = path.join(process.cwd(), 'compiler', 'knitr.R');
   const rFile = path.join(__dirname, 'knitr.R');
 
-  const cacheDir = ctx.cacheDir.startsWith('/')
+  const cacheDir = path.isAbsolute(ctx.cacheDir)
     ? ctx.cacheDir
-    : path.join(process.cwd(), ctx.cacheDir);
+    : path.relative(process.cwd(), ctx.cacheDir);
 
   const cmd = `Rscript ${rFile} ${filePath} ${cacheDir}/`;
   return new Promise<string>((resolve, reject) => {
