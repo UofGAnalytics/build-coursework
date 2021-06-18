@@ -3,7 +3,7 @@ import path from 'path';
 import hashSum from 'hash-sum';
 
 import { Context } from '../types';
-import { checkFileExists, mkdir, readFile, writeFile } from './utils';
+import { checkLocalFileExists, mkdir, readFile, writeFile } from './utils';
 
 type Options = {
   ctx: Context;
@@ -26,7 +26,7 @@ export async function cacheToFile({
 
   const filePath = `${prefix}-${hashSum(key)}.txt`;
   const cachedFilePath = path.join(ctx.cacheDir, filePath);
-  const exists = await checkFileExists(cachedFilePath);
+  const exists = await checkLocalFileExists(cachedFilePath);
   if (exists) {
     const str = await readFile(cachedFilePath);
     return json ? JSON.parse(str) : str;

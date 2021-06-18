@@ -49,7 +49,7 @@ module.exports = {
     new ShebangPlugin(),
     new CopyPlugin({
       patterns: [
-        { from: './knitr.R', to: './' },
+        { from: './src/r-markdown/knitr.R', to: './' },
       ],
     }),
   ],

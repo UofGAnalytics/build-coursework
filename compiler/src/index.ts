@@ -44,9 +44,9 @@ export async function rMarkdown(dirPath: string, options: Options = {}) {
 async function createUnit(ctx: Context, unitIdx: number) {
   const unit = ctx.course.units[unitIdx];
   try {
-    const { html } = await buildUnit(ctx, unitIdx);
-    if (ctx.buildDir) {
-      await writeHtml(unit.titles.unitName, html, ctx.dirPath);
+    const built = await buildUnit(ctx, unitIdx);
+    if (built !== null && ctx.buildDir) {
+      await writeHtml(unit.titles.unitName, built.html, ctx.dirPath);
       // await writePdf(titles.unitName, pdfHtml, dirPath);
     }
   } catch (err) {
@@ -76,9 +76,11 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
 
   if (!ctx.options.noReport) {
     printReport(files, ctx);
-    if (reportHasFatalErrors(files, ctx)) {
-      throw new Error('Validation failed');
-    }
+  }
+  if (reportHasFatalErrors(files, ctx)) {
+    const options = { ...ctx.options, reportOnlyErrors: true };
+    printReport(files, { ...ctx, options });
+    return null;
   }
 
   // combine mdast trees

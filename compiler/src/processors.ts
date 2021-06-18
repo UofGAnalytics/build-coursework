@@ -68,7 +68,7 @@ export async function customTransforms(
   ctx: Context,
   file: VFile
 ) {
-  const processor = unified().use(embedAssetUrl).use(youtubeVideos);
+  const processor = unified().use(embedAssetUrl, ctx).use(youtubeVideos);
   return processor.run(mdast, file);
 }
 

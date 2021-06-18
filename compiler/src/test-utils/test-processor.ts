@@ -58,9 +58,18 @@ export async function testProcessor(md: string, options: Options = {}) {
     },
   };
 
-  const hasFailingMessage = createHasFailingMessage(ctx);
-
-  const { mdast, html, hast } = await buildUnit(ctx, 0);
+  const hasFailingMessage = createHasFailingMessage(ctx, file);
+  const { mdast, html, hast } = await (async () => {
+    const built = await buildUnit(ctx, 0);
+    if (built === null) {
+      return {
+        mdast: {},
+        html: '',
+        hast: {},
+      };
+    }
+    return built;
+  })();
 
   return { hasFailingMessage, file, html, mdast, hast };
 }

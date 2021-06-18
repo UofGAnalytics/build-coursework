@@ -4,10 +4,10 @@ import { Context } from '../types';
 import { MessageStatus } from '../utils/message';
 import { reportHasFatalErrors } from '../utils/report';
 
-export function createHasFailingMessage(ctx: Context) {
-  return function hasFailingMessage(file: VFile, reason: string) {
+export function createHasFailingMessage(ctx: Context, file: VFile) {
+  return function hasFailingMessage(reason: string) {
     const errors = file.messages.filter((o) => o.reason === reason);
-    if (errors.length !== 1) {
+    if (errors.length === 0) {
       console.log('Message not found in these messages:');
       console.log(file.messages);
       return false;

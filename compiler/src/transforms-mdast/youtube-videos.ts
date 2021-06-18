@@ -136,5 +136,5 @@ function formatDuration(duration: string = '') {
   if (match === null) {
     return '';
   }
-  return `${match[1]}:${match[2]}`;
+  return `${match[1]}:${match[2].padStart(2, '0')}`;
 }
