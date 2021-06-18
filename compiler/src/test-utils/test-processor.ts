@@ -3,6 +3,7 @@ import path from 'path';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
+import { Node, Parent } from 'unist';
 import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';
@@ -10,6 +11,12 @@ import { Options } from '../types';
 import { writeFile } from '../utils/utils';
 import { createHasFailingMessage } from './has-message';
 import { buildUnit } from '..';
+
+type Built = {
+  mdast: Parent;
+  hast: Node;
+  html: string;
+};
 
 export async function testProcessor(md: string, options: Options = {}) {
   const tempDir = os.tmpdir();
@@ -59,13 +66,14 @@ export async function testProcessor(md: string, options: Options = {}) {
   };
 
   const hasFailingMessage = createHasFailingMessage(ctx, file);
-  const { mdast, html, hast } = await (async () => {
+
+  const { mdast, html, hast } = await (async (): Promise<Built> => {
     const built = await buildUnit(ctx, 0);
     if (built === null) {
       return {
-        mdast: {},
+        mdast: { type: 'blank', children: [] },
         html: '',
-        hast: {},
+        hast: { type: 'blank' },
       };
     }
     return built;
