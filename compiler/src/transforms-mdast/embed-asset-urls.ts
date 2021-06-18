@@ -14,7 +14,7 @@ export function embedAssetUrl(ctx: Context) {
     if (!file.dirname) {
       throw new Error('VFile dirname undefined');
     }
-    if (!url.startsWith('http') && !url.startsWith('/')) {
+    if (!url.startsWith('http') && !path.isAbsolute(url)) {
       const fullPath = path.join(process.cwd(), file.dirname, url);
       const exists = await checkLocalFileExists(fullPath);
       if (exists) {
