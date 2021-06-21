@@ -15,12 +15,12 @@ module.exports = {
   projects: [
     {
       displayName: { name: 'compiler', color: 'cyan' },
-      testMatch: ['<rootDir>/compiler/**/?(*.)test.ts?(x)'],
+      testMatch: ['<rootDir>/compiler/**/*(*.)test.ts?(x)'],
       testEnvironment: "node",
     },
     {
       displayName: { name: 'template', color: 'magenta' },
-      testMatch: ['<rootDir>/template/**/?(*.)test.ts?(x)']
+      testMatch: ['<rootDir>/template/**/*(*.)test.ts?(x)']
     }
   ],
   moduleNameMapper: {

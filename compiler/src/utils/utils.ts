@@ -19,7 +19,7 @@ export function writeFile(filePath: string, contents: string) {
   return fs.promises.writeFile(filePath, contents);
 }
 
-export async function checkFileExists(filePath: string) {
+export async function checkLocalFileExists(filePath: string) {
   try {
     await fs.promises.access(filePath, fs.constants.F_OK);
     return true;

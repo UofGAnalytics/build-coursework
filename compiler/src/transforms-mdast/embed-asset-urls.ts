@@ -4,22 +4,23 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
+import { Context } from '../types';
 import { failMessage } from '../utils/message';
-import { checkFileExists } from '../utils/utils';
+import { checkLocalFileExists } from '../utils/utils';
 
-export function embedAssetUrl() {
+export function embedAssetUrl(ctx: Context) {
   async function getAssetUrl(node: Node, file: VFile) {
     const url = (node.url || '') as string;
     if (!file.dirname) {
       throw new Error('VFile dirname undefined');
     }
-    if (!url.startsWith('http')) {
-      const fullPath = path.join(file.cwd, file.dirname, url);
-      const exists = await checkFileExists(fullPath);
+    if (!url.startsWith('http') && !path.isAbsolute(url)) {
+      const fullPath = path.join(process.cwd(), file.dirname, url);
+      const exists = await checkLocalFileExists(fullPath);
       if (exists) {
         node.url = fullPath;
       } else {
-        failMessage(file, `No asset found at ${url}`, node.position);
+        failMessage(file, `No asset found at ${fullPath}`, node.position);
       }
     }
   }

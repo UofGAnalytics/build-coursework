@@ -125,18 +125,47 @@ describe('background', () => {
 
 describe('weblink', () => {
   it('should render a weblink boxout', async () => {
-    const { html } = await testProcessor(`
+    const { hasFailingMessage } = await testProcessor(
+      `
       :::weblink
+      A weblink of *this*!
+      :::
+    `,
+      { shouldFail: true }
+    );
+
+    expect(hasFailingMessage('Weblink has no target attribute')).toBe(
+      true
+    );
+
+    const { html } = await testProcessor(`
+      :::weblink{target=https://cran.r-project.org}
       A weblink of *this*!
       :::
     `);
 
     const expected = createHtml(`
       <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
+        <h3><a href="https://cran.r-project.org" target="_blank" class="target">https://cran.r-project.org</a></h3>
         <p>A weblink of <em>this</em>!</p>
       </div>
     `);
 
     expect(html).toBe(expected);
+
+    const { html: html2 } = await testProcessor(`
+      :::weblink[CRAN]{target=https://cran.r-project.org}
+      A weblink of *this*!
+      :::
+    `);
+
+    const expected2 = createHtml(`
+      <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
+        <h3><a href="https://cran.r-project.org" target="_blank" class="target">CRAN</a></h3>
+        <p>A weblink of <em>this</em>!</p>
+      </div>
+    `);
+
+    expect(html2).toBe(expected2);
   });
 });

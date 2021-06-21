@@ -47,12 +47,11 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ShebangPlugin(),
-    // new CopyPlugin({
-    //   patterns: [
-    //     { from: 'assets', to: 'assets' },
-    //     { from: '../template/build', to: 'assets' },
-    //   ],
-    // }),
+    new CopyPlugin({
+      patterns: [
+        { from: './src/r-markdown/knitr.R', to: './' },
+      ],
+    }),
   ],
   optimization: {
     minimize: false,

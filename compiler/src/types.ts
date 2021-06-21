@@ -10,6 +10,7 @@ export type Options = {
   noCache?: boolean;
   week?: number;
   watch?: boolean;
+  shouldFail?: boolean;
 };
 
 export type Context = {

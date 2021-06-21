@@ -1,34 +1,34 @@
 import { exec } from 'child_process';
+import path from 'path';
+
+import { VFile } from 'vfile';
 
 import { Context } from '../types';
 
-export async function knitr(rMarkdown: string, ctx: Context) {
-  const rMarkdownStdin = `tee <<"EOF"\n${rMarkdown}\nEOF\n`;
+export async function processKnitr(files: VFile[], ctx: Context) {
+  return Promise.all(
+    files.map(async (file) => {
+      file.contents = await knitr(file.path as string, ctx);
+      return file;
+    })
+  );
+}
 
-  const inlineKnitr = `
-    library(knitr)
+async function knitr(filePath: string, ctx: Context) {
+  const rFile = path.join(__dirname, 'knitr.R');
 
-    input <- file("stdin", "r")
-    content <- readLines(input)
+  const cacheDir = path.isAbsolute(ctx.cacheDir)
+    ? ctx.cacheDir
+    : path.relative(process.cwd(), ctx.cacheDir);
 
-    opts_chunk$set(
-      dev="svglite",
-      fig.path="${ctx.cacheDir}/"
-    )
-
-    knit(
-      text=content,
-      output="",
-      quiet=TRUE
-    )
-  `;
-
-  const command = `(${rMarkdownStdin}) | Rscript -e '${inlineKnitr}'`;
-
+  const cmd = `Rscript ${rFile} ${filePath} ${cacheDir}/`;
   return new Promise<string>((resolve, reject) => {
-    exec(command, (err, response) => {
-      if (err) {
-        // console.log('ERROR', err);
+    exec(cmd, (err, response, stdErr) => {
+      if (stdErr) {
+        console.error('STDERR', stdErr);
+        reject(stdErr);
+      } else if (err) {
+        console.error('ERROR', err);
         reject(err);
       } else {
         const res = formatResponse(response);

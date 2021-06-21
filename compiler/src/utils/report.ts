@@ -25,7 +25,11 @@ type ReportMessage = {
 };
 
 export function printReport(files: VFile[], ctx: Context) {
-  const { reportOnlyErrors } = ctx.options;
+  const { reportOnlyErrors, shouldFail } = ctx.options;
+
+  if (reportOnlyErrors && shouldFail) {
+    return;
+  }
 
   for (const file of files) {
     const messages = reportOnlyErrors

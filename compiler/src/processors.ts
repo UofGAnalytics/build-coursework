@@ -35,7 +35,6 @@ import { codeMod } from './code-mod';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
-import { knitr } from './r-markdown/knitr';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
@@ -52,8 +51,7 @@ import { createSvg } from './utils/icons';
 // import { inspect } from './utils/utils';
 
 export async function markdownParser(file: VFile, ctx: Context) {
-  const md = await knitr(file.contents as string, ctx);
-  file.contents = codeMod(md);
+  file.contents = codeMod(file.contents as string);
 
   const processor = unified()
     .use(markdown)
@@ -70,7 +68,7 @@ export async function customTransforms(
   ctx: Context,
   file: VFile
 ) {
-  const processor = unified().use(embedAssetUrl).use(youtubeVideos);
+  const processor = unified().use(embedAssetUrl, ctx).use(youtubeVideos);
   return processor.run(mdast, file);
 }
 

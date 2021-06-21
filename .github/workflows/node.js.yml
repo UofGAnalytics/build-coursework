@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: [12.x]
         r-version: [release]
 
@@ -54,8 +54,8 @@ jobs:
 
       - name: Install R packages
         run: |
-          R -e 'install.packages("renv")'
-          R -e 'renv::restore()'
+          Rscript -e "install.packages('renv')"
+          Rscript -e "renv::restore()"
 
       - run: yarn workspace template build
       - run: yarn check-types

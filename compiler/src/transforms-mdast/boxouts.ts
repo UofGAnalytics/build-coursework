@@ -50,21 +50,7 @@ export function createBoxout(node: Node, count: number): Node[] {
     titles.push(title);
   }
 
-  // console.log(
-  //   toHast(
-  //     {
-  //       type: 'html',
-  //       value:
-  //         '<!-- This is a dataset on admissions to US medical schools which you have first seen in [Predictive Modelling](http://moodle2.gla.ac.uk/pluginfile.php/1457608/mod_resource/content/0/week9.pdf). -->',
-  //     },
-  //     { allowDangerousHtml: true }
-  //   )
-  // );
-
   const children = node.children as Node[];
-  // if (count === 1 && node.name === 'example') {
-  //   console.dir(children, { depth: null });
-  // }
 
   const content = children
     .filter((o) => !o.data?.directiveLabel)
@@ -72,12 +58,10 @@ export function createBoxout(node: Node, count: number): Node[] {
     .map((o) => toHast(o), { allowDangerousHtml: true })
     .filter(Boolean);
 
-  // if (count === 1 && node.name === 'example') {
-  //   console.dir(content, { depth: null });
-  // }
-
   if (node.name === 'task') {
-    const answer = children.find((o) => o.type === 'containerDirective' && o.name === 'answer');
+    const answer = children.find(
+      (o) => o.type === 'containerDirective' && o.name === 'answer'
+    );
     if (answer) {
       content.push(createAnswer(answer, count));
     }
@@ -180,7 +164,12 @@ function createTitleValue(node: Node): Node {
 function getTitleValue(node: Node) {
   const children = (node.children || []) as Node[];
   const parent = (children[0] || {}) as Parent;
+
   if (!parent.data?.directiveLabel) {
+    if (node.name === 'weblink') {
+      const attributes = node.attributes as Record<string, string>;
+      return attributes.target;
+    }
     return null;
   }
 

@@ -1,18 +1,32 @@
 import os from 'os';
+import path from 'path';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
+import { Node, Parent } from 'unist';
 import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';
 import { Options } from '../types';
+import { writeFile } from '../utils/utils';
 import { createHasFailingMessage } from './has-message';
 import { buildUnit } from '..';
 
+type Built = {
+  mdast: Parent;
+  hast: Node;
+  html: string;
+};
+
 export async function testProcessor(md: string, options: Options = {}) {
+  const tempDir = os.tmpdir();
+  const fileName = Math.random().toString(36).substr(2, 5);
+  const filePath = path.join(tempDir, fileName + '.Rmd');
+
+  await writeFile(filePath, unindentString(md));
+
   const file = toVFile({
-    path: 'fake-path/fake.md',
-    contents: createHtml(md),
+    path: filePath,
   }) as VFile;
 
   const course = {
@@ -35,7 +49,7 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   const ctx = {
     dirPath: '',
-    cacheDir: os.tmpdir(),
+    cacheDir: tempDir,
     buildDir: null,
     course: {
       ...course,
@@ -51,9 +65,19 @@ export async function testProcessor(md: string, options: Options = {}) {
     },
   };
 
-  const hasFailingMessage = createHasFailingMessage(ctx);
+  const hasFailingMessage = createHasFailingMessage(ctx, file);
 
-  const { mdast, html, hast } = await buildUnit(ctx, 0);
+  const { mdast, html, hast } = await (async (): Promise<Built> => {
+    const built = await buildUnit(ctx, 0);
+    if (built === null) {
+      return {
+        mdast: { type: 'blank', children: [] },
+        html: '',
+        hast: { type: 'blank' },
+      };
+    }
+    return built;
+  })();
 
   return { hasFailingMessage, file, html, mdast, hast };
 }
