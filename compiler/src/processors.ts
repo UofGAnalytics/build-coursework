@@ -1,3 +1,5 @@
+import path from 'path';
+
 // @ts-expect-error
 import lintAltText from '@double-great/remark-lint-alt-text';
 // @ts-expect-error
@@ -28,10 +30,7 @@ import unified from 'unified';
 import { Node } from 'unist';
 import { VFile } from 'vfile';
 
-import templateCss from '../../template/build/template.css';
-import templateJs from '../../template/build/template.js2';
 import { codeMod } from './code-mod';
-// import { getTemplateCss, getTemplateJs } from './env';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
@@ -47,6 +46,7 @@ import { responsiveTables } from './transforms-mdast/responsive-tables';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
 import { createSvg } from './utils/icons';
+import { readFile } from './utils/utils';
 
 // import { inspect } from './utils/utils';
 
@@ -123,6 +123,12 @@ export async function htmlCompiler(
   }
 
   if (!ctx.options.noDoc) {
+    const templateCss = await readFile(
+      path.join(__dirname, 'template.css')
+    );
+    const templateJs = await readFile(
+      path.join(__dirname, 'template.js2')
+    );
     processor.use(doc, {
       title: titles.docTitle,
       style: `\n${templateCss}\n`,
