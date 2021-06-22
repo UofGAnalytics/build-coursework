@@ -73,14 +73,20 @@ export async function customTransforms(
 }
 
 export async function linter(mdast: Node, ctx: Context, file: VFile) {
-  const retextProcessor = unified().use(english).use(spell, dictionary);
   const processor = unified()
     .use(assertTaskAnswerStructure)
     .use(assertWeblinkTarget)
     .use(lintLatex)
     .use(lintAltText)
-    .use(lintLinkText)
-    .use(remark2retext, retextProcessor);
+    .use(lintLinkText);
+
+  if (ctx.options.spelling) {
+    const retextProcessor = unified()
+      .use(english)
+      .use(spell, { dictionary, max: 1 });
+
+    processor.use(remark2retext, retextProcessor);
+  }
 
   return processor.run(mdast, file);
 }
