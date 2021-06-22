@@ -4,116 +4,126 @@ import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';
 
-export function youtubeVideos() {
+export function assertVideoAttributes() {
   return async (tree: Node, file: VFile) => {
     visit(tree, 'leafDirective', (node) => {
       if (node.name === 'video') {
-        template(node, file);
+        const attributes = node.attributes as Record<string, string>;
+        if (!attributes.id) {
+          failMessage(file, 'id attribute is required', node.position);
+        }
+        if (!attributes.duration) {
+          failMessage(
+            file,
+            'duration attribute is required',
+            node.position
+          );
+        }
+
+        const title = getTitle(node);
+        if (!title) {
+          failMessage(file, 'title is required', node.position);
+        }
       }
     });
   };
 }
 
-function template(node: Node, file: VFile) {
-  const attributes = node.attributes as Record<string, string>;
-  if (!attributes.id) {
-    failMessage(file, 'id attribute is required', node.position);
-  }
-  if (!attributes.duration) {
-    failMessage(file, 'duration attribute is required', node.position);
-  }
-
-  const title = getTitle(node);
-  if (!title) {
-    failMessage(file, 'title is required', node.position);
-  }
-
-  node.data = {
-    hName: 'a',
-    hProperties: {
-      className: ['boxout', 'video'],
-      href: getYoutubeUrl(attributes.id),
-      title: attributes.title || null,
-      target: '_blank',
-    },
-    hChildren: [
-      {
-        type: 'element',
-        tagName: 'span',
-        properties: {
-          className: 'content',
-        },
-        children: [
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: {
-              className: 'type',
-            },
-            children: [
-              {
-                type: 'text',
-                value: 'Video',
-              },
-            ],
+export function youtubeVideos() {
+  return async (tree: Node, file: VFile) => {
+    visit(tree, 'leafDirective', (node) => {
+      if (node.name === 'video') {
+        const attributes = node.attributes as Record<string, string>;
+        const title = getTitle(node);
+        node.data = {
+          hName: 'a',
+          hProperties: {
+            className: ['boxout', 'video'],
+            href: getYoutubeUrl(attributes.id),
+            title: attributes.title || null,
+            target: '_blank',
           },
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: {
-              className: 'title',
-            },
-            children: [
-              {
-                type: 'text',
-                value: title,
+          hChildren: [
+            {
+              type: 'element',
+              tagName: 'span',
+              properties: {
+                className: 'content',
               },
-            ],
-          },
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: {
-              className: 'duration',
-            },
-            children: [
-              {
-                type: 'element',
-                tagName: 'strong',
-                children: [
-                  {
-                    type: 'text',
-                    value: 'Duration',
+              children: [
+                {
+                  type: 'element',
+                  tagName: 'span',
+                  properties: {
+                    className: 'type',
                   },
-                ],
-              },
-              {
-                type: 'text',
-                value: formatDuration(attributes.duration),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'element',
-        tagName: 'span',
-        properties: {
-          className: 'thumbnail',
-        },
-        children: [
-          {
-            type: 'element',
-            tagName: 'img',
-            properties: {
-              src: getYoutubeThumbnailUrl(attributes.id),
-              alt: '',
+                  children: [
+                    {
+                      type: 'text',
+                      value: 'Video',
+                    },
+                  ],
+                },
+                {
+                  type: 'element',
+                  tagName: 'span',
+                  properties: {
+                    className: 'title',
+                  },
+                  children: [
+                    {
+                      type: 'text',
+                      value: title,
+                    },
+                  ],
+                },
+                {
+                  type: 'element',
+                  tagName: 'span',
+                  properties: {
+                    className: 'duration',
+                  },
+                  children: [
+                    {
+                      type: 'element',
+                      tagName: 'strong',
+                      children: [
+                        {
+                          type: 'text',
+                          value: 'Duration',
+                        },
+                      ],
+                    },
+                    {
+                      type: 'text',
+                      value: formatDuration(attributes.duration),
+                    },
+                  ],
+                },
+              ],
             },
-            children: [],
-          },
-        ],
-      },
-    ],
+            {
+              type: 'element',
+              tagName: 'span',
+              properties: {
+                className: 'thumbnail',
+              },
+              children: [
+                {
+                  type: 'element',
+                  tagName: 'img',
+                  properties: {
+                    src: getYoutubeThumbnailUrl(attributes.id),
+                    alt: '',
+                  },
+                  children: [],
+                },
+              ],
+            },
+          ],
+        };
+      }
+    });
   };
 }
 

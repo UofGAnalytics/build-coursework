@@ -30,20 +30,25 @@ import unified from 'unified';
 import { Node } from 'unist';
 import { VFile } from 'vfile';
 
-import { codeMod } from './code-mod';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
+import {
+  assertAssetExists,
+  embedAssetUrl,
+} from './transforms-mdast/assets';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
-import { embedAssetUrl } from './transforms-mdast/embed-asset-urls';
 import { images } from './transforms-mdast/images';
 import { responsiveTables } from './transforms-mdast/responsive-tables';
 // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
-import { youtubeVideos } from './transforms-mdast/youtube-videos';
+import {
+  assertVideoAttributes,
+  youtubeVideos,
+} from './transforms-mdast/youtube-videos';
 import { Context } from './types';
 import { createSvg } from './utils/icons';
 import { readFile } from './utils/utils';
@@ -51,8 +56,6 @@ import { readFile } from './utils/utils';
 // import { inspect } from './utils/utils';
 
 export async function markdownParser(file: VFile, ctx: Context) {
-  file.contents = codeMod(file.contents as string);
-
   const processor = unified()
     .use(markdown)
     .use(directive)
@@ -63,17 +66,10 @@ export async function markdownParser(file: VFile, ctx: Context) {
   return processor.run(parsed, file);
 }
 
-export async function customTransforms(
-  mdast: Node,
-  ctx: Context,
-  file: VFile
-) {
-  const processor = unified().use(embedAssetUrl, ctx).use(youtubeVideos);
-  return processor.run(mdast, file);
-}
-
 export async function linter(mdast: Node, ctx: Context, file: VFile) {
   const processor = unified()
+    .use(assertAssetExists)
+    .use(assertVideoAttributes)
     .use(assertTaskAnswerStructure)
     .use(assertWeblinkTarget)
     .use(lintLatex)
@@ -99,6 +95,8 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
       content: linkIcon,
       linkProperties: { className: 'link' },
     })
+    .use(embedAssetUrl)
+    .use(youtubeVideos)
     .use(responsiveTables)
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
