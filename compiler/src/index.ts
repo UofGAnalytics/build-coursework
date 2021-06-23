@@ -58,17 +58,17 @@ async function createUnit(ctx: Context, unitIdx: number) {
 export async function buildUnit(ctx: Context, unitIdx: number) {
   const { files } = ctx.course.units[unitIdx];
 
-  // //////////
-  // 1 codeMod
-  // //////////
+  ////////////
+  // 1 code mod - rewrite old syntax to new syntax with regex
+  ////////////
 
   files.forEach((file) => {
     file.contents = codeMod(file.contents as string);
   });
 
-  // //////////
+  ////////////
   // 2 static analysis
-  // //////////
+  ////////////
 
   const mdasts = await Promise.all(
     files.map((file) => markdownParser(file, ctx))
@@ -89,15 +89,21 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
     return null;
   }
 
-  // //////////
-  // 3 knitr Rmarkdown -> markdown
-  // //////////
+  ////////////
+  // 3 knitr: Rmarkdown -> markdown
+  ////////////
 
+  // needs to re-read original files for easy
+  // compatibility with Windows Command Prompt
   const markdowns = await processKnitr(files, ctx);
 
-  // //////////
+  files.forEach((file) => {
+    file.contents = codeMod(file.contents as string);
+  });
+
+  ////////////
   // 4 markdown -> html
-  // //////////
+  ////////////
 
   const mdasts2 = await Promise.all(
     markdowns.map((file) => markdownParser(file, ctx))

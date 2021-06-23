@@ -12,7 +12,7 @@ export const defaultState: State = {
   font: 'font-default',
   fontSize: '1',
   lineSpacing: '1',
-  letterSpacing: '1',
+  letterSpacing: '0',
   lineWidth: '1',
 };
 

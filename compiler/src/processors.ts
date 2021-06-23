@@ -30,25 +30,21 @@ import unified from 'unified';
 import { Node } from 'unist';
 import { VFile } from 'vfile';
 
+import { assertAssetExists } from './linters/assert-asset-exists';
 import { assertTaskAnswerStructure } from './linters/assert-task-answer';
+import { assertVideoAttributes } from './linters/assert-video-attributes';
 import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
-import {
-  assertAssetExists,
-  embedAssetUrl,
-} from './transforms-mdast/assets';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
+import { embedAssetUrl } from './transforms-mdast/embed-asset-url';
 import { images } from './transforms-mdast/images';
 import { responsiveTables } from './transforms-mdast/responsive-tables';
 // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
-import {
-  assertVideoAttributes,
-  youtubeVideos,
-} from './transforms-mdast/youtube-videos';
+import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
 import { createSvg } from './utils/icons';
 import { readFile } from './utils/utils';
@@ -61,7 +57,8 @@ export async function markdownParser(file: VFile, ctx: Context) {
     .use(directive)
     .use(math)
     .use(gfm)
-    .use(frontmatter);
+    .use(frontmatter)
+    .use(embedAssetUrl);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -95,7 +92,6 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
       content: linkIcon,
       linkProperties: { className: 'link' },
     })
-    .use(embedAssetUrl)
     .use(youtubeVideos)
     .use(responsiveTables)
     .use(accessibleTex, ctx)

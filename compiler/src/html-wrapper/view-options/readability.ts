@@ -24,16 +24,16 @@ const options: ReadabilityItem[] = [
   {
     value: 'letterSpacing',
     label: 'Letter spacing',
-    min: 0.6,
-    max: 2,
-    increment: 0.1,
+    min: -0.1,
+    max: 0.2,
+    increment: 0.05,
   },
   {
     value: 'lineWidth',
     label: 'Line width',
     min: 0.6,
-    max: 2,
-    increment: 0.1,
+    max: 1.2,
+    increment: 0.05,
   },
 ];
 

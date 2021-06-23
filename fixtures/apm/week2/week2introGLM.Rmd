@@ -110,6 +110,24 @@ Using the fitted model equation, predict the gross revenue for a film with a bud
 
 *Hint: Remember that the variables have been log-transformed.*
 
+####[answer]
+For the *Bollywood box office revenue* example, we can write down the fitted model equation from the `summary(bol.lm)`:
+$$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(\text{Budget})$$
+
+We can use this equation to predict the gross revenue of a film by simply substituting the relevant budget value, and transforming the result from the log10 scale. Thus:
+
+(i) budget = 10:
+ $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(10) =  0.69406  \Rightarrow \text{Gross}= 10^{0.69406} = 4.94379$$
+
+
+(ii) budget = 50:
+ $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(50) =  1.616386  \Rightarrow \text{Gross}= 10^{1.616386} = 41.34148$$
+
+
+(iii) budget = 100:
+  $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(100) =  2.01361 \Rightarrow \text{Gross}= 10^{2.01361} = 103.1834$$
+
+####[/answer]
 ###[/task]
 
 
