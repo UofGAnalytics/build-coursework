@@ -11,6 +11,7 @@ export type Options = {
   week?: number;
   watch?: boolean;
   shouldFail?: boolean;
+  spelling?: boolean;
 };
 
 export type Context = {

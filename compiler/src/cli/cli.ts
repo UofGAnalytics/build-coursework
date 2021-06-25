@@ -36,6 +36,10 @@ const { argv } = yargs(process.argv.slice(2))
   .option('noCache', {
     type: 'boolean',
     description: 'No cache',
+  })
+  .option('spelling', {
+    type: 'boolean',
+    description: 'Check spelling',
   });
 
 const dirPath = String(argv._[0] || '.');
@@ -49,6 +53,7 @@ const options = {
   noReport: argv.noReport,
   noEmbedAssets: argv.noEmbedAssets,
   noCache: argv.noCache,
+  spelling: argv.spelling,
 };
 
 rMarkdown(dirPath, options);

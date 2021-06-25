@@ -50,6 +50,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: './src/r-markdown/knitr.R', to: './' },
+        { from: '../template/build', to: './' },
       ],
     }),
   ],

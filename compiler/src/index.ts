@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 
+import { codeMod } from './code-mod';
 import { collectCoursework } from './course';
 import {
   customCombinedTransforms,
-  customTransforms,
   htmlCompiler,
   linter,
   markdownParser,
@@ -58,18 +58,22 @@ async function createUnit(ctx: Context, unitIdx: number) {
 export async function buildUnit(ctx: Context, unitIdx: number) {
   const { files } = ctx.course.units[unitIdx];
 
-  const markdowns = await processKnitr(files, ctx);
+  ////////////
+  // 1 code mod - rewrite old syntax to new syntax with regex
+  ////////////
+
+  files.forEach((file) => {
+    file.contents = codeMod(file.contents as string);
+  });
+
+  ////////////
+  // 2 static analysis
+  ////////////
 
   const mdasts = await Promise.all(
-    markdowns.map((file) => markdownParser(file, ctx))
+    files.map((file) => markdownParser(file, ctx))
   );
 
-  // transforms in parallel with reports back to original files
-  await Promise.all(
-    mdasts.map((mdast, idx) => customTransforms(mdast, ctx, files[idx]))
-  );
-
-  // linter in parallel
   await Promise.all(
     mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
   );
@@ -78,15 +82,35 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
     printReport(files, ctx);
   }
   if (reportHasFatalErrors(files, ctx)) {
-    const options = { ...ctx.options, reportOnlyErrors: true };
-    printReport(files, { ...ctx, options });
+    if (ctx.options.noReport) {
+      const options = { ...ctx.options, reportOnlyErrors: true };
+      printReport(files, { ...ctx, options });
+    }
     return null;
   }
 
-  // combine mdast trees
-  const mdast = combineMdastTrees(mdasts);
+  ////////////
+  // 3 knitr: Rmarkdown -> markdown
+  ////////////
 
-  // transforms on the combined tree
+  // needs to re-read original files for easy
+  // compatibility with Windows Command Prompt
+  const markdowns = await processKnitr(files, ctx);
+
+  files.forEach((file) => {
+    file.contents = codeMod(file.contents as string);
+  });
+
+  ////////////
+  // 4 markdown -> html
+  ////////////
+
+  const mdasts2 = await Promise.all(
+    markdowns.map((file) => markdownParser(file, ctx))
+  );
+
+  const mdast = combineMdastTrees(mdasts2);
+
   await customCombinedTransforms(mdast, ctx);
 
   const { hast, html } = await htmlCompiler(mdast, ctx, unitIdx);

@@ -4,23 +4,17 @@ import chokidar from 'chokidar';
 import { debounce } from 'lodash';
 
 const COURSE = 'rprog';
-const UNIT = 'week1';
-
-const watcherOptions = {
-  ignoreInitial: true,
-};
-
-rebuildAndRecompile();
 
 chokidar
-  .watch(
-    ['./compiler/src', './compiler/assets', './compiler/knitr.R'],
-    watcherOptions
-  )
+  .watch(['./compiler/src', './compiler/assets'])
   .on('all', debounce(rebuildAndRecompile, 300));
 
 chokidar
-  .watch(`./fixtures/${COURSE}/${UNIT}`, watcherOptions)
+  .watch(`./fixtures/${COURSE}`, {
+    ignoreInitial: true,
+    ignored: (filePath: string) =>
+      !filePath.includes('/build/') && !filePath.includes('/cache/'),
+  })
   .on('all', debounce(recompile, 300));
 
 async function rebuildAndRecompile() {
@@ -40,7 +34,7 @@ async function rebuildCompiler() {
 }
 
 async function recompile(eventName?: string, path?: string) {
-  console.log({ eventName, path });
+  // console.log({ eventName, path });
   console.log('recompiling...');
   const timerName = 'compiling took';
   console.time(timerName);
@@ -48,7 +42,7 @@ async function recompile(eventName?: string, path?: string) {
   // TODO: watch single unit
   try {
     await runCommand(
-      `yarn workspace compiler rmarkdown ../fixtures/${COURSE} --week=1 --noCache --noReport --noDoc`
+      `yarn rmarkdown fixtures/${COURSE} --week=1 --noReport --noDoc`
     );
   } finally {
     console.timeEnd(timerName);

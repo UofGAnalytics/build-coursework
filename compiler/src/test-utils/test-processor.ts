@@ -25,9 +25,7 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   await writeFile(filePath, unindentString(md));
 
-  const file = toVFile({
-    path: filePath,
-  }) as VFile;
+  const file = (await toVFile.read(filePath, 'utf-8')) as VFile;
 
   const course = {
     title: 'Test Course',

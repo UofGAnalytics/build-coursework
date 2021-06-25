@@ -15,14 +15,9 @@ export async function processKnitr(files: VFile[], ctx: Context) {
 }
 
 async function knitr(filePath: string, ctx: Context) {
-  const rFile = path.join(__dirname, 'knitr.R');
-
-  const cacheDir = path.isAbsolute(ctx.cacheDir)
-    ? ctx.cacheDir
-    : path.relative(process.cwd(), ctx.cacheDir);
-
-  const cmd = `Rscript ${rFile} ${filePath} ${cacheDir}/`;
   return new Promise<string>((resolve, reject) => {
+    const rFile = path.join(__dirname, 'knitr.R');
+    const cmd = `Rscript ${rFile} ${filePath} ${ctx.cacheDir}/`;
     exec(cmd, (err, response, stdErr) => {
       if (stdErr) {
         console.error('STDERR', stdErr);
@@ -43,7 +38,7 @@ function formatResponse(response: string) {
   return response.replace(/\[1\]\s""$/m, '').trim();
 }
 
-// attempts at changing knitr output. doesn't work
+// attempts at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
 //     source = function(x, options) {

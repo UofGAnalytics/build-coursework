@@ -55,6 +55,7 @@ function failingMessages(messages: VFileMessage[]) {
 }
 
 function printMessage(message: VFileMessage) {
+  // console.log(message);
   const status = message.status as MessageStatus;
   const position = chalk.grey(`${message.line}:${message.column}`);
   const reason = formatReason(message.reason, status);

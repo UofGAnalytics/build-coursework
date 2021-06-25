@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 import rehype from 'rehype-parse';
 import unified from 'unified';
@@ -37,11 +38,11 @@ export function rmdir(dirPath: string) {
 }
 
 export function getBuildDir(dirPath: string) {
-  return `${dirPath}/build`;
+  return path.join(process.cwd(), dirPath, 'build');
 }
 
 export function getCacheDir(dirPath: string) {
-  return `${dirPath}/cache`;
+  return path.join(process.cwd(), dirPath, 'cache');
 }
 
 export function combineMdastTrees(mdasts: Node[]): Parent {
