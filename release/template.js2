@@ -1,0 +1,342 @@
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 48:
+/***/ (() => {
+
+setHtmlFontSize();
+window.addEventListener('resize', setHtmlFontSize, false);
+
+function setHtmlFontSize() {
+  const min = 14;
+  const max = 30;
+  const width = Math.min(window.innerWidth, 1000 * 1.5);
+  const fontSize = width / 80;
+  const clamped = Math.max(min, Math.min(max, fontSize));
+  document.documentElement.style.fontSize = `${clamped}px`;
+}
+
+/***/ }),
+
+/***/ 137:
+/***/ (() => {
+
+document.querySelectorAll('.answer-trigger').forEach(elem => {
+  elem.addEventListener('click', toggleAnswer);
+});
+
+function toggleAnswer(e) {
+  const target = e.target;
+  const id = `answer-${target.dataset.answerId}`;
+  const $answer = document.getElementById(id);
+
+  if ($answer.classList.contains('show')) {
+    $answer.classList.remove('show');
+    target.innerHTML = 'Show answer';
+  } else {
+    $answer.classList.add('show');
+    target.innerHTML = 'Hide answer';
+  }
+}
+
+/***/ }),
+
+/***/ 567:
+/***/ (() => {
+
+var _document$querySelect, _document$querySelect2;
+
+(_document$querySelect = document.querySelector('#root > .hamburger-icon')) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.addEventListener('click', openSidebar);
+(_document$querySelect2 = document.querySelector('.logo > .hamburger-icon')) === null || _document$querySelect2 === void 0 ? void 0 : _document$querySelect2.addEventListener('click', closeSidebar);
+
+function openSidebar() {
+  document.documentElement.classList.remove('hide-sidebar');
+}
+
+function closeSidebar() {
+  document.documentElement.classList.add('hide-sidebar');
+}
+
+/***/ }),
+
+/***/ 512:
+/***/ (() => {
+
+// toggle view options
+const button = document.getElementById('view-options-toggle');
+button.addEventListener('click', toggleOpen);
+let viewOptionsOpen = false;
+
+function toggleOpen() {
+  if (viewOptionsOpen) {
+    document.documentElement.classList.remove('view-options-open');
+    button.innerHTML = 'View options';
+    viewOptionsOpen = false;
+  } else {
+    document.documentElement.classList.add('view-options-open');
+    button.innerHTML = 'Table of contents';
+    viewOptionsOpen = true;
+  }
+}
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+
+// EXTERNAL MODULE: ./src/html-font-size.ts
+var html_font_size = __webpack_require__(48);
+// EXTERNAL MODULE: ./src/view-options/toggle.ts
+var toggle = __webpack_require__(512);
+;// CONCATENATED MODULE: ./src/view-options/util.ts
+const defaultState = {
+  theme: 'theme-light',
+  font: 'font-default',
+  fontSize: '1',
+  lineSpacing: '1',
+  letterSpacing: '1',
+  lineWidth: '1'
+};
+const state = getSavedState();
+function saveState(state) {
+  localStorage.setItem('view-options', JSON.stringify(state));
+}
+
+function getSavedState() {
+  const saved = localStorage.getItem('view-options');
+
+  if (saved === null) {
+    return defaultState;
+  }
+
+  const savedState = JSON.parse(saved);
+  return Object.entries(defaultState).reduce((acc, tuple) => {
+    const key = tuple[0];
+    const value = tuple[1];
+    acc[key] = savedState[key] || value;
+    return acc;
+  }, {});
+}
+;// CONCATENATED MODULE: ./src/view-options/theme.ts
+var _document$querySelect;
+
+
+document.documentElement.classList.add(state.theme);
+const current = state.theme.replace('theme-', '');
+(_document$querySelect = document.querySelector(`#themes .${current}`)) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.classList.add('selected');
+document.querySelectorAll('#themes li').forEach(elem => {
+  elem.addEventListener('click', setTheme);
+});
+
+function setTheme(e) {
+  const target = e.target;
+  const name = `theme-${target.classList[0]}`;
+  const themes = target.closest('#themes');
+  themes.querySelectorAll('li').forEach(elem => {
+    elem.classList.remove('selected');
+  });
+  target.classList.add('selected');
+  document.documentElement.classList.replace(state.theme, name);
+  state.theme = name;
+  saveState(state);
+}
+;// CONCATENATED MODULE: ./src/view-options/font.ts
+var font_document$querySelect;
+
+
+document.documentElement.classList.add(state.font);
+const font_current = state.font.replace('font-', '');
+(font_document$querySelect = document.querySelector(`#fonts .${font_current}`)) === null || font_document$querySelect === void 0 ? void 0 : font_document$querySelect.classList.add('selected');
+document.querySelectorAll('#fonts li').forEach(elem => {
+  elem.addEventListener('click', setFont);
+});
+
+function setFont(e) {
+  const target = e.target;
+  const name = `font-${target.classList[0]}`;
+  const fonts = target.closest('#fonts');
+  fonts.querySelectorAll('li').forEach(elem => {
+    elem.classList.remove('selected');
+  });
+  target.classList.add('selected');
+  document.documentElement.classList.replace(state.font, name);
+  state.font = name;
+  saveState(state);
+}
+;// CONCATENATED MODULE: ./src/view-options/readability.ts
+
+document.documentElement.style.setProperty('--fontSize', state.fontSize);
+document.documentElement.style.setProperty('--lineSpacing', state.lineSpacing);
+document.documentElement.style.setProperty('--letterSpacing', state.letterSpacing);
+document.documentElement.style.setProperty('--lineWidth', state.lineWidth);
+document.querySelectorAll('#readability .btn.minus').forEach(elem => {
+  elem.addEventListener('click', handleMinus);
+});
+document.querySelectorAll('#readability .btn.plus').forEach(elem => {
+  elem.addEventListener('click', handlePlus);
+});
+document.querySelectorAll('#readability .btn.reset').forEach(elem => {
+  elem.addEventListener('click', handleReset);
+  const {
+    currentValue,
+    defaultValue
+  } = getProps(elem);
+
+  if (currentValue === Number(defaultValue)) {
+    elem.classList.add('disabled');
+  }
+});
+
+function handleMinus(e) {
+  const target = e.target;
+
+  if (target.classList.contains('disabled')) {
+    return;
+  }
+
+  const props = getProps(target);
+  const newValue = Math.max(props.min, props.currentValue - props.increment);
+
+  if (newValue === props.min) {
+    target.classList.add('disabled');
+  } else {
+    target.classList.remove('disabled');
+  }
+
+  const strValue = String(newValue);
+
+  if (strValue === props.defaultValue) {
+    props.reset.classList.add('disabled');
+  } else {
+    props.reset.classList.remove('disabled');
+  }
+
+  document.documentElement.style.setProperty(`--${props.name}`, strValue);
+  state[props.name] = strValue;
+  saveState(state);
+}
+
+function handlePlus(e) {
+  const target = e.target;
+
+  if (target.classList.contains('disabled')) {
+    return;
+  }
+
+  const props = getProps(target);
+  const newValue = Math.min(props.max, props.currentValue + props.increment);
+
+  if (newValue === props.max) {
+    target.classList.add('disabled');
+  } else {
+    target.classList.remove('disabled');
+  }
+
+  const strValue = String(newValue);
+
+  if (strValue === defaultState[props.name]) {
+    props.reset.classList.add('disabled');
+  } else {
+    props.reset.classList.remove('disabled');
+  }
+
+  document.documentElement.style.setProperty(`--${props.name}`, strValue);
+  state[props.name] = strValue;
+  saveState(state);
+}
+
+function handleReset(e) {
+  const target = e.target;
+
+  if (target.classList.contains('disabled')) {
+    return;
+  }
+
+  const props = getProps(target);
+  const strValue = defaultState[props.name];
+
+  if (props.defaultValue === String(props.min)) {
+    props.minus.classList.add('disabled');
+  } else {
+    props.minus.classList.remove('disabled');
+  }
+
+  if (props.defaultValue === String(props.max)) {
+    props.plus.classList.add('disabled');
+  } else {
+    props.plus.classList.remove('disabled');
+  }
+
+  target.classList.add('disabled');
+  document.documentElement.style.setProperty(`--${props.name}`, strValue);
+  state[props.name] = String(strValue);
+  saveState(state);
+}
+
+function getProps(elem) {
+  const li = elem.closest('li');
+  const plus = li.querySelector('.btn.plus');
+  const minus = li.querySelector('.btn.minus');
+  const reset = li.querySelector('.btn.reset');
+  const name = li.classList[0];
+  return {
+    li,
+    name,
+    plus,
+    minus,
+    reset,
+    min: Number(li.dataset.min),
+    max: Number(li.dataset.max),
+    increment: Number(li.dataset.increment),
+    currentValue: Number(state[name]),
+    defaultValue: defaultState[name]
+  };
+}
+;// CONCATENATED MODULE: ./src/view-options/index.ts
+
+
+
+
+// EXTERNAL MODULE: ./src/toggle-answers.ts
+var toggle_answers = __webpack_require__(137);
+// EXTERNAL MODULE: ./src/toggle-sidebar.ts
+var toggle_sidebar = __webpack_require__(567);
+;// CONCATENATED MODULE: ./src/index.ts
+
+
+
+
+
+})();
+
+/******/ })()
+;
