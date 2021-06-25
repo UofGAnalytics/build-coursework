@@ -1,6 +1,12 @@
 {
   "name": "build-coursework",
   "private": true,
+  "files": [
+    "release/*"
+  ],
+  "bin": {
+    "rmarkdown": "./release/cli.js"
+  },
   "workspaces": [
     "compiler",
     "template"
@@ -13,7 +19,8 @@
     "compiler": "babel-node --extensions .ts dev.ts",
     "template": "yarn workspace template dev",
     "test": "jest --verbose",
-    "check-types": "tsc"
+    "check-types": "tsc",
+    "release": "./release.sh"
   },
   "dependencies": {},
   "devDependencies": {
