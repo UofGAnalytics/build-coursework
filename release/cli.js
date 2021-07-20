@@ -702,7 +702,6 @@ function messageWithStatus(file, message, position, status) {
 
 
 
-
 function assertAssetExists() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
@@ -727,10 +726,6 @@ function assertAssetExists() {
     });
     await Promise.all(transformations);
   };
-}
-
-function getPath(url, dirname) {
-  return path.isAbsolute(url) ? url : path.join(process.cwd(), dirname, url);
 }
 ;// CONCATENATED MODULE: ./src/linters/assert-task-answer.ts
 
@@ -1953,7 +1948,7 @@ function embedAssetUrl() {
     const dirname = file.dirname || '';
 
     if (!url.startsWith('http')) {
-      const newUrl = embed_asset_url_getPath(url, dirname);
+      const newUrl = getPath(url, dirname);
       node.url = newUrl;
     }
   }
@@ -1967,7 +1962,7 @@ function embedAssetUrl() {
   };
 }
 
-function embed_asset_url_getPath(url, dirname) {
+function getPath(url, dirname) {
   return external_path_default().isAbsolute(url) ? url : external_path_default().join(process.cwd(), dirname, url);
 }
 ;// CONCATENATED MODULE: ./src/transforms-mdast/images.ts
@@ -11982,7 +11977,7 @@ const {
   description: 'Watch coursework for changes'
 }).option('noDoc', {
   type: 'boolean',
-  description: 'Only Compile content HTML'
+  description: 'Only compile content HTML'
 }).option('noWrapper', {
   type: 'boolean',
   description: 'No wrapper'

@@ -61,6 +61,11 @@ jobs:
       - run: yarn check-types
       - run: yarn test
 
+      - run: |
+          npm link
+          cd fixtures/apm
+          rmarkdown --week=1
+
       - name: Upload artifacts
         if: ${{ failure() }}
         uses: actions/upload-artifact@main
