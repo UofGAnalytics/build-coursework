@@ -1,3 +1,5 @@
+# Introduction to Generalised Linear Models
+
 ## Introduction and motivating examples
 
 ```{r,echo=FALSE, include=FALSE, fig.height=4}
@@ -5,7 +7,6 @@ knitr::opts_chunk$set(comment=NA, warning = FALSE)
 ```
 
 ##[video, videoid="5u1w6eROypI", duration="9m57s"] Introduction to GLMs
-
 
 <!-- In this course we will extend the theory of linear regression models, covered in [Predictive Modelling](http://moodle2.gla.ac.uk/course/view.php?id=12738) and [Learning from Data](http://moodle2.gla.ac.uk/course/view.php?id=12736).  -->
 
@@ -16,7 +17,7 @@ The main objective of this week's learning material is to introduce Generalised 
 
 ###[example]Bollywood box office revenue
 
-Possibly the simplest scenario of a predictive model is when we want to predict an outcome variable based on a predictor which displays a linear relationship to the variable of interest. Consider the following dataset on Bollywood film revenues (sourced from http://www.bollymoviereviewz.com](http://www.bollymoviereviewz.com)) which contains data on 190 films made during the period 2013-2017. We would like to predict the gross revenue of a film from the film's budget. Both the gross revenue and the budget are measured in [crore](https://en.wikipedia.org/wiki/Crore). Here are the first few rows of the data:
+Possibly the simplest scenario of a predictive model is when we want to predict an outcome variable based on a predictor which displays a linear relationship to the variable of interest. Consider the following dataset on Bollywood film revenues (sourced from [http://www.bollymoviereviewz.com](http://www.bollymoviereviewz.com)) which contains data on 190 films made during the period 2013-2017. We would like to predict the gross revenue of a film from the film's budget. Both the gross revenue and the budget are measured in [crore](https://en.wikipedia.org/wiki/Crore). Here are the first few rows of the data:
 
 ```{r, results = 'hide'}
 bollywood <-
@@ -24,14 +25,14 @@ bollywood <-
 head(bollywood)
 ```
 
-|Movie  | Gross | Budget |
-|-------|-------|--------|
-|Ek Villain|95.64|36.0|
-|Humshakals|55.65|77.0|
-|Holiday|110.01|90.0|
-|Fugly|11.16|16.0|
-|City Lights|5.19|9.5|
-|Kuku Mathur Ki Jhand Ho Gayi|2.23|4.5|
+   Movie                            Gross       Budget
+   -------------------------------- ----------- -----------
+     Ek Villain                       95.64       36.0
+     Humshakals                       55.65       77.0
+     Holiday                         110.01      90.0
+     Fugly                            11.16       16.0
+     City Lights                       5.19        9.5
+     Kuku Mathur Ki Jhand Ho Gayi      2.23        4.5
 
 
 We can plot the gross revenue against the budget to explore the relationship between the two variables.
@@ -77,8 +78,8 @@ Now let's fit a model with the $\log_{10}$ transformed gross revenue as the resp
 bol.lm <- lm(log10(Gross) ~ log10(Budget), data = bollywood)
 ```
 
-The model equation in mathematical notation is
-$$E(Y_{i}) = \mu_i= \beta_0 + \beta_1 x_{i}; ~~~ \text{where the}~ Y_{i} \text{ are independent }  N(\mu_{i}, \sigma^2),~~~i=1,...,190 $$
+The model equation in mathematical notation is $E(Y_{i}) = \mu_i= \beta_0 + \beta_1 x_{i}$; where the $Y_{i}$ are independent $N(\mu_{i}, \sigma^2)$, $i=1,...,190$.
+
 The model fit is shown below:
 
 ```{r }
@@ -112,20 +113,15 @@ Using the fitted model equation, predict the gross revenue for a film with a bud
 
 ####[answer]
 For the *Bollywood box office revenue* example, we can write down the fitted model equation from the `summary(bol.lm)`:
-$$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(\text{Budget})$$
+$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(\text{Budget})$
 
 We can use this equation to predict the gross revenue of a film by simply substituting the relevant budget value, and transforming the result from the log10 scale. Thus:
 
-(i) budget = 10:
- $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(10) =  0.69406  \Rightarrow \text{Gross}= 10^{0.69406} = 4.94379$$
+1. budget = 10: $\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(10) =  0.69406  \Rightarrow \text{Gross}= 10^{0.69406} = 4.94379$
 
+2. budget = 50: $\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(50) =  1.616386  \Rightarrow \text{Gross}= 10^{1.616386} = 41.34148$
 
-(ii) budget = 50:
- $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(50) =  1.616386  \Rightarrow \text{Gross}= 10^{1.616386} = 41.34148$$
-
-
-(iii) budget = 100:
-  $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(100) =  2.01361 \Rightarrow \text{Gross}= 10^{2.01361} = 103.1834$$
+3. budget = 100: $\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(100) =  2.01361 \Rightarrow \text{Gross}= 10^{2.01361} = 103.1834$
 
 ####[/answer]
 ###[/task]
@@ -184,6 +180,7 @@ In mathematical notation, the value of the independent response $Y_i$ is equal t
 One issue with this fit is that the predicted values of the response can take any real values, while acceptance can only take the value 0 or 1. And it is hard to argue that a variable taking values of 0 or 1 is normally distributed. Instead, we can use a logistic regression model for the *probability* of acceptance. Let's first write it down in mathematical notation by letting $p_i=P(Y_i=1)$ denote the probability of acceptance for the $i$th applicant. We assume that the $Y_i$ are independent random variables which follow the $\text{Bin}(1,p_i)$ (or Bernoulli($p_i)$) distribution with
 
 $$\log \left(\dfrac{p_i}{1-p_i} \right)=\beta_0+\beta_1 x_i.$$
+
 This is equivalent to:
 
 $$p_i=\dfrac{\exp(\beta_0+\beta_1 x_i)}{1+\exp(\beta_0+\beta_1 x_i)}.$$
@@ -206,6 +203,7 @@ summary(med.glm)
 ```
 
 The regression equation for the fitted model is
+
 $$\log \left(\dfrac{\hat{p}_i}{1-\hat{p}_i}\right)=-19.207+5.454 x_i,$$
 
 or equivalently
@@ -235,6 +233,7 @@ Predict the acceptance probability for an applicant with a GPA of (i) 2.5, (ii) 
 
 ####[answer]
 In the *GPA and admission to medical school* example, we can write down the fitted model equation from the `summary(med.glm)`:
+
 $$\log\left(\frac{p_i}{1-p_i}\right) =-19.207 + 5.454 \times \text{GPA}$$
 
 From the fitted equation, we can obtain the acceptance probability by solving for $p_i$:
@@ -261,9 +260,7 @@ predict(med.glm, data.frame(GPA = c(2.5, 3, 4)), type = 'response')
 ###[/task]
 
 ###[weblink,target="https://goo.gl/mZHxyN", icon=book]
-
- - Section 2.3 from *Mixed effects models and extensions in ecology with R -Zuur et al.* discusses the appropriateness of the assumptions of the linear model.
-
+Section 2.3 from *Mixed effects models and extensions in ecology with R -Zuur et al.* discusses the appropriateness of the assumptions of the linear model.
 ###[/weblink]
 
 ## What do the Bollywood box office and medical school admission examples have in common?
@@ -290,7 +287,7 @@ Consider a random variable $Y$ whose probability density function (p.d.f.) or pr
 ###[/definition]
 
 ###[example] Normal distribution is a member of exponential family
-Consider $Y \sim N(\theta, \sigma^2)$ with p.d.f. \begin{align} f(y; \theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}\exp \left[ -\frac{1}{2\sigma^2} (y-\theta)^2\right], \hspace{0.5cm} -\infty <y<\infty.\end{align} If we are interested in estimating $\theta$, the variance, $\sigma^2$, can be regarded as a nuisance parameter. By rewriting the p.d.f. as \begin{align} f(y; \theta) = \exp \left[-\dfrac{y^2}{2\sigma^2}+\dfrac{y \theta}{\sigma^2} -\dfrac{\theta^2}{2\sigma^2}-\dfrac{1}{2}\log(2 \pi \sigma^2)\right]\end{align} we can see that this is of exponential family form with $a(y) = y$ (hence in canonical form) and natural parameter $b(\theta)= \theta/\sigma^2$.
+Consider $Y \sim N(\theta, \sigma^2)$ with p.d.f. $\begin{align} f(y; \theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}\exp \left[ -\frac{1}{2\sigma^2} (y-\theta)^2\right], \hspace{0.5cm} -\infty <y<\infty.\end{align}$ If we are interested in estimating $\theta$, the variance, $\sigma^2$, can be regarded as a nuisance parameter. By rewriting the p.d.f. as $\begin{align} f(y; \theta) = \exp \left[-\dfrac{y^2}{2\sigma^2}+\dfrac{y \theta}{\sigma^2} -\dfrac{\theta^2}{2\sigma^2}-\dfrac{1}{2}\log(2 \pi \sigma^2)\right]\end{align}$ we can see that this is of exponential family form with $a(y) = y$ (hence in canonical form) and natural parameter $b(\theta)= \theta/\sigma^2$.
 
 ###[/example]
 
@@ -311,8 +308,7 @@ $$\mathrm{Var}[a(Y)] =\dfrac{b''(\theta)c'(\theta)-c''(\theta)b'(\theta)}{[b'(\t
 Some further useful properties of exponential family distributions relate to the **score function**.
 
 ###[definition] Score statistic
-
-\label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$ is called the \textbf{score statistic}, and is equal to the derivative of the log-likelihood $l(\theta;y)$ with respect to the parameter $\theta$.
+$\label{def:scoreuniv}U=\dfrac{dl(\theta;y)}{d\theta}$ is called the **score statistic**, and is equal to the derivative of the log-likelihood $l(\theta;y)$ with respect to the parameter $\theta$.
 ###[/definition]
 
 For exponential family distributions with log-likelihood $l(\theta; y) = a(y)b(\theta)+c(\theta) + d(y)$, the score is
@@ -371,7 +367,7 @@ A GLM generalises the normal linear model by allowing:
   & = \exp \left[ \sum_{i=1}^n y_i b(\theta_i)+ \sum_{i=1}^n c(\theta_i) +\sum_{i=1}^n d(y_i) \right] \label{eqn:joint} \end{align}
   The distribution of each $Y_i$ is in canonical form and depends on a single parameter $\theta_i$.
 
-2. The *systematic component*: Associated with each $y_i$ is a vector $\boldsymbol{x}_i=(x_{i1},x_{i2},\dots,x_{ip})\intercal$ of values of $p$ explanatory variables. The response, $Y_i$, depends on the explanatory variables through a linear component, $\eta_i=\boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}=\beta_1x_{i1}+\dots + \beta_p x_{ip}$ for $i=1,\dots, n$ where $\boldsymbol{x}_i^{\intercal}$ is the $i$th row of the design matrix $\boldsymbol{X}$ and $\boldsymbol{\beta}=(\beta_1,\dots, \beta_p)\intercal$ is the parameter vector. As in linear models, the design matrix is given by $$\boldsymbol{X} = \left[ \begin{array}{c} \boldsymbol{x}_1\intercal \\ \vdots \\ \boldsymbol{x}_n\intercal \end{array}\right] =  \left[ \begin{array}{ccc} x_{11} & \dots & x_{1p} \\ \vdots & & \vdots \\ x_{n1} & \dots & x_{np}  \end{array}\right].$$
+2. The *systematic component*: Associated with each $y_i$ is a vector $\boldsymbol{x}_i=(x_{i1},x_{i2},\dots,x_{ip})^\intercal$ of values of $p$ explanatory variables. The response, $Y_i$, depends on the explanatory variables through a linear component, $\eta_i=\boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}=\beta_1x_{i1}+\dots + \beta_p x_{ip}$ for $i=1,\dots, n$ where $\boldsymbol{x}_i^{\intercal}$ is the $i$th row of the design matrix $\boldsymbol{X}$ and $\boldsymbol{\beta}=(\beta_1,\dots, \beta_p)^\intercal$ is the parameter vector. As in linear models, the design matrix is given by $$\boldsymbol{X} = \left[ \begin{array}{c} \boldsymbol{x}_1^\intercal \\ \vdots \\ \boldsymbol{x}_n^\intercal \end{array}\right] =  \left[ \begin{array}{ccc} x_{11} & \dots & x_{1p} \\ \vdots & & \vdots \\ x_{n1} & \dots & x_{np}  \end{array}\right].$$
 
 3. The *link function*: The parameters $\theta_i$ in equation (\ref{eqn:joint}) are usually not of direct interest. Instead, we are interested in a smaller set of parameters $(\beta_1,\dots, \beta_p)$, and assume that $Y_i$ depends on these through the linear predictor $\eta_i$. The link between the distribution of the $Y_i$ and the linear predictor $\eta_i$ is provided by the link function $g()$, for which $g(\mu_i)=\eta_i=\boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}.$ Here $\mu_i=E(Y_i)$ and $g()$ is a monotone, differentiable function. Although any one-to-one function could be used in principle, certain choices of link function can offer great simplification. In particular, the link function can be chosen so that the natural parameter, $b(\theta_i)$, is proportional to the linear component $\eta_i=\boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}$. Such a link function is known as the *canonical link*. The following table shows the canonical link function for some of the most common distributions.
 
@@ -411,7 +407,7 @@ i.e. $Y_i \sim \text{Bernoulli}(p)$ (or equivalently Bin$(1,p)$) and $E(Y_i)=p$.
 ###[example] A model for mortality rates
 
  The number of deaths, $Y$, in a population can be modelled by the Poisson distribution $f(y; \mu)=\frac{\mu^y e^{-\mu}}{y!}$ where $y=0,1,2,\dots$
- The expected number of deaths per year is $E(Y)=\mu$ and it can be modelled by $E(Y)=\mu = n \lambda (\boldsymbol{x}\intercal \boldsymbol{\beta})$ where $n$ is the population size and $\lambda (\boldsymbol{x}\intercal \boldsymbol{\beta})$ is the death rate per 100,000 people per year.
+ The expected number of deaths per year is $E(Y)=\mu$ and it can be modelled by $E(Y)=\mu = n \lambda (\boldsymbol{x}^\intercal \boldsymbol{\beta})$ where $n$ is the population size and $\lambda (\boldsymbol{x}^\intercal \boldsymbol{\beta})$ is the death rate per 100,000 people per year.
  Let $Y_1,\dots, Y_n$ be the numbers of deaths occurring in successive age groups. A possible model is $E(Y_i)=\mu_i = n_i \exp(\theta i)$ where $Y_i \sim \text{Poisson}(\mu_i)$ and
 
 * $i=1$ for the age group 30-34,
@@ -419,7 +415,7 @@ i.e. $Y_i \sim \text{Bernoulli}(p)$ (or equivalently Bin$(1,p)$) and $E(Y_i)=p$.
 * $\vdots$
 * $i=8$ for age group 65-69.
 
-This can be expressed as a generalised linear model as $g(\mu_i) = \log \mu_i = \log n_i +\theta i$ where $\boldsymbol{x}_i^{\intercal}= (\log n_i, i)$;  and $\boldsymbol{\beta}=(1, \theta)\intercal$. The term $\log n_i$ is called the *offset*, and we will see more about it when we talk about models for counts.
+This can be expressed as a generalised linear model as $g(\mu_i) = \log \mu_i = \log n_i +\theta i$ where $\boldsymbol{x}_i^{\intercal}= (\log n_i, i)$;  and $\boldsymbol{\beta}=(1, \theta)^\intercal$. The term $\log n_i$ is called the *offset*, and we will see more about it when we talk about models for counts.
 
 ###[/example]
 
@@ -472,52 +468,54 @@ The maximisation procedure results in $p$ simultaneous equations for $\hat{\bold
 
 
 ###[supplement]
+Here we present in some detail how the maximum likelihood estimates of the coefficients of a GLM are obtained. Suppose that we are interested in estimating the parameter vector $(\beta_1,\dots, \beta_p)^\intercal$ in a GLM. To find the maximum likelihood estimates $\hat{\beta}_j$ we need the scores (multivariate version of the score from Definition $\ref{def:scoreuniv}$) expressed as functions of the $\beta_j$:
 
-Here we present in some detail how the maximum likelihood estimates of the coefficients of a GLM are obtained. Suppose that we are interested in estimating the parameter vector $(\beta_1,\dots, \beta_p)\intercal$ in a GLM. To find the maximum likelihood estimates $\hat{\beta}_j$ we need the scores (multivariate version of the score from Definition \ref{def:scoreuniv}) expressed as functions of the $\beta_j$:
-  \begin{align} U_j=\frac{\partial l}{\partial \beta_j} &= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \beta_j}  \right]= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \theta_i} \cdot \frac{\partial \theta_i}{\partial \mu_i} \cdot \frac{\partial \mu_i} {\partial \beta_j}  \right] \label{eqn:chainrule}           \end{align}
+$$
+\begin{align} U_j=\frac{\partial l}{\partial \beta_j} &= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \beta_j}  \right]= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \theta_i} \cdot \frac{\partial \theta_i}{\partial \mu_i} \cdot \frac{\partial \mu_i} {\partial \beta_j}  \right] \label{eqn:chainrule}           \end{align}
+$$
 
+For an exponential family distribution in canonical form, the components of ($\ref{eqn:chainrule}$) are:
 
-For an exponential family distribution in canonical form, the components of (\ref{eqn:chainrule}) are:
-  \begin{align} &\frac{\partial l_i}{\partial \theta_i} = y_i b'(\theta) +c'(\theta)=b'(\theta) \left[y_i -\left(-\frac{c'(\theta)}{b'(\theta)}\right) \right]=b' (\theta) (y_i - \mu_i) \label{eqn:dldtheta}\\
-& \frac{\partial \mu_i}{\partial \theta_i} = -\frac{c''(\theta_i)}{b'(\theta_i)}+\frac{c'(\theta_i) b''(\theta_i)}{[b'(\theta_i)]^2} = b'(\theta_i) \mathrm{Var}(Y_i)  \nonumber \\ & \Rightarrow  \frac{\partial \theta_i}{\partial \mu_i}= \frac{1}{b'(\theta_i) \mathrm{Var}(Y_i)} \label{eqn:dmudtheta}\\
-&\frac{\partial \mu_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}\cdot \frac{\partial \eta_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}x_{ij}=\frac{x_{ij}}{g'(\mu_i)} \label{eqn:dmudbeta}
-\end{align}
-Substituting (\ref{eqn:dldtheta}), (\ref{eqn:dmudtheta}) and (\ref{eqn:dmudbeta}) into (\ref{eqn:chainrule}) the expression for the scores becomes
- \begin{align}
- U_j=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right]=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}\frac{x_{ij}} {g'(\mu_i)}\right]. \label{eqn:score}
- \end{align}
+$$
+\begin{align} &\frac{\partial l_i}{\partial \theta_i} = y_i b'(\theta) +c'(\theta)=b'(\theta) \left[y_i -\left(-\frac{c'(\theta)}{b'(\theta)}\right) \right]=b' (\theta) (y_i - \mu_i) \label{eqn:dldtheta} \frac{\partial \mu_i}{\partial \theta_i} = -\frac{c''(\theta_i)}{b'(\theta_i)}+\frac{c'(\theta_i) b''(\theta_i)}{[b'(\theta_i)]^2} = b'(\theta_i) \mathrm{Var}(Y_i)  \nonumber \\ & \Rightarrow  \frac{\partial \theta_i}{\partial \mu_i}= \frac{1}{b'(\theta_i) \mathrm{Var}(Y_i)} \label{eqn:dmudtheta} \frac{\partial \mu_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}\cdot \frac{\partial \eta_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}x_{ij}=\frac{x_{ij}}{g'(\mu_i)} \label{eqn:dmudbeta \end{align}
+$$
+
+Substituting ($\ref{eqn:dldtheta}$), ($\ref{eqn:dmudtheta}$) and ($\ref{eqn:dmudbeta}$) into ($\ref{eqn:chainrule}$) the expression for the scores becomes:
+
+$$
+\begin{align} U_j=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right]=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}\frac{x_{ij}} {g'(\mu_i)}\right]. \label{eqn:score} \end{align}
+$$
+
 Note that the scores depend on $\boldsymbol{\beta}$ through $\mu_i=E(Y_i)$ and through $\mathrm{Var}(Y_i)$.
-The variance-covariance matrix of the $U_j$ has terms $\mathcal{\mathcal{I}}_{jk}=E(U_jU_k)$ and is known as the \textbf{(Fisher) information matrix}. This is the multivariate version of Definition \ref{def:infuniv}. The elements of matrix $\mathcal{\mathcal{I}}$ can be obtained from (\ref{eqn:score}):
-\begin{align}
- \mathcal{\mathcal{I}}_{jk}&=  E \left \lbrace \sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right] \sum_{l=1}^n \left[  \frac{(y_l-\mu_l)}{\mathrm{Var}(Y_l)}x_{lk} \frac{\partial \mu_l}{\partial \eta_l}\right]  \right \rbrace \nonumber \\
- &=\sum_{i=1}^n \frac{E[(Y_i-\mu_i)^2]x_{ij}x_{ik}}{[\mathrm{Var}(Y_i)]^2} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2  \nonumber\\
- &=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2 = \sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2} \label{eqn:informationmatrix}
-\end{align}
-Here we have used the fact that $E[(Y_i-\mu_i)(Y_l-\mu_l)]=0$ by the independence of the $Y_i$.
-Notice that the information matrix can be written as \begin{align}
-\mathcal{I}=\mathcal{I}(\boldsymbol{\beta})=\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{X} \label{eqn:informationirwls} \end{align} where $\boldsymbol{X}=\left[ \begin{array}{c} \boldsymbol{x}_1\intercal\\ \dots \\  \boldsymbol{x}_n\intercal \end{array} \right]= \left[ \begin{array}{ccc}
+The variance-covariance matrix of the $U_j$ has terms $\mathcal{\mathcal{I}}_{jk}=E(U_jU_k)$ and is known as the **(Fisher) information matrix**. This is the multivariate version of Definition $\ref{def:infuniv}$. The elements of matrix $\mathcal{\mathcal{I}}$ can be obtained from ($\ref{eqn:score}$):
+
+$$
+\begin{align} \mathcal{\mathcal{I}}_{jk}&=  E \left \lbrace \sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right] \sum_{l=1}^n \left[  \frac{(y_l-\mu_l)}{\mathrm{Var}(Y_l)}x_{lk} \frac{\partial \mu_l}{\partial \eta_l}\right]  \right \rbrace \nonumber =\sum_{i=1}^n \frac{E[(Y_i-\mu_i)^2]x_{ij}x_{ik}}{[\mathrm{Var}(Y_i)]^2} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2  \nonumber=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2 = \sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2} \label{eqn:informationmatrix} \end{align}
+$$
+
+Here we have used the fact that $E[(Y_i-\mu_i)(Y_l-\mu_l)]=0$ by the independence of the $Y_i$. Notice that the information matrix can be written as $\begin{align}\mathcal{I}=\mathcal{I}(\boldsymbol{\beta})=\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X} \label{eqn:informationirwls} \end{align}$ where $\boldsymbol{X}=\left[ \begin{array}{c} \boldsymbol{x}_1^\intercal\\ \dots \\  \boldsymbol{x}_n^\intercal \end{array} \right]= \left[ \begin{array}{ccc}
 x_{11} & \dots & x_{1p}\\
 \vdots & \ddots & \vdots\\
-x_{n1} & \dots & x_{np}                                                                                                                                                                                                                     \end{array} \right],$
- $\boldsymbol{W}=\text{diag}(\boldsymbol{w})=  \left[ \begin{array}{cccc}
+x_{n1} & \dots & x_{np}\end{array} \right]$, $\boldsymbol{W}=\text{diag}(\boldsymbol{w})=  \left[ \begin{array}{cccc}
 w_1 & 0 &  \dots & 0\\
 0 & w_2 & & \vdots\\
 \vdots & & \ddots & 0\\
-0 & \dots &0 & w_n                                                                                                                                                                                                                     \end{array} \right],$ and \begin{align}w_i=\frac{1}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2}, \hspace{1cm} i=1,\dots, n.\end{align}
+0 & \dots &0 & w_n\end{array} \right]$, and $\begin{align}w_i=\frac{1}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2}, \hspace{1cm} i=1,\dots, n\end{align}$.
+
 The information matrix $\mathcal{I}(\boldsymbol{\beta})$ depends on $\boldsymbol{\beta}$ through $\boldsymbol{\mu}$ and through $\mathrm{Var}(Y_i)$ for $i=1,\dots,n$.
 
 Equation (\ref{eqn:score}) can be written as \begin{align}
 U_j=\sum_{i=1}^n (y_i-\mu_i)x_{ij}w_i g'(\mu_i)=   \sum_{i=1}^n x_{ij}w_iz_i \label{eqn:scoreirwls}    \hspace{1cm} j=1,\dots,p                                   \end{align}
 
 where $z_i=(y_i-\mu_i)g'(\mu_i)$, so the score can be expressed in vector-matrix form as \begin{align}
-\boldsymbol{U}(\boldsymbol{\theta})= \boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{z} \label{eqn:scoreirwlsmatrix}. \end{align}
+\boldsymbol{U}(\boldsymbol{\theta})= \boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{z} \label{eqn:scoreirwlsmatrix}. \end{align}
 
 
 
 Fisher's method of scoring is based on the estimating equation \begin{align}\hat{\boldsymbol{\beta}}^{(m)} = \hat{\boldsymbol{\beta}}^{(m-1)} +[\mathcal{\mathcal{I}}^{(m-1)}]^{-1} \boldsymbol{U}^{(m-1)} \label{eqn:scoringpdim}\end{align} where $\hat{\boldsymbol{\beta}}^{(m)}$ is the vector of estimates of $(\beta_1,\dots \beta_p)$ at the $m$th iteration, $[\mathcal{\mathcal{I}}^{(m-1)}]^{-1}$ is the inverse of the information matrix with elements $\mathcal{\mathcal{I}}_{jk}$ given by (\ref{eqn:informationmatrix}), and $\boldsymbol{U}^{(m-1)}$ is the vector of elements given by (\ref{eqn:score}), all evaluated at  $\hat{\boldsymbol{\beta}}^{(m-1)}$.
-  Substituting (\ref{eqn:informationirwls}) and (\ref{eqn:scoreirwlsmatrix}) in (\ref{eqn:scoringpdim}) we obtain \begin{align} \hat{\boldsymbol{\beta}}^{(m)}&=   \hat{\boldsymbol{\beta}}^{(m-1)}+\left[\boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{z}^{(m-1)}  \nonumber \\
-  &=  \left[\boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)}\boldsymbol{X} \hat{\boldsymbol{\beta}}^{(m-1)}+\left[\boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{z}^{(m-1)}  \nonumber \\
-  &=\left[\boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}\intercal \boldsymbol{W}^{(m-1)} (\boldsymbol{\eta}^{(m-1)}+\boldsymbol{z}^{(m-1)}) \label{eqn:irwls} \end{align}
+  Substituting (\ref{eqn:informationirwls}) and (\ref{eqn:scoreirwlsmatrix}) in (\ref{eqn:scoringpdim}) we obtain \begin{align} \hat{\boldsymbol{\beta}}^{(m)}&=   \hat{\boldsymbol{\beta}}^{(m-1)}+\left[\boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{z}^{(m-1)}  \nonumber \\
+  &=  \left[\boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)}\boldsymbol{X} \hat{\boldsymbol{\beta}}^{(m-1)}+\left[\boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{z}^{(m-1)}  \nonumber \\
+  &=\left[\boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} \boldsymbol{X}\right]^{-1}  \boldsymbol{X}^\intercal \boldsymbol{W}^{(m-1)} (\boldsymbol{\eta}^{(m-1)}+\boldsymbol{z}^{(m-1)}) \label{eqn:irwls} \end{align}
  This is the same form as the normal equations for weighted least squares, except that it has to be solved numerically because $\boldsymbol{\eta}$, $\boldsymbol{z}$ and $\boldsymbol{W}$ depend on $\hat{\boldsymbol{\beta}}$.
 
 This is why the method to obtain maximum likelihood estimators for GLMs is called \textbf{iteratively (re)weighted least squares (IRWLS)}.
@@ -537,18 +535,18 @@ The procedure begins by using an initial approximation $\hat{\boldsymbol{\beta}}
 <!-- \end{center} -->
 <!-- Assume that the responses $Y_i$ are independent Poisson random variables with $E(Y_i)=\mu_i = \beta_1 + \beta_2 x_i= \boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}=\eta_i$ where $\boldsymbol{\beta}= \left[ \begin{array}{c} \beta_1\\ \beta_2 \end{array}\right] \text{ and } \boldsymbol{x}_i =   \left[ \begin{array}{c} 1\\ x_i \end{array} \right] \text{ for } i=1,\dots, n.$ Note that here we are taking the link function to be the identity link: $g(\mu_i)= \mu_i= \boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}=\eta_i$ -->
 <!-- Then $g'(\mu_i)=\dfrac{\partial \mu_i}{\partial \eta_i}= 1$ so the weights in (\ref{eqn:informationirwls}) are  $w_i = \frac{1}{\mathrm{Var}(Y_i)} =\frac{1}{\mu_i}=\frac{1}{\beta_1+\beta_2 x_i}$ and $\eta_i+z_i$ in  (\ref{eqn:irwls}) simplifies to  $\eta_i+z_i = -->
-<!--  \hat{\beta}_1+\hat{\beta}_2x_i+ (y_i-\mu_i)=\hat{\beta}_1 +\hat{\beta}_2 x_i +(y_i - \hat{\beta}_1 -\hat{\beta}_2 x_i) = y_i. $ Also $\mathcal{\mathcal{I}}=\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{X}= \left[ \begin{array}{cc} \sum \dfrac{1}{\hat{\beta}_1+\hat{\beta}_2 x_i }&  \sum \dfrac{x_i}{\hat{\beta}_1+\hat{\beta}_2 x_i} \\ -->
+<!--  \hat{\beta}_1+\hat{\beta}_2x_i+ (y_i-\mu_i)=\hat{\beta}_1 +\hat{\beta}_2 x_i +(y_i - \hat{\beta}_1 -\hat{\beta}_2 x_i) = y_i. $ Also $\mathcal{\mathcal{I}}=\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X}= \left[ \begin{array}{cc} \sum \dfrac{1}{\hat{\beta}_1+\hat{\beta}_2 x_i }&  \sum \dfrac{x_i}{\hat{\beta}_1+\hat{\beta}_2 x_i} \\ -->
 <!--  \sum \dfrac{x_i}{\hat{\beta}_1+\hat{\beta}_2 x_i}  &  \sum \dfrac{x_i^2}{\hat{\beta}_1+\hat{\beta}_2 x_i } \end{array}\right] $ -->
-<!-- and $\boldsymbol{X}\intercal \boldsymbol{W} (\boldsymbol{\eta}+\boldsymbol{z})= \left[ \begin{array}{c} \sum \dfrac{y_i}{\hat{\beta}_1+\hat{\beta}_2 x_i }\\ -->
+<!-- and $\boldsymbol{X}^\intercal \boldsymbol{W} (\boldsymbol{\eta}+\boldsymbol{z})= \left[ \begin{array}{c} \sum \dfrac{y_i}{\hat{\beta}_1+\hat{\beta}_2 x_i }\\ -->
 <!--  \sum \dfrac{x_i y_i}{\hat{\beta}_1+\hat{\beta}_2 x_i}  \end{array}\right] $ -->
-<!-- so that the MLEs can be obtained from  $\hat{\boldsymbol{\beta}}^{(m)}=\left[(\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{X})^{(m-1)}\right]^{-1} (\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{z}) ^{(m-1)}.$ -->
-<!-- For the data in this example, $\boldsymbol{\eta}+ \boldsymbol{z}=\boldsymbol{y}=\left[\begin{array}{c} 2\\ 3\\ \vdots\\ 15 \end{array}\right] \text{ and } \boldsymbol{X}=\left[ \begin{array}{c} \boldsymbol{x}_1\intercal \\ \boldsymbol{x}_2\intercal \\ \vdots \\ \boldsymbol{x}_9\intercal  \end{array} \right]=\left[\begin{array}{rr} 1 &  -1\\ 1 &  -1\\ \vdots & \vdots\\ 1 & 1 \end{array}\right]. $ -->
+<!-- so that the MLEs can be obtained from  $\hat{\boldsymbol{\beta}}^{(m)}=\left[(\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X})^{(m-1)}\right]^{-1} (\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{z}) ^{(m-1)}.$ -->
+<!-- For the data in this example, $\boldsymbol{\eta}+ \boldsymbol{z}=\boldsymbol{y}=\left[\begin{array}{c} 2\\ 3\\ \vdots\\ 15 \end{array}\right] \text{ and } \boldsymbol{X}=\left[ \begin{array}{c} \boldsymbol{x}_1^\intercal \\ \boldsymbol{x}_2^\intercal \\ \vdots \\ \boldsymbol{x}_9^\intercal  \end{array} \right]=\left[\begin{array}{rr} 1 &  -1\\ 1 &  -1\\ \vdots & \vdots\\ 1 & 1 \end{array}\right]. $ -->
 <!-- We also need some initial parameter estimates. Start with $\hat{\beta}_1^{(1)}=7$ and $\hat{\beta}_2^{(1)}=5$. -->
-<!-- Then $(\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{X})^{(1)}= \left[ \begin{array}{rr} 1.821429 & -0.75  \\ -->
+<!-- Then $(\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X})^{(1)}= \left[ \begin{array}{rr} 1.821429 & -0.75  \\ -->
 <!--  -0.75&  1.25 \end{array}\right], $ -->
-<!--  $(\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{z})^{(1)}= \left[ \begin{array}{cc} 9.869048  \\ -->
+<!--  $(\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{z})^{(1)}= \left[ \begin{array}{cc} 9.869048  \\ -->
 <!-- 0.583333 \end{array}\right], $ -->
-<!--  so \begin{align*} \hat{\boldsymbol{\beta}}^{(2)}= [(\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{X})^{(1)}]^{-1}(\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{z})^{(1)}= \left[ \begin{array}{cc} 7.4514  \\ -->
+<!--  so \begin{align*} \hat{\boldsymbol{\beta}}^{(2)}= [(\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X})^{(1)}]^{-1}(\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{z})^{(1)}= \left[ \begin{array}{cc} 7.4514  \\ -->
 <!-- 4.9375 \end{array}\right] -->
 <!-- \end{align*} -->
 <!-- and so on until convergence.\\ -->
@@ -585,8 +583,8 @@ We will now turn our attention to inference for GLMs, mainly through hypothesis 
 <!-- #Large sample approximations  -->
 
 <!-- To come up with the approximate distribution of a statistic of interest, we rely on the following large sample distribution results: If $S$ is a statistic of interest, under appropriate conditions $\dfrac{S-E(S)}{\sqrt{\mathrm{Var}(S)}}  \overset{\text{approx}}{\sim} N(0,1)$, or equivalently  $\dfrac{[S-E(S)]^2}{\mathrm{Var}(S)}  \overset{\text{approx}}{\sim} \chi^2(1)$. -->
-<!--  For a vector of statistics of interest $\boldsymbol{s}=(S_1, S_2, \dots, S_p)\intercal$ with mean $E(\boldsymbol{s})$ and variance-covariance matrix $\boldsymbol{V}$, we have the asymptotic result -->
-<!--  \begin{align} [\boldsymbol{s}-E(\boldsymbol{s})]\intercal \boldsymbol{V}^{-1}  [\boldsymbol{s}-E(\boldsymbol{s})]  \overset{\text{approx}}{\sim} \chi^2(p), \label{eqn:approxnormgeneral}\end{align} provided that $\boldsymbol{V}$ is not singular. -->
+<!--  For a vector of statistics of interest $\boldsymbol{s}=(S_1, S_2, \dots, S_p)^\intercal$ with mean $E(\boldsymbol{s})$ and variance-covariance matrix $\boldsymbol{V}$, we have the asymptotic result -->
+<!--  \begin{align} [\boldsymbol{s}-E(\boldsymbol{s})]^\intercal \boldsymbol{V}^{-1}  [\boldsymbol{s}-E(\boldsymbol{s})]  \overset{\text{approx}}{\sim} \chi^2(p), \label{eqn:approxnormgeneral}\end{align} provided that $\boldsymbol{V}$ is not singular. -->
 
 <!-- #Sampling distribution for score statistics  -->
 <!--  Suppose $Y_1, \dots, Y_n$ are independent random variables in a GLM with parameters $\boldsymbol{\beta}$, with $E(Y_i)=\mu_i$ and $g(\mu_i)=\boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}= \eta_i$. -->
@@ -596,7 +594,7 @@ We will now turn our attention to inference for GLMs, mainly through hypothesis 
 <!-- \begin{align}\mathcal{I}_{jk}= E(U_jU_k).\label{eqn:scorevar}\end{align} -->
 
 <!-- For univariate $\beta$, the score statistic has asymptotic sampling distribution \begin{align}\frac{U}{\sqrt{\mathcal{I}}} \overset{\text{approx}}{\sim}N(0,1)\label{eqn:scoreuniv}\end{align} or equivalently  \begin{align}\frac{U^2}{\mathcal{I}} \overset{\text{approx}}{\sim} \chi^2(1).\end{align} -->
-<!-- For $\boldsymbol{\beta}=(\beta_1, \dots, \beta_p)\intercal$, the score vector \begin{align}\boldsymbol{U}=(U_1,\dots, U_p)\intercal \overset{\text{approx}}{\sim} MVN(\boldsymbol{0}, \mathcal{I})  \end{align} and so \begin{align} \boldsymbol{U}\intercal \mathcal{I}^{-1} \boldsymbol{U} \overset{\text{approx}}{\sim} \chi^2(p).\label{eqn:scoremultiv}\end{align} -->
+<!-- For $\boldsymbol{\beta}=(\beta_1, \dots, \beta_p)^\intercal$, the score vector \begin{align}\boldsymbol{U}=(U_1,\dots, U_p)^\intercal \overset{\text{approx}}{\sim} MVN(\boldsymbol{0}, \mathcal{I})  \end{align} and so \begin{align} \boldsymbol{U}^\intercal \mathcal{I}^{-1} \boldsymbol{U} \overset{\text{approx}}{\sim} \chi^2(p).\label{eqn:scoremultiv}\end{align} -->
 
 <!-- \begin{example}[Normal distribution] -->
 <!-- Let $Y_1, \dots, Y_n$ be independent $N(\mu, \sigma^2)$ random variables where $\sigma^2$ is assumed to be known. The log-likelihood function is -->
@@ -607,7 +605,7 @@ We will now turn our attention to inference for GLMs, mainly through hypothesis 
 <!-- The variance of $U$ is -->
 <!--  \begin{align} \mathcal{I} = \mathrm{Var}(U)= \frac{1}{\sigma^4}\sum \mathrm{Var}(Y_i)=\frac{n}{\sigma^2}. \label{eqn:varnormal}\end{align} -->
 <!--  Therefore \begin{align}\frac{U}{\sqrt{\mathcal{I}}}= \frac{\bar{Y}-\mu}{\sigma / \sqrt{n}} \overset{\text{approx}}{\sim}N(0,1).\label{eqn:scoredistnormaluniv} \end{align} In fact, this is an exact result since $\bar{Y} \sim N(\mu, \sigma^2/n)$. -->
-<!-- Also, \begin{align} \boldsymbol{U}\intercal \mathcal{I}^{-1} \boldsymbol{U}= \frac{U^2}{\mathcal{I}} = \frac{(\bar{Y}-\mu)^2}{\sigma^2/n} \sim \chi^2(1).\label{eqn:scoredistnormalmultiv}\end{align} -->
+<!-- Also, \begin{align} \boldsymbol{U}^\intercal \mathcal{I}^{-1} \boldsymbol{U}= \frac{U^2}{\mathcal{I}} = \frac{(\bar{Y}-\mu)^2}{\sigma^2/n} \sim \chi^2(1).\label{eqn:scoredistnormalmultiv}\end{align} -->
 <!-- This sampling distribution can be used obtain interval estimates for $\mu$ of the form $\bar{y} \pm 1.96 \sigma /\sqrt{n} $ where $\sigma^2$ is assumed to be known. -->
 <!-- \end{example} -->
 
@@ -633,7 +631,7 @@ We will now turn our attention to inference for GLMs, mainly through hypothesis 
 
 <!-- Replacing $U'=d^2l/ d\beta^2$ by its expected value, $E(U')=-\mathcal{I}$, the approximation becomes  $l(\beta) \approx l(\hat{\beta}) + (\beta-\hat{\beta}) U(\hat{\beta}) -  \frac{1}{2} (\beta-\hat{\beta})^2 \mathcal{I}(\hat{\beta}).$ -->
 
-<!--  For a vector $\boldsymbol{\beta}$ of parameters this generalizes to \begin{align} l(\boldsymbol{\beta}) \approx l(\hat{\boldsymbol{\beta}}) + (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})\intercal \boldsymbol{U}(\hat{\boldsymbol{\beta}}) -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})\intercal \mathcal{I}(\hat{\boldsymbol{\beta}})(\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}). \label{eqn:likelihoodexp} \end{align} -->
+<!--  For a vector $\boldsymbol{\beta}$ of parameters this generalizes to \begin{align} l(\boldsymbol{\beta}) \approx l(\hat{\boldsymbol{\beta}}) + (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \boldsymbol{U}(\hat{\boldsymbol{\beta}}) -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}})(\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}). \label{eqn:likelihoodexp} \end{align} -->
 
 <!-- Similarly for the score function with a single parameter $\beta$ the Taylor series expansion is \begin{align*}U(\beta) & \approx U(\hat{\beta})+ (\beta-\hat{\beta})U'(\hat{\beta}).\end{align*} -->
 <!-- Approximating $U'$ by its expectation $E(U')=-\mathcal{I}$ this becomes -->
@@ -641,12 +639,12 @@ We will now turn our attention to inference for GLMs, mainly through hypothesis 
 <!-- For a vector $\boldsymbol{\beta}$ of parameters this generalizes to \begin{align} U(\boldsymbol{\beta}) \approx U(\hat{\boldsymbol{\beta}}) -\mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}).\label{eqn:scoreexp}\end{align} -->
 
 <!-- Equation (\ref{eqn:scoreexp}) can be used to obtain the sampling distribution of the MLE $\hat{\boldsymbol{\beta}}$.  Since $U(\hat{\boldsymbol{\beta}})=\boldsymbol{0}$, we have  $ U(\boldsymbol{\beta}) \approx  -\mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}) \Rightarrow (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta}) = \mathcal{I}^{-1} \boldsymbol{U} $ assuming $\mathcal{I}$ is not singular. Taking the expectation (regarding $\mathcal{I}$ as a constant), we have that asymptotically $\hat{\boldsymbol{\beta}}- \boldsymbol{\beta}=\boldsymbol{0}$ since $E(\boldsymbol{U})=0$. Thus $E(\hat{\boldsymbol{\beta}})=\boldsymbol{\beta}$ (asymptotically) and hence the MLE is asymptotically unbiased. -->
-<!--  The variance-covariance matrix for $\hat{\boldsymbol{\beta}}$ is $E\left[(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})\intercal  \right]= \mathcal{I}^{-1} E(\boldsymbol{U}\boldsymbol{U}\intercal) \mathcal{I}^{-1} = \mathcal{I}^{-1}$ since $E(\boldsymbol{U}\boldsymbol{U}\intercal)=\mathcal{I}$ and $(\mathcal{I}^{-1})\intercal =\mathcal{I}^{-1}$ since $\mathcal{I}$ is symmetric. -->
+<!--  The variance-covariance matrix for $\hat{\boldsymbol{\beta}}$ is $E\left[(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})^\intercal  \right]= \mathcal{I}^{-1} E(\boldsymbol{U}\boldsymbol{U}^\intercal) \mathcal{I}^{-1} = \mathcal{I}^{-1}$ since $E(\boldsymbol{U}\boldsymbol{U}^\intercal)=\mathcal{I}$ and $(\mathcal{I}^{-1})^\intercal =\mathcal{I}^{-1}$ since $\mathcal{I}$ is symmetric. -->
 <!-- Then by equation (\ref{eqn:approxnormgeneral}), -->
 
 The asymptotic (large sample) distribution for $\hat{\boldsymbol{\beta}}$ is
   \begin{align}
-   (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta}) \overset{\text{approx}}{\sim} \chi^2(p) \label{eqn:waldchi}   \end{align} or equivalently \begin{align}\hat{\boldsymbol{\beta}} \overset{\text{approx}}{\sim} N_p(\boldsymbol{\beta}, \mathcal{I}^{-1}),\label{eqn:waldnormal}\end{align} where $\chi^2(p)$ refers to the chi-squared distribution with $p$ degrees of freedom and $N_p(\boldsymbol{\beta},\mathcal{I}^{-1})$ refers to a multivariate ($p$-dimensional) normal distribution with vector mean $\boldsymbol{\beta}$ and $p \times p$-dimensional variance-covariance matrix $\mathcal{I}^{-1}$.
+   (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\hat{\boldsymbol{\beta}} - \boldsymbol{\beta}) \overset{\text{approx}}{\sim} \chi^2(p) \label{eqn:waldchi}   \end{align} or equivalently \begin{align}\hat{\boldsymbol{\beta}} \overset{\text{approx}}{\sim} N_p(\boldsymbol{\beta}, \mathcal{I}^{-1}),\label{eqn:waldnormal}\end{align} where $\chi^2(p)$ refers to the chi-squared distribution with $p$ degrees of freedom and $N_p(\boldsymbol{\beta},\mathcal{I}^{-1})$ refers to a multivariate ($p$-dimensional) normal distribution with vector mean $\boldsymbol{\beta}$ and $p \times p$-dimensional variance-covariance matrix $\mathcal{I}^{-1}$.
 
 In the one-dimensional case, what this says is that the MLE $\hat{\beta}$ is approximately normally distributed with mean $\beta$ and variance $\mathcal{I}^{-1}$.
 
@@ -689,28 +687,28 @@ The resulting interval is $(2.36,8.55)$, and since it does not include zero, we 
 ###[/example]
 <!-- \begin{example}[MLE for the normal linear model] -->
 <!-- Consider the model $E(Y_i)= \mu_i = \boldsymbol{x}_i^{\intercal} \boldsymbol{\beta}$ where $Y_i \sim N(\mu_i, \sigma^2)$  for $i =1, \dots, n$ and $\boldsymbol{\beta}$ is a $p$-dimensional vector of parameters. This is a GLM with the identity link. Since $\eta_i =g(\mu_i)=\mu_i$ we have $g'(\mu_i)=1$. The elements of the information matrix therefore are $\mathcal{I}_{jk}=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i) (g'(\mu_i))^2} =\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\sigma^2}$ Hence \begin{align} -->
-<!--               \mathcal{I} =\frac{1}{\sigma^2} \boldsymbol{X}\intercal \boldsymbol{X} \label{eqn:informationnormal} -->
+<!--               \mathcal{I} =\frac{1}{\sigma^2} \boldsymbol{X}^\intercal \boldsymbol{X} \label{eqn:informationnormal} -->
 <!--              \end{align} -->
 <!-- Similarly -->
 <!--  $\eta_i+z_i = \mu_i+ (y_i-\mu_i) g'(\mu_i)=y_i$ -->
-<!--  The estimating equation  $\boldsymbol{X}\intercal \boldsymbol{W} \boldsymbol{X} \hat{\boldsymbol{\beta}}^{(m)}= \boldsymbol{X}\intercal \boldsymbol{W} (\boldsymbol{\eta}+\boldsymbol{z}) $ thus simplifies to  $\frac{1}{\sigma^2}\boldsymbol{X}\intercal \boldsymbol{X} \hat{\boldsymbol{\beta}}=\frac{1}{\sigma^2} \boldsymbol{X}\intercal \boldsymbol{y} \Rightarrow \hat{\boldsymbol{\beta}}=(\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{y}. $ -->
+<!--  The estimating equation  $\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X} \hat{\boldsymbol{\beta}}^{(m)}= \boldsymbol{X}^\intercal \boldsymbol{W} (\boldsymbol{\eta}+\boldsymbol{z}) $ thus simplifies to  $\frac{1}{\sigma^2}\boldsymbol{X}^\intercal \boldsymbol{X} \hat{\boldsymbol{\beta}}=\frac{1}{\sigma^2} \boldsymbol{X}^\intercal \boldsymbol{y} \Rightarrow \hat{\boldsymbol{\beta}}=(\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{y}. $ -->
 <!--  If we write the normal linear model as -->
-<!--   $\boldsymbol{y} \sim MVN (\boldsymbol{X}\boldsymbol{\beta}, \sigma^2 \boldsymbol{I})$ where $\boldsymbol{I}$ is the $n\times n$ identity matrix, we have that $E(\hat{\boldsymbol{\beta}}) = E[(\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{y}]=  (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{X}\boldsymbol{\beta} = \boldsymbol{\beta}, $ -->
+<!--   $\boldsymbol{y} \sim MVN (\boldsymbol{X}\boldsymbol{\beta}, \sigma^2 \boldsymbol{I})$ where $\boldsymbol{I}$ is the $n\times n$ identity matrix, we have that $E(\hat{\boldsymbol{\beta}}) = E[(\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{y}]=  (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{X}\boldsymbol{\beta} = \boldsymbol{\beta}, $ -->
 <!--  so $\hat{\boldsymbol{\beta}}$ is an unbiased estimator of $\boldsymbol{\beta}$. -->
 
-<!--  To obtain the variance-covariance matrix for $\hat{\boldsymbol{\beta}}$ we use $$(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta}) &= (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{y}-\boldsymbol{\beta} \\                                                                       &=    (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal (\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}) $$  -->
+<!--  To obtain the variance-covariance matrix for $\hat{\boldsymbol{\beta}}$ we use $$(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta}) &= (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{y}-\boldsymbol{\beta} \\                                                                       &=    (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal (\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}) $$  -->
 
 <!--  Hence, -->
 <!--  \begin{align*} -->
 <!--  & E[(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})  (\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})\intercal] \\ -->
-<!--  & = (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal E[(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta})(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta})\intercal]\boldsymbol{X}  (\boldsymbol{X}\intercal \boldsymbol{X})^{-1}\\ & = (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \mathrm{Var}(\boldsymbol{y})  \boldsymbol{X}  (\boldsymbol{X}\intercal \boldsymbol{X})^{-1}  \\   &= \sigma^2      (\boldsymbol{X}\intercal \boldsymbol{X})^{-1}\\ -->
+<!--  & = (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal E[(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta})(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta})\intercal]\boldsymbol{X}  (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1}\\ & = (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \mathrm{Var}(\boldsymbol{y})  \boldsymbol{X}  (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1}  \\   &= \sigma^2      (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1}\\ -->
 <!--  &= \mathcal{I}^{-1} \hspace{5cm} \text{ by (\ref{eqn:informationnormal})} \end{align*} -->
-<!-- In this case, the exact sampling distribution of $\hat{\boldsymbol{\beta}}$ is $N(\boldsymbol{\beta}, \mathcal{I}^{-1})$ or equivalently $(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta}) \sim \chi^2(p)$. -->
+<!-- In this case, the exact sampling distribution of $\hat{\boldsymbol{\beta}}$ is $N(\boldsymbol{\beta}, \mathcal{I}^{-1})$ or equivalently $(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}-\boldsymbol{\beta}) \sim \chi^2(p)$. -->
 <!-- \end{example} -->
 
 ###Deviance
 
-To assess the adequacy of a model of interest, we compare it with the \textbf{saturated} (or \textbf{full}) model, which has the maximum number of parameters that can be estimated. For data with $n$ observations, $y_1,\dots, y_n$, each with a different parameter in $\boldsymbol{X}\intercal \boldsymbol{\beta}$, the saturated  model can be specified with $n$ parameters. If we have replicates, the maximum number of parameters in the saturated model can be less than $n$. Let $m$ be the maximum number of parameters that can be estimated, and $\boldsymbol{\beta}_{\max}$ and $\hat{\boldsymbol{\beta}}_{\max}$ be the corresponding parameter vector and MLE.
+To assess the adequacy of a model of interest, we compare it with the \textbf{saturated} (or \textbf{full}) model, which has the maximum number of parameters that can be estimated. For data with $n$ observations, $y_1,\dots, y_n$, each with a different parameter in $\boldsymbol{X}^\intercal \boldsymbol{\beta}$, the saturated  model can be specified with $n$ parameters. If we have replicates, the maximum number of parameters in the saturated model can be less than $n$. Let $m$ be the maximum number of parameters that can be estimated, and $\boldsymbol{\beta}_{\max}$ and $\hat{\boldsymbol{\beta}}_{\max}$ be the corresponding parameter vector and MLE.
 
 Let $L(\hat{\boldsymbol{\beta}}_{\max};\boldsymbol{y})$ be the likelihood evaluated at $\hat{\boldsymbol{\beta}}_{\max}$, that is the likelihood for the full model. Let $L(\hat{\boldsymbol{\beta}};\boldsymbol{y})$ be the maximum value of the likelihood for a model of interest.
 The **likelihood ratio** $$\lambda=\frac{L(\hat{\boldsymbol{\beta}}_{\max};\boldsymbol{y})}{L(\hat{\boldsymbol{\beta}};\boldsymbol{y})}$$ provides a measure of how well the model of interest fits compared with the full model.
@@ -720,9 +718,9 @@ In practice, we often use the logarithm of the likelihood ratio:
 The deviance, $D$, is defined as $D=2\log \lambda =2[ l(\hat{\boldsymbol{\beta}}_{\max};\boldsymbol{y})-l(\hat{\boldsymbol{\beta}};\boldsymbol{y})]$ where $l(\hat{\boldsymbol{\beta}}_{\max};\boldsymbol{y})$ is the maximised log-likelihood for the saturated model and $l(\hat{\boldsymbol{\beta}};\boldsymbol{y})$ is the maximised log-likelihood for the model of interest.
 ###[/definition]
 
-<!-- Recall the Taylor series expansion for the log-likelihood (\ref{eqn:likelihoodexp}): $(\boldsymbol{\beta}) \approx l(\hat{\boldsymbol{\beta}}) + (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})\intercal U(\hat{\boldsymbol{\beta}}) -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})\intercal \mathcal{I}(\hat{\boldsymbol{\beta}})(\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}) $ -->
-<!-- Since $\hat{\boldsymbol{\beta}}$ is the MLE, $U(\hat{\boldsymbol{\beta}})=\boldsymbol{0}$ and hence this becomes  $l(\boldsymbol{\beta})- l(\hat{\boldsymbol{\beta}}) \approx  -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}).$ -->
-<!-- Therefore, the statistic $2[ l(\hat{\boldsymbol{\beta}};\boldsymbol{y})-l(\boldsymbol{\beta};\boldsymbol{y})] \approx  (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})$ will be approximately $\chi^2(p)$. -->
+<!-- Recall the Taylor series expansion for the log-likelihood (\ref{eqn:likelihoodexp}): $(\boldsymbol{\beta}) \approx l(\hat{\boldsymbol{\beta}}) + (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal U(\hat{\boldsymbol{\beta}}) -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}})(\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}) $ -->
+<!-- Since $\hat{\boldsymbol{\beta}}$ is the MLE, $U(\hat{\boldsymbol{\beta}})=\boldsymbol{0}$ and hence this becomes  $l(\boldsymbol{\beta})- l(\hat{\boldsymbol{\beta}}) \approx  -  \frac{1}{2} (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}}).$ -->
+<!-- Therefore, the statistic $2[ l(\hat{\boldsymbol{\beta}};\boldsymbol{y})-l(\boldsymbol{\beta};\boldsymbol{y})] \approx  (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})^\intercal \mathcal{I}(\hat{\boldsymbol{\beta}}) (\boldsymbol{\beta}-\hat{\boldsymbol{\beta}})$ will be approximately $\chi^2(p)$. -->
 <!-- For the deviance, write \begin{align*}D&=2[ l(\hat{\boldsymbol{\beta}}_{\max};\boldsymbol{y})-l(\hat{\boldsymbol{\beta}};\boldsymbol{y})]\\ -->
 <!--  &=2[ l(\hat{\boldsymbol{\beta}}_{\max};\boldsymbol{y})-l(\boldsymbol{\beta}_{\max};\boldsymbol{y})]\\ -->
 <!--  & \hspace{1cm} -2[ l(\hat{\boldsymbol{\beta}};\boldsymbol{y})-l(\boldsymbol{\beta};\boldsymbol{y})]+2 \left[ l(\boldsymbol{\beta}_{\max};\boldsymbol{y})-l(\boldsymbol{\beta};\boldsymbol{y}) \right]    .                    \end{align*} -->
@@ -733,7 +731,7 @@ For a GLM that fits the data well, the approximate distribution of the deviance,
 
 ###[example] Deviance for a binomial model
 Suppose $Y_1, \dots, Y_n$ are independent with $Y_i \sim Bin(n_i, p_i)$ for $i=1,\dots, n$.  The log-likelihood is  \begin{align}l(\boldsymbol{\beta}; \boldsymbol{y}) = \sum_{i=1}^n \left[y_i \log p_i-y_i \log(1-p_i)+ n_i \log(1-p_i) +\log \binom{n_i}{y_i} \right] \label{eqn:binomloglik} \end{align}
-For the full model the $p_i$'s are all different, so $\boldsymbol{\beta}=(p_1, \dots, p_n)\intercal$ and we can show that $\hat{p}_i=y_i/n_i$. This gives
+For the full model the $p_i$'s are all different, so $\boldsymbol{\beta}=(p_1, \dots, p_n)^\intercal$ and we can show that $\hat{p}_i=y_i/n_i$. This gives
   \begin{align}l(\hat{\boldsymbol{\beta}}_{\max}; \boldsymbol{y}) &= \sum \left[y_i \log \left(\frac{y_i}{n_i}\right)-y_i \log\left(\frac{n_i-y_i}{n_i}\right)  + n_i \log\left(\frac{n_i-y_i}{n_i}\right) +\log \binom{n_i}{y_i} \right].\label{eqn:binomloglikfullmodel}\end{align}
 For any model with $p<n$ parameters, the MLE of $p_i$ is $\hat{p}_i$ and the fitted values are $\hat{y_i}=n_i \hat{p_i}$.  This gives
   \begin{align}l(\hat{\boldsymbol{\beta}}; \boldsymbol{y}) &= \sum_{i=1}^n \left[y_i \log \left(\frac{\hat{y}_i}{n_i}\right)-y_i \log\left(\frac{n_i-\hat{y}_i}{n_i}\right)+n_i \log\left(\frac{n_i-\hat{y}_i}{n_i}\right) +\log \binom{n_i}{y_i} \right].\end{align}
@@ -743,12 +741,12 @@ Thus, the deviance is \begin{align}
 ###[/example]
 
 ###[example] Deviance for a normal linear model
-Suppose $Y_1, \dots, Y_n$ are independent with $Y_i \sim N(\mu_i, \sigma^2)$ and $E(Y_i)= \mu_i=\boldsymbol{x}\intercal_i  \boldsymbol{\beta}$ for $i=1,\dots, n$ .
+Suppose $Y_1, \dots, Y_n$ are independent with $Y_i \sim N(\mu_i, \sigma^2)$ and $E(Y_i)= \mu_i=\boldsymbol{X}^\intercal_i  \boldsymbol{\beta}$ for $i=1,\dots, n$ .
  The log-likelihood function is
  \begin{align}l(\boldsymbol{\beta}; \boldsymbol{y}) = -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i -\mu_i)^2 -\frac{1}{2}n \log(2\pi \sigma^2).\label{eqn:normalloglik}\end{align}
 For the saturated model, we have $n$ parameters $\mu_1, \dots, \mu_n$. The MLEs are $\hat{\mu}_i=y_i$ and so the maximum value of the log-likelihood becomes
  \begin{align}l(\hat{\boldsymbol{\beta}}_{\max}; \boldsymbol{y}) =  -\frac{1}{2}n \log(2\pi \sigma^2). \label{eqn:normloglikfullmodel}\end{align}
- For any other model with $p<n$ parameters, the MLE of $\boldsymbol{\beta}$ is $\hat{\boldsymbol{\beta}} = (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{y}.$
+ For any other model with $p<n$ parameters, the MLE of $\boldsymbol{\beta}$ is $\hat{\boldsymbol{\beta}} = (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{y}.$
 The corresponding maximised log-likelihood function is
  \begin{align}l(\hat{\boldsymbol{\beta}}; \boldsymbol{y}) = -\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i -\boldsymbol{x}_i^{\intercal} \hat{\boldsymbol{\beta}})^2 -\frac{1}{2}n \log(2\pi \sigma^2).\end{align}
  The deviance then is \begin{align}
@@ -766,20 +764,20 @@ The corresponding maximised log-likelihood function is
 
 <!-- More generally, when $\mu_i=\boldsymbol{x}_i^{\intercal} \hat{\boldsymbol{\beta}}$, we have -->
 <!-- \begin{align*} -->
-<!--   D =\frac{1}{\sigma^2} \sum_{i=1}^n \left(y_i-\boldsymbol{x}_i^{\intercal} \hat{\boldsymbol{\beta}}\right)^2=\frac{1}{\sigma^2} (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})\intercal (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}}). -->
+<!--   D =\frac{1}{\sigma^2} \sum_{i=1}^n \left(y_i-\boldsymbol{x}_i^{\intercal} \hat{\boldsymbol{\beta}}\right)^2=\frac{1}{\sigma^2} (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})^\intercal (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}}). -->
 <!-- \end{align*} -->
-<!-- Since the MLE is $\hat{\boldsymbol{\beta}}= (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{y}$, the term $(\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})$ can be written as -->
-<!-- \begin{align*}\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}} &= \boldsymbol{y}-\boldsymbol{X} (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal \boldsymbol{y}\\ -->
-<!--  &= [\boldsymbol{I} - \boldsymbol{X} (\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal]\boldsymbol{y}=[\boldsymbol{I}-\boldsymbol{H}]\boldsymbol{y} -->
-<!-- \end{align*} where $\boldsymbol{I}$ is the identity matrix and $\boldsymbol{H}= \boldsymbol{X}(\boldsymbol{X}\intercal \boldsymbol{X})^{-1} \boldsymbol{X}\intercal$ is the \textbf{hat} matrix. -->
+<!-- Since the MLE is $\hat{\boldsymbol{\beta}}= (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{y}$, the term $(\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})$ can be written as -->
+<!-- \begin{align*}\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}} &= \boldsymbol{y}-\boldsymbol{X} (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal \boldsymbol{y}\\ -->
+<!--  &= [\boldsymbol{I} - \boldsymbol{X} (\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal]\boldsymbol{y}=[\boldsymbol{I}-\boldsymbol{H}]\boldsymbol{y} -->
+<!-- \end{align*} where $\boldsymbol{I}$ is the identity matrix and $\boldsymbol{H}= \boldsymbol{X}(\boldsymbol{X}^\intercal \boldsymbol{X})^{-1} \boldsymbol{X}^\intercal$ is the \textbf{hat} matrix. -->
 <!-- Therefore -->
 <!-- \begin{align*} -->
-<!--   D &=\frac{1}{\sigma^2} (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})\intercal (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})\\ -->
-<!--   &=\frac{1}{\sigma^2}\left([\boldsymbol{I}-\boldsymbol{H}]\boldsymbol{y}\right)\intercal [\boldsymbol{I}-\boldsymbol{H}]\boldsymbol{y}\\ -->
-<!--   &= \frac{1}{\sigma^2} \boldsymbol{y}\intercal (\boldsymbol{I}-\boldsymbol{H})\boldsymbol{y} -->
+<!--   D &=\frac{1}{\sigma^2} (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})^\intercal (\boldsymbol{y}-\boldsymbol{X} \hat{\boldsymbol{\beta}})\\ -->
+<!--   &=\frac{1}{\sigma^2}\left([\boldsymbol{I}-\boldsymbol{H}]\boldsymbol{y}\right)^\intercal [\boldsymbol{I}-\boldsymbol{H}]\boldsymbol{y}\\ -->
+<!--   &= \frac{1}{\sigma^2} \boldsymbol{y}^\intercal (\boldsymbol{I}-\boldsymbol{H})\boldsymbol{y} -->
 <!-- \end{align*} -->
-<!-- since $\boldsymbol{H}$ is idempotent; that is $\boldsymbol{H}\intercal = \boldsymbol{H}$ and $\boldsymbol{H}\boldsymbol{H}=\boldsymbol{H}$. -->
-<!-- $D  = \dfrac{1}{\sigma^2} \boldsymbol{y}\intercal (\boldsymbol{I}-\boldsymbol{H}) \boldsymbol{y}$ is a quadratic form, with rank equal to the rank of the matrix $\boldsymbol{I}-\boldsymbol{H}$. -->
+<!-- since $\boldsymbol{H}$ is idempotent; that is $\boldsymbol{H}^\intercal = \boldsymbol{H}$ and $\boldsymbol{H}\boldsymbol{H}=\boldsymbol{H}$. -->
+<!-- $D  = \dfrac{1}{\sigma^2} \boldsymbol{y}^\intercal (\boldsymbol{I}-\boldsymbol{H}) \boldsymbol{y}$ is a quadratic form, with rank equal to the rank of the matrix $\boldsymbol{I}-\boldsymbol{H}$. -->
 <!-- The rank of $\boldsymbol{I}$ is $n$ and that of $\boldsymbol{H}$ is $p$, so the rank of $\boldsymbol{I}-\boldsymbol{H}$  is $n-p$. (For more details consult your Predictive Modelling notes.) -->
 
 It turns out that the (exact) distribution of $D$ is $\chi^2(n-p)$.
@@ -794,7 +792,7 @@ However, we are not able to use this chi-squared distribution directly, because 
 ###[example] Deviance for a Poisson model
 Let $Y_1, \dots, Y_n$ be independent random variables with $Y_i \sim Po(\mu_i)$.
 Then the log-likelihood function is \begin{align}l(\boldsymbol{\beta}; \boldsymbol{y}) = \sum y_i \log \mu_i - \sum \mu_i -\sum \log (y_i!).\label{en:poissonloglik}\end{align}
-For the full model $\boldsymbol{\beta}_{\max}= (\mu_1,\dots, \mu_n)\intercal$, $\hat{\mu}_i=y_i$, and the maximum value of the log-likelihood is
+For the full model $\boldsymbol{\beta}_{\max}= (\mu_1,\dots, \mu_n)^\intercal$, $\hat{\mu}_i=y_i$, and the maximum value of the log-likelihood is
   \begin{align}l(\hat{\boldsymbol{\beta}}_{\max}; \boldsymbol{y}) = \sum y_i \log y_i - \sum y_i -\sum \log (y_i!).\label{eqn:poissonloglikfullmodel}\end{align}
 Suppose that for the model of interest with $p<n$ parameters the MLE, $\hat{\boldsymbol{\beta}}$, can be used to obtain $\hat{\mu}_i$ and hence fitted values $\hat{y}_i=\hat{\mu}_i$ (because $E(Y_i)=\mu_i$).
  For the model of interest the maximum value of the log-likelihood is
@@ -848,7 +846,7 @@ As we've already seen, we can test hypotheses about the $p$-dimensional paramete
 Alternatively we can compare **nested** models $M_0$ and $M_1$ using the difference of their deviances.
 
 
-Consider $H_0: \boldsymbol{\beta}= \boldsymbol{\beta}_0 = (\beta_1, \dots, \beta_q)\intercal$ corresponding to $M_0$ and $H_1: \boldsymbol{\beta}= \boldsymbol{\beta}_0 = (\beta_1, \dots, \beta_p)\intercal$ corresponding to $M_1$ with $q<p<n$.
+Consider $H_0: \boldsymbol{\beta}= \boldsymbol{\beta}_0 = (\beta_1, \dots, \beta_q)^\intercal$ corresponding to $M_0$ and $H_1: \boldsymbol{\beta} = \boldsymbol{\beta}_1=(\beta_1, \dots, \beta_p)^\intercal$ corresponding to $M_1$ with $q<p<n$.
  Test $H_0$ against $H_1$ by considering \begin{align*} D_0-D_1& =2[l(\hat{\boldsymbol{\beta}}_{\max}; \boldsymbol{y}) -l(\hat{\boldsymbol{\beta}}_0; \boldsymbol{y})]-2[l(\hat{\boldsymbol{\beta}}_{\max}; \boldsymbol{y}) -l(\hat{\boldsymbol{\beta}}_1; \boldsymbol{y})] \\ &=2[ l(\hat{\boldsymbol{\beta}}_1; \boldsymbol{y}) -l(\hat{\boldsymbol{\beta}}_0; \boldsymbol{y})]\end{align*}
  If both models describe the data well then $D_0 \sim \chi^2(n-q)$, $D_1 \sim \chi^2(n-p)$ and $D_0-D_1 \sim \chi^2(p-q)$.
  If $M_1$ describes the data well but $M_0$ does not, then $D_0-D_1$ will be larger than expected for a value from $\chi^2(p-q)$.
@@ -931,4 +929,3 @@ Here $D_0$ is the null deviance, that is the deviance in the model that includes
 * Have a basic understanding of how coefficient estimates and standard errors are obtained in a GLM; be familiar with the concepts of likelihood, maximum likelihood estimation, testing, confidence intervals, and goodness of fit statistics in the context of GLMs.
 
 * Be familiar with the main ways of doing inference on the parameters of a GLM -- these are based on large sample distribution results for the maximum likelihood estimator and the deviance. Be able to test the significance of a term in a GLM by performing a Wald test or by comparing deviances between nested models.
-
