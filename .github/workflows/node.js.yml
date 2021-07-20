@@ -64,7 +64,7 @@ jobs:
       - run: |
           npm link
           cd fixtures/apm
-          rmarkdown --week=1
+          rmarkdown --week=2
 
       - name: Upload artifacts
         if: ${{ failure() }}

@@ -43,7 +43,7 @@ module.exports = {
       // },
     ]
   },
-  externals: [nodeExternals({ modulesFromFile: true })],
+  // externals: [nodeExternals({ modulesFromFile: true })],
   plugins: [
     new CleanWebpackPlugin(),
     new ShebangPlugin(),
