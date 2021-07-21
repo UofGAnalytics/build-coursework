@@ -3,17 +3,16 @@ import { exec } from 'child_process';
 import chokidar from 'chokidar';
 import { debounce } from 'lodash';
 
-const COURSE = 'rprog';
+const COURSE = 'apm';
+const WEEK = 'week2';
 
 chokidar
   .watch(['./compiler/src', './compiler/assets'])
   .on('all', debounce(rebuildAndRecompile, 300));
 
 chokidar
-  .watch(`./fixtures/${COURSE}`, {
+  .watch(`./fixtures/${COURSE}/${WEEK}`, {
     ignoreInitial: true,
-    ignored: (filePath: string) =>
-      !filePath.includes('/build/') && !filePath.includes('/cache/'),
   })
   .on('all', debounce(recompile, 300));
 
@@ -42,7 +41,7 @@ async function recompile(eventName?: string, path?: string) {
   // TODO: watch single unit
   try {
     await runCommand(
-      `yarn rmarkdown fixtures/${COURSE} --week=1 --noReport --noDoc`
+      `yarn rmarkdown fixtures/${COURSE} --week=2 --noCache --noReport --noDoc`
     );
   } finally {
     console.timeEnd(timerName);

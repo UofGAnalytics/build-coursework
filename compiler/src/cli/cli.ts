@@ -15,7 +15,7 @@ const { argv } = yargs(process.argv.slice(2))
   })
   .option('noDoc', {
     type: 'boolean',
-    description: 'Only Compile content HTML',
+    description: 'Only compile content HTML',
   })
   .option('noWrapper', {
     type: 'boolean',

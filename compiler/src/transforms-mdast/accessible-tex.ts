@@ -21,12 +21,21 @@ export function accessibleTex(ctx: Context) {
 async function customMath(node: Node, ctx: Context) {
   const value = node.value as string;
 
+  // if (node.type === 'math') {
+  //   console.log(value);
+  // }
+
   const svg = await cacheJsonToFile({
     ctx,
     prefix: 'tex',
     key: value,
     execFn: mathJaxSvg,
   });
+
+  // if (value.startsWith('y')) {
+  //   console.log(value);
+  //   console.log(svg);
+  // }
 
   node.data = {
     hName: node.type === 'inlineMath' ? 'span' : 'div',

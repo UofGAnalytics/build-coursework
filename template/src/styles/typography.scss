@@ -128,6 +128,7 @@ h5 + .boxout {
 }
 
 // link icon on hover
+h1,
 h2,
 h3,
 h4,
@@ -163,7 +164,8 @@ h6 {
 // list -------------------
 // ------------------------
 
-ul {
+ul,
+ol {
   padding: 0rem 2rem 1rem;
 }
 li:not(:last-child) {

@@ -9976,7 +9976,6 @@ function messageWithStatus(file, message, position, status) {
 
 
 
-
 function assert_asset_exists_assertAssetExists() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
@@ -10001,10 +10000,6 @@ function assert_asset_exists_assertAssetExists() {
     });
     await Promise.all(transformations);
   };
-}
-
-function getPath(url, dirname) {
-  return path.isAbsolute(url) ? url : path.join(process.cwd(), dirname, url);
 }
 ;// CONCATENATED MODULE: ./src/linters/assert-task-answer.ts
 
@@ -11219,7 +11214,7 @@ function embed_asset_url_embedAssetUrl() {
     const dirname = file.dirname || '';
 
     if (!url.startsWith('http')) {
-      const newUrl = embed_asset_url_getPath(url, dirname);
+      const newUrl = getPath(url, dirname);
       node.url = newUrl;
     }
   }
@@ -11233,7 +11228,7 @@ function embed_asset_url_embedAssetUrl() {
   };
 }
 
-function embed_asset_url_getPath(url, dirname) {
+function getPath(url, dirname) {
   return path.isAbsolute(url) ? url : path.join(process.cwd(), dirname, url);
 }
 ;// CONCATENATED MODULE: ./src/transforms-mdast/images.ts
@@ -11696,6 +11691,10 @@ function src_defineProperty(obj, key, value) { if (key in obj) { Object.definePr
 
 
 async function rMarkdown(dirPath, options = {}) {
+  console.log({
+    dirPath,
+    options
+  });
   const ctx = {
     course: await collectCoursework(dirPath),
     dirPath,
@@ -11719,6 +11718,10 @@ async function rMarkdown(dirPath, options = {}) {
 
 async function createUnit(ctx, unitIdx) {
   const unit = ctx.course.units[unitIdx];
+  console.log({
+    unitIdx,
+    unit
+  });
 
   try {
     const built = await buildUnit(ctx, unitIdx);

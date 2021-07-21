@@ -9,8 +9,8 @@ const {
   generateJSReferences
 } = require('mini-html-webpack-plugin');
 
-const COURSE = 'rprog'
-const UNIT = 'week-1.html'
+const COURSE = 'apm'
+const UNIT = 'week-2.html'
 const htmlFilePath = `../fixtures/${COURSE}/build/${UNIT}`
 
 const isProd = process.env.NODE_ENV === 'production';

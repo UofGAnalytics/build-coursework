@@ -1,4 +1,4 @@
-export function codeMod(contents: string) {
+export function containerDirective(contents: string) {
   return contents
     .split('\n')
     .map((line) => {
@@ -8,7 +8,6 @@ export function codeMod(contents: string) {
       }
       return line;
     })
-    .filter((s) => s.trim() !== '\\newpage')
     .join('\n');
 }
 
