@@ -59,16 +59,13 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
   const { files } = ctx.course.units[unitIdx];
 
   ////////////
-  // 1 code mod - rewrite old syntax to new syntax with regex
+  // 2 static analysis
   ////////////
 
   files.forEach((file) => {
     file.contents = codeMod(file.contents as string);
   });
-
-  ////////////
-  // 2 static analysis
-  ////////////
+  return;
 
   const mdasts = await Promise.all(
     files.map((file) => markdownParser(file, ctx))
