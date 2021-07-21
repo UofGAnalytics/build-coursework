@@ -65,7 +65,6 @@ export async function buildUnit(ctx: Context, unitIdx: number) {
   files.forEach((file) => {
     file.contents = codeMod(file.contents as string);
   });
-  return;
 
   const mdasts = await Promise.all(
     files.map((file) => markdownParser(file, ctx))

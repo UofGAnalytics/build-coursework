@@ -2,22 +2,22 @@
 import markdownTable from 'markdown-table';
 
 export function reformatPandocSimpleTables(contents: string) {
-  let lines = contents.split('\n');
+  const lines = contents.split('\n');
 
   for (var idx = lines.length - 1; idx >= 0; idx--) {
     const line = lines[idx];
 
     if (isValidPandocSimpleTableSeparator(line, idx, lines)) {
       const bounds = getTableBounds(lines, idx);
-      const tableLines = lines.slice(bounds.startIdx, idx + bounds.count);
-      const { table, align } = parseTable(tableLines);
+      const tableLines = lines.slice(
+        bounds.startIdx,
+        bounds.startIdx + bounds.count
+      );
+      const table = parseTable(tableLines);
+      const align = getColumnAlignment(table[0]);
       const mdTable = markdownTable(table, { align });
 
-      lines.splice(
-        bounds.startIdx,
-        bounds.count + 1,
-        ...mdTable.split('\n')
-      );
+      lines.splice(bounds.startIdx, bounds.count, ...mdTable.split('\n'));
     }
   }
 
@@ -33,29 +33,25 @@ function isValidPandocSimpleTableSeparator(
     return false;
   }
   const columnIndexes = getColumnIndexes(line);
-  const titles = parseBodyRow(arr[idx - 1], columnIndexes).filter(
-    (s) => s.trim() !== ''
-  );
-  return columnIndexes.length === titles.length;
+  const titles = parseBodyRow(arr[idx - 1], columnIndexes);
+  const filtered = titles.filter((s) => s.trim() !== '');
+  return columnIndexes.length === filtered.length;
 }
 
 function getTableBounds(arr: string[], idx: number) {
   const startIdx = idx - 1;
-  const count = arr.slice(idx).findIndex((l) => l.trim() === '');
+  const count = arr.slice(startIdx).findIndex((l) => l.trim() === '');
   return { startIdx, count };
 }
 
 function parseTable(tableLines: string[]) {
   const [titles, separator, ...body] = tableLines;
   const columnIndexes = getColumnIndexes(separator);
-  const align = getColumnAlignment(titles, columnIndexes);
-  const titleCells = parseBodyRow(titles, columnIndexes);
+  const titleCells = parseTitleRow(titles, columnIndexes);
   const bodyCells = body
     .map((line) => parseBodyRow(line, columnIndexes))
     .reduce(multilineReducer, []);
-  const table = [titleCells, ...bodyCells];
-
-  return { table, align };
+  return [titleCells, ...bodyCells];
 }
 
 function getColumnIndexes(line: string) {
@@ -73,37 +69,36 @@ function getColumnIndexes(line: string) {
   }, []);
 }
 
-function getColumnAlignment(
-  line: string,
-  columnIndexes: number[][]
-): ('left' | 'right' | 'center')[] {
-  return columnIndexes
-    .map((tuple) => line.slice(...tuple))
-    .map((title) => {
-      if (title[0] === ' ') {
-        if (title[title.length - 1] === ' ') {
-          return 'center';
-        }
-        return 'right';
+function getColumnAlignment(titleCells: string[]): string[] {
+  return titleCells.map((title) => {
+    if (title[0] === ' ') {
+      if (title[title.length - 1] === ' ') {
+        return 'center';
       }
-      return 'left';
-    });
+      return 'right';
+    }
+    return 'left';
+  });
+}
+
+function parseTitleRow(line: string, columnIndexes: number[][]) {
+  return columnIndexes.map((tuple) => line.slice(...tuple));
 }
 
 function parseBodyRow(line: string, columnIndexes: number[][]) {
-  return columnIndexes.map((t) => {
-    const end = t[1] === undefined ? t[1] : t[1] + 1;
-    return line.slice(t[0], end).trim();
+  return columnIndexes.map((tuple) => {
+    const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
+    return line.slice(tuple[0], end).trim();
   });
 }
 
 function multilineReducer(acc: string[][], row: string[]) {
-  if (row.some((c) => c.trim() === '')) {
+  if (row.some((cell) => cell.trim() === '')) {
     const prevIdx = acc.length - 1;
-    acc[prevIdx].forEach((c, i) => {
+    acc[prevIdx].forEach((cell, i) => {
       const trimmed = row[i].trim();
       if (trimmed !== '') {
-        acc[prevIdx][i] = c + ' ' + trimmed;
+        acc[prevIdx][i] = cell + ' ' + trimmed;
       }
     });
   } else {

@@ -18,7 +18,7 @@ export function codeMod(contents: string) {
   log('Reformatting Pandoc simple tables...');
   newContents = reformatPandocSimpleTables(newContents);
 
-  console.log(newContents);
+  // console.log(newContents);
 
   return newContents;
 }

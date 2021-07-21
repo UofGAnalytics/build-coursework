@@ -32,6 +32,11 @@ async function customMath(node: Node, ctx: Context) {
     execFn: mathJaxSvg,
   });
 
+  // if (value.startsWith('y')) {
+  //   console.log(value);
+  //   console.log(svg);
+  // }
+
   node.data = {
     hName: node.type === 'inlineMath' ? 'span' : 'div',
     hProperties: {

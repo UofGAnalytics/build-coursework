@@ -41,7 +41,7 @@ async function recompile(eventName?: string, path?: string) {
   // TODO: watch single unit
   try {
     await runCommand(
-      `yarn rmarkdown fixtures/${COURSE} --week=2 --noReport --noDoc`
+      `yarn rmarkdown fixtures/${COURSE} --week=2 --noCache --noReport --noDoc`
     );
   } finally {
     console.timeEnd(timerName);
