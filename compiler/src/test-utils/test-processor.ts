@@ -84,7 +84,7 @@ export function createHtml(str: string) {
   return unindentString(str);
 }
 
-function unindentString(str: string) {
+export function unindentString(str: string) {
   const arr = str.split('\n');
   const indentIdx = arr.reduce((acc, line) => {
     const idx = line.search(/[^\s]/);
