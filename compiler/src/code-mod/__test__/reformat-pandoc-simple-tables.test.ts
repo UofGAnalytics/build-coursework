@@ -47,4 +47,31 @@ describe('reformatPandocSimpleTables', () => {
 
     expect(codeMod(md)).toBe(expected);
   });
+
+  it('should be idempotent', async () => {
+    const md = unindentString(`
+      Movie                            Gross       Budget
+      -------------------------------- ----------- -----------
+        Ek Villain                       95.64       36.0
+        Humshakals                       55.65       77.0
+        Holiday                         110.01      90.0
+        Fugly                            11.16       16.0
+        City Lights                       5.19        9.5
+        Kuku Mathur Ki Jhand Ho Gayi      2.23        4.5
+    `);
+
+    const expected = unindentString(`
+      | Movie                            | Gross       | Budget |
+      | :------------------------------- | :---------- | :----- |
+      | Ek Villain                       | 95.64       | 36.0   |
+      | Humshakals                       | 55.65       | 77.0   |
+      | Holiday                          | 110.01      | 90.0   |
+      | Fugly                            | 11.16       | 16.0   |
+      | City Lights                      | 5.19        | 9.5    |
+      | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
+    `);
+
+    const result = codeMod(md);
+    expect(codeMod(result)).toBe(expected);
+  });
 });

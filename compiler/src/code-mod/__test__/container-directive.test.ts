@@ -33,4 +33,22 @@ describe('containerDirective', () => {
 
     expect(codeMod(md)).toBe(expected);
   });
+
+  it('should be idempotent', async () => {
+    const md = unindentString(`
+      ###[example] A title
+      An example of *this*!
+      ###[/example]
+    `);
+
+    const result = codeMod(md);
+
+    const expected = unindentString(`
+      :::example[A title]
+      An example of *this*!
+      :::
+    `);
+
+    expect(codeMod(result)).toBe(expected);
+  });
 });
