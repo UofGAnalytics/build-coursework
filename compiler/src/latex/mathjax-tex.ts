@@ -1,14 +1,13 @@
-import { mathjax } from 'mathjax-full/js/mathjax.js';
-import { TeX } from 'mathjax-full/js/input/tex.js';
-import { SVG } from 'mathjax-full/js/output/svg.js';
-import { MathML } from 'mathjax-full/js/input/mathml.js';
 import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js';
-import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js';
-import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
-import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
-import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
 import { STATE } from 'mathjax-full/js/core/MathItem.js';
-
+import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
+import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
+import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js';
+import { MathML } from 'mathjax-full/js/input/mathml.js';
+import { TeX } from 'mathjax-full/js/input/tex.js';
+import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
+import { mathjax } from 'mathjax-full/js/mathjax.js';
+import { SVG } from 'mathjax-full/js/output/svg.js';
 // @ts-expect-error
 import { toSpeech } from 'speech-rule-engine';
 
