@@ -24,5 +24,5 @@ export function codeMod(contents: string) {
 }
 
 function log(str: string) {
-  console.log(str);
+  // console.log(str);
 }

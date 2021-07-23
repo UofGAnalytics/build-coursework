@@ -37,12 +37,12 @@ import { assertWeblinkTarget } from './linters/assert-weblink-target';
 import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
+import { responsiveTables } from './transforms-hast/responsive-tables';
 import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-url';
 import { images } from './transforms-mdast/images';
-import { responsiveTables } from './transforms-mdast/responsive-tables';
 // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
 import { youtubeVideos } from './transforms-mdast/youtube-videos';
 import { Context } from './types';
@@ -93,7 +93,6 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
       linkProperties: { className: 'link' },
     })
     .use(youtubeVideos)
-    .use(responsiveTables)
     .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
     .use(boxouts)
@@ -111,6 +110,7 @@ export async function htmlCompiler(
   const { titles } = ctx.course.units[unitIdx];
   const processor = unified()
     .use(remark2rehype)
+    .use(responsiveTables)
     .use(format)
     .use(stringify);
 
