@@ -53,13 +53,18 @@ async function mathJaxSvg(value: string) {
   return createAccessibleSvg(svg, label);
 }
 
-function createAccessibleSvg(mathjaxSvg: string, label: string = '') {
+export function createAccessibleSvg(
+  mathjaxSvg: string,
+  label: string = ''
+) {
   const tree = rehypeParser.parse(mathjaxSvg) as Parent;
   const parent = tree.children[0] as Parent;
   const svg = parent.children[0] as Parent;
   const properties = svg.properties as Record<string, string>;
+  const block = properties.width === '100%';
 
   const newProperties: Record<string, string> = {
+    className: block ? 'math' : 'math-inline',
     width: properties.width,
     height: properties.height,
     viewBox: properties.viewBox,

@@ -15,12 +15,11 @@ import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
-import math from 'remark-math';
+// import math from 'remark-math';
 import markdown from 'remark-parse';
 import remark2rehype from 'remark-rehype';
 // @ts-expect-error
 import remark2retext from 'remark-retext';
-// @ts-expect-error
 import slug from 'remark-slug';
 // @ts-expect-error
 import english from 'retext-english';
@@ -38,7 +37,7 @@ import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { responsiveTables } from './transforms-hast/responsive-tables';
-import { accessibleTex } from './transforms-mdast/accessible-tex';
+// import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-url';
@@ -55,7 +54,7 @@ export async function markdownParser(file: VFile, ctx: Context) {
   const processor = unified()
     .use(markdown)
     .use(directive)
-    .use(math)
+    // .use(math)
     .use(gfm)
     .use(frontmatter)
     .use(embedAssetUrl);
@@ -93,7 +92,7 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
       linkProperties: { className: 'link' },
     })
     .use(youtubeVideos)
-    .use(accessibleTex, ctx)
+    // .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
     .use(boxouts)
     .use(images);
@@ -109,7 +108,7 @@ export async function htmlCompiler(
 ) {
   const { titles } = ctx.course.units[unitIdx];
   const processor = unified()
-    .use(remark2rehype)
+    .use(remark2rehype, { allowDangerousHtml: true })
     .use(responsiveTables)
     .use(format)
     .use(stringify);

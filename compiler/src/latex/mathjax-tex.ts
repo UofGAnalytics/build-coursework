@@ -12,8 +12,9 @@ import { SVG } from 'mathjax-full/js/output/svg.js';
 import { toSpeech } from 'speech-rule-engine';
 
 export function texToMml(tex: string = '') {
-  const packages = AllPackages.filter((name) => name !== 'bussproofs');
   const adaptor = liteAdaptor();
+  //  Busproofs requires an output jax, which we aren't using
+  const packages = AllPackages.filter((name) => name !== 'bussproofs');
   const input = new TeX({ packages });
   const doc = new HTMLDocument('', adaptor, { InputJax: input });
   const node = doc.convert(tex, { end: STATE.CONVERT });

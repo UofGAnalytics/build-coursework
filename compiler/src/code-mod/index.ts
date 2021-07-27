@@ -12,8 +12,8 @@ export function codeMod(contents: string) {
   log('Removing \\newpage lines...');
   newContents = removeNewPage(newContents);
 
-  log('Formatting block math...');
-  newContents = formatBlockMath(newContents);
+  // log('Formatting block math...');
+  // newContents = formatBlockMath(newContents);
 
   log('Reformatting Pandoc simple tables...');
   newContents = reformatPandocSimpleTables(newContents);

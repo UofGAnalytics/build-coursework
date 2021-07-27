@@ -27,7 +27,7 @@ export async function cacheToFile(options: Options) {
   if (exists) {
     const str = await readFile(cachedFilePath);
 
-    // auto-heal corrupt json
+    // ignore cache if json is corrupt
     if (json) {
       try {
         return JSON.parse(str);
