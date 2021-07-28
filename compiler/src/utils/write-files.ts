@@ -11,7 +11,6 @@ export async function writeHtml(
   dirPath: string
 ) {
   const filePath = getFilePath(dirPath, fileName);
-  // console.log(filePath)
   await writeFile(`${filePath}.html`, html);
   console.log('html file written to:', `${filePath}.html`);
 }
@@ -22,17 +21,11 @@ export async function writePdf(
   dirPath: string
 ) {
   const filePath = getFilePath(dirPath, fileName);
-  await writePdfFile(`${filePath}.pdf`, pdfHtml);
+  await writePdfPromise(`${filePath}.pdf`, pdfHtml);
   console.log('pdf file written to:', `${filePath}.pdf`);
 }
 
-function getFilePath(dirPath: string, unitName: string) {
-  const buildDir = getBuildDir(dirPath);
-  const fileName = kebabCase(unitName);
-  return path.join(buildDir, fileName);
-}
-
-async function writePdfFile(filePath: string, html: string) {
+async function writePdfPromise(filePath: string, html: string) {
   return new Promise<void>((resolve, reject) => {
     pdf.create(html).toFile(filePath, (err) => {
       if (err) {
@@ -42,4 +35,10 @@ async function writePdfFile(filePath: string, html: string) {
       }
     });
   });
+}
+
+function getFilePath(dirPath: string, unitName: string) {
+  const buildDir = getBuildDir(dirPath);
+  const fileName = kebabCase(unitName);
+  return path.join(buildDir, fileName);
 }

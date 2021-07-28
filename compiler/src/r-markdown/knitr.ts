@@ -26,9 +26,7 @@ async function knitr(filePath: string, ctx: Context) {
         console.error('ERROR', err);
         reject(err);
       } else {
-        const res = formatResponse(response);
-        // console.log(res);
-        resolve(res);
+        resolve(formatResponse(response));
       }
     });
   });

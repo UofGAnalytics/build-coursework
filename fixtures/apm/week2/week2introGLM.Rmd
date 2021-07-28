@@ -313,8 +313,9 @@ $$\mathrm{Var}[a(Y)] =\dfrac{b''(\theta)c'(\theta)-c''(\theta)b'(\theta)}{[b'(\t
 Some further useful properties of exponential family distributions relate to the **score function**.
 
 ###[definition] Score statistic
+\begin{align} U=\dfrac{dl(\theta;y)}{d\theta}\label{def:scoreuniv} \end{align}
 
-\label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$ is called the \textbf{score statistic}, and is equal to the derivative of the log-likelihood $l(\theta;y)$ with respect to the parameter $\theta$.
+is called the \textbf{score statistic}, and is equal to the derivative of the log-likelihood $l(\theta;y)$ with respect to the parameter $\theta$.
 ###[/definition]
 
 For exponential family distributions with log-likelihood $l(\theta; y) = a(y)b(\theta)+c(\theta) + d(y)$, the score is

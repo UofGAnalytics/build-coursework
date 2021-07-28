@@ -20,4 +20,5 @@ export type Context = {
   cacheDir: string;
   course: Course;
   options: Options;
+  texStore?: string[];
 };

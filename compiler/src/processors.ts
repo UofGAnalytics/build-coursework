@@ -37,7 +37,7 @@ import { lintLatex } from './linters/lint-latex';
 import { embedAssets } from './transforms-hast/embed-assets';
 import { htmlWrapper } from './transforms-hast/html-wrapper';
 import { responsiveTables } from './transforms-hast/responsive-tables';
-// import { accessibleTex } from './transforms-mdast/accessible-tex';
+import { accessibleTex } from './transforms-mdast/accessible-tex';
 import { boxouts } from './transforms-mdast/boxouts';
 import { codeBlocks } from './transforms-mdast/code-blocks';
 import { embedAssetUrl } from './transforms-mdast/embed-asset-url';
@@ -92,7 +92,7 @@ export async function customCombinedTransforms(mdast: Node, ctx: Context) {
       linkProperties: { className: 'link' },
     })
     .use(youtubeVideos)
-    // .use(accessibleTex, ctx)
+    .use(accessibleTex, ctx)
     .use(codeBlocks, ctx)
     .use(boxouts)
     .use(images);

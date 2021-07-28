@@ -33,9 +33,9 @@ function isValidPandocSimpleTableSeparator(
     return false;
   }
   const columnIndexes = getColumnIndexes(line);
-  const titles = parseBodyRow(arr[idx - 1], columnIndexes);
-  const filtered = titles.filter((s) => s.trim() !== '');
-  return columnIndexes.length === filtered.length;
+  // const titles = parseBodyRow(arr[idx - 1], columnIndexes);
+  // const filtered = titles.filter((s) => s.trim() !== '');
+  return columnIndexes.length > 1;
 }
 
 function getTableBounds(arr: string[], idx: number) {

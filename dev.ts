@@ -27,6 +27,7 @@ async function rebuildCompiler() {
   console.time(timerName);
   try {
     await runCommand('yarn workspace compiler build');
+    await runCommand('yarn release');
   } finally {
     console.timeEnd(timerName);
   }

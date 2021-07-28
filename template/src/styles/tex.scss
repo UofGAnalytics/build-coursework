@@ -15,7 +15,13 @@ svg.pdftex {
   max-width: 100%;
 }
 
-.math-inline {
+svg.block-math {
+  display: block;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+svg.inline-math {
   vertical-align: middle;
   font-size: 0.9em;
   svg {
