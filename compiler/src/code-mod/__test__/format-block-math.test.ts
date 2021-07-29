@@ -1,7 +1,7 @@
 import { unindentString } from '../../test-utils/test-processor';
 import { codeMod } from '../index';
 
-describe('formatBlockMath', () => {
+describe.skip('formatBlockMath', () => {
   it('should reformat block math', async () => {
     const md = unindentString(String.raw`
       Equation of the GLM: $$\log \left(\dfrac{p_i}{1-p_i} \right)=\beta_0+\beta_1 x_i$$

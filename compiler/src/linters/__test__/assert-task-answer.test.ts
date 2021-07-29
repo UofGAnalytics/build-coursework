@@ -1,6 +1,6 @@
 import { testProcessor } from '../../test-utils/test-processor';
 
-describe('assertTaskAnswerStructure', () => {
+describe.skip('assertTaskAnswerStructure', () => {
   it('should fail on task with no answer', async () => {
     const { hasFailingMessage } = await testProcessor(
       `
