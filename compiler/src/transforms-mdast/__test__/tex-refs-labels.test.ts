@@ -19,7 +19,7 @@ describe('latexReferences', () => {
       \begin{align} &U_j=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right]=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}\frac{x_{ij}} {g'(\mu_i)}\right]. \label{eqn:score}\end{align}
     `);
 
-    // console.log(html);
+    console.log(html);
 
     // delay jest output
     // await new Promise((resolve) => {

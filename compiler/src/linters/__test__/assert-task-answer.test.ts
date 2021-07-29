@@ -1,7 +1,7 @@
 import { testProcessor } from '../../test-utils/test-processor';
 
-describe.skip('assertTaskAnswerStructure', () => {
-  it('should fail on task with no answer', async () => {
+describe('assertTaskAnswerStructure', () => {
+  it.skip('should fail on task with no answer', async () => {
     const { hasFailingMessage } = await testProcessor(
       `
       ::::task
@@ -13,7 +13,7 @@ describe.skip('assertTaskAnswerStructure', () => {
     expect(hasFailingMessage('Task has no answer')).toBe(true);
   });
 
-  it('should fail on task with multiple answers', async () => {
+  it.skip('should fail on task with multiple answers', async () => {
     const { hasFailingMessage } = await testProcessor(
       `
       ::::task
@@ -31,7 +31,7 @@ describe.skip('assertTaskAnswerStructure', () => {
     expect(hasFailingMessage('Task has multiple answers')).toBe(true);
   });
 
-  it('should fail on answer outside task', async () => {
+  it.skip('should fail on answer outside task', async () => {
     const { hasFailingMessage } = await testProcessor(
       `
       :::answer
