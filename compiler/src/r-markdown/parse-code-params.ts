@@ -1,4 +1,4 @@
-import { Node } from 'unist';
+import { Code } from 'mdast';
 
 export type CodeParams = {
   language: string;
@@ -6,7 +6,7 @@ export type CodeParams = {
   value: string;
 };
 
-export function parseCodeParams(node: Node): CodeParams {
+export function parseCodeParams(node: Code): CodeParams {
   const combined = `${node.lang || ''}${node.meta || ''}`;
   const language = parseLanguage(combined);
 

@@ -1,10 +1,16 @@
-import { Node } from 'unist';
+import { Literal } from 'mdast';
+import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
+interface LeafDirective extends Parent {
+  name: string;
+  attributes: Record<string, string>;
+}
+
 export function youtubeVideos() {
   return async (tree: Node, file: VFile) => {
-    visit(tree, 'leafDirective', (node) => {
+    visit<LeafDirective>(tree, 'leafDirective', (node) => {
       if (node.name === 'video') {
         const attributes = node.attributes as Record<string, string>;
         const title = getTitle(node);
@@ -100,9 +106,9 @@ export function youtubeVideos() {
   };
 }
 
-function getTitle(node: Node) {
+function getTitle(node: LeafDirective) {
   const children = node.children as Node[];
-  const firstChild = children[0];
+  const firstChild = children[0] as Literal;
   return firstChild.value as string;
 }
 

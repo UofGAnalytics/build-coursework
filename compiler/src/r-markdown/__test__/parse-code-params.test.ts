@@ -1,4 +1,4 @@
-import { Node } from 'unist';
+import { Code } from 'mdast';
 
 import { parseCodeParams } from '../parse-code-params';
 
@@ -79,7 +79,7 @@ function createNode(params: string) {
     lang = params.slice(0, spaceIdx);
     meta = params.slice(spaceIdx);
   }
-  const node: Node = {
+  const node: Code = {
     type: 'code',
     lang,
     meta,

@@ -6,18 +6,12 @@ import { storeTex } from './latex';
 import {
   customCombinedTransforms,
   htmlCompiler,
-  linter,
   markdownParser,
 } from './processors';
 import { processKnitr } from './r-markdown/knitr';
 import { Context, Options } from './types';
-import { printReport, reportHasFatalErrors } from './utils/report';
-import {
-  combineMdastTrees,
-  getBuildDir,
-  getCacheDir,
-  mkdir,
-} from './utils/utils';
+// import { printReport, reportHasFatalErrors } from './utils/report';
+import { getBuildDir, getCacheDir, mkdir } from './utils/utils';
 import { writeHtml } from './utils/write-files';
 
 export async function rMarkdown(dirPath: string, options: Options = {}) {

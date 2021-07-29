@@ -1,5 +1,6 @@
 import path from 'path';
 
+import { Element } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
 import { Node } from 'unist';
@@ -14,7 +15,7 @@ import { failMessage } from '../utils/message';
 import { readFile } from '../utils/utils';
 
 export function embedAssets(ctx: Context) {
-  async function embed(node: Node, file: VFile) {
+  async function embed(node: Element, file: VFile) {
     const src = getImageSrc(node);
     const parsed = path.parse(src);
     try {
@@ -36,7 +37,7 @@ export function embedAssets(ctx: Context) {
   }
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
-    visit(tree, 'element', (node) => {
+    visit<Element>(tree, 'element', (node) => {
       if (node.tagName === 'img') {
         transformations.push(embed(node, file));
       }
@@ -45,7 +46,7 @@ export function embedAssets(ctx: Context) {
   };
 }
 
-async function embedImage(node: Node, ctx: Context) {
+async function embedImage(node: Element, ctx: Context) {
   const properties = (node.properties || {}) as { src: string };
   const src = getImageSrc(node);
   const mime = mimes.getType(path.extname(src));
@@ -56,20 +57,18 @@ async function embedImage(node: Node, ctx: Context) {
   };
 }
 
-async function embedPlotSvg(imgNode: Node, ctx: Context) {
+async function embedPlotSvg(imgNode: Element, ctx: Context) {
   const src = getImageSrc(imgNode);
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
-  const svgNode = getAssetHast(svg);
-  const svgProps = svgNode.properties as Record<string, string>;
-  const imgProps = imgNode.properties as Record<string, string>;
-  const properties = { ...svgProps, ...imgProps };
+  const svgNode = getAssetHast(svg) as Element;
+  const properties = { ...svgNode.properties, ...imgNode.properties };
   delete properties.src;
   Object.assign(imgNode, svgNode, { properties });
 }
 
-function getImageSrc(node: Node) {
+function getImageSrc(node: Element) {
   const properties = (node.properties || {}) as { src: string };
   if (!properties.src) {
     throw new Error('Image has no src');
@@ -95,12 +94,10 @@ async function getImageDataFromWeb(src: string) {
   return buffer.toString('base64');
 }
 
-async function embedTexPdfSvg(imgNode: Node) {
+async function embedTexPdfSvg(imgNode: Element) {
   const src = getImageSrc(imgNode);
-  const svgNode = await texPdfToSvg(src);
-  const svgProps = svgNode.properties as Record<string, string>;
-  const imgProps = imgNode.properties as Record<string, string>;
-  const properties = { ...svgProps, ...imgProps };
+  const svgNode = (await texPdfToSvg(src)) as Element;
+  const properties = { ...svgNode.properties, ...imgNode.properties };
   delete properties.src;
   Object.assign(imgNode, svgNode, { properties });
 }

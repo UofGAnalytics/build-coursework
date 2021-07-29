@@ -1,3 +1,5 @@
+import { Literal } from 'hast';
+
 import {
   createHtml,
   testProcessor,
@@ -39,7 +41,8 @@ describe('codeBlocks', () => {
       \`\`\`
     `);
 
-    const withOutput = mdast.children.map((o, idx) => {
+    const children = mdast.children as Literal[];
+    const withOutput = children.map((o, idx) => {
       const v = (o.value || '') as string;
       const value = v.slice(0, v.indexOf('\n'));
       return `${idx} ${value}`.trim();

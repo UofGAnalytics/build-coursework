@@ -1,5 +1,5 @@
 import { containerDirective } from './container-directive';
-import { formatBlockMath } from './format-block-math';
+// import { formatBlockMath } from './format-block-math';
 import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
 import { removeNewPage } from './remove-new-page';
 

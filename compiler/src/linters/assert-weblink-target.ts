@@ -1,15 +1,20 @@
 import { Node } from 'hast';
+import { Parent } from 'mdast';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';
 
+interface ContainerDirective extends Parent {
+  name: string;
+  attributes: Record<string, string>;
+}
+
 export function assertWeblinkTarget() {
   return (tree: Node, file: VFile) => {
-    visit(tree, 'containerDirective', (node) => {
+    visit<ContainerDirective>(tree, 'containerDirective', (node) => {
       if (node.name === 'weblink') {
-        const { target } = node.attributes as Record<string, string>;
-        if (target === undefined) {
+        if (node.attributes.target === undefined) {
           failMessage(
             file,
             'Weblink has no target attribute',

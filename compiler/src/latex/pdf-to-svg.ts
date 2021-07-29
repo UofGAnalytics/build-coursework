@@ -1,3 +1,4 @@
+import { Element as HastElement } from 'hast';
 import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
 import SandboxedModule from 'sandboxed-module';
@@ -51,9 +52,9 @@ async function formatSvg(str: string) {
 
 function addWrapper() {
   return (tree: Node) => {
-    visit(tree, 'element', (node) => {
+    visit<HastElement>(tree, 'element', (node) => {
       if (node.tagName === 'svg') {
-        const properties = node.properties as Record<string, any>;
+        const properties = node.properties || {};
         node.properties = {
           width: properties.width,
           height: properties.height,

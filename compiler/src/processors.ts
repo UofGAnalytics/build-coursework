@@ -6,6 +6,8 @@ import lintAltText from '@double-great/remark-lint-alt-text';
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
 import dictionary from 'dictionary-en-gb';
+import { Parent as HastParent } from 'hast';
+import { Parent } from 'mdast';
 import doc from 'rehype-document';
 // @ts-expect-error
 import format from 'rehype-format';
@@ -59,7 +61,7 @@ export async function markdownParser(file: VFile, ctx: Context) {
     .use(frontmatter)
     .use(embedAssetUrl);
   const parsed = processor.parse(file);
-  return processor.run(parsed, file);
+  return processor.run(parsed, file) as Promise<Parent>;
 }
 
 export async function linter(mdast: Node, ctx: Context, file: VFile) {
@@ -135,7 +137,7 @@ export async function htmlCompiler(
     });
   }
 
-  const hast = await processor.run(mdast);
+  const hast = (await processor.run(mdast)) as HastParent;
 
   const html = processor.stringify(hast);
 

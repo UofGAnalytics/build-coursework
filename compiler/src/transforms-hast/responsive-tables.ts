@@ -1,3 +1,4 @@
+import { Element } from 'hast';
 import { cloneDeep } from 'lodash';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
@@ -9,11 +10,12 @@ type ParentProps = {
 
 export function responsiveTables() {
   return async (tree: Node, file: VFile) => {
-    visit(tree, 'element', (node, idx, parent) => {
+    visit<Element>(tree, 'element', (node, idx, _parent) => {
       if (node.tagName !== 'table') {
         return;
       }
 
+      const parent = _parent as Element;
       const properties = (parent?.properties || {}) as ParentProps;
       const className = properties.className || [];
 

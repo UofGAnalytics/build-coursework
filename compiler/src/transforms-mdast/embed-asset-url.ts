@@ -1,11 +1,12 @@
 import path from 'path';
 
+import { Image } from 'mdast';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 export function embedAssetUrl() {
-  async function getAssetUrl(node: Node, file: VFile) {
+  async function getAssetUrl(node: Image, file: VFile) {
     const url = (node.url || '') as string;
     const dirname = (file.dirname || '') as string;
     if (!url.startsWith('http')) {
@@ -16,7 +17,7 @@ export function embedAssetUrl() {
 
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
-    visit(tree, 'image', (node) => {
+    visit<Image>(tree, 'image', (node) => {
       transformations.push(getAssetUrl(node, file));
     });
     await Promise.all(transformations);

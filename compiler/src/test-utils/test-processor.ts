@@ -3,7 +3,7 @@ import path from 'path';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
-import { Node, Parent } from 'unist';
+import { Parent } from 'unist';
 import { VFile } from 'vfile';
 
 import { getUnitTitles } from '../course';
@@ -14,7 +14,7 @@ import { buildUnit } from '..';
 
 type Built = {
   mdast: Parent;
-  hast: Node;
+  hast: Parent;
   html: string;
 };
 
@@ -71,7 +71,7 @@ export async function testProcessor(md: string, options: Options = {}) {
       return {
         mdast: { type: 'blank', children: [] },
         html: '',
-        hast: { type: 'blank' },
+        hast: { type: 'blank', children: [] },
       };
     }
     return built;

@@ -48,7 +48,7 @@ export function getCacheDir(dirPath: string) {
   return path.join(process.cwd(), dirPath, 'cache');
 }
 
-export function combineMdastTrees(mdasts: Node[]): Parent {
+export function combineMdastTrees(mdasts: Parent[]): Parent {
   const children = mdasts.flatMap(
     (mdast) => mdast.children || []
   ) as Node[];

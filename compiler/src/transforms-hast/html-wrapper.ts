@@ -1,4 +1,4 @@
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 
 import { UnitTitles } from '../course/types';
 import { createMain } from '../html-wrapper/main';
@@ -7,10 +7,9 @@ import { createDefs, createSvg } from '../utils/icons';
 
 export function htmlWrapper(titles: UnitTitles, mdast: Node) {
   return async (tree: Node) => {
-    const hamburgerIcon = await createSvg('hamburger-icon');
+    const hamburgerIcon = createSvg('hamburger-icon');
     const sidebar = await createSidebar(mdast);
-    const children = tree.children as Node[];
-    const main = await createMain(titles, children);
+    const main = await createMain(titles, (tree as Parent).children);
     const iconDefs = createDefs();
     return {
       type: 'root',

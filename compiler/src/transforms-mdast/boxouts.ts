@@ -1,12 +1,18 @@
+import { Element, Literal } from 'hast';
 import { startCase } from 'lodash';
 import toHast from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
+interface ContainerDirective extends Parent {
+  name: string;
+  attributes: Record<string, string>;
+}
+
 export function boxouts() {
   return async (tree: Node) => {
     const counter = createCounter();
-    visit(tree, 'containerDirective', (node) => {
+    visit<ContainerDirective>(tree, 'containerDirective', (node) => {
       switch (node.name) {
         case 'example':
         case 'error':
@@ -28,7 +34,7 @@ export function boxouts() {
   };
 }
 
-function createAttributes(node: Node, count: number) {
+function createAttributes(node: ContainerDirective, count: number) {
   const name = node.name as string;
   const id = `${name}-${count}`;
 
@@ -40,7 +46,10 @@ function createAttributes(node: Node, count: number) {
   return { className, id };
 }
 
-export function createBoxout(node: Node, count: number): Node[] {
+export function createBoxout(
+  node: ContainerDirective,
+  count: number
+): Node[] {
   const typeTitle = createBoxoutType(node, count);
   const titles = [typeTitle];
 
@@ -50,7 +59,7 @@ export function createBoxout(node: Node, count: number): Node[] {
     titles.push(title);
   }
 
-  const children = node.children as Node[];
+  const children = node.children as ContainerDirective[];
 
   const content = children
     .filter((o) => !o.data?.directiveLabel)
@@ -70,9 +79,8 @@ export function createBoxout(node: Node, count: number): Node[] {
   return [...titles, ...content];
 }
 
-function createAnswer(node: Node, count: number) {
-  const hast = toHast(node);
-  const children = hast.children as Node[];
+function createAnswer(node: ContainerDirective, count: number) {
+  const { children } = toHast(node) as Parent;
   return {
     type: 'element',
     tagName: 'div',
@@ -107,7 +115,10 @@ function createAnswer(node: Node, count: number) {
   };
 }
 
-function createBoxoutType(node: Node, count: number): Parent {
+function createBoxoutType(
+  node: ContainerDirective,
+  count: number
+): Element {
   const name = node.name as string;
   const label = startCase(name);
   const value = name === 'task' ? `${label} ${count}` : label;
@@ -126,42 +137,46 @@ function createBoxoutType(node: Node, count: number): Parent {
   };
 }
 
-function createTitle(node: Node): Parent {
+function createTitle(node: ContainerDirective): Element {
   return {
     type: 'element',
     tagName: 'h3',
-    children: [createTitleValue(node)],
+    children: createTitleValue(node),
   };
 }
 
-function createTitleValue(node: Node): Node {
+function createTitleValue(node: ContainerDirective): Element['children'] {
   const name = node.name as string;
-  const title = getTitleValue(node);
+  const title = getTitleValue(node) || '';
   if (name !== 'weblink') {
-    return {
-      type: 'text',
-      value: title,
-    };
-  }
-  const { target } = node.attributes as Record<string, string>;
-  return {
-    type: 'element',
-    tagName: 'a',
-    properties: {
-      href: target,
-      target: '_blank',
-      className: ['target'],
-    },
-    children: [
+    return [
       {
         type: 'text',
         value: title,
       },
-    ],
-  };
+    ];
+  }
+  const { target } = node.attributes as Record<string, string>;
+  return [
+    {
+      type: 'element',
+      tagName: 'a',
+      properties: {
+        href: target,
+        target: '_blank',
+        className: ['target'],
+      },
+      children: [
+        {
+          type: 'text',
+          value: title,
+        },
+      ],
+    },
+  ];
 }
 
-function getTitleValue(node: Node) {
+function getTitleValue(node: ContainerDirective) {
   const children = (node.children || []) as Node[];
   const parent = (children[0] || {}) as Parent;
 
@@ -174,7 +189,7 @@ function getTitleValue(node: Node) {
   }
 
   const parentChildren = (parent.children || []) as Node[];
-  const firstChild = (parentChildren[0] || {}) as Parent;
+  const firstChild = (parentChildren[0] || {}) as Literal;
   if (typeof firstChild.value !== 'string') {
     return null;
   }
