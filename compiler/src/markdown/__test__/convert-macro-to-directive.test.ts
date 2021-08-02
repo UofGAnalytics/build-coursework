@@ -1,4 +1,5 @@
 import {
+  ignoreWhitespace,
   testProcessor,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
@@ -17,7 +18,7 @@ describe('convertMacroToDirective', () => {
       :::
     `);
 
-    expect(md).toBe(expected);
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should reformat a macro with title to directive', async () => {
@@ -33,7 +34,7 @@ describe('convertMacroToDirective', () => {
       :::
     `);
 
-    expect(md).toBe(expected);
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should be idempotent', async () => {
@@ -51,6 +52,6 @@ describe('convertMacroToDirective', () => {
       :::
     `);
 
-    expect(md2).toBe(expected);
+    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
   });
 });

@@ -82,3 +82,7 @@ export function unindentString(str: string) {
 export function unindentStringAndTrim(str: string) {
   return unindentString(str).trim();
 }
+
+export function ignoreWhitespace(str: string) {
+  return str.replace(/\s+/g, '');
+}

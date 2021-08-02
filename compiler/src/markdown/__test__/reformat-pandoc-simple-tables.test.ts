@@ -1,4 +1,5 @@
 import {
+  ignoreWhitespace,
   testProcessor,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
@@ -27,7 +28,7 @@ describe('reformatPandocSimpleTables', () => {
       | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
     `);
 
-    expect(md).toBe(expected);
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should reformat pandoc simple tables to markdown tables with LaTeX', async () => {
@@ -54,7 +55,7 @@ describe('reformatPandocSimpleTables', () => {
       | Logistic regression model  | :inlineMath[4] :inlineMath[5]          | :inlineMath[6] | Logit link: :inlineMath[7] |
     `);
 
-    expect(md).toBe(expected);
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should be idempotent', async () => {
@@ -82,6 +83,6 @@ describe('reformatPandocSimpleTables', () => {
       | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
     `);
 
-    expect(md2).toBe(expected);
+    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
   });
 });
