@@ -1,5 +1,3 @@
-import { EOL } from 'os';
-
 import { Literal } from 'hast';
 
 import {
@@ -46,7 +44,7 @@ describe('codeBlocks', () => {
     const children = mdast.children as Literal[];
     const withOutput = children.map((o, idx) => {
       const v = (o.value || '') as string;
-      const value = v.slice(0, v.indexOf(EOL));
+      const value = v.slice(0, v.indexOf('\n'));
       return `${idx} ${value}`.trim();
     });
 
@@ -66,7 +64,7 @@ describe('codeBlocks', () => {
       12 ## third
     `);
 
-    expect(withOutput.join(EOL)).toBe(expected.trim());
+    expect(withOutput.join('\n')).toBe(expected.trim());
   });
 
   it('should output a graph as svg', async () => {

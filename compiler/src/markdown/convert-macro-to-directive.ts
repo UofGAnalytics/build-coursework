@@ -1,8 +1,6 @@
-import { EOL } from 'os';
-
 export function convertMacroToDirective(contents: string) {
   return contents
-    .split(EOL)
+    .split('\n')
     .map((line) => {
       const container = parseCustomContainer(line);
       if (container !== null) {
@@ -10,7 +8,7 @@ export function convertMacroToDirective(contents: string) {
       }
       return line;
     })
-    .join(EOL);
+    .join('\n');
 }
 
 type Container = {

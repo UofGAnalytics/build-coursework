@@ -1,4 +1,3 @@
-import { EOL } from 'os';
 import path from 'path';
 
 import { Parent as HastParent } from 'hast';
@@ -36,8 +35,8 @@ export async function htmlPhase(
     );
     processor.use(doc, {
       title: unit.titles.docTitle,
-      style: EOL + templateCss + EOL,
-      script: EOL + templateJs + EOL,
+      style: `\n${templateCss}\n`,
+      script: `\n${templateJs}\n`,
     });
   }
 

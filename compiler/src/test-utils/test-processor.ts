@@ -16,15 +16,7 @@ export async function testProcessor(md: string, options: Options = {}) {
   const hasFailingMessage = createHasFailingMessage(ctx, file);
   const unitFile = ctx.course.units[0];
   const unit = await buildUnit(unitFile, ctx);
-  return {
-    file,
-    hasFailingMessage,
-    ...unit,
-    // md: unit.md.trim(),
-    // mdast: unit.mdast,
-    // hast: unit.hast,
-    // html: unit.html.trim(),
-  };
+  return { file, hasFailingMessage, ...unit };
 }
 
 async function createTestContext(md: string, options: Options = {}) {
@@ -79,14 +71,13 @@ async function createTestFile(md: string, cacheDir: string) {
 }
 
 export function unindentString(str: string) {
-  const arr = str.split(os.EOL);
+  const arr = str.split('\n');
   const indentIdx = arr.reduce((acc, line) => {
     const idx = line.search(/[^\s]/);
     return idx > -1 && idx < acc ? idx : acc;
   }, 100);
-  return arr.map((s) => s.slice(indentIdx)).join(os.EOL);
-}
-
-export function unindentAndTrimString(str: string) {
-  return unindentString(str).trim();
+  return arr
+    .map((s) => s.slice(indentIdx))
+    .join('\n')
+    .trim();
 }
