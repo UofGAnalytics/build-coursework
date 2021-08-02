@@ -19,10 +19,11 @@ export async function testProcessor(md: string, options: Options = {}) {
   return {
     file,
     hasFailingMessage,
-    md: unit.md.trim(),
-    mdast: unit.mdast,
-    hast: unit.hast,
-    html: unit.html.trim(),
+    ...unit,
+    // md: unit.md.trim(),
+    // mdast: unit.mdast,
+    // hast: unit.hast,
+    // html: unit.html.trim(),
   };
 }
 
@@ -83,8 +84,9 @@ export function unindentString(str: string) {
     const idx = line.search(/[^\s]/);
     return idx > -1 && idx < acc ? idx : acc;
   }, 100);
-  return arr
-    .map((s) => s.slice(indentIdx))
-    .join('\n')
-    .trim();
+  return arr.map((s) => s.slice(indentIdx)).join('\n');
+}
+
+export function unindentAndTrimString(str: string) {
+  return unindentString(str).trim();
 }
