@@ -2,8 +2,8 @@ import { Element, Literal } from 'hast';
 import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
+import { Context } from '../context';
 import { mmlToSpeech, mmlToSvg } from '../latex/mathjax-tex';
-import { Context } from '../types';
 import { rehypeParser } from '../utils/utils';
 
 interface TextDirective extends Parent {
@@ -29,7 +29,6 @@ export function accessibleTex(ctx: Context) {
             className:
               node.name === 'inlineMath' ? 'inline-math' : 'block-math',
           };
-          // console.log(svg);
           node.data = {
             hName: svg.tagName,
             hProperties: properties,
@@ -56,10 +55,8 @@ function createAccessibleSvg(mathjaxSvg: string, label: string = '') {
   const parent = tree.children[0] as Element;
   const svg = parent.children[0] as Element;
   const properties = svg.properties as Record<string, string>;
-  // const block = properties.width === '100%';
 
   const newProperties: Record<string, string> = {
-    // className: block ? 'math' : 'math-inline',
     width: properties.width,
     height: properties.height,
     viewBox: properties.viewBox,

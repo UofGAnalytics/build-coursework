@@ -5,7 +5,7 @@ import figures from 'figures';
 import { VFile } from 'vfile';
 import { VFileMessage } from 'vfile-message';
 
-import { Context } from '../types';
+import { Context } from '../context';
 import { MessageStatus } from './message';
 
 export type Report = {

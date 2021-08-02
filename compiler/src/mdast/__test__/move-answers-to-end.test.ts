@@ -1,6 +1,6 @@
 import {
-  createHtml,
   testProcessor,
+  unindentString,
 } from '../../test-utils/test-processor';
 
 describe('moveAnswersToEnd', () => {
@@ -14,7 +14,7 @@ describe('moveAnswersToEnd', () => {
       ::::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout task" id="task-1"><span class="type">Task 1</span>
         <h3>My task title</h3>
         <p>This is the <em>task</em> content</p>

@@ -2,10 +2,10 @@ import toHast from 'mdast-util-to-hast';
 import getToc from 'mdast-util-toc';
 import { Node } from 'unist';
 
-import crestSvg from '../../assets/crest.svg';
-import uOfGSvg from '../../assets/uofg.svg';
-import { getAssetHast } from '../utils/get-asset-hast';
-import { createSvg } from '../utils/icons';
+import crestSvg from '../../../assets/crest.svg';
+import uOfGSvg from '../../../assets/uofg.svg';
+import { getAssetHast } from '../../utils/get-asset-hast';
+import { createSvg } from '../../utils/icons';
 import {
   createViewOptions,
   createViewOptionsButton,

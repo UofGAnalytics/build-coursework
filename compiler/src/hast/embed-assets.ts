@@ -1,14 +1,14 @@
 import path from 'path';
 
-import { Element } from 'hast';
+import { Element, Properties } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
+import { Context } from '../context';
 import { texPdfToSvg } from '../latex/pdf-to-svg';
-import { Context } from '../types';
 import { cacheToFile } from '../utils/cache-to-file';
 import { getAssetHast } from '../utils/get-asset-hast';
 import { failMessage } from '../utils/message';
@@ -47,12 +47,11 @@ export function embedAssets(ctx: Context) {
 }
 
 async function embedImage(node: Element, ctx: Context) {
-  const properties = (node.properties || {}) as { src: string };
   const src = getImageSrc(node);
   const mime = mimes.getType(path.extname(src));
   const image = await getImage(src, ctx);
   node.properties = {
-    ...properties,
+    ...node.properties,
     src: `data:${mime};base64,${image}`,
   };
 }
@@ -63,8 +62,14 @@ async function embedPlotSvg(imgNode: Element, ctx: Context) {
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
   const svgNode = getAssetHast(svg) as Element;
-  const properties = { ...svgNode.properties, ...imgNode.properties };
+
+  const properties = {
+    ...svgNode.properties,
+    ...imgNode.properties,
+  } as Properties;
+
   delete properties.src;
+
   Object.assign(imgNode, svgNode, { properties });
 }
 
@@ -97,7 +102,13 @@ async function getImageDataFromWeb(src: string) {
 async function embedTexPdfSvg(imgNode: Element) {
   const src = getImageSrc(imgNode);
   const svgNode = (await texPdfToSvg(src)) as Element;
-  const properties = { ...svgNode.properties, ...imgNode.properties };
+
+  const properties = {
+    ...svgNode.properties,
+    ...imgNode.properties,
+  } as Properties;
+
   delete properties.src;
+
   Object.assign(imgNode, svgNode, { properties });
 }

@@ -4,43 +4,40 @@ import markdownTable from 'markdown-table';
 export function reformatPandocSimpleTables(contents: string) {
   const lines = contents.split('\n');
 
+  // array "lines" length may change with transformation
+  // so operate on array backwards to preserve next line
+  // index in loop
   for (var idx = lines.length - 1; idx >= 0; idx--) {
     const line = lines[idx];
 
-    if (isValidPandocSimpleTableSeparator(line, idx, lines)) {
-      const bounds = getTableBounds(lines, idx);
-      const tableLines = lines.slice(
-        bounds.startIdx,
-        bounds.startIdx + bounds.count
-      );
-      const table = parseTable(tableLines);
-      const align = getColumnAlignment(table[0]);
-      const mdTable = markdownTable(table, { align });
-
-      lines.splice(bounds.startIdx, bounds.count, ...mdTable.split('\n'));
+    if (isValidPandocSimpleTableSeparator(line, idx)) {
+      const { startIdx, count } = getTableBounds(lines, idx);
+      const currentLines = lines.slice(startIdx, startIdx + count + 1);
+      const newLines = convertLines(currentLines);
+      lines.splice(startIdx, count + 1, ...newLines);
     }
   }
 
   return lines.join('\n');
 }
 
-function isValidPandocSimpleTableSeparator(
-  line: string,
-  idx: number,
-  arr: string[]
-) {
+function isValidPandocSimpleTableSeparator(line: string, idx: number) {
   if (idx === 0 || !/-{2,}/g.test(line) || !/^[\s|-]+$/.test(line)) {
     return false;
   }
-  const columnIndexes = getColumnIndexes(line);
-  // const titles = parseBodyRow(arr[idx - 1], columnIndexes);
-  // const filtered = titles.filter((s) => s.trim() !== '');
-  return columnIndexes.length > 1;
+  return getColumnIndexes(line).length > 1;
+}
+
+function convertLines(lines: string[]) {
+  const table = parseTable(lines);
+  const align = getColumnAlignment(table[0]);
+  return markdownTable(table, { align }).split('\n');
 }
 
 function getTableBounds(arr: string[], idx: number) {
   const startIdx = idx - 1;
-  const count = arr.slice(startIdx).findIndex((l) => l.trim() === '');
+  const endIdx = arr.slice(startIdx).findIndex((l) => l.trim() === '');
+  const count = endIdx === -1 ? arr.length - 1 : endIdx;
   return { startIdx, count };
 }
 

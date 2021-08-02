@@ -1,9 +1,11 @@
-import { unindentString } from '../../test-utils/test-processor';
-import { codeMod } from '../index';
+import {
+  testProcessor,
+  unindentString,
+} from '../../test-utils/test-processor';
 
 describe('containerDirective', () => {
   it('should reformat a macro to directive', async () => {
-    const md = unindentString(`
+    const { md } = await testProcessor(`
       ###[example]
       An example of *this*!
       ###[/example]
@@ -15,11 +17,11 @@ describe('containerDirective', () => {
       :::
     `);
 
-    expect(codeMod(md)).toBe(expected);
+    expect(md).toBe(expected);
   });
 
   it('should reformat a macro with title to directive', async () => {
-    const md = unindentString(`
+    const { md } = await testProcessor(`
       ###[example] A title
       An example of *this*!
       ###[/example]
@@ -31,17 +33,17 @@ describe('containerDirective', () => {
       :::
     `);
 
-    expect(codeMod(md)).toBe(expected);
+    expect(md).toBe(expected);
   });
 
   it('should be idempotent', async () => {
-    const md = unindentString(`
+    const { md } = await testProcessor(`
       ###[example] A title
       An example of *this*!
       ###[/example]
     `);
 
-    const result = codeMod(md);
+    const { md: md2 } = await testProcessor(md);
 
     const expected = unindentString(`
       :::example[A title]
@@ -49,6 +51,6 @@ describe('containerDirective', () => {
       :::
     `);
 
-    expect(codeMod(result)).toBe(expected);
+    expect(md2).toBe(expected);
   });
 });

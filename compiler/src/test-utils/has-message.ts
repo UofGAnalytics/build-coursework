@@ -1,6 +1,6 @@
 import { VFile } from 'vfile';
 
-import { Context } from '../types';
+import { Context } from '../context';
 import { MessageStatus } from '../utils/message';
 import { reportHasFatalErrors } from '../utils/report';
 

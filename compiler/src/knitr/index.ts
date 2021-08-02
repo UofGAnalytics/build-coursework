@@ -1,24 +1,24 @@
 import { exec } from 'child_process';
 import path from 'path';
 
-import { VFile } from 'vfile';
+import hashSum from 'hash-sum';
 
-import { Context } from '../types';
+import { Context } from '../context';
+import { rmFile, writeFile } from '../utils/utils';
 
-export async function processKnitr(files: VFile[], ctx: Context) {
-  return Promise.all(
-    files.map(async (file) => {
-      file.contents = await knitr(file.path as string, ctx);
-      return file;
-    })
-  );
-}
+export async function knitr(md: string, ctx: Context) {
+  const fileName = getUniqueTempFileName(md);
+  const cachedFilePath = path.join(ctx.cacheDir, fileName);
+  await writeFile(cachedFilePath, md);
 
-async function knitr(filePath: string, ctx: Context) {
+  // TODO:
+  // * write md to file in cache and reference in command
+  // * see what can be done with output when "quiet" turned off
+
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${ctx.cacheDir}/`;
-    exec(cmd, (err, response, stdErr) => {
+    const cmd = `Rscript ${rFile} ${cachedFilePath} ${ctx.cacheDir}/`;
+    exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.error('STDERR', stdErr);
         reject(stdErr);
@@ -28,15 +28,22 @@ async function knitr(filePath: string, ctx: Context) {
       } else {
         resolve(formatResponse(response));
       }
+      await rmFile(cachedFilePath);
     });
   });
+}
+
+function getUniqueTempFileName(md: string) {
+  const hash = hashSum(md);
+  const ts = new Date().getTime().toString();
+  return `knitr-${hash}-${ts}.Rmd`;
 }
 
 function formatResponse(response: string) {
   return response.replace(/\[1\]\s""$/m, '').trim();
 }
 
-// attempts at changing knitr output. doesn't completely work
+// attempt at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
 //     source = function(x, options) {

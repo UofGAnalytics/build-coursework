@@ -3,29 +3,32 @@ import path from 'path';
 
 // @ts-expect-error
 import toVFile from 'to-vfile';
-import { Parent } from 'unist';
 import { VFile } from 'vfile';
 
+import { Options } from '../context';
 import { getUnitTitles } from '../course';
-import { Options } from '../types';
 import { writeFile } from '../utils/utils';
 import { createHasFailingMessage } from './has-message';
 import { buildUnit } from '..';
 
-type Built = {
-  mdast: Parent;
-  hast: Parent;
-  html: string;
-};
-
 export async function testProcessor(md: string, options: Options = {}) {
-  const tempDir = os.tmpdir();
-  const fileName = Math.random().toString(36).substr(2, 5);
-  const filePath = path.join(tempDir, fileName + '.Rmd');
+  const { ctx, file } = await createTestContext(md, options);
+  const hasFailingMessage = createHasFailingMessage(ctx, file);
+  const unitFile = ctx.course.units[0];
+  const unit = await buildUnit(unitFile, ctx);
+  return {
+    file,
+    hasFailingMessage,
+    md: unit.md.trim(),
+    mdast: unit.mdast,
+    hast: unit.hast,
+    html: unit.html.trim(),
+  };
+}
 
-  await writeFile(filePath, unindentString(md));
-
-  const file = (await toVFile.read(filePath, 'utf-8')) as VFile;
+async function createTestContext(md: string, options: Options = {}) {
+  const cacheDir = os.tmpdir();
+  const file = await createTestFile(md, cacheDir);
 
   const course = {
     title: 'Test Course',
@@ -47,8 +50,8 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   const ctx = {
     dirPath: '',
-    cacheDir: tempDir,
-    buildDir: null,
+    cacheDir,
+    buildDir: '',
     course: {
       ...course,
       units: [{ ...unit, titles }],
@@ -63,25 +66,15 @@ export async function testProcessor(md: string, options: Options = {}) {
     },
   };
 
-  const hasFailingMessage = createHasFailingMessage(ctx, file);
-
-  const { mdast, html, hast } = await (async (): Promise<Built> => {
-    const built = await buildUnit(ctx, 0);
-    if (built === null) {
-      return {
-        mdast: { type: 'blank', children: [] },
-        html: '',
-        hast: { type: 'blank', children: [] },
-      };
-    }
-    return built;
-  })();
-
-  return { hasFailingMessage, file, html, mdast, hast };
+  return { ctx, file };
 }
 
-export function createHtml(str: string) {
-  return unindentString(str);
+async function createTestFile(md: string, cacheDir: string) {
+  const fileName = Math.random().toString(36).substr(2, 5);
+  const filePath = path.join(cacheDir, fileName + '.Rmd');
+  await writeFile(filePath, unindentString(md));
+  const file = await toVFile.read(filePath, 'utf-8');
+  return file as VFile;
 }
 
 export function unindentString(str: string) {
@@ -90,5 +83,8 @@ export function unindentString(str: string) {
     const idx = line.search(/[^\s]/);
     return idx > -1 && idx < acc ? idx : acc;
   }, 100);
-  return arr.map((s) => s.slice(indentIdx)).join('\n');
+  return arr
+    .map((s) => s.slice(indentIdx))
+    .join('\n')
+    .trim();
 }

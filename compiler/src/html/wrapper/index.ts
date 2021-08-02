@@ -1,9 +1,9 @@
 import { Node, Parent } from 'unist';
 
-import { UnitTitles } from '../course/types';
-import { createMain } from '../html-wrapper/main';
-import { createSidebar } from '../html-wrapper/sidebar';
-import { createDefs, createSvg } from '../utils/icons';
+import { UnitTitles } from '../../course/types';
+import { createDefs, createSvg } from '../../utils/icons';
+import { createMain } from './main';
+import { createSidebar } from './sidebar';
 
 export function htmlWrapper(titles: UnitTitles, mdast: Node) {
   return async (tree: Node) => {

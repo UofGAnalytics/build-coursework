@@ -1,4 +1,4 @@
-export function containerDirective(contents: string) {
+export function convertMacroToDirective(contents: string) {
   return contents
     .split('\n')
     .map((line) => {

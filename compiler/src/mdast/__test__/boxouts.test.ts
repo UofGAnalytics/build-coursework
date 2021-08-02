@@ -1,6 +1,6 @@
 import {
-  createHtml,
   testProcessor,
+  unindentString,
 } from '../../test-utils/test-processor';
 
 describe('example', () => {
@@ -11,7 +11,7 @@ describe('example', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout example" id="example-1"><span class="type">Example</span>
         <p>An example of <em>this</em>!</p>
       </div>
@@ -27,7 +27,7 @@ describe('example', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout example" id="example-1"><span class="type">Example</span>
         <h3>My Example</h3>
         <p>An example of <em>this</em>!</p>
@@ -44,7 +44,7 @@ describe('example', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout example" id="example-1"><span class="type">Example</span>
         <p>An example of <em>this</em>!</p>
       </div>
@@ -60,7 +60,7 @@ describe('example', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout example hello-icon" id="example-1"><span class="type">Example</span>
         <p>An example of <em>this</em>!</p>
       </div>
@@ -76,7 +76,7 @@ describe('example', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout example hello-icon" id="example-1"><span class="type">Example</span>
         <h3>My Example</h3>
         <p>An example of <em>this</em>!</p>
@@ -95,7 +95,7 @@ describe('supplement', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout supplement" id="supplement-1"><span class="type">Supplement</span>
         <p>A supplement of <em>this</em>!</p>
       </div>
@@ -113,7 +113,7 @@ describe('background', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout background" id="background-1"><span class="type">Background</span>
         <p>A background of <em>this</em>!</p>
       </div>
@@ -146,7 +146,7 @@ describe('weblink', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
         <h3><a href="https://cran.r-project.org" target="_blank" class="target">https://cran.r-project.org</a></h3>
         <p>A weblink of <em>this</em>!</p>
@@ -163,7 +163,7 @@ describe('weblink', () => {
       :::
     `);
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
         <h3><a href="https://cran.r-project.org" target="_blank" class="target">CRAN</a></h3>
         <p>A weblink of <em>this</em>!</p>

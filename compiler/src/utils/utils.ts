@@ -32,6 +32,10 @@ export async function checkLocalFileExists(filePath: string) {
   }
 }
 
+export async function rmFile(filePath: string) {
+  return fs.promises.unlink(filePath);
+}
+
 export function mkdir(dirPath: string) {
   return fs.promises.mkdir(dirPath, { recursive: true });
 }

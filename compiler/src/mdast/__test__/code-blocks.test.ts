@@ -1,8 +1,8 @@
 import { Literal } from 'hast';
 
 import {
-  createHtml,
   testProcessor,
+  unindentString,
 } from '../../test-utils/test-processor';
 
 describe('codeBlocks', () => {
@@ -48,7 +48,7 @@ describe('codeBlocks', () => {
       return `${idx} ${value}`.trim();
     });
 
-    const expected = createHtml(`
+    const expected = unindentString(`
       0 a <- c(1, 4, 2)
       1 ## [1] 1 4
       2 names(a) <- c("first", "second", "third")

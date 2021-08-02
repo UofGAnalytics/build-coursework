@@ -1,6 +1,6 @@
 import { Node } from 'unist';
 
-import { UnitTitles } from '../course/types';
+import { UnitTitles } from '../../course/types';
 
 export async function createMain(titles: UnitTitles, content: Node[]) {
   return {

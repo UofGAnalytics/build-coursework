@@ -3,7 +3,7 @@ import path from 'path';
 import pdf from 'html-pdf';
 import { kebabCase } from 'lodash';
 
-import { getBuildDir, writeFile } from './utils';
+import { getBuildDir, mkdir, writeFile } from './utils';
 
 export async function writeHtml(
   fileName: string,
@@ -11,6 +11,7 @@ export async function writeHtml(
   dirPath: string
 ) {
   const filePath = getFilePath(dirPath, fileName);
+  await mkdir(dirPath);
   await writeFile(`${filePath}.html`, html);
   console.log('html file written to:', `${filePath}.html`);
 }

@@ -5,7 +5,7 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
-import { Context } from '../types';
+import { Context } from '../context';
 
 export function codeBlocks(ctx: Context) {
   return async (tree: Node, file: VFile) => {

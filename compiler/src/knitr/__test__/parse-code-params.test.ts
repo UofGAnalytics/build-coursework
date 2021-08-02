@@ -1,6 +1,6 @@
 import { Code } from 'mdast';
 
-import { parseCodeParams } from '../parse-code-params';
+import { parseCodeParams } from '../_parse-code-params';
 
 it('should parse code params', async () => {
   expect(createNode('')).toStrictEqual({
