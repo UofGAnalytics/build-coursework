@@ -76,8 +76,9 @@ export function unindentString(str: string) {
     const idx = line.search(/[^\s]/);
     return idx > -1 && idx < acc ? idx : acc;
   }, 100);
-  return arr
-    .map((s) => s.slice(indentIdx))
-    .join('\n')
-    .trim();
+  return arr.map((s) => s.slice(indentIdx)).join('\n');
+}
+
+export function unindentStringAndTrim(str: string) {
+  return unindentString(str).trim();
 }

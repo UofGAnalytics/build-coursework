@@ -1,9 +1,9 @@
 import {
   testProcessor,
-  unindentString,
+  unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
-describe('containerDirective', () => {
+describe('convertMacroToDirective', () => {
   it('should reformat a macro to directive', async () => {
     const { md } = await testProcessor(`
       ###[example]
@@ -11,7 +11,7 @@ describe('containerDirective', () => {
       ###[/example]
     `);
 
-    const expected = unindentString(`
+    const expected = unindentStringAndTrim(`
       :::example
       An example of *this*!
       :::
@@ -27,7 +27,7 @@ describe('containerDirective', () => {
       ###[/example]
     `);
 
-    const expected = unindentString(`
+    const expected = unindentStringAndTrim(`
       :::example[A title]
       An example of *this*!
       :::
@@ -45,7 +45,7 @@ describe('containerDirective', () => {
 
     const { md: md2 } = await testProcessor(md);
 
-    const expected = unindentString(`
+    const expected = unindentStringAndTrim(`
       :::example[A title]
       An example of *this*!
       :::
