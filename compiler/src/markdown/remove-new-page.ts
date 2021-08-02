@@ -1,6 +1,8 @@
+import { EOL } from 'os';
+
 export function removeNewPage(contents: string) {
   return contents
-    .split('\n')
+    .split(EOL)
     .filter((s) => s.trim() !== '\\newpage')
-    .join('\n');
+    .join(EOL);
 }

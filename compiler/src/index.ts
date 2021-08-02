@@ -1,3 +1,5 @@
+import { EOL } from 'os';
+
 import { Context, Options, createContext } from './context';
 import { Unit } from './course/types';
 import { hastPhase } from './hast';
@@ -43,7 +45,7 @@ export async function buildUnit(
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const combined = unit.files.map((o) => o.contents).join('\n\n');
+  const combined = unit.files.map((o) => o.contents).join(EOL);
   const md = await markdownPhase(combined, ctx);
   const mdast = await mdastPhase(md, ctx, targetPdf);
   const hast = await hastPhase(mdast, unit, ctx);

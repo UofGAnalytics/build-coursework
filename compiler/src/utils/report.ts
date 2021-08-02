@@ -1,3 +1,4 @@
+import { EOL } from 'os';
 import path from 'path';
 
 import chalk from 'chalk';
@@ -37,7 +38,7 @@ export function printReport(files: VFile[], ctx: Context) {
       : file.messages;
 
     if (messages.length !== 0) {
-      console.log(`\n${getFilePath(file.path as string)}`);
+      console.log(EOL + getFilePath(file.path as string));
       messages.map(printMessage);
     }
   }
@@ -79,10 +80,10 @@ function formatStatus(status: MessageStatus) {
 
 function formatReason(reason: string, status: MessageStatus) {
   const statusColour = getStatusColour(status);
-  const [first, ...rest] = reason.split('\n');
+  const [first, ...rest] = reason.split(EOL);
   const formattedFirst = statusColour(first);
   const formattedRest = rest.map((line) => chalk.grey(line));
-  return [formattedFirst, ...formattedRest].join('\n');
+  return [formattedFirst, ...formattedRest].join(EOL);
 }
 
 function getStatusColour(status: MessageStatus) {

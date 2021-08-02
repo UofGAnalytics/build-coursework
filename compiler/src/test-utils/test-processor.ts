@@ -79,7 +79,7 @@ async function createTestFile(md: string, cacheDir: string) {
 }
 
 export function unindentString(str: string) {
-  const arr = str.split('\n');
+  const arr = str.split(os.EOL);
   const indentIdx = arr.reduce((acc, line) => {
     const idx = line.search(/[^\s]/);
     return idx > -1 && idx < acc ? idx : acc;
