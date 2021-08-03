@@ -8,6 +8,7 @@ knitr::opts_chunk$set(comment=NA, warning = FALSE)
 
 ##[video, videoid="5u1w6eROypI", duration="9m57s"] Introduction to GLMs
 
+
 <!-- In this course we will extend the theory of linear regression models, covered in [Predictive Modelling](http://moodle2.gla.ac.uk/course/view.php?id=12738) and [Learning from Data](http://moodle2.gla.ac.uk/course/view.php?id=12736).  -->
 
 In this course we will extend the theory of linear regression models to non-normal responses. Before we begin with introducing the class of models known as Generalised Linear Models (GLMs), we will briefly illustrate why linear models are not sufficient for all types of data. Throughout the course, we will see how we can deal with a variety of situations where the linear model may not be adequate.
@@ -17,7 +18,7 @@ The main objective of this week's learning material is to introduce Generalised 
 
 ###[example]Bollywood box office revenue
 
-Possibly the simplest scenario of a predictive model is when we want to predict an outcome variable based on a predictor which displays a linear relationship to the variable of interest. Consider the following dataset on Bollywood film revenues (sourced from [http://www.bollymoviereviewz.com](http://www.bollymoviereviewz.com)) which contains data on 190 films made during the period 2013-2017. We would like to predict the gross revenue of a film from the film's budget. Both the gross revenue and the budget are measured in [crore](https://en.wikipedia.org/wiki/Crore). Here are the first few rows of the data:
+Possibly the simplest scenario of a predictive model is when we want to predict an outcome variable based on a predictor which displays a linear relationship to the variable of interest. Consider the following dataset on Bollywood film revenues (sourced from http://www.bollymoviereviewz.com](http://www.bollymoviereviewz.com)) which contains data on 190 films made during the period 2013-2017. We would like to predict the gross revenue of a film from the film's budget. Both the gross revenue and the budget are measured in [crore](https://en.wikipedia.org/wiki/Crore). Here are the first few rows of the data:
 
 ```{r, results = 'hide'}
 bollywood <-
@@ -78,8 +79,8 @@ Now let's fit a model with the $\log_{10}$ transformed gross revenue as the resp
 bol.lm <- lm(log10(Gross) ~ log10(Budget), data = bollywood)
 ```
 
-The model equation in mathematical notation is $E(Y_{i}) = \mu_i= \beta_0 + \beta_1 x_{i}$; where the $Y_{i}$ are independent $N(\mu_{i}, \sigma^2)$, $i=1,...,190$.
-
+The model equation in mathematical notation is
+$$E(Y_{i}) = \mu_i= \beta_0 + \beta_1 x_{i}; ~~~ \text{where the}~ Y_{i} \text{ are independent }  N(\mu_{i}, \sigma^2),~~~i=1,...,190 $$
 The model fit is shown below:
 
 ```{r }
@@ -113,15 +114,20 @@ Using the fitted model equation, predict the gross revenue for a film with a bud
 
 ####[answer]
 For the *Bollywood box office revenue* example, we can write down the fitted model equation from the `summary(bol.lm)`:
-$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(\text{Budget})$
+$$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(\text{Budget})$$
 
 We can use this equation to predict the gross revenue of a film by simply substituting the relevant budget value, and transforming the result from the log10 scale. Thus:
 
-1. budget = 10: $\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(10) =  0.69406  \Rightarrow \text{Gross}= 10^{0.69406} = 4.94379$
+(i) budget = 10:
+ $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(10) =  0.69406  \Rightarrow \text{Gross}= 10^{0.69406} = 4.94379$$
 
-2. budget = 50: $\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(50) =  1.616386  \Rightarrow \text{Gross}= 10^{1.616386} = 41.34148$
 
-3. budget = 100: $\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(100) =  2.01361 \Rightarrow \text{Gross}= 10^{2.01361} = 103.1834$
+(ii) budget = 50:
+ $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(50) =  1.616386  \Rightarrow \text{Gross}= 10^{1.616386} = 41.34148$$
+
+
+(iii) budget = 100:
+  $$\log10(\text{Gross}) =-0.62549 + 1.31955\times \log10(100) =  2.01361 \Rightarrow \text{Gross}= 10^{2.01361} = 103.1834$$
 
 ####[/answer]
 ###[/task]
@@ -180,7 +186,6 @@ In mathematical notation, the value of the independent response $Y_i$ is equal t
 One issue with this fit is that the predicted values of the response can take any real values, while acceptance can only take the value 0 or 1. And it is hard to argue that a variable taking values of 0 or 1 is normally distributed. Instead, we can use a logistic regression model for the *probability* of acceptance. Let's first write it down in mathematical notation by letting $p_i=P(Y_i=1)$ denote the probability of acceptance for the $i$th applicant. We assume that the $Y_i$ are independent random variables which follow the $\text{Bin}(1,p_i)$ (or Bernoulli($p_i)$) distribution with
 
 $$\log \left(\dfrac{p_i}{1-p_i} \right)=\beta_0+\beta_1 x_i.$$
-
 This is equivalent to:
 
 $$p_i=\dfrac{\exp(\beta_0+\beta_1 x_i)}{1+\exp(\beta_0+\beta_1 x_i)}.$$
@@ -203,7 +208,6 @@ summary(med.glm)
 ```
 
 The regression equation for the fitted model is
-
 $$\log \left(\dfrac{\hat{p}_i}{1-\hat{p}_i}\right)=-19.207+5.454 x_i,$$
 
 or equivalently
@@ -233,7 +237,6 @@ Predict the acceptance probability for an applicant with a GPA of (i) 2.5, (ii) 
 
 ####[answer]
 In the *GPA and admission to medical school* example, we can write down the fitted model equation from the `summary(med.glm)`:
-
 $$\log\left(\frac{p_i}{1-p_i}\right) =-19.207 + 5.454 \times \text{GPA}$$
 
 From the fitted equation, we can obtain the acceptance probability by solving for $p_i$:
@@ -260,12 +263,14 @@ predict(med.glm, data.frame(GPA = c(2.5, 3, 4)), type = 'response')
 ###[/task]
 
 ###[weblink,target="https://goo.gl/mZHxyN", icon=book]
-Section 2.3 from *Mixed effects models and extensions in ecology with R -Zuur et al.* discusses the appropriateness of the assumptions of the linear model.
+
+ - Section 2.3 from *Mixed effects models and extensions in ecology with R -Zuur et al.* discusses the appropriateness of the assumptions of the linear model.
+
 ###[/weblink]
 
 ## What do the Bollywood box office and medical school admission examples have in common?
 
-In both cases we have independent observations and we want to predict an outcome of interest (gross revenue/acceptance) based on an explanatory variable (budget/GPA). In both cases we have a regression equation allowing us to predict the response from a given value of the predictor. However, in one case the response is assumed to follow the normal distribution, in the other the binomial distribution. In both cases we fit a model to the *mean* of the response: in the normal linear model the mean $E(Y_i)=\mu_i$ is assumed to be a linear function of $x_i$: $\mu_i=\beta_0+\beta_1x_i$, and in the logistic regression model the mean $\mu_i=E(Y_i)=p_i$ is modelled through the *logit link function*. That is, in logistic regression $\log\left(\dfrac{p_i}{1-p_i}\right)=\beta_0+\beta_1x_i$. In slightly more general notation we have $g(\mu_i)=\boldsymbol{x}_i^\intercal\boldsymbol{\beta}$ where $\mu_i=E(Y_i)$ and $g(\mu_i)$ for each distribution is given in the following table.
+In both cases we have independent observations and we want to predict an outcome of interest (gross revenue/acceptance) based on an explanatory variable (budget/GPA). In both cases we have a regression equation allowing us to predict the response from a given value of the predictor. However, in one case the response is assumed to follow the normal distribution, in the other the binomial distribution. In both cases we fit a model to the *mean* of the response: in the normal linear model the mean $E(Y_i)=\mu_i$ is assumed to be a linear function of $x_i$: $\mu_i=\beta_0+\beta_1x_i$, and in the logistic regression model the mean $\mu_i=E(Y_i)=p_i$ is modelled through the *logit link function*. That is, in logistic regression $\log\left(\dfrac{p_i}{1-p_i}\right)=\beta_0+\beta_1x_i$. In slightly more general notation we have $g(\mu_i)=\boldsymbol{x}_i^{\intercal}\boldsymbol{\beta}$ where $\mu_i=E(Y_i)$ and $g(\mu_i)$ for each distribution is given in the following table.
 
 
 
@@ -287,7 +292,7 @@ Consider a random variable $Y$ whose probability density function (p.d.f.) or pr
 ###[/definition]
 
 ###[example] Normal distribution is a member of exponential family
-Consider $Y \sim N(\theta, \sigma^2)$ with p.d.f. $\begin{align} f(y; \theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}\exp \left[ -\frac{1}{2\sigma^2} (y-\theta)^2\right], \hspace{0.5cm} -\infty <y<\infty.\end{align}$ If we are interested in estimating $\theta$, the variance, $\sigma^2$, can be regarded as a nuisance parameter. By rewriting the p.d.f. as $\begin{align} f(y; \theta) = \exp \left[-\dfrac{y^2}{2\sigma^2}+\dfrac{y \theta}{\sigma^2} -\dfrac{\theta^2}{2\sigma^2}-\dfrac{1}{2}\log(2 \pi \sigma^2)\right]\end{align}$ we can see that this is of exponential family form with $a(y) = y$ (hence in canonical form) and natural parameter $b(\theta)= \theta/\sigma^2$.
+Consider $Y \sim N(\theta, \sigma^2)$ with p.d.f. \begin{align} f(y; \theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}\exp \left[ -\frac{1}{2\sigma^2} (y-\theta)^2\right], \hspace{0.5cm} -\infty <y<\infty.\end{align} If we are interested in estimating $\theta$, the variance, $\sigma^2$, can be regarded as a nuisance parameter. By rewriting the p.d.f. as \begin{align} f(y; \theta) = \exp \left[-\dfrac{y^2}{2\sigma^2}+\dfrac{y \theta}{\sigma^2} -\dfrac{\theta^2}{2\sigma^2}-\dfrac{1}{2}\log(2 \pi \sigma^2)\right]\end{align} we can see that this is of exponential family form with $a(y) = y$ (hence in canonical form) and natural parameter $b(\theta)= \theta/\sigma^2$.
 
 ###[/example]
 
@@ -308,7 +313,9 @@ $$\mathrm{Var}[a(Y)] =\dfrac{b''(\theta)c'(\theta)-c''(\theta)b'(\theta)}{[b'(\t
 Some further useful properties of exponential family distributions relate to the **score function**.
 
 ###[definition] Score statistic
-$\label{def:scoreuniv}U=\dfrac{dl(\theta;y)}{d\theta}$ is called the **score statistic**, and is equal to the derivative of the log-likelihood $l(\theta;y)$ with respect to the parameter $\theta$.
+\begin{align} U=\dfrac{dl(\theta;y)}{d\theta}\label{def:scoreuniv} \end{align}
+
+is called the \textbf{score statistic}, and is equal to the derivative of the log-likelihood $l(\theta;y)$ with respect to the parameter $\theta$.
 ###[/definition]
 
 For exponential family distributions with log-likelihood $l(\theta; y) = a(y)b(\theta)+c(\theta) + d(y)$, the score is
@@ -468,40 +475,38 @@ The maximisation procedure results in $p$ simultaneous equations for $\hat{\bold
 
 
 ###[supplement]
-Here we present in some detail how the maximum likelihood estimates of the coefficients of a GLM are obtained. Suppose that we are interested in estimating the parameter vector $(\beta_1,\dots, \beta_p)^\intercal$ in a GLM. To find the maximum likelihood estimates $\hat{\beta}_j$ we need the scores (multivariate version of the score from Definition $\ref{def:scoreuniv}$) expressed as functions of the $\beta_j$:
 
-$$
-\begin{align} U_j=\frac{\partial l}{\partial \beta_j} &= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \beta_j}  \right]= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \theta_i} \cdot \frac{\partial \theta_i}{\partial \mu_i} \cdot \frac{\partial \mu_i} {\partial \beta_j}  \right] \label{eqn:chainrule}           \end{align}
-$$
+Here we present in some detail how the maximum likelihood estimates of the coefficients of a GLM are obtained. Suppose that we are interested in estimating the parameter vector $(\beta_1,\dots, \beta_p)^\intercal$ in a GLM. To find the maximum likelihood estimates $\hat{\beta}_j$ we need the scores (multivariate version of the score from Definition \ref{def:scoreuniv}) expressed as functions of the $\beta_j$:
+  \begin{align} U_j=\frac{\partial l}{\partial \beta_j} &= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \beta_j}  \right]= \sum_{i=1}^n \left [   \frac{\partial l_i}{\partial \theta_i} \cdot \frac{\partial \theta_i}{\partial \mu_i} \cdot \frac{\partial \mu_i} {\partial \beta_j}  \right] \label{eqn:chainrule}           \end{align}
 
-For an exponential family distribution in canonical form, the components of ($\ref{eqn:chainrule}$) are:
 
-$$
-\begin{align} &\frac{\partial l_i}{\partial \theta_i} = y_i b'(\theta) +c'(\theta)=b'(\theta) \left[y_i -\left(-\frac{c'(\theta)}{b'(\theta)}\right) \right]=b' (\theta) (y_i - \mu_i) \label{eqn:dldtheta} \frac{\partial \mu_i}{\partial \theta_i} = -\frac{c''(\theta_i)}{b'(\theta_i)}+\frac{c'(\theta_i) b''(\theta_i)}{[b'(\theta_i)]^2} = b'(\theta_i) \mathrm{Var}(Y_i)  \nonumber \\ & \Rightarrow  \frac{\partial \theta_i}{\partial \mu_i}= \frac{1}{b'(\theta_i) \mathrm{Var}(Y_i)} \label{eqn:dmudtheta} \frac{\partial \mu_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}\cdot \frac{\partial \eta_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}x_{ij}=\frac{x_{ij}}{g'(\mu_i)} \label{eqn:dmudbeta \end{align}
-$$
-
-Substituting ($\ref{eqn:dldtheta}$), ($\ref{eqn:dmudtheta}$) and ($\ref{eqn:dmudbeta}$) into ($\ref{eqn:chainrule}$) the expression for the scores becomes:
-
-$$
-\begin{align} U_j=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right]=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}\frac{x_{ij}} {g'(\mu_i)}\right]. \label{eqn:score} \end{align}
-$$
-
+For an exponential family distribution in canonical form, the components of (\ref{eqn:chainrule}) are:
+  \begin{align} &\frac{\partial l_i}{\partial \theta_i} = y_i b'(\theta) +c'(\theta)=b'(\theta) \left[y_i -\left(-\frac{c'(\theta)}{b'(\theta)}\right) \right]=b' (\theta) (y_i - \mu_i) \label{eqn:dldtheta}\\
+& \frac{\partial \mu_i}{\partial \theta_i} = -\frac{c''(\theta_i)}{b'(\theta_i)}+\frac{c'(\theta_i) b''(\theta_i)}{[b'(\theta_i)]^2} = b'(\theta_i) \mathrm{Var}(Y_i)  \nonumber \\ & \Rightarrow  \frac{\partial \theta_i}{\partial \mu_i}= \frac{1}{b'(\theta_i) \mathrm{Var}(Y_i)} \label{eqn:dmudtheta}\\
+&\frac{\partial \mu_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}\cdot \frac{\partial \eta_i}{\partial \beta_j}=\frac{\partial \mu_i}{\partial \eta_i}x_{ij}=\frac{x_{ij}}{g'(\mu_i)} \label{eqn:dmudbeta}
+\end{align}
+Substituting (\ref{eqn:dldtheta}), (\ref{eqn:dmudtheta}) and (\ref{eqn:dmudbeta}) into (\ref{eqn:chainrule}) the expression for the scores becomes
+ \begin{align}
+ U_j=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right]=\sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}\frac{x_{ij}} {g'(\mu_i)}\right]. \label{eqn:score}
+ \end{align}
 Note that the scores depend on $\boldsymbol{\beta}$ through $\mu_i=E(Y_i)$ and through $\mathrm{Var}(Y_i)$.
-The variance-covariance matrix of the $U_j$ has terms $\mathcal{\mathcal{I}}_{jk}=E(U_jU_k)$ and is known as the **(Fisher) information matrix**. This is the multivariate version of Definition $\ref{def:infuniv}$. The elements of matrix $\mathcal{\mathcal{I}}$ can be obtained from ($\ref{eqn:score}$):
-
-$$
-\begin{align} \mathcal{\mathcal{I}}_{jk}&=  E \left \lbrace \sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right] \sum_{l=1}^n \left[  \frac{(y_l-\mu_l)}{\mathrm{Var}(Y_l)}x_{lk} \frac{\partial \mu_l}{\partial \eta_l}\right]  \right \rbrace \nonumber =\sum_{i=1}^n \frac{E[(Y_i-\mu_i)^2]x_{ij}x_{ik}}{[\mathrm{Var}(Y_i)]^2} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2  \nonumber=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2 = \sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2} \label{eqn:informationmatrix} \end{align}
-$$
-
-Here we have used the fact that $E[(Y_i-\mu_i)(Y_l-\mu_l)]=0$ by the independence of the $Y_i$. Notice that the information matrix can be written as $\begin{align}\mathcal{I}=\mathcal{I}(\boldsymbol{\beta})=\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X} \label{eqn:informationirwls} \end{align}$ where $\boldsymbol{X}=\left[ \begin{array}{c} \boldsymbol{x}_1^\intercal\\ \dots \\  \boldsymbol{x}_n^\intercal \end{array} \right]= \left[ \begin{array}{ccc}
+The variance-covariance matrix of the $U_j$ has terms $\mathcal{\mathcal{I}}_{jk}=E(U_jU_k)$ and is known as the \textbf{(Fisher) information matrix}. This is the multivariate version of Definition \ref{def:infuniv}. The elements of matrix $\mathcal{\mathcal{I}}$ can be obtained from (\ref{eqn:score}):
+\begin{align}
+ \mathcal{\mathcal{I}}_{jk}&=  E \left \lbrace \sum_{i=1}^n \left[  \frac{(y_i-\mu_i)}{\mathrm{Var}(Y_i)}x_{ij} \frac{\partial \mu_i}{\partial \eta_i}\right] \sum_{l=1}^n \left[  \frac{(y_l-\mu_l)}{\mathrm{Var}(Y_l)}x_{lk} \frac{\partial \mu_l}{\partial \eta_l}\right]  \right \rbrace \nonumber \\
+ &=\sum_{i=1}^n \frac{E[(Y_i-\mu_i)^2]x_{ij}x_{ik}}{[\mathrm{Var}(Y_i)]^2} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2  \nonumber\\
+ &=\sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)} \left(\frac{\partial \mu_i}{\partial \eta_i} \right)^2 = \sum_{i=1}^n \frac{x_{ij}x_{ik}}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2} \label{eqn:informationmatrix}
+\end{align}
+Here we have used the fact that $E[(Y_i-\mu_i)(Y_l-\mu_l)]=0$ by the independence of the $Y_i$.
+Notice that the information matrix can be written as \begin{align}
+\mathcal{I}=\mathcal{I}(\boldsymbol{\beta})=\boldsymbol{X}^\intercal \boldsymbol{W} \boldsymbol{X} \label{eqn:informationirwls} \end{align} where $\boldsymbol{X}=\left[ \begin{array}{c} \boldsymbol{x}_1^\intercal\\ \dots \\  \boldsymbol{x}_n^\intercal \end{array} \right]= \left[ \begin{array}{ccc}
 x_{11} & \dots & x_{1p}\\
 \vdots & \ddots & \vdots\\
-x_{n1} & \dots & x_{np}\end{array} \right]$, $\boldsymbol{W}=\text{diag}(\boldsymbol{w})=  \left[ \begin{array}{cccc}
+x_{n1} & \dots & x_{np}                                                                                                                                                                                                                     \end{array} \right],$
+ $\boldsymbol{W}=\text{diag}(\boldsymbol{w})=  \left[ \begin{array}{cccc}
 w_1 & 0 &  \dots & 0\\
 0 & w_2 & & \vdots\\
 \vdots & & \ddots & 0\\
-0 & \dots &0 & w_n\end{array} \right]$, and $\begin{align}w_i=\frac{1}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2}, \hspace{1cm} i=1,\dots, n\end{align}$.
-
+0 & \dots &0 & w_n                                                                                                                                                                                                                     \end{array} \right],$ and \begin{align}w_i=\frac{1}{\mathrm{Var}(Y_i)\left(g'(\mu_i)\right)^2}, \hspace{1cm} i=1,\dots, n.\end{align}
 The information matrix $\mathcal{I}(\boldsymbol{\beta})$ depends on $\boldsymbol{\beta}$ through $\boldsymbol{\mu}$ and through $\mathrm{Var}(Y_i)$ for $i=1,\dots,n$.
 
 Equation (\ref{eqn:score}) can be written as \begin{align}
@@ -929,3 +934,4 @@ Here $D_0$ is the null deviance, that is the deviance in the model that includes
 * Have a basic understanding of how coefficient estimates and standard errors are obtained in a GLM; be familiar with the concepts of likelihood, maximum likelihood estimation, testing, confidence intervals, and goodness of fit statistics in the context of GLMs.
 
 * Be familiar with the main ways of doing inference on the parameters of a GLM -- these are based on large sample distribution results for the maximum likelihood estimator and the deviance. Be able to test the significance of a term in a GLM by performing a Wald test or by comparing deviances between nested models.
+

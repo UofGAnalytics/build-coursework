@@ -1,3 +1,4 @@
+import { Element } from 'hast';
 import { Node } from 'unist';
 
 import hamburgerSvg from '../../assets/hamburger-icon.svg';
@@ -55,8 +56,8 @@ export function createDefs() {
 }
 
 function createStoredSvg(id: string, svg: string) {
-  const hast = getAssetHast(svg);
-  const children = hast.children as Node[];
+  const hast = getAssetHast(svg) as Element;
+  const children = hast.children;
   const properties = hast.properties as Record<string, string>;
   const viewBox = properties.viewBox as string;
   return { id, viewBox, children };

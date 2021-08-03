@@ -1,115 +1,64 @@
-import chalk from 'chalk';
-
-import { codeMod } from './code-mod';
-import { collectCoursework } from './course';
-import {
-  customCombinedTransforms,
-  htmlCompiler,
-  linter,
-  markdownParser,
-} from './processors';
-import { processKnitr } from './r-markdown/knitr';
-import { Context, Options } from './types';
-import { printReport, reportHasFatalErrors } from './utils/report';
-import {
-  combineMdastTrees,
-  getBuildDir,
-  getCacheDir,
-  mkdir,
-} from './utils/utils';
-import { writeHtml } from './utils/write-files';
+import { Context, Options, createContext } from './context';
+import { Unit } from './course/types';
+import { hastPhase } from './hast';
+import { htmlPhase } from './html';
+import { linter } from './linter';
+import { markdownPhase } from './markdown';
+import { mdastPhase } from './mdast';
+// import { writeHtml } from './utils/write-files';
 
 export async function rMarkdown(dirPath: string, options: Options = {}) {
-  const ctx: Context = {
-    course: await collectCoursework(dirPath),
-    dirPath,
-    buildDir: getBuildDir(dirPath),
-    cacheDir: getCacheDir(dirPath),
-    options,
-  };
-
-  if (ctx.buildDir) {
-    await mkdir(ctx.buildDir);
-  }
-
-  if (ctx.options.week) {
-    await createUnit(ctx, ctx.options.week - 1);
-  } else {
-    for (let idx = 0; idx < ctx.course.units.length; idx++) {
-      await createUnit(ctx, idx);
-    }
-  }
-}
-
-async function createUnit(ctx: Context, unitIdx: number) {
-  const unit = ctx.course.units[unitIdx];
   try {
-    const built = await buildUnit(ctx, unitIdx);
-    if (built !== null && ctx.buildDir) {
-      await writeHtml(unit.titles.unitName, built.html, ctx.dirPath);
-      // await writePdf(titles.unitName, pdfHtml, dirPath);
-    }
+    await run(dirPath, options);
   } catch (err) {
-    console.error(chalk.red(err.message));
-    return;
+    console.error(err);
   }
 }
 
-export async function buildUnit(ctx: Context, unitIdx: number) {
-  const { files } = ctx.course.units[unitIdx];
+async function run(dirPath: string, options: Options = {}) {
+  const ctx = await createContext(dirPath, options);
 
-  ////////////
-  // 2 static analysis
-  ////////////
-
-  files.forEach((file) => {
-    file.contents = codeMod(file.contents as string);
-  });
-
-  const mdasts = await Promise.all(
-    files.map((file) => markdownParser(file, ctx))
-  );
-
-  await Promise.all(
-    mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
-  );
-
-  if (!ctx.options.noReport) {
-    printReport(files, ctx);
-  }
-  if (reportHasFatalErrors(files, ctx)) {
-    if (ctx.options.noReport) {
-      const options = { ...ctx.options, reportOnlyErrors: true };
-      printReport(files, { ...ctx, options });
-    }
-    return null;
+  // write single week
+  if (ctx.options.week) {
+    const idx = ctx.options.week - 1;
+    const unit = ctx.course.units[idx];
+    return writeUnit(unit, ctx);
   }
 
-  ////////////
-  // 3 knitr: Rmarkdown -> markdown
-  ////////////
-
-  // needs to re-read original files for easy
-  // compatibility with Windows Command Prompt
-  const markdowns = await processKnitr(files, ctx);
-
-  files.forEach((file) => {
-    file.contents = codeMod(file.contents as string);
-  });
-
-  ////////////
-  // 4 markdown -> html
-  ////////////
-
-  const mdasts2 = await Promise.all(
-    markdowns.map((file) => markdownParser(file, ctx))
+  // write full course
+  return Promise.all(
+    ctx.course.units.map((unit) => {
+      return writeUnit(unit, ctx);
+    })
   );
+}
 
-  const mdast = combineMdastTrees(mdasts2);
+async function writeUnit(unit: Unit, ctx: Context) {
+  console.log('yo!');
 
-  await customCombinedTransforms(mdast, ctx);
+  if (!ctx.options.noHtml) {
+    const { html } = await buildUnit(unit, ctx);
+    console.log(html);
+    // await writeHtml(unit.titles.unitName, html, ctx.dirPath);
+  }
+  if (!ctx.options.noPdf) {
+    console.log('write pdf!');
+    // const { html } = await buildUnit(unit, ctx, true);
+    // const pdf = convertToPdf(html)
+    // await writePdf(unit.titles.unitName, pdf, ctx.dirPath);
+  }
+}
 
-  const { hast, html } = await htmlCompiler(mdast, ctx, unitIdx);
-
-  return { mdast, hast, html };
+export async function buildUnit(
+  unit: Unit,
+  ctx: Context,
+  targetPdf?: boolean
+) {
+  await linter(unit, ctx);
+  const combined = unit.files.map((o) => o.contents).join('\n\n');
+  const md = await markdownPhase(combined, ctx);
+  const mdast = await mdastPhase(md, ctx, targetPdf);
+  const hast = await hastPhase(mdast, unit, ctx);
+  const html = await htmlPhase(hast, unit, ctx);
+  return { md, mdast, hast, html };
 }

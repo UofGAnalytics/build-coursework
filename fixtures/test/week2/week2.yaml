@@ -1,0 +1,6 @@
+name: 'Week 2'
+title: 'Automated reporting using knitr and R Markdown'
+
+content:
+  - type: text
+    src: test.Rmd

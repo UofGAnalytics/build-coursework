@@ -2,7 +2,7 @@ import path from 'path';
 
 import hashSum from 'hash-sum';
 
-import { Context } from '../types';
+import { Context } from '../context';
 import { checkLocalFileExists, mkdir, readFile, writeFile } from './utils';
 
 type Options = {
@@ -27,7 +27,7 @@ export async function cacheToFile(options: Options) {
   if (exists) {
     const str = await readFile(cachedFilePath);
 
-    // auto-heal corrupt json
+    // ignore cache if json is corrupt
     if (json) {
       try {
         return JSON.parse(str);

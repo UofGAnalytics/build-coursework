@@ -2,12 +2,15 @@ import fs from 'fs';
 import path from 'path';
 
 import rehype from 'rehype-parse';
+import stringify from 'rehype-stringify';
 import unified from 'unified';
 import { Node, Parent } from 'unist';
 
 // import visit from 'unist-util-visit';
 
-export const rehypeParser = unified().use(rehype, { fragment: true });
+export const rehypeParser = unified()
+  .use(rehype, { fragment: true })
+  .use(stringify);
 
 export function readFile(
   filePath: string,
@@ -29,6 +32,10 @@ export async function checkLocalFileExists(filePath: string) {
   }
 }
 
+export async function rmFile(filePath: string) {
+  return fs.promises.unlink(filePath);
+}
+
 export function mkdir(dirPath: string) {
   return fs.promises.mkdir(dirPath, { recursive: true });
 }
@@ -45,7 +52,7 @@ export function getCacheDir(dirPath: string) {
   return path.join(process.cwd(), dirPath, 'cache');
 }
 
-export function combineMdastTrees(mdasts: Node[]): Parent {
+export function combineMdastTrees(mdasts: Parent[]): Parent {
   const children = mdasts.flatMap(
     (mdast) => mdast.children || []
   ) as Node[];

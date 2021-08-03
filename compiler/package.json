@@ -13,8 +13,7 @@
     "rmarkdown": "./build/cli.js"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack",
-    "compile": "node --trace-warnings build/main.js"
+    "build": "NODE_ENV=production webpack"
   },
   "dependencies": {
     "@double-great/remark-lint-alt-text": "^0.7.0",
@@ -60,6 +59,7 @@
     "retext-spell": "^4.0.0",
     "sandboxed-module": "^2.0.4",
     "speech-rule-engine": "^3.2.0-beta.0",
+    "temp-dir": "^2.0.0",
     "to-vfile": "^6.1.0",
     "unist-util-visit": "^2.0.3",
     "vfile-reporter": "^6.0.2",

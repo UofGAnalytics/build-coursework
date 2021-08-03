@@ -17,6 +17,14 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: 'Only compile content HTML',
   })
+  .option('noHtml', {
+    type: 'boolean',
+    description: 'Only compile content HTML',
+  })
+  .option('noPdf', {
+    type: 'boolean',
+    description: 'Only compile content HTML',
+  })
   .option('noWrapper', {
     type: 'boolean',
     description: 'No wrapper',
@@ -48,6 +56,8 @@ const options = {
   week: argv.week,
   watch: argv.watch,
   noDoc: argv.noDoc,
+  noHtml: argv.noHtml,
+  noPdf: argv.noPdf,
   noWrapper: argv.noWrapper,
   noSyntaxHighlight: argv.noSyntaxHighlight,
   noReport: argv.noReport,

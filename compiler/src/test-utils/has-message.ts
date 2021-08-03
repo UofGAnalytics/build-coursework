@@ -1,8 +1,8 @@
 import { VFile } from 'vfile';
 
-import { Context } from '../types';
+import { Context } from '../context';
+import { reportHasFatalErrors } from '../linter/report';
 import { MessageStatus } from '../utils/message';
-import { reportHasFatalErrors } from '../utils/report';
 
 export function createHasFailingMessage(ctx: Context, file: VFile) {
   return function hasFailingMessage(reason: string) {

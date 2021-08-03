@@ -314,14 +314,14 @@ exports.unsetStubs = function (namespace) {
 
 /***/ }),
 
-/***/ 5830:
+/***/ 1617:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "A": () => (/* binding */ codeMod)
+/* harmony export */   "E": () => (/* binding */ containerDirective)
 /* harmony export */ });
-function codeMod(contents) {
+function containerDirective(contents) {
   return contents.split('\n').map(line => {
     const container = parseCustomContainer(line);
 
@@ -330,7 +330,7 @@ function codeMod(contents) {
     }
 
     return line;
-  }).filter(s => s.trim() !== '\\newpage').join('\n');
+  }).join('\n');
 }
 
 function parseCustomContainer(line) {
@@ -394,6 +394,19 @@ function transformAttributes(containerName, attributesArr) {
 
 /***/ }),
 
+/***/ 6398:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "C": () => (/* binding */ removeNewPage)
+/* harmony export */ });
+function removeNewPage(contents) {
+  return contents.split('\n').filter(s => s.trim() !== '\\newpage').join('\n');
+}
+
+/***/ }),
+
 /***/ 7921:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -439,7 +452,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 5725:
+/***/ 4307:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -452,31 +465,165 @@ __webpack_require__.d(__webpack_exports__, {
 // UNUSED EXPORTS: buildUnit
 
 ;// CONCATENATED MODULE: external "chalk"
-const external_chalk_namespaceObject = require("chalk");;
+const external_chalk_namespaceObject = require("chalk");
 var external_chalk_default = /*#__PURE__*/__webpack_require__.n(external_chalk_namespaceObject);
-// EXTERNAL MODULE: ./src/code-mod.ts
-var code_mod = __webpack_require__(5830);
+// EXTERNAL MODULE: ./src/code-mod/container-directive.ts
+var container_directive = __webpack_require__(1617);
+;// CONCATENATED MODULE: external "markdown-table"
+const external_markdown_table_namespaceObject = require("markdown-table");
+var external_markdown_table_default = /*#__PURE__*/__webpack_require__.n(external_markdown_table_namespaceObject);
+;// CONCATENATED MODULE: ./src/code-mod/reformat-pandoc-simple-tables.ts
+// @ts-expect-error
+
+function reformatPandocSimpleTables(contents) {
+  const lines = contents.split('\n');
+
+  for (var idx = lines.length - 1; idx >= 0; idx--) {
+    const line = lines[idx];
+
+    if (isValidPandocSimpleTableSeparator(line, idx, lines)) {
+      const bounds = getTableBounds(lines, idx);
+      const tableLines = lines.slice(bounds.startIdx, bounds.startIdx + bounds.count);
+      const table = parseTable(tableLines);
+      const align = getColumnAlignment(table[0]);
+      const mdTable = external_markdown_table_default()(table, {
+        align
+      });
+      lines.splice(bounds.startIdx, bounds.count, ...mdTable.split('\n'));
+    }
+  }
+
+  return lines.join('\n');
+}
+
+function isValidPandocSimpleTableSeparator(line, idx, arr) {
+  if (idx === 0 || !/-{2,}/g.test(line) || !/^[\s|-]+$/.test(line)) {
+    return false;
+  }
+
+  const columnIndexes = getColumnIndexes(line); // const titles = parseBodyRow(arr[idx - 1], columnIndexes);
+  // const filtered = titles.filter((s) => s.trim() !== '');
+
+  return columnIndexes.length > 1;
+}
+
+function getTableBounds(arr, idx) {
+  const startIdx = idx - 1;
+  const count = arr.slice(startIdx).findIndex(l => l.trim() === '');
+  return {
+    startIdx,
+    count
+  };
+}
+
+function parseTable(tableLines) {
+  const [titles, separator, ...body] = tableLines;
+  const columnIndexes = getColumnIndexes(separator);
+  const titleCells = parseTitleRow(titles, columnIndexes);
+  const bodyCells = body.map(line => parseBodyRow(line, columnIndexes)).reduce(multilineReducer, []);
+  return [titleCells, ...bodyCells];
+}
+
+function getColumnIndexes(line) {
+  return line.split('').reduce((acc, str, idx) => {
+    if (str === '-' && (idx === 0 || line[idx - 1] === ' ')) {
+      acc.push([idx]);
+    } else if (idx !== line.length - 1 && str === ' ' && line[idx - 1] === '-') {
+      acc[acc.length - 1].push(idx);
+    }
+
+    return acc;
+  }, []);
+}
+
+function getColumnAlignment(titleCells) {
+  return titleCells.map(title => {
+    if (title[0] === ' ') {
+      if (title[title.length - 1] === ' ') {
+        return 'center';
+      }
+
+      return 'right';
+    }
+
+    return 'left';
+  });
+}
+
+function parseTitleRow(line, columnIndexes) {
+  return columnIndexes.map(tuple => line.slice(...tuple));
+}
+
+function parseBodyRow(line, columnIndexes) {
+  return columnIndexes.map(tuple => {
+    const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
+    return line.slice(tuple[0], end).trim();
+  });
+}
+
+function multilineReducer(acc, row) {
+  if (row.some(cell => cell.trim() === '')) {
+    const prevIdx = acc.length - 1;
+    acc[prevIdx].forEach((cell, i) => {
+      const trimmed = row[i].trim();
+
+      if (trimmed !== '') {
+        acc[prevIdx][i] = cell + ' ' + trimmed;
+      }
+    });
+  } else {
+    acc.push(row);
+  }
+
+  return acc;
+}
+// EXTERNAL MODULE: ./src/code-mod/remove-new-page.ts
+var remove_new_page = __webpack_require__(6398);
+;// CONCATENATED MODULE: ./src/code-mod/index.ts
+
+
+
+function codeMod(contents) {
+  let newContents = contents;
+  log('Converting macros to directives...');
+  newContents = (0,container_directive/* containerDirective */.E)(newContents);
+  log('Removing \\newpage lines...');
+  newContents = (0,remove_new_page/* removeNewPage */.C)(newContents); // log('Formatting block math...');
+  // newContents = formatBlockMath(newContents);
+
+  log('Reformatting Pandoc simple tables...');
+  newContents = reformatPandocSimpleTables(newContents); // console.log(newContents);
+
+  return newContents;
+}
+
+function log(str) {// console.log(str);
+}
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(5622);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "to-vfile"
-const external_to_vfile_namespaceObject = require("to-vfile");;
+const external_to_vfile_namespaceObject = require("to-vfile");
 var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_vfile_namespaceObject);
 ;// CONCATENATED MODULE: external "js-yaml"
-const external_js_yaml_namespaceObject = require("js-yaml");;
+const external_js_yaml_namespaceObject = require("js-yaml");
 var external_js_yaml_default = /*#__PURE__*/__webpack_require__.n(external_js_yaml_namespaceObject);
 ;// CONCATENATED MODULE: external "yup"
-const external_yup_namespaceObject = require("yup");;
+const external_yup_namespaceObject = require("yup");
 ;// CONCATENATED MODULE: external "fs"
-const external_fs_namespaceObject = require("fs");;
+const external_fs_namespaceObject = require("fs");
 var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_namespaceObject);
 ;// CONCATENATED MODULE: external "rehype-parse"
-const external_rehype_parse_namespaceObject = require("rehype-parse");;
+const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
+;// CONCATENATED MODULE: external "rehype-stringify"
+const external_rehype_stringify_namespaceObject = require("rehype-stringify");
+var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(external_rehype_stringify_namespaceObject);
 // EXTERNAL MODULE: ../node_modules/unified/index.js
-var unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
+var node_modules_unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 ;// CONCATENATED MODULE: ./src/utils/utils.ts
+
 
 
 
@@ -484,14 +631,14 @@ var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
 // import visit from 'unist-util-visit';
 const rehypeParser = unified_default()().use((external_rehype_parse_default()), {
   fragment: true
-});
+}).use((external_rehype_stringify_default()));
 function readFile(filePath, encoding = 'utf-8') {
   return external_fs_default().promises.readFile(filePath, encoding);
 }
 function writeFile(filePath, contents) {
   return external_fs_default().promises.writeFile(filePath, contents);
 }
-async function checkLocalFileExists(filePath) {
+async function utils_checkLocalFileExists(filePath) {
   try {
     await external_fs_default().promises.access(filePath, (external_fs_default()).constants.F_OK);
     return true;
@@ -616,57 +763,112 @@ function getUnitTitles({
     docTitle: `${unitTitle} | ${courseTitle}`
   };
 }
+;// CONCATENATED MODULE: external "mathjax-full/js/adaptors/liteAdaptor.js"
+const liteAdaptor_js_namespaceObject = require("mathjax-full/js/adaptors/liteAdaptor.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/core/MathItem"
+const MathItem_namespaceObject = require("mathjax-full/js/core/MathItem");
+;// CONCATENATED MODULE: external "mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js"
+const SerializedMmlVisitor_js_namespaceObject = require("mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html.js"
+const html_js_namespaceObject = require("mathjax-full/js/handlers/html.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/input/tex.js"
+const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/AllPackages.js"
+const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
+const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
+;// CONCATENATED MODULE: ./src/latex/index.ts
+
+
+
+
+
+
+
+function storeTex(html) {
+  const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
+  (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
+  const tex = new tex_js_namespaceObject.TeX({
+    packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
+    tags: 'ams',
+    inlineMath: [['$', '$']],
+    processEscapes: true
+  });
+  const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
+  const store = [];
+
+  function storeTex({
+    math
+  }) {
+    const items = Array.from(math);
+
+    for (const item of items) {
+      store.push(visitor.visitTree(item.root));
+      const type = item.display ? 'block' : 'inline';
+      const idx = store.length - 1;
+      const directive = `:${type}Math[${idx}]`;
+      const tree = adaptor.parse(directive, 'text/html');
+      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    }
+  }
+
+  const renderActions = {
+    typeset: [MathItem_namespaceObject.STATE.TYPESET, storeTex]
+  };
+  const doc = mathjax_js_namespaceObject.mathjax.document(html, {
+    InputJax: tex,
+    renderActions
+  });
+  doc.render();
+  const result = adaptor.innerHTML(adaptor.body(doc.document));
+  return {
+    store,
+    html: unprotectHtml(result)
+  };
+} // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
+
+function unprotectHtml(html) {
+  return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
 ;// CONCATENATED MODULE: external "@double-great/remark-lint-alt-text"
-const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");;
-var remark_lint_alt_text_default = /*#__PURE__*/__webpack_require__.n(remark_lint_alt_text_namespaceObject);
+const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");
 ;// CONCATENATED MODULE: external "@mapbox/remark-lint-link-text"
-const remark_lint_link_text_namespaceObject = require("@mapbox/remark-lint-link-text");;
-var remark_lint_link_text_default = /*#__PURE__*/__webpack_require__.n(remark_lint_link_text_namespaceObject);
+const remark_lint_link_text_namespaceObject = require("@mapbox/remark-lint-link-text");
 ;// CONCATENATED MODULE: external "dictionary-en-gb"
-const external_dictionary_en_gb_namespaceObject = require("dictionary-en-gb");;
-var external_dictionary_en_gb_default = /*#__PURE__*/__webpack_require__.n(external_dictionary_en_gb_namespaceObject);
+const external_dictionary_en_gb_namespaceObject = require("dictionary-en-gb");
 ;// CONCATENATED MODULE: external "rehype-document"
-const external_rehype_document_namespaceObject = require("rehype-document");;
+const external_rehype_document_namespaceObject = require("rehype-document");
 var external_rehype_document_default = /*#__PURE__*/__webpack_require__.n(external_rehype_document_namespaceObject);
 ;// CONCATENATED MODULE: external "rehype-format"
-const external_rehype_format_namespaceObject = require("rehype-format");;
+const external_rehype_format_namespaceObject = require("rehype-format");
 var external_rehype_format_default = /*#__PURE__*/__webpack_require__.n(external_rehype_format_namespaceObject);
-;// CONCATENATED MODULE: external "rehype-stringify"
-const external_rehype_stringify_namespaceObject = require("rehype-stringify");;
-var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(external_rehype_stringify_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
-const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");;
+const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-directive"
-const external_remark_directive_namespaceObject = require("remark-directive");;
+const external_remark_directive_namespaceObject = require("remark-directive");
 var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-frontmatter"
-const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");;
+const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
 var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-gfm"
-const external_remark_gfm_namespaceObject = require("remark-gfm");;
+const external_remark_gfm_namespaceObject = require("remark-gfm");
 var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
-;// CONCATENATED MODULE: external "remark-math"
-const external_remark_math_namespaceObject = require("remark-math");;
-var external_remark_math_default = /*#__PURE__*/__webpack_require__.n(external_remark_math_namespaceObject);
 // EXTERNAL MODULE: ../node_modules/remark-parse/index.js
 var remark_parse = __webpack_require__(3850);
 var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
 ;// CONCATENATED MODULE: external "remark-rehype"
-const external_remark_rehype_namespaceObject = require("remark-rehype");;
+const external_remark_rehype_namespaceObject = require("remark-rehype");
 var external_remark_rehype_default = /*#__PURE__*/__webpack_require__.n(external_remark_rehype_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-retext"
-const external_remark_retext_namespaceObject = require("remark-retext");;
-var external_remark_retext_default = /*#__PURE__*/__webpack_require__.n(external_remark_retext_namespaceObject);
+const external_remark_retext_namespaceObject = require("remark-retext");
 ;// CONCATENATED MODULE: external "remark-slug"
-const external_remark_slug_namespaceObject = require("remark-slug");;
+const external_remark_slug_namespaceObject = require("remark-slug");
 var external_remark_slug_default = /*#__PURE__*/__webpack_require__.n(external_remark_slug_namespaceObject);
 ;// CONCATENATED MODULE: external "retext-english"
-const external_retext_english_namespaceObject = require("retext-english");;
-var external_retext_english_default = /*#__PURE__*/__webpack_require__.n(external_retext_english_namespaceObject);
+const external_retext_english_namespaceObject = require("retext-english");
 ;// CONCATENATED MODULE: external "retext-spell"
-const external_retext_spell_namespaceObject = require("retext-spell");;
-var external_retext_spell_default = /*#__PURE__*/__webpack_require__.n(external_retext_spell_namespaceObject);
+const external_retext_spell_namespaceObject = require("retext-spell");
 // EXTERNAL MODULE: external "unist-util-visit"
 var external_unist_util_visit_ = __webpack_require__(2148);
 var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
@@ -679,7 +881,7 @@ let MessageStatus;
   MessageStatus["info"] = "info";
 })(MessageStatus || (MessageStatus = {}));
 
-function failMessage(file, message, position) {
+function message_failMessage(file, message, position) {
   const status = MessageStatus.fail;
   return messageWithStatus(file, message, position, status);
 }
@@ -702,7 +904,7 @@ function messageWithStatus(file, message, position, status) {
 
 
 
-function assertAssetExists() {
+function assert_asset_exists_assertAssetExists() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
 
@@ -721,7 +923,7 @@ function assertAssetExists() {
 
   return async (tree, file) => {
     const transformations = [];
-    external_unist_util_visit_default()(tree, 'image', node => {
+    visit(tree, 'image', node => {
       transformations.push(getAssetUrl(node, file));
     });
     await Promise.all(transformations);
@@ -730,9 +932,9 @@ function assertAssetExists() {
 ;// CONCATENATED MODULE: ./src/linters/assert-task-answer.ts
 
 
-function assertTaskAnswerStructure() {
+function assert_task_answer_assertTaskAnswerStructure() {
   return (tree, file) => {
-    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, parent) => {
+    visit(tree, 'containerDirective', (node, index, parent) => {
       if (node.name === 'task') {
         const children = node.children || [];
         const answers = children.filter(o => o.name === 'answer');
@@ -757,9 +959,9 @@ function assertTaskAnswerStructure() {
 ;// CONCATENATED MODULE: ./src/linters/assert-video-attributes.ts
 
 
-function assertVideoAttributes() {
+function assert_video_attributes_assertVideoAttributes() {
   return async (tree, file) => {
-    external_unist_util_visit_default()(tree, 'leafDirective', node => {
+    visit(tree, 'leafDirective', node => {
       if (node.name === 'video') {
         const attributes = node.attributes;
 
@@ -789,9 +991,9 @@ function getTitle(node) {
 ;// CONCATENATED MODULE: ./src/linters/assert-weblink-target.ts
 
 
-function assertWeblinkTarget() {
+function assert_weblink_target_assertWeblinkTarget() {
   return (tree, file) => {
-    external_unist_util_visit_default()(tree, 'containerDirective', node => {
+    visit(tree, 'containerDirective', node => {
       if (node.name === 'weblink') {
         const {
           target
@@ -805,14 +1007,14 @@ function assertWeblinkTarget() {
   };
 }
 ;// CONCATENATED MODULE: external "child_process"
-const external_child_process_namespaceObject = require("child_process");;
+const external_child_process_namespaceObject = require("child_process");
 ;// CONCATENATED MODULE: ./src/linters/lint-latex.ts
 
 
-function lintLatex() {
+function lint_latex_lintLatex() {
   return async (tree, file) => {
     const transformations = [];
-    external_unist_util_visit_default()(tree, 'math', node => {
+    visit(tree, 'math', node => {
       transformations.push(chktex(node, file));
     });
     await Promise.all(transformations);
@@ -822,7 +1024,7 @@ function lintLatex() {
 
 async function chktex(node, file) {
   return new Promise((resolve, reject) => {
-    (0,external_child_process_namespaceObject.exec)(`chktex -q <<< "${node.value}"`, (err, response) => {
+    exec(`chktex -q <<< "${node.value}"`, (err, response) => {
       if (err) {
         reject(err);
       } else {
@@ -878,13 +1080,13 @@ function formatResponse(response) {
   }, []);
 }
 ;// CONCATENATED MODULE: external "mime/lite"
-const lite_namespaceObject = require("mime/lite");;
+const lite_namespaceObject = require("mime/lite");
 var lite_default = /*#__PURE__*/__webpack_require__.n(lite_namespaceObject);
 ;// CONCATENATED MODULE: external "node-fetch"
-const external_node_fetch_namespaceObject = require("node-fetch");;
+const external_node_fetch_namespaceObject = require("node-fetch");
 var external_node_fetch_default = /*#__PURE__*/__webpack_require__.n(external_node_fetch_namespaceObject);
 ;// CONCATENATED MODULE: external "sandboxed-module"
-const external_sandboxed_module_namespaceObject = require("sandboxed-module");;
+const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
 // EXTERNAL MODULE: ./src/latex/domstubs.js
 var domstubs = __webpack_require__(6209);
@@ -897,7 +1099,7 @@ var domstubs = __webpack_require__(6209);
 
  // inject globals into pdf.js in a non-leaky way
 
-const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/es5/build/pdf', {
+const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/build/pdf', {
   globals: {
     document: domstubs.document,
     Image: domstubs.Image,
@@ -961,7 +1163,7 @@ function addWrapper() {
   };
 }
 ;// CONCATENATED MODULE: external "hash-sum"
-const external_hash_sum_namespaceObject = require("hash-sum");;
+const external_hash_sum_namespaceObject = require("hash-sum");
 var external_hash_sum_default = /*#__PURE__*/__webpack_require__.n(external_hash_sum_namespaceObject);
 ;// CONCATENATED MODULE: ./src/utils/cache-to-file.ts
 function cache_to_file_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
@@ -988,10 +1190,10 @@ async function cacheToFile(options) {
 
   const filePath = `${prefix}-${external_hash_sum_default()(key)}.txt`;
   const cachedFilePath = external_path_default().join(ctx.cacheDir, filePath);
-  const exists = await checkLocalFileExists(cachedFilePath);
+  const exists = await utils_checkLocalFileExists(cachedFilePath);
 
   if (exists) {
-    const str = await readFile(cachedFilePath); // auto-heal corrupt json
+    const str = await readFile(cachedFilePath); // ignore cache if json is corrupt
 
     if (json) {
       try {
@@ -1006,7 +1208,7 @@ async function cacheToFile(options) {
 
   return execAndCache(options, cachedFilePath);
 }
-async function cacheJsonToFile(options) {
+async function cache_to_file_cacheJsonToFile(options) {
   return cacheToFile(cache_to_file_objectSpread(cache_to_file_objectSpread({}, options), {}, {
     json: true
   }));
@@ -1079,7 +1281,7 @@ function embedAssets(ctx) {
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (err) {
-      failMessage(file, err.message, node.position);
+      message_failMessage(file, err.message, node.position);
     }
   }
 
@@ -1169,7 +1371,7 @@ var html_wrapper_main = __webpack_require__(7921);
 var mdast_util_to_hast = __webpack_require__(9376);
 var mdast_util_to_hast_default = /*#__PURE__*/__webpack_require__.n(mdast_util_to_hast);
 ;// CONCATENATED MODULE: external "mdast-util-toc"
-const external_mdast_util_toc_namespaceObject = require("mdast-util-toc");;
+const external_mdast_util_toc_namespaceObject = require("mdast-util-toc");
 var external_mdast_util_toc_default = /*#__PURE__*/__webpack_require__.n(external_mdast_util_toc_namespaceObject);
 ;// CONCATENATED MODULE: ./src/utils/icons.ts
 /* babel-plugin-inline-import '../../assets/hamburger-icon.svg' */
@@ -1544,28 +1746,43 @@ function htmlWrapper(titles, mdast) {
     };
   };
 }
-;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
-const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/input/tex.js"
-const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/output/svg.js"
-const svg_js_namespaceObject = require("mathjax-full/js/output/svg.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/input/mathml.js"
-const mathml_js_namespaceObject = require("mathjax-full/js/input/mathml.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/adaptors/liteAdaptor.js"
-const liteAdaptor_js_namespaceObject = require("mathjax-full/js/adaptors/liteAdaptor.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html/HTMLDocument.js"
-const HTMLDocument_js_namespaceObject = require("mathjax-full/js/handlers/html/HTMLDocument.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html.js"
-const html_js_namespaceObject = require("mathjax-full/js/handlers/html.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/AllPackages.js"
-const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");;
-;// CONCATENATED MODULE: external "mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js"
-const SerializedMmlVisitor_js_namespaceObject = require("mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js");;
+;// CONCATENATED MODULE: external "lodash"
+const external_lodash_namespaceObject = require("lodash");
+;// CONCATENATED MODULE: ./src/transforms-hast/responsive-tables.ts
+
+
+function responsiveTables() {
+  return async (tree, file) => {
+    external_unist_util_visit_default()(tree, 'element', (node, idx, parent) => {
+      if (node.tagName !== 'table') {
+        return;
+      }
+
+      const properties = (parent === null || parent === void 0 ? void 0 : parent.properties) || {};
+      const className = properties.className || [];
+
+      if (!className.includes('table-wrapper')) {
+        Object.assign(node, {
+          tagName: 'div',
+          properties: {
+            className: 'table-wrapper'
+          },
+          children: [(0,external_lodash_namespaceObject.cloneDeep)(node)]
+        });
+      }
+    });
+  };
+}
 ;// CONCATENATED MODULE: external "mathjax-full/js/core/MathItem.js"
-const MathItem_js_namespaceObject = require("mathjax-full/js/core/MathItem.js");;
+const MathItem_js_namespaceObject = require("mathjax-full/js/core/MathItem.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html/HTMLDocument.js"
+const HTMLDocument_js_namespaceObject = require("mathjax-full/js/handlers/html/HTMLDocument.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/input/mathml.js"
+const mathml_js_namespaceObject = require("mathjax-full/js/input/mathml.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/output/svg.js"
+const svg_js_namespaceObject = require("mathjax-full/js/output/svg.js");
 ;// CONCATENATED MODULE: external "speech-rule-engine"
-const external_speech_rule_engine_namespaceObject = require("speech-rule-engine");;
+const external_speech_rule_engine_namespaceObject = require("speech-rule-engine");
 ;// CONCATENATED MODULE: ./src/latex/mathjax-tex.ts
 
 
@@ -1579,22 +1796,23 @@ const external_speech_rule_engine_namespaceObject = require("speech-rule-engine"
  // @ts-expect-error
 
 
-function texToMml(tex = '') {
-  const packages = AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs');
-  const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
-  const input = new tex_js_namespaceObject.TeX({
+function mathjax_tex_texToMml(tex = '') {
+  const adaptor = liteAdaptor(); //  Busproofs requires an output jax, which we aren't using
+
+  const packages = AllPackages.filter(name => name !== 'bussproofs');
+  const input = new TeX({
     packages
   });
-  const doc = new HTMLDocument_js_namespaceObject.HTMLDocument('', adaptor, {
+  const doc = new HTMLDocument('', adaptor, {
     InputJax: input
   });
   const node = doc.convert(tex, {
-    end: MathItem_js_namespaceObject.STATE.CONVERT
+    end: STATE.CONVERT
   });
-  const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
+  const visitor = new SerializedMmlVisitor();
   return visitor.visitTree(node);
 }
-function mmlToSvg(mml) {
+function mathjax_tex_mmlToSvg(mml) {
   const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
   (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
   const input = new mathml_js_namespaceObject.MathML();
@@ -1610,10 +1828,10 @@ function mmlToSvg(mml) {
   });
   return adaptor.outerHTML(node);
 }
-function mmlToSpeech(mml) {
+function mathjax_tex_mmlToSpeech(mml) {
   return (0,external_speech_rule_engine_namespaceObject.toSpeech)(mml);
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/accessible-tex.ts
+;// CONCATENATED MODULE: ./src/transforms-mdast/_accessible-tex.ts
 
 
 
@@ -1621,7 +1839,7 @@ function mmlToSpeech(mml) {
 function accessibleTex(ctx) {
   return async tree => {
     const transformations = [];
-    external_unist_util_visit_default()(tree, ['math', 'inlineMath'], node => {
+    visit(tree, ['math', 'inlineMath'], node => {
       transformations.push(node);
     });
     await Promise.all(transformations.map(node => customMath(node, ctx)));
@@ -1629,13 +1847,20 @@ function accessibleTex(ctx) {
 }
 
 async function customMath(node, ctx) {
-  const value = node.value;
+  const value = node.value; // if (node.type === 'math') {
+  //   console.log(value);
+  // }
+
   const svg = await cacheJsonToFile({
     ctx,
     prefix: 'tex',
     key: value,
     execFn: mathJaxSvg
-  });
+  }); // if (value.startsWith('y')) {
+  //   console.log(value);
+  //   console.log(svg);
+  // }
+
   node.data = {
     hName: node.type === 'inlineMath' ? 'span' : 'div',
     hProperties: {
@@ -1656,8 +1881,10 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   const tree = rehypeParser.parse(mathjaxSvg);
   const parent = tree.children[0];
   const svg = parent.children[0];
-  const properties = svg.properties;
+  const properties = svg.properties; // const block = properties.width === '100%';
+
   const newProperties = {
+    // className: block ? 'math' : 'math-inline',
     width: properties.width,
     height: properties.height,
     viewBox: properties.viewBox,
@@ -1683,8 +1910,52 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   svg.properties = newProperties;
   return svg;
 }
-;// CONCATENATED MODULE: external "lodash"
-const external_lodash_namespaceObject = require("lodash");;
+;// CONCATENATED MODULE: ./src/transforms-mdast/accessible-tex.ts
+function accessible_tex_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function accessible_tex_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { accessible_tex_ownKeys(Object(source), true).forEach(function (key) { accessible_tex_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { accessible_tex_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function accessible_tex_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+function accessible_tex_accessibleTex(ctx) {
+  return tree => {
+    external_unist_util_visit_default()(tree, 'textDirective', node => {
+      switch (node.name) {
+        case 'inlineMath':
+        case 'blockMath':
+          {
+            const idx = getTexIdx(node);
+            const mml = ctx.texStore[idx];
+            const svg = renderSvg(mml);
+
+            const properties = accessible_tex_objectSpread(accessible_tex_objectSpread({}, svg.properties), {}, {
+              className: node.name === 'inlineMath' ? 'inline-math' : 'block-math'
+            }); // console.log(svg);
+
+
+            node.data = {
+              hName: svg.tagName,
+              hProperties: properties,
+              hChildren: svg.children
+            };
+          }
+      }
+    });
+  };
+}
+
+function getTexIdx(node) {
+  return Number(node.children[0].value);
+}
+
+function renderSvg(mml) {
+  const label = mathjax_tex_mmlToSpeech(mml);
+  const svg = mathjax_tex_mmlToSvg(mml);
+  return createAccessibleSvg(svg, label);
+}
 ;// CONCATENATED MODULE: ./src/transforms-mdast/boxouts.ts
 
 
@@ -1883,7 +2154,7 @@ function createCounter() {
   };
 }
 ;// CONCATENATED MODULE: external "refractor"
-const external_refractor_namespaceObject = require("refractor");;
+const external_refractor_namespaceObject = require("refractor");
 var external_refractor_default = /*#__PURE__*/__webpack_require__.n(external_refractor_namespaceObject);
 ;// CONCATENATED MODULE: ./src/transforms-mdast/code-blocks.ts
 // @ts-expect-error
@@ -2011,22 +2282,6 @@ function template(node, count) {
     }]
   };
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/responsive-tables.ts
-
-
-function responsiveTables() {
-  return async (tree, file) => {
-    external_unist_util_visit_default()(tree, 'table', node => {
-      node.data = {
-        hName: 'div',
-        hProperties: {
-          className: 'table-wrapper'
-        },
-        hChildren: [mdast_util_to_hast_default()(node)]
-      };
-    });
-  };
-}
 ;// CONCATENATED MODULE: ./src/transforms-mdast/youtube-videos.ts
 
 function youtubeVideos() {
@@ -2148,12 +2403,11 @@ function formatDuration(duration = '') {
 
 
 
-
+ // import math from 'remark-math';
 
 
  // @ts-expect-error
 
- // @ts-expect-error
 
  // @ts-expect-error
 
@@ -2180,19 +2434,20 @@ function formatDuration(duration = '') {
  // import { inspect } from './utils/utils';
 
 async function markdownParser(file, ctx) {
-  const processor = unified_default()().use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_math_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use(embedAssetUrl);
+  const processor = unified_default()().use((remark_parse_default())).use((external_remark_directive_default())) // .use(math)
+  .use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use(embedAssetUrl);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
 async function linter(mdast, ctx, file) {
-  const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
+  const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(lintLatex).use(lintAltText).use(lintLinkText);
 
   if (ctx.options.spelling) {
-    const retextProcessor = unified_default()().use((external_retext_english_default())).use((external_retext_spell_default()), {
-      dictionary: (external_dictionary_en_gb_default()),
+    const retextProcessor = unified().use(english).use(spell, {
+      dictionary,
       max: 1
     });
-    processor.use((external_remark_retext_default()), retextProcessor);
+    processor.use(remark2retext, retextProcessor);
   }
 
   return processor.run(mdast, file);
@@ -2204,7 +2459,7 @@ async function customCombinedTransforms(mdast, ctx) {
     linkProperties: {
       className: 'link'
     }
-  }).use(youtubeVideos).use(responsiveTables).use(accessibleTex, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images); // .use(moveAnswersToEnd);
+  }).use(youtubeVideos).use(accessible_tex_accessibleTex, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images); // .use(moveAnswersToEnd);
 
   return processor.run(mdast);
 }
@@ -2212,7 +2467,9 @@ async function htmlCompiler(mdast, ctx, unitIdx) {
   const {
     titles
   } = ctx.course.units[unitIdx];
-  const processor = unified_default()().use((external_remark_rehype_default())).use((external_rehype_format_default())).use((external_rehype_stringify_default()));
+  const processor = unified_default()().use((external_remark_rehype_default()), {
+    allowDangerousHtml: true
+  }).use(responsiveTables).use((external_rehype_format_default())).use((external_rehype_stringify_default()));
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx); // TODO: try to get this inside custom transforms
@@ -2265,9 +2522,7 @@ async function knitr(filePath, ctx) {
         console.error('ERROR', err);
         reject(err);
       } else {
-        const res = knitr_formatResponse(response); // console.log(res);
-
-        resolve(res);
+        resolve(knitr_formatResponse(response));
       }
     });
   });
@@ -2296,110 +2551,25 @@ function knitr_formatResponse(response) {
 //     }
 //   )
 // `;
-;// CONCATENATED MODULE: external "figures"
-const external_figures_namespaceObject = require("figures");;
-var external_figures_default = /*#__PURE__*/__webpack_require__.n(external_figures_namespaceObject);
-;// CONCATENATED MODULE: ./src/utils/report.ts
-
-
-
-
-function printReport(files, ctx) {
-  const {
-    reportOnlyErrors,
-    shouldFail
-  } = ctx.options;
-
-  if (reportOnlyErrors && shouldFail) {
-    return;
-  }
-
-  for (const file of files) {
-    const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
-
-    if (messages.length !== 0) {
-      console.log(`\n${getFilePath(file.path)}`);
-      messages.map(printMessage);
-    }
-  }
-}
-function reportHasFatalErrors(files, ctx) {
-  const passed = files.every(file => file.messages.every(message => message.status !== MessageStatus.fail));
-  return !passed;
-}
-
-function failingMessages(messages) {
-  return messages.filter(o => o.status === MessageStatus.fail);
-}
-
-function printMessage(message) {
-  // console.log(message);
-  const status = message.status;
-  const position = external_chalk_default().grey(`${message.line}:${message.column}`);
-  const reason = formatReason(message.reason, status);
-  console.log(`${formatStatus(status)}  ${position}  ${reason}`);
-}
-
-function getFilePath(filePath) {
-  return external_path_default().join(process.cwd(), filePath);
-}
-
-function formatStatus(status) {
-  const statusColour = getStatusColour(status);
-
-  switch (status) {
-    case MessageStatus.fail:
-      return statusColour((external_figures_default()).cross);
-
-    default:
-      return statusColour((external_figures_default()).warning);
-    // TODO: fail on unsupported status?
-  }
-}
-
-function formatReason(reason, status) {
-  const statusColour = getStatusColour(status);
-  const [first, ...rest] = reason.split('\n');
-  const formattedFirst = statusColour(first);
-  const formattedRest = rest.map(line => external_chalk_default().grey(line));
-  return [formattedFirst, ...formattedRest].join('\n');
-}
-
-function getStatusColour(status) {
-  switch (status) {
-    case MessageStatus.fail:
-      return (external_chalk_default()).red;
-
-    default:
-      return (external_chalk_default()).yellow;
-  }
-}
 ;// CONCATENATED MODULE: external "html-pdf"
-const external_html_pdf_namespaceObject = require("html-pdf");;
+const external_html_pdf_namespaceObject = require("html-pdf");
 ;// CONCATENATED MODULE: ./src/utils/write-files.ts
 
 
 
 
 async function writeHtml(fileName, html, dirPath) {
-  const filePath = write_files_getFilePath(dirPath, fileName); // console.log(filePath)
-
+  const filePath = getFilePath(dirPath, fileName);
   await writeFile(`${filePath}.html`, html);
   console.log('html file written to:', `${filePath}.html`);
 }
 async function writePdf(fileName, pdfHtml, dirPath) {
-  const filePath = write_files_getFilePath(dirPath, fileName);
-  await writePdfFile(`${filePath}.pdf`, pdfHtml);
+  const filePath = getFilePath(dirPath, fileName);
+  await writePdfPromise(`${filePath}.pdf`, pdfHtml);
   console.log('pdf file written to:', `${filePath}.pdf`);
 }
 
-function write_files_getFilePath(dirPath, unitName) {
-  const buildDir = getBuildDir(dirPath);
-  const fileName = (0,external_lodash_namespaceObject.kebabCase)(unitName);
-  return external_path_default().join(buildDir, fileName);
-}
-
-async function writePdfFile(filePath, html) {
+async function writePdfPromise(filePath, html) {
   return new Promise((resolve, reject) => {
     pdf.create(html).toFile(filePath, err => {
       if (err) {
@@ -2410,13 +2580,13 @@ async function writePdfFile(filePath, html) {
     });
   });
 }
+
+function getFilePath(dirPath, unitName) {
+  const buildDir = getBuildDir(dirPath);
+  const fileName = (0,external_lodash_namespaceObject.kebabCase)(unitName);
+  return external_path_default().join(buildDir, fileName);
+}
 ;// CONCATENATED MODULE: ./src/index.ts
-function src_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function src_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { src_ownKeys(Object(source), true).forEach(function (key) { src_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { src_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function src_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -2465,62 +2635,87 @@ async function createUnit(ctx, unitIdx) {
 async function buildUnit(ctx, unitIdx) {
   const {
     files
-  } = ctx.course.units[unitIdx]; ////////////
-  // 1 code mod - rewrite old syntax to new syntax with regex
+  } = ctx.course.units[unitIdx]; // files.forEach((file) => {
+  //   console.log(file.contents);
+  // });
   ////////////
-
-  files.forEach(file => {
-    file.contents = (0,code_mod/* codeMod */.A)(file.contents);
-  }); ////////////
   // 2 static analysis
   ////////////
-
-  const mdasts = await Promise.all(files.map(file => markdownParser(file, ctx)));
-  await Promise.all(mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx])));
-
-  if (!ctx.options.noReport) {
-    printReport(files, ctx);
-  }
-
-  if (reportHasFatalErrors(files, ctx)) {
-    if (ctx.options.noReport) {
-      const options = src_objectSpread(src_objectSpread({}, ctx.options), {}, {
-        reportOnlyErrors: true
-      });
-
-      printReport(files, src_objectSpread(src_objectSpread({}, ctx), {}, {
-        options
-      }));
-    }
-
-    return null;
-  } ////////////
+  // files.forEach((file) => {
+  //   console.log(file.contents);
+  //   file.contents = embedLaTeXAsSvg(file.contents as string);
+  //   // console.log(file.contents);
+  //   file.contents = codeMod(file.contents);
+  // });
+  // const mdasts = await Promise.all(
+  //   files.map((file) => markdownParser(file, ctx))
+  // );
+  // await Promise.all(
+  //   mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
+  // );
+  // if (!ctx.options.noReport) {
+  //   printReport(files, ctx);
+  // }
+  // if (reportHasFatalErrors(files, ctx)) {
+  //   if (ctx.options.noReport) {
+  //     const options = { ...ctx.options, reportOnlyErrors: true };
+  //     printReport(files, { ...ctx, options });
+  //   }
+  //   return null;
+  // }
+  ////////////
   // 3 knitr: Rmarkdown -> markdown
   ////////////
   // needs to re-read original files for easy
   // compatibility with Windows Command Prompt
 
+  await processKnitr(files, ctx); // files.forEach((file) => {
+  //   file.contents = codeMod(file.contents as string);
+  //   file.contents = htmlTexToMml(file.contents as string);
+  // });
 
-  const markdowns = await processKnitr(files, ctx);
-  files.forEach(file => {
-    file.contents = (0,code_mod/* codeMod */.A)(file.contents);
-  }); ////////////
+  const file = files[0];
+  let contents = file.contents;
+  contents = contents.replace(/<\!--.*?-->/g, '');
+  contents = codeMod(contents);
+  const {
+    store,
+    html: contents2
+  } = storeTex(contents);
+  file.contents = contents2;
+  ctx.texStore = store; // console.log(file.contents);
+  // return;
+  // return;
+  ////////////
   // 4 markdown -> html
   ////////////
 
-  const mdasts2 = await Promise.all(markdowns.map(file => markdownParser(file, ctx)));
-  const mdast = combineMdastTrees(mdasts2);
+  const mdast = await markdownParser(file, ctx); // const mdasts2 = await Promise.all(
+  //   markdowns.map((file) => markdownParser(file, ctx))
+  // );
+  // const mdast = combineMdastTrees(mdasts2);
+
   await customCombinedTransforms(mdast, ctx);
   const {
     hast,
     html
-  } = await htmlCompiler(mdast, ctx, unitIdx);
+  } = await htmlCompiler(mdast, ctx, unitIdx); // const html2 = htmlMmlToSvg(html);
+  ////////////
+  // TODO: 5 html with LaTeX -> html with accessible SVGs
+  ////////////
+  // console.log('before:', html);
+  // console.log('INPUT:', `"${html}"`);
+  // const html2 = embedLaTeXAsSvg(html);
+  // console.log('YER MAW:', html2);
+
   return {
     mdast,
     hast,
-    html
+    html: html.replace(/&#x3C;/g, '<')
   };
-}
+} // function htmlDecode(input: string) {
+//   return input;
+// }
 
 /***/ }),
 
@@ -10926,6 +11121,10 @@ function pipelineStringify(p, ctx) {
   if (result === undefined || result === null) {
     // Empty.
   } else if (typeof result === 'string' || buffer(result)) {
+    if ('value' in ctx.file) {
+      ctx.file.value = result
+    }
+
     ctx.file.contents = result
   } else {
     ctx.file.result = result
@@ -11885,7 +12084,7 @@ module.exports = process
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("path");;
+module.exports = require("path");
 
 /***/ }),
 
@@ -11893,7 +12092,7 @@ module.exports = require("path");;
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("unist-util-visit");;
+module.exports = require("unist-util-visit");
 
 /***/ })
 
@@ -11960,10 +12159,10 @@ var __webpack_exports__ = {};
 "use strict";
 
 ;// CONCATENATED MODULE: external "yargs"
-const external_yargs_namespaceObject = require("yargs");;
+const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 76 modules
-var src = __webpack_require__(5725);
+// EXTERNAL MODULE: ./src/index.ts + 79 modules
+var src = __webpack_require__(4307);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
