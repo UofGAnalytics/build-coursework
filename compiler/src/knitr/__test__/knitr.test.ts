@@ -1,11 +1,12 @@
 import { Literal } from 'hast';
 
 import {
+  ignoreWhitespace,
   testProcessor,
   unindentString,
 } from '../../test-utils/test-processor';
 
-describe('codeBlocks', () => {
+describe('knitr', () => {
   it('should share state with other codeblocks', async () => {
     const { mdast } = await testProcessor(`
       \`\`\`{r}
@@ -111,5 +112,33 @@ describe('codeBlocks', () => {
     `);
 
     expect(html.includes('Error: unexpected end of input')).toBe(false);
+  });
+
+  it('should encapsulate r output', async () => {
+    const { html } = await testProcessor(`
+      \`\`\`{r}
+      a <- c(1, 4, 2)
+      a
+      \`\`\`
+
+      \`\`\`r
+      b <- c(4, 2, 0)
+      \`\`\`
+    `);
+
+    const expected = unindentString(`
+      <div class="code-wrapper">
+        <pre><code>a &#x3C;- c(1, 4, 2)
+      a</code></pre>
+      </div>
+      <div class="code-wrapper r-output">
+        <pre><code>## [1] 1 4 2</code></pre>
+      </div>
+      <div class="code-wrapper">
+        <pre><code>b &#x3C;- c(4, 2, 0)</code></pre>
+      </div>
+    `);
+
+    expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
   });
 });

@@ -1,3 +1,4 @@
+import { Properties } from 'hast';
 import { Code } from 'mdast';
 // @ts-expect-error
 import refractor from 'refractor';
@@ -24,14 +25,20 @@ export function codeBlocks(ctx: Context) {
 async function customCode(node: Code, ctx: Context, file: VFile) {
   // const { language, options, value } = parseCodeParams(node);
   const language = parseLanguage(node);
+  const klass = parseClass(node);
   const meta = (node.meta || '') as string;
+
+  const codeProps: Properties = {};
+  if (meta !== '') {
+    codeProps.className = meta;
+  }
 
   Object.assign(node, {
     type: 'custom-code',
     data: {
       hName: 'div',
       hProperties: {
-        className: 'code-wrapper',
+        className: ['code-wrapper', klass],
       },
       hChildren: [
         {
@@ -41,9 +48,7 @@ async function customCode(node: Code, ctx: Context, file: VFile) {
             {
               type: 'element',
               tagName: 'code',
-              properties: {
-                className: [meta],
-              },
+              properties: codeProps,
               children:
                 ctx.options.noSyntaxHighlight || language === ''
                   ? [
@@ -63,8 +68,16 @@ async function customCode(node: Code, ctx: Context, file: VFile) {
 
 function parseLanguage(node: Code) {
   const lang = (node.lang || '') as string;
-  if (lang === 'plaintext') {
+  if (lang === 'plaintext' || lang.startsWith('{.')) {
     return '';
   }
   return lang.toLowerCase();
+}
+
+function parseClass(node: Code) {
+  const lang = (node.lang || '') as string;
+  if (!lang.startsWith('{.')) {
+    return '';
+  }
+  return lang.slice(2, -1);
 }
