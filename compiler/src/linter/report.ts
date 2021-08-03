@@ -6,7 +6,7 @@ import { VFile } from 'vfile';
 import { VFileMessage } from 'vfile-message';
 
 import { Context } from '../context';
-import { MessageStatus } from './message';
+import { MessageStatus } from '../utils/message';
 
 export type Report = {
   failed: boolean;
@@ -63,7 +63,9 @@ function printMessage(message: VFileMessage) {
 }
 
 function getFilePath(filePath: string) {
-  return path.join(process.cwd(), filePath);
+  return path.isAbsolute(filePath)
+    ? filePath
+    : path.join(process.cwd(), filePath);
 }
 
 function formatStatus(status: MessageStatus) {

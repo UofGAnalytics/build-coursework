@@ -1,7 +1,7 @@
 import { testProcessor } from '../../test-utils/test-processor';
 
 describe('assertWeblinkTarget', () => {
-  it.skip('should fail on weblink with no target', async () => {
+  it('should fail on weblink with no target', async () => {
     const { hasFailingMessage } = await testProcessor(
       `
         ::::weblink

@@ -1,6 +1,8 @@
 import os from 'os';
 import path from 'path';
 
+import { Parent as HastParent } from 'hast';
+import { Parent as MDastParent } from 'mdast';
 // @ts-expect-error
 import toVFile from 'to-vfile';
 import { VFile } from 'vfile';
@@ -15,7 +17,23 @@ export async function testProcessor(md: string, options: Options = {}) {
   const { ctx, file } = await createTestContext(md, options);
   const hasFailingMessage = createHasFailingMessage(ctx, file);
   const unitFile = ctx.course.units[0];
-  const unit = await buildUnit(unitFile, ctx);
+
+  const unit = {
+    md: '',
+    mdast: {} as MDastParent,
+    hast: {} as HastParent,
+    html: '',
+  };
+  try {
+    const result = await buildUnit(unitFile, ctx);
+    unit.md = result.md;
+    unit.mdast = result.mdast;
+    unit.hast = result.hast;
+    unit.html = result.html;
+  } catch (err) {
+    console.error(err);
+  }
+
   return { file, hasFailingMessage, ...unit };
 }
 

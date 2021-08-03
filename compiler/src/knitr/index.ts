@@ -12,7 +12,6 @@ export async function knitr(md: string, ctx: Context) {
   await writeFile(cachedFilePath, md);
 
   // TODO:
-  // * write md to file in cache and reference in command
   // * see what can be done with output when "quiet" turned off
 
   return new Promise<string>((resolve, reject) => {
