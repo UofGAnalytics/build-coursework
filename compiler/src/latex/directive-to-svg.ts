@@ -3,8 +3,8 @@ import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
 import { Context } from '../context';
-import { mmlToSpeech, mmlToSvg } from '../latex/mathjax-tex';
 import { rehypeParser } from '../utils/utils';
+import { mmlToSpeech, mmlToSvg } from './mathjax-tex';
 
 interface TextDirective extends Parent {
   name: string;
@@ -12,17 +12,22 @@ interface TextDirective extends Parent {
   children: Literal[];
 }
 
-export function accessibleTex(ctx: Context) {
+export function aliasDirectiveToSvg(ctx: Context) {
   return (tree: Node) => {
     visit<TextDirective>(tree, 'textDirective', (node) => {
-      if (!ctx.texStore) {
+      if (!ctx.mmlStore) {
         return;
       }
       switch (node.name) {
+        case 'refMath': {
+          console.log(node);
+          return;
+        }
         case 'inlineMath':
         case 'blockMath': {
           const idx = getTexIdx(node);
-          const mml = ctx.texStore[idx];
+          const mml = ctx.mmlStore[idx];
+          // console.log(mml);
           const svg = renderSvg(mml);
           const properties = {
             ...svg.properties,

@@ -1,6 +1,6 @@
 import { Context } from '../context';
 import { knitr } from '../knitr';
-import { replaceMathWithAlias } from '../latex/replace-math-with-alias';
+import { texToAliasDirective } from '../latex/tex-to-directive';
 import { convertMacroToDirective } from './convert-macro-to-directive';
 import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
 import { removeNewPage } from './remove-new-page';
@@ -24,8 +24,8 @@ export async function markdownPhase(md: string, ctx: Context) {
   result = reformatPandocSimpleTables(result);
 
   // Extract all LaTeX and replace with alias
-  // and build ctx.texStore
-  result = replaceMathWithAlias(result, ctx);
+  // and build ctx.mmlStore
+  result = texToAliasDirective(result, ctx);
 
   result = await knitr(result, ctx);
 

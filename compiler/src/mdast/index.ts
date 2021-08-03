@@ -11,8 +11,8 @@ import toVFile from 'to-vfile';
 import unified from 'unified';
 
 import { Context } from '../context';
+import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 import { createSvg } from '../utils/icons';
-import { accessibleTex } from './accessible-tex';
 import { boxouts } from './boxouts';
 import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
@@ -42,7 +42,7 @@ export async function mdastPhase(
     // custom plugins:
     .use(embedAssetUrl)
     .use(youtubeVideos)
-    .use(accessibleTex, ctx)
+    .use(aliasDirectiveToSvg, ctx)
     .use(codeBlocks, ctx)
     .use(boxouts)
     .use(images);

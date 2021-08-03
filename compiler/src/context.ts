@@ -24,7 +24,7 @@ export type Context = {
   cacheDir: string;
   course: Course;
   options: Options;
-  texStore?: string[];
+  mmlStore?: string[];
 };
 
 export async function createContext(
