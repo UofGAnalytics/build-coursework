@@ -124,21 +124,6 @@ describe('background', () => {
 });
 
 describe('weblink', () => {
-  it.skip('should fail if no target', async () => {
-    const { hasFailingMessage } = await testProcessor(
-      `
-    :::weblink
-    A weblink of *this*!
-    :::
-    `,
-      { shouldFail: true }
-    );
-
-    expect(hasFailingMessage('Weblink has no target attribute')).toBe(
-      true
-    );
-  });
-
   it('should render a weblink boxout', async () => {
     const { html } = await testProcessor(`
       :::weblink{target=https://cran.r-project.org}

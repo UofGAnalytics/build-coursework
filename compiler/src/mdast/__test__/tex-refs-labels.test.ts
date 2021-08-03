@@ -1,4 +1,5 @@
 import {
+  ignoreWhitespace,
   testProcessor,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
@@ -19,7 +20,7 @@ describe('latexReferences', () => {
       Some text ([1](#${makeAnchor(id)}))
     `);
 
-    expect(md).toBe(expectedMd);
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));
   });
 });
 
