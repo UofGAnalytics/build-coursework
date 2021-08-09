@@ -17,13 +17,9 @@ describe('latexReferences', () => {
     const expectedMd = unindentStringAndTrim(`
       :blockMath[0]
 
-      Some text ([1](#${makeAnchor(id)}))
+      Some text ([1](#${encodeURIComponent(`mjx-eqn:${id}`)}))
     `);
 
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));
   });
 });
-
-function makeAnchor(id: string) {
-  return encodeURIComponent(`mjx-eqn:${id}`);
-}

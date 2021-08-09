@@ -1,8 +1,6 @@
 import { Node } from 'unist';
 
-import { UnitTitles } from '../../course/types';
-
-export async function createMain(titles: UnitTitles, content: Node[]) {
+export async function createMain(children: Node[]) {
   return {
     type: 'element',
     tagName: 'main',
@@ -13,34 +11,34 @@ export async function createMain(titles: UnitTitles, content: Node[]) {
         properties: {
           className: 'wrapper',
         },
-        children: [createH1(titles), ...content],
+        children,
       },
     ],
   };
 }
 
-function createH1(titles: UnitTitles) {
-  return {
-    type: 'element',
-    tagName: 'h1',
-    children: [
-      {
-        type: 'text',
-        value: titles.courseTitle,
-      },
-      {
-        type: 'element',
-        tagName: 'span',
-        properties: {
-          className: 'unit',
-        },
-        children: [
-          {
-            type: 'text',
-            value: titles.unitTitle,
-          },
-        ],
-      },
-    ],
-  };
-}
+// function createH1(titles: UnitTitles) {
+//   return {
+//     type: 'element',
+//     tagName: 'h1',
+//     children: [
+//       {
+//         type: 'text',
+//         value: titles.courseTitle,
+//       },
+//       {
+//         type: 'element',
+//         tagName: 'span',
+//         properties: {
+//           className: 'unit',
+//         },
+//         children: [
+//           {
+//             type: 'text',
+//             value: titles.unitTitle,
+//           },
+//         ],
+//       },
+//     ],
+//   };
+// }

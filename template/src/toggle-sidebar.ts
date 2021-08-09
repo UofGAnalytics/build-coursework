@@ -1,10 +1,16 @@
-document.querySelector('#root > .hamburger-icon')?.addEventListener('click', openSidebar);
-document.querySelector('.logo > .hamburger-icon')?.addEventListener('click', closeSidebar);
+document
+  .querySelector('#root > .hamburger-icon')
+  ?.addEventListener('click', openSidebar);
+document
+  .querySelector('.logo > .hamburger-icon')
+  ?.addEventListener('click', closeSidebar);
 
 function openSidebar() {
-  document.documentElement.classList.remove('hide-sidebar');
+  const root = document.getElementById('root') as HTMLElement;
+  root.classList.remove('hide-sidebar');
 }
 
 function closeSidebar() {
-  document.documentElement.classList.add('hide-sidebar');
+  const root = document.getElementById('root') as HTMLElement;
+  root.classList.add('hide-sidebar');
 }

@@ -1,16 +1,20 @@
-import { Parent } from 'mdast';
+import { Heading, Parent } from 'mdast';
 // @ts-expect-error
+import normalizeHeadings from 'mdast-normalize-headings';
 import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
+// @ts-expect-error
+import sectionize from 'remark-sectionize';
 import slug from 'remark-slug';
 // @ts-expect-error
 import toVFile from 'to-vfile';
 import unified from 'unified';
 
 import { Context } from '../context';
+import { Unit, UnitTitles } from '../course/types';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 import { createSvg } from '../utils/icons';
 import { boxouts } from './boxouts';
@@ -22,6 +26,7 @@ import { youtubeVideos } from './youtube-videos';
 
 export async function mdastPhase(
   md: string,
+  unit: Unit,
   ctx: Context,
   targetPdf?: boolean
 ) {
@@ -34,6 +39,7 @@ export async function mdastPhase(
     .use(directive)
     .use(gfm)
     .use(frontmatter)
+    .use(sectionize)
     .use(slug)
     .use(headings, {
       content: createSvg('link-icon'),
@@ -52,6 +58,57 @@ export async function mdastPhase(
   }
 
   const file = toVFile({ contents: md });
-  const parsed = processor.parse(file);
-  return processor.run(parsed, file) as Promise<Parent>;
+  const parsed = processor.parse(file) as Parent;
+  const withTitles = addCoureTitles(parsed, unit.titles);
+  normalizeHeadings(withTitles);
+  return processor.run(withTitles, file) as Promise<Parent>;
+}
+
+function addCoureTitles(
+  tree: Parent,
+  { courseTitle, unitTitle }: UnitTitles
+): Parent {
+  const titles: Heading[] = [
+    {
+      type: 'heading',
+      depth: 1,
+      children: [
+        {
+          type: 'text',
+          value: courseTitle,
+        },
+      ],
+      data: {
+        hChildren: [
+          {
+            type: 'element',
+            tagName: 'h1',
+            children: [
+              {
+                type: 'text',
+                value: courseTitle,
+              },
+              {
+                type: 'element',
+                tagName: 'span',
+                properties: {
+                  className: 'unit',
+                },
+                children: [
+                  {
+                    type: 'text',
+                    value: unitTitle,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
+  return {
+    ...tree,
+    children: [...titles, ...tree.children],
+  };
 }

@@ -25,10 +25,6 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: 'Only compile content HTML',
   })
-  .option('noWrapper', {
-    type: 'boolean',
-    description: 'No wrapper',
-  })
   .option('noSyntaxHighlight', {
     type: 'boolean',
     description: 'No syntax highlight',
@@ -45,6 +41,10 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: 'No cache',
   })
+  .option('noTexSvg', {
+    type: 'boolean',
+    description: 'No Tex Svg',
+  })
   .option('spelling', {
     type: 'boolean',
     description: 'Check spelling',
@@ -58,11 +58,11 @@ const options = {
   noDoc: argv.noDoc,
   noHtml: argv.noHtml,
   noPdf: argv.noPdf,
-  noWrapper: argv.noWrapper,
   noSyntaxHighlight: argv.noSyntaxHighlight,
   noReport: argv.noReport,
   noEmbedAssets: argv.noEmbedAssets,
   noCache: argv.noCache,
+  noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
 };
 

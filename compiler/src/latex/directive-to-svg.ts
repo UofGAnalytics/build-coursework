@@ -15,14 +15,10 @@ interface TextDirective extends Parent {
 export function aliasDirectiveToSvg(ctx: Context) {
   return (tree: Node) => {
     visit<TextDirective>(tree, 'textDirective', (node) => {
-      if (!ctx.mmlStore) {
+      if (!ctx.mmlStore || ctx.options.noTexSvg) {
         return;
       }
       switch (node.name) {
-        case 'refMath': {
-          console.log(node);
-          return;
-        }
         case 'inlineMath':
         case 'blockMath': {
           const idx = getTexIdx(node);

@@ -1,5 +1,6 @@
 import path from 'path';
 
+import { kebabCase } from 'lodash';
 // @ts-expect-error
 import toVFile from 'to-vfile';
 
@@ -53,5 +54,6 @@ export function getUnitTitles({
     unitTitle: `${unitName}: ${unitTitle}`,
     unitName,
     docTitle: `${unitTitle} | ${courseTitle}`,
+    fileName: kebabCase(unitName),
   };
 }

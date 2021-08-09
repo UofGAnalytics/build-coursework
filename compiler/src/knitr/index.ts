@@ -1,14 +1,17 @@
 import { exec } from 'child_process';
 import path from 'path';
 
+import chalk from 'chalk';
 import hashSum from 'hash-sum';
 
 import { Context } from '../context';
-import { rmFile, writeFile } from '../utils/utils';
+import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 export async function knitr(md: string, ctx: Context) {
   const fileName = getUniqueTempFileName(md);
   const cachedFilePath = path.join(ctx.cacheDir, fileName);
+
+  await mkdir(ctx.cacheDir);
   await writeFile(cachedFilePath, md);
 
   // TODO:
@@ -19,9 +22,9 @@ export async function knitr(md: string, ctx: Context) {
     const cmd = `Rscript ${rFile} ${cachedFilePath} ${ctx.cacheDir}/`;
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
-        console.error('STDERR', stdErr);
-        reject(stdErr);
-      } else if (err) {
+        console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
+      }
+      if (err) {
         console.error('ERROR', err);
         reject(err);
       } else {

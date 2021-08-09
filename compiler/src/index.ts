@@ -1,18 +1,27 @@
+import path from 'path';
+
+import chalk from 'chalk';
+
 import { Context, Options, createContext } from './context';
 import { Unit } from './course/types';
 import { hastPhase } from './hast';
 import { htmlPhase } from './html';
+import { knitr } from './knitr';
+import { texToAliasDirective } from './latex/tex-to-directive';
 import { linter } from './linter';
-import { markdownPhase } from './markdown';
 import { mdastPhase } from './mdast';
-// import { writeHtml } from './utils/write-files';
+import { preParsePhase } from './pre-parse';
+import { convertToPdf } from './utils/pdf';
+import { createTimer } from './utils/timer';
+import { mkdir, writeFile } from './utils/utils';
 
 export async function rMarkdown(dirPath: string, options: Options = {}) {
-  try {
-    await run(dirPath, options);
-  } catch (err) {
-    console.error(err);
-  }
+  return run(dirPath, options);
+  // try {
+  //   await run(dirPath, options);
+  // } catch (err) {
+  //   console.log(err.message);
+  // }
 }
 
 async function run(dirPath: string, options: Options = {}) {
@@ -22,30 +31,44 @@ async function run(dirPath: string, options: Options = {}) {
   if (ctx.options.week) {
     const idx = ctx.options.week - 1;
     const unit = ctx.course.units[idx];
-    return writeUnit(unit, ctx);
+    await writeUnit(unit, ctx);
+    return;
   }
 
   // write full course
-  return Promise.all(
-    ctx.course.units.map((unit) => {
-      return writeUnit(unit, ctx);
-    })
-  );
+  for (const unit of ctx.course.units) {
+    await writeUnit(unit, ctx);
+  }
 }
 
 async function writeUnit(unit: Unit, ctx: Context) {
-  console.log('yo!');
+  await linter(unit, ctx);
+  const md = await contextTransforms(unit, ctx);
+  await mkdir(ctx.buildDir);
+  const filePath = path.join(ctx.buildDir, unit.titles.fileName);
 
   if (!ctx.options.noHtml) {
-    const { html } = await buildUnit(unit, ctx);
-    console.log(html);
-    // await writeHtml(unit.titles.unitName, html, ctx.dirPath);
+    const timer = createTimer();
+    const { html } = await syntaxTreeTransforms(md, unit, ctx);
+    await writeFile(filePath + '.html', html);
+    const seconds = timer.stop();
+    const status = chalk.green.bold(`Complete in ${seconds}s`);
+    console.log(`✨ ${status} ${filePath}`);
   }
+
   if (!ctx.options.noPdf) {
-    console.log('write pdf!');
-    // const { html } = await buildUnit(unit, ctx, true);
-    // const pdf = convertToPdf(html)
-    // await writePdf(unit.titles.unitName, pdf, ctx.dirPath);
+    const timer = createTimer();
+    const { html } = await syntaxTreeTransforms(md, unit, ctx, true);
+
+    // testing
+    await writeFile(filePath + '.pdf.html', html);
+
+    const pdf = await convertToPdf(html);
+    await writeFile(filePath + '.pdf', pdf);
+
+    const seconds = timer.stop();
+    const status = chalk.green.bold(`Complete in ${seconds}s`);
+    console.log(`✨ ${status} ${filePath}`);
   }
 }
 
@@ -55,10 +78,31 @@ export async function buildUnit(
   targetPdf?: boolean
 ) {
   await linter(unit, ctx);
-  const combined = unit.files.map((o) => o.contents).join('\n\n');
-  const md = await markdownPhase(combined, ctx);
-  const mdast = await mdastPhase(md, ctx, targetPdf);
-  const hast = await hastPhase(mdast, unit, ctx);
-  const html = await htmlPhase(hast, unit, ctx);
+  const md = await contextTransforms(unit, ctx);
+  const { mdast, hast, html } = await syntaxTreeTransforms(
+    md,
+    unit,
+    ctx,
+    targetPdf
+  );
   return { md, mdast, hast, html };
+}
+
+async function contextTransforms(unit: Unit, ctx: Context) {
+  const combined = unit.files.map((o) => o.contents).join('\n\n');
+  const md = preParsePhase(combined, ctx);
+  const withKnitr = await knitr(md, ctx);
+  return texToAliasDirective(withKnitr, ctx);
+}
+
+async function syntaxTreeTransforms(
+  md: string,
+  unit: Unit,
+  ctx: Context,
+  targetPdf?: boolean
+) {
+  const mdast = await mdastPhase(md, unit, ctx, targetPdf);
+  const hast = await hastPhase(mdast, unit, ctx, targetPdf);
+  const html = await htmlPhase(hast, mdast, unit, ctx, targetPdf);
+  return { mdast, hast, html };
 }

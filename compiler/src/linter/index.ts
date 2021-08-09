@@ -15,8 +15,8 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { markdownPhase } from '../markdown';
 import { mdastPhase } from '../mdast';
+import { preParsePhase } from '../pre-parse';
 import { assertAssetExists } from './assert-asset-exists';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
@@ -24,15 +24,17 @@ import { assertWeblinkTarget } from './assert-weblink-target';
 import { lintLatex } from './lint-latex';
 import { printReport, reportHasFatalErrors } from './report';
 
-export async function linter({ files }: Unit, ctx: Context) {
-  await Promise.all(files.map((file) => createReport(file, ctx)));
+export async function linter(unit: Unit, ctx: Context) {
+  await Promise.all(
+    unit.files.map((file) => createReport(file, unit, ctx))
+  );
 
   if (!ctx.options.noReport) {
-    printReport(files, ctx);
+    printReport(unit.files, ctx);
   }
-  if (reportHasFatalErrors(files, ctx)) {
+  if (reportHasFatalErrors(unit.files, ctx)) {
     if (ctx.options.noReport) {
-      printReport(files, {
+      printReport(unit.files, {
         ...ctx,
         options: {
           ...ctx.options,
@@ -40,14 +42,15 @@ export async function linter({ files }: Unit, ctx: Context) {
         },
       });
     }
+    // TODO: should probably throw here
     // throw new Error('Report has fatal errors');
   }
 }
 
-async function createReport(file: VFile, ctx: Context) {
+async function createReport(file: VFile, unit: Unit, ctx: Context) {
   const contents = file.contents as string;
-  const md = await markdownPhase(contents, ctx);
-  const mdast = await mdastPhase(md, ctx);
+  const md = preParsePhase(contents, ctx);
+  const mdast = await mdastPhase(md, unit, ctx);
 
   const processor = unified()
     .use(assertAssetExists)

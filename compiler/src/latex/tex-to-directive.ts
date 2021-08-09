@@ -14,7 +14,7 @@ import { Context } from '../context';
 // https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
 
 // Convert Tex to alias and build ctx.mmlStore
-// (Alias is replaced with SVG in ./directive-to-svg in mdast phase)
+// (Alias is replaced with SVG in ./directive-to-svg.ts in mdast phase)
 
 // Avoids typesetting issues:
 // If I leave the LaTeX in it gets munged
@@ -46,8 +46,8 @@ export function texToAliasDirective(html: string, ctx: Context) {
       let newMarkdown = '';
       if (isReferenceLink(item.math)) {
         // convert tex to text link
-        const refNum = extractRefNumFromMml(mml);
-        const anchor = extractAnchorLinkFromMml(mml);
+        const refNum = extractRefNumFromMml(mml, item.math);
+        const anchor = extractAnchorLinkFromMml(mml, item.math);
         newMarkdown = `[${refNum}](${anchor})`;
       } else {
         // insert alias as a custom directive and build store of mml
@@ -62,7 +62,7 @@ export function texToAliasDirective(html: string, ctx: Context) {
     }
   }
 
-  // add store to ctx.mmlStore
+  // add store to ctx
   ctx.mmlStore = store;
 
   const doc = mathjax.document(html, {
@@ -80,18 +80,22 @@ function isReferenceLink(tex: string) {
   return /^\\ref\{(.+)\}$/.test(tex);
 }
 
-function extractAnchorLinkFromMml(mml: string) {
-  const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
+function extractRefNumFromMml(mml: string, tex: string) {
+  // TODO: should error on "???"
+  // const match = mml.match(/<mtext>(\d+)<\/mtext>/);
+  const match = mml.match(/<mtext>(.+)<\/mtext>/);
   if (match === null) {
-    throw new Error(`Mml has no anchor link: ${mml}`);
+    throw new Error(
+      `Invalid reference: ${tex}. You may only reference numbered sections.`
+    );
   }
   return match[1] as string;
 }
 
-function extractRefNumFromMml(mml: string) {
-  const match = mml.match(/<mtext>(\d+)<\/mtext>/);
+function extractAnchorLinkFromMml(mml: string, tex: string) {
+  const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
   if (match === null) {
-    throw new Error(`Mml has no reference number: ${mml}`);
+    throw new Error(`Reference has no anchor link: ${tex}`);
   }
   return match[1] as string;
 }

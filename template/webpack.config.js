@@ -49,7 +49,7 @@ module.exports = {
     pathinfo: !isProd
   },
   resolve: {
-    extensions: ['.ts', '.js', '.css', '.svg', '.html']
+    extensions: ['.ts', '.js', '.css', '.svg', '.html', '.ttf']
   },
   module: {
     rules: [
@@ -76,6 +76,11 @@ module.exports = {
       {
         test: /\.svg$/,
         loader: 'url-loader'
+      },
+      {
+        test: /\.ttf$/,
+        loader: 'base64-inline-loader',
+        // use: 'base64-inline-loader?limit=1000&name=[name].[ext]'
       },
     ]
   },

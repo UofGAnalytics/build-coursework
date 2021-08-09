@@ -314,107 +314,14 @@ exports.unsetStubs = function (namespace) {
 
 /***/ }),
 
-/***/ 1617:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "E": () => (/* binding */ containerDirective)
-/* harmony export */ });
-function containerDirective(contents) {
-  return contents.split('\n').map(line => {
-    const container = parseCustomContainer(line);
-
-    if (container !== null) {
-      return renderContainerDirective(container);
-    }
-
-    return line;
-  }).join('\n');
-}
-
-function parseCustomContainer(line) {
-  const match = line.match(/^#{1,6}\[(.+)](.*)/);
-
-  if (!Array.isArray(match)) {
-    return null;
-  }
-
-  const [, attributeStr = '', extra = ''] = match;
-  const [name, ...attributesArr] = attributeStr.split(',').map(s => s.trim());
-  const title = extra.trim();
-  const attributes = transformAttributes(name, attributesArr);
-  return {
-    name,
-    title,
-    attributes
-  };
-}
-
-function renderContainerDirective({
-  name,
-  title,
-  attributes
-}) {
-  const colons = getColons(name);
-
-  if (name.startsWith('/')) {
-    return colons;
-  }
-
-  const newTitle = title ? `[${title}]` : '';
-  const newAttributes = attributes ? `{${attributes}}` : '';
-  return colons + name + newTitle + newAttributes;
-}
-
-function getColons(name) {
-  switch (name.replace('/', '')) {
-    case 'task':
-      return '::::';
-
-    case 'video':
-      return '::';
-
-    default:
-      return ':::';
-  }
-}
-
-function transformAttributes(containerName, attributesArr) {
-  return attributesArr.map(attribute => {
-    const [key, value] = attribute.split('=').map(s => s.trim());
-
-    if (containerName === 'video' && key === 'videoid') {
-      return `id=${value}`;
-    }
-
-    return attribute;
-  }).join(' ');
-}
-
-/***/ }),
-
-/***/ 6398:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "C": () => (/* binding */ removeNewPage)
-/* harmony export */ });
-function removeNewPage(contents) {
-  return contents.split('\n').filter(s => s.trim() !== '\\newpage').join('\n');
-}
-
-/***/ }),
-
-/***/ 7921:
+/***/ 9060:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "C": () => (/* binding */ createMain)
 /* harmony export */ });
-async function createMain(titles, content) {
+async function createMain(children) {
   return {
     type: 'element',
     tagName: 'main',
@@ -424,35 +331,38 @@ async function createMain(titles, content) {
       properties: {
         className: 'wrapper'
       },
-      children: [createH1(titles), ...content]
+      children
     }]
   };
-}
-
-function createH1(titles) {
-  return {
-    type: 'element',
-    tagName: 'h1',
-    children: [{
-      type: 'text',
-      value: titles.courseTitle
-    }, {
-      type: 'element',
-      tagName: 'span',
-      properties: {
-        className: 'unit'
-      },
-      children: [{
-        type: 'text',
-        value: titles.unitTitle
-      }]
-    }]
-  };
-}
+} // function createH1(titles: UnitTitles) {
+//   return {
+//     type: 'element',
+//     tagName: 'h1',
+//     children: [
+//       {
+//         type: 'text',
+//         value: titles.courseTitle,
+//       },
+//       {
+//         type: 'element',
+//         tagName: 'span',
+//         properties: {
+//           className: 'unit',
+//         },
+//         children: [
+//           {
+//             type: 'text',
+//             value: titles.unitTitle,
+//           },
+//         ],
+//       },
+//     ],
+//   };
+// }
 
 /***/ }),
 
-/***/ 4307:
+/***/ 1323:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -464,144 +374,14 @@ __webpack_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: buildUnit
 
-;// CONCATENATED MODULE: external "chalk"
-const external_chalk_namespaceObject = require("chalk");
-var external_chalk_default = /*#__PURE__*/__webpack_require__.n(external_chalk_namespaceObject);
-// EXTERNAL MODULE: ./src/code-mod/container-directive.ts
-var container_directive = __webpack_require__(1617);
-;// CONCATENATED MODULE: external "markdown-table"
-const external_markdown_table_namespaceObject = require("markdown-table");
-var external_markdown_table_default = /*#__PURE__*/__webpack_require__.n(external_markdown_table_namespaceObject);
-;// CONCATENATED MODULE: ./src/code-mod/reformat-pandoc-simple-tables.ts
-// @ts-expect-error
-
-function reformatPandocSimpleTables(contents) {
-  const lines = contents.split('\n');
-
-  for (var idx = lines.length - 1; idx >= 0; idx--) {
-    const line = lines[idx];
-
-    if (isValidPandocSimpleTableSeparator(line, idx, lines)) {
-      const bounds = getTableBounds(lines, idx);
-      const tableLines = lines.slice(bounds.startIdx, bounds.startIdx + bounds.count);
-      const table = parseTable(tableLines);
-      const align = getColumnAlignment(table[0]);
-      const mdTable = external_markdown_table_default()(table, {
-        align
-      });
-      lines.splice(bounds.startIdx, bounds.count, ...mdTable.split('\n'));
-    }
-  }
-
-  return lines.join('\n');
-}
-
-function isValidPandocSimpleTableSeparator(line, idx, arr) {
-  if (idx === 0 || !/-{2,}/g.test(line) || !/^[\s|-]+$/.test(line)) {
-    return false;
-  }
-
-  const columnIndexes = getColumnIndexes(line); // const titles = parseBodyRow(arr[idx - 1], columnIndexes);
-  // const filtered = titles.filter((s) => s.trim() !== '');
-
-  return columnIndexes.length > 1;
-}
-
-function getTableBounds(arr, idx) {
-  const startIdx = idx - 1;
-  const count = arr.slice(startIdx).findIndex(l => l.trim() === '');
-  return {
-    startIdx,
-    count
-  };
-}
-
-function parseTable(tableLines) {
-  const [titles, separator, ...body] = tableLines;
-  const columnIndexes = getColumnIndexes(separator);
-  const titleCells = parseTitleRow(titles, columnIndexes);
-  const bodyCells = body.map(line => parseBodyRow(line, columnIndexes)).reduce(multilineReducer, []);
-  return [titleCells, ...bodyCells];
-}
-
-function getColumnIndexes(line) {
-  return line.split('').reduce((acc, str, idx) => {
-    if (str === '-' && (idx === 0 || line[idx - 1] === ' ')) {
-      acc.push([idx]);
-    } else if (idx !== line.length - 1 && str === ' ' && line[idx - 1] === '-') {
-      acc[acc.length - 1].push(idx);
-    }
-
-    return acc;
-  }, []);
-}
-
-function getColumnAlignment(titleCells) {
-  return titleCells.map(title => {
-    if (title[0] === ' ') {
-      if (title[title.length - 1] === ' ') {
-        return 'center';
-      }
-
-      return 'right';
-    }
-
-    return 'left';
-  });
-}
-
-function parseTitleRow(line, columnIndexes) {
-  return columnIndexes.map(tuple => line.slice(...tuple));
-}
-
-function parseBodyRow(line, columnIndexes) {
-  return columnIndexes.map(tuple => {
-    const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
-    return line.slice(tuple[0], end).trim();
-  });
-}
-
-function multilineReducer(acc, row) {
-  if (row.some(cell => cell.trim() === '')) {
-    const prevIdx = acc.length - 1;
-    acc[prevIdx].forEach((cell, i) => {
-      const trimmed = row[i].trim();
-
-      if (trimmed !== '') {
-        acc[prevIdx][i] = cell + ' ' + trimmed;
-      }
-    });
-  } else {
-    acc.push(row);
-  }
-
-  return acc;
-}
-// EXTERNAL MODULE: ./src/code-mod/remove-new-page.ts
-var remove_new_page = __webpack_require__(6398);
-;// CONCATENATED MODULE: ./src/code-mod/index.ts
-
-
-
-function codeMod(contents) {
-  let newContents = contents;
-  log('Converting macros to directives...');
-  newContents = (0,container_directive/* containerDirective */.E)(newContents);
-  log('Removing \\newpage lines...');
-  newContents = (0,remove_new_page/* removeNewPage */.C)(newContents); // log('Formatting block math...');
-  // newContents = formatBlockMath(newContents);
-
-  log('Reformatting Pandoc simple tables...');
-  newContents = reformatPandocSimpleTables(newContents); // console.log(newContents);
-
-  return newContents;
-}
-
-function log(str) {// console.log(str);
-}
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(5622);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
+;// CONCATENATED MODULE: external "chalk"
+const external_chalk_namespaceObject = require("chalk");
+var external_chalk_default = /*#__PURE__*/__webpack_require__.n(external_chalk_namespaceObject);
+;// CONCATENATED MODULE: external "lodash"
+const external_lodash_namespaceObject = require("lodash");
 ;// CONCATENATED MODULE: external "to-vfile"
 const external_to_vfile_namespaceObject = require("to-vfile");
 var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_vfile_namespaceObject);
@@ -620,8 +400,8 @@ var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_
 const external_rehype_stringify_namespaceObject = require("rehype-stringify");
 var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(external_rehype_stringify_namespaceObject);
 // EXTERNAL MODULE: ../node_modules/unified/index.js
-var node_modules_unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
+var unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
 ;// CONCATENATED MODULE: ./src/utils/utils.ts
 
 
@@ -638,13 +418,16 @@ function readFile(filePath, encoding = 'utf-8') {
 function writeFile(filePath, contents) {
   return external_fs_default().promises.writeFile(filePath, contents);
 }
-async function utils_checkLocalFileExists(filePath) {
+async function checkLocalFileExists(filePath) {
   try {
     await external_fs_default().promises.access(filePath, (external_fs_default()).constants.F_OK);
     return true;
   } catch (err) {
     return false;
   }
+}
+async function rmFile(filePath) {
+  return external_fs_default().promises.unlink(filePath);
 }
 function mkdir(dirPath) {
   return external_fs_default().promises.mkdir(dirPath, {
@@ -661,6 +444,9 @@ function getBuildDir(dirPath) {
 }
 function getCacheDir(dirPath) {
   return external_path_default().join(process.cwd(), dirPath, 'cache');
+}
+function getLibraryDir() {
+  return __dirname;
 }
 function combineMdastTrees(mdasts) {
   const children = mdasts.flatMap(mdast => mdast.children || []);
@@ -719,6 +505,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+
  // @ts-expect-error
 
 
@@ -760,331 +547,34 @@ function getUnitTitles({
     courseTitle,
     unitTitle: `${unitName}: ${unitTitle}`,
     unitName,
-    docTitle: `${unitTitle} | ${courseTitle}`
+    docTitle: `${unitTitle} | ${courseTitle}`,
+    fileName: (0,external_lodash_namespaceObject.kebabCase)(unitName)
   };
 }
-;// CONCATENATED MODULE: external "mathjax-full/js/adaptors/liteAdaptor.js"
-const liteAdaptor_js_namespaceObject = require("mathjax-full/js/adaptors/liteAdaptor.js");
-;// CONCATENATED MODULE: external "mathjax-full/js/core/MathItem"
-const MathItem_namespaceObject = require("mathjax-full/js/core/MathItem");
-;// CONCATENATED MODULE: external "mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js"
-const SerializedMmlVisitor_js_namespaceObject = require("mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js");
-;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html.js"
-const html_js_namespaceObject = require("mathjax-full/js/handlers/html.js");
-;// CONCATENATED MODULE: external "mathjax-full/js/input/tex.js"
-const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
-;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/AllPackages.js"
-const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
-;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
-const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
-;// CONCATENATED MODULE: ./src/latex/index.ts
+;// CONCATENATED MODULE: ./src/context.ts
 
 
-
-
-
-
-
-function storeTex(html) {
-  const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
-  (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
-  const tex = new tex_js_namespaceObject.TeX({
-    packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
-    tags: 'ams',
-    inlineMath: [['$', '$']],
-    processEscapes: true
-  });
-  const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
-  const store = [];
-
-  function storeTex({
-    math
-  }) {
-    const items = Array.from(math);
-
-    for (const item of items) {
-      store.push(visitor.visitTree(item.root));
-      const type = item.display ? 'block' : 'inline';
-      const idx = store.length - 1;
-      const directive = `:${type}Math[${idx}]`;
-      const tree = adaptor.parse(directive, 'text/html');
-      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
-    }
-  }
-
-  const renderActions = {
-    typeset: [MathItem_namespaceObject.STATE.TYPESET, storeTex]
-  };
-  const doc = mathjax_js_namespaceObject.mathjax.document(html, {
-    InputJax: tex,
-    renderActions
-  });
-  doc.render();
-  const result = adaptor.innerHTML(adaptor.body(doc.document));
+async function createContext(dirPath, options = {}) {
   return {
-    store,
-    html: unprotectHtml(result)
+    course: await collectCoursework(dirPath),
+    dirPath,
+    buildDir: getBuildDir(dirPath),
+    cacheDir: getCacheDir(dirPath),
+    options
   };
-} // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
-
-function unprotectHtml(html) {
-  return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
-;// CONCATENATED MODULE: external "@double-great/remark-lint-alt-text"
-const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");
-;// CONCATENATED MODULE: external "@mapbox/remark-lint-link-text"
-const remark_lint_link_text_namespaceObject = require("@mapbox/remark-lint-link-text");
-;// CONCATENATED MODULE: external "dictionary-en-gb"
-const external_dictionary_en_gb_namespaceObject = require("dictionary-en-gb");
-;// CONCATENATED MODULE: external "rehype-document"
-const external_rehype_document_namespaceObject = require("rehype-document");
-var external_rehype_document_default = /*#__PURE__*/__webpack_require__.n(external_rehype_document_namespaceObject);
-;// CONCATENATED MODULE: external "rehype-format"
-const external_rehype_format_namespaceObject = require("rehype-format");
-var external_rehype_format_default = /*#__PURE__*/__webpack_require__.n(external_rehype_format_namespaceObject);
-;// CONCATENATED MODULE: external "remark-autolink-headings"
-const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
-var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
-;// CONCATENATED MODULE: external "remark-directive"
-const external_remark_directive_namespaceObject = require("remark-directive");
-var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
-;// CONCATENATED MODULE: external "remark-frontmatter"
-const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
-var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
-;// CONCATENATED MODULE: external "remark-gfm"
-const external_remark_gfm_namespaceObject = require("remark-gfm");
-var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
-// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
-var remark_parse = __webpack_require__(3850);
-var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
 var external_remark_rehype_default = /*#__PURE__*/__webpack_require__.n(external_remark_rehype_namespaceObject);
-;// CONCATENATED MODULE: external "remark-retext"
-const external_remark_retext_namespaceObject = require("remark-retext");
-;// CONCATENATED MODULE: external "remark-slug"
-const external_remark_slug_namespaceObject = require("remark-slug");
-var external_remark_slug_default = /*#__PURE__*/__webpack_require__.n(external_remark_slug_namespaceObject);
-;// CONCATENATED MODULE: external "retext-english"
-const external_retext_english_namespaceObject = require("retext-english");
-;// CONCATENATED MODULE: external "retext-spell"
-const external_retext_spell_namespaceObject = require("retext-spell");
-// EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
-var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
-;// CONCATENATED MODULE: ./src/utils/message.ts
-let MessageStatus;
-
-(function (MessageStatus) {
-  MessageStatus["fail"] = "fail";
-  MessageStatus["warning"] = "warning";
-  MessageStatus["info"] = "info";
-})(MessageStatus || (MessageStatus = {}));
-
-function message_failMessage(file, message, position) {
-  const status = MessageStatus.fail;
-  return messageWithStatus(file, message, position, status);
-}
-function warnMessage(file, message, position) {
-  const status = MessageStatus.warning;
-  return messageWithStatus(file, message, position, status);
-}
-function infoMessage(file, message, position) {
-  const status = MessageStatus.info;
-  return messageWithStatus(file, message, position, status);
-}
-
-function messageWithStatus(file, message, position, status) {
-  // console.log(message);
-  const msg = file.message(message, position);
-  msg.status = status;
-  return msg;
-}
-;// CONCATENATED MODULE: ./src/linters/assert-asset-exists.ts
-
-
-
-function assert_asset_exists_assertAssetExists() {
-  async function getAssetUrl(node, file) {
-    const url = node.url || '';
-
-    if (!file.dirname) {
-      throw new Error('VFile dirname undefined');
-    }
-
-    if (!url.startsWith('http')) {
-      const exists = await checkLocalFileExists(url);
-
-      if (!exists) {
-        failMessage(file, `No asset found at ${url}`, node.position);
-      }
-    }
-  }
-
-  return async (tree, file) => {
-    const transformations = [];
-    visit(tree, 'image', node => {
-      transformations.push(getAssetUrl(node, file));
-    });
-    await Promise.all(transformations);
-  };
-}
-;// CONCATENATED MODULE: ./src/linters/assert-task-answer.ts
-
-
-function assert_task_answer_assertTaskAnswerStructure() {
-  return (tree, file) => {
-    visit(tree, 'containerDirective', (node, index, parent) => {
-      if (node.name === 'task') {
-        const children = node.children || [];
-        const answers = children.filter(o => o.name === 'answer');
-
-        if (answers.length < 1) {
-          failMessage(file, 'Task has no answer', node.position);
-        }
-
-        if (answers.length > 1) {
-          failMessage(file, 'Task has multiple answers', node.position);
-        }
-      }
-
-      if (node.name === 'answer') {
-        if (!parent || parent.name !== 'task') {
-          failMessage(file, 'Answer must be nested inside task', node.position);
-        }
-      }
-    });
-  };
-}
-;// CONCATENATED MODULE: ./src/linters/assert-video-attributes.ts
-
-
-function assert_video_attributes_assertVideoAttributes() {
-  return async (tree, file) => {
-    visit(tree, 'leafDirective', node => {
-      if (node.name === 'video') {
-        const attributes = node.attributes;
-
-        if (!attributes.id) {
-          failMessage(file, 'id attribute is required', node.position);
-        }
-
-        if (!attributes.duration) {
-          failMessage(file, 'duration attribute is required', node.position);
-        }
-
-        const title = getTitle(node);
-
-        if (!title) {
-          failMessage(file, 'title is required', node.position);
-        }
-      }
-    });
-  };
-}
-
-function getTitle(node) {
-  const children = node.children;
-  const firstChild = children[0];
-  return firstChild.value;
-}
-;// CONCATENATED MODULE: ./src/linters/assert-weblink-target.ts
-
-
-function assert_weblink_target_assertWeblinkTarget() {
-  return (tree, file) => {
-    visit(tree, 'containerDirective', node => {
-      if (node.name === 'weblink') {
-        const {
-          target
-        } = node.attributes;
-
-        if (target === undefined) {
-          failMessage(file, 'Weblink has no target attribute', node.position);
-        }
-      }
-    });
-  };
-}
-;// CONCATENATED MODULE: external "child_process"
-const external_child_process_namespaceObject = require("child_process");
-;// CONCATENATED MODULE: ./src/linters/lint-latex.ts
-
-
-function lint_latex_lintLatex() {
-  return async (tree, file) => {
-    const transformations = [];
-    visit(tree, 'math', node => {
-      transformations.push(chktex(node, file));
-    });
-    await Promise.all(transformations);
-    return tree;
-  };
-}
-
-async function chktex(node, file) {
-  return new Promise((resolve, reject) => {
-    exec(`chktex -q <<< "${node.value}"`, (err, response) => {
-      if (err) {
-        reject(err);
-      } else {
-        const messages = formatResponse(response);
-        const position = node.position;
-        messages.forEach(({
-          line,
-          column,
-          message
-        }) => {
-          file.message(message, {
-            line: position.start.line + line,
-            column: position.start.column + column
-          });
-        });
-        resolve();
-      }
-    });
-  });
-}
-
-function formatResponse(response) {
-  if (response.trim() === '') {
-    return [];
-  }
-
-  function formatMessage(message) {
-    return message.replace(/'/g, '').replace(/`/g, '');
-  }
-
-  return response.split(/Warning \d+ in stdin line /).filter(Boolean).reduce((acc, s) => {
-    const [key, value] = s.split(':');
-    const line = Number(key);
-    const trimmed = value.trim();
-    const match = trimmed.match(/(.*)\n(.*)\n(\s*)\^/m);
-
-    if (Array.isArray(match)) {
-      const message = formatMessage(match[1]);
-      acc.push({
-        line,
-        column: match[3].length,
-        message: `${message}\n\n${match[2]}\n${match[3]}^`
-      });
-    } else {
-      acc.push({
-        line,
-        column: 0,
-        message: formatMessage(trimmed)
-      });
-    }
-
-    return acc;
-  }, []);
-}
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 var lite_default = /*#__PURE__*/__webpack_require__.n(lite_namespaceObject);
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
 var external_node_fetch_default = /*#__PURE__*/__webpack_require__.n(external_node_fetch_namespaceObject);
+// EXTERNAL MODULE: external "unist-util-visit"
+var external_unist_util_visit_ = __webpack_require__(2148);
+var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
 ;// CONCATENATED MODULE: external "sandboxed-module"
 const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
@@ -1099,7 +589,7 @@ var domstubs = __webpack_require__(6209);
 
  // inject globals into pdf.js in a non-leaky way
 
-const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/build/pdf', {
+const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/legacy/build/pdf', {
   globals: {
     document: domstubs.document,
     Image: domstubs.Image,
@@ -1151,7 +641,7 @@ function addWrapper() {
   return tree => {
     external_unist_util_visit_default()(tree, 'element', node => {
       if (node.tagName === 'svg') {
-        const properties = node.properties;
+        const properties = node.properties || {};
         node.properties = {
           width: properties.width,
           height: properties.height,
@@ -1190,7 +680,7 @@ async function cacheToFile(options) {
 
   const filePath = `${prefix}-${external_hash_sum_default()(key)}.txt`;
   const cachedFilePath = external_path_default().join(ctx.cacheDir, filePath);
-  const exists = await utils_checkLocalFileExists(cachedFilePath);
+  const exists = await checkLocalFileExists(cachedFilePath);
 
   if (exists) {
     const str = await readFile(cachedFilePath); // ignore cache if json is corrupt
@@ -1208,7 +698,7 @@ async function cacheToFile(options) {
 
   return execAndCache(options, cachedFilePath);
 }
-async function cache_to_file_cacheJsonToFile(options) {
+async function cacheJsonToFile(options) {
   return cacheToFile(cache_to_file_objectSpread(cache_to_file_objectSpread({}, options), {}, {
     json: true
   }));
@@ -1243,7 +733,35 @@ function getAssetHast(contents) {
   const parsed = rehypeParser().parse(vfile);
   return parsed.children[0];
 }
-;// CONCATENATED MODULE: ./src/transforms-hast/embed-assets.ts
+;// CONCATENATED MODULE: ./src/utils/message.ts
+let MessageStatus;
+
+(function (MessageStatus) {
+  MessageStatus["fail"] = "fail";
+  MessageStatus["warning"] = "warning";
+  MessageStatus["info"] = "info";
+})(MessageStatus || (MessageStatus = {}));
+
+function failMessage(file, message, position) {
+  const status = MessageStatus.fail;
+  return messageWithStatus(file, message, position, status);
+}
+function warnMessage(file, message, position) {
+  const status = MessageStatus.warning;
+  return messageWithStatus(file, message, position, status);
+}
+function infoMessage(file, message, position) {
+  const status = MessageStatus.info;
+  return messageWithStatus(file, message, position, status);
+}
+
+function messageWithStatus(file, message, position, status) {
+  // console.log(message);
+  const msg = file.message(message, position);
+  msg.status = status;
+  return msg;
+}
+;// CONCATENATED MODULE: ./src/hast/embed-assets.ts
 function embed_assets_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function embed_assets_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { embed_assets_ownKeys(Object(source), true).forEach(function (key) { embed_assets_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { embed_assets_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -1281,7 +799,7 @@ function embedAssets(ctx) {
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (err) {
-      message_failMessage(file, err.message, node.position);
+      failMessage(file, err.message, node.position);
     }
   }
 
@@ -1297,11 +815,10 @@ function embedAssets(ctx) {
 }
 
 async function embedImage(node, ctx) {
-  const properties = node.properties || {};
   const src = getImageSrc(node);
   const mime = lite_default().getType(external_path_default().extname(src));
   const image = await getImage(src, ctx);
-  node.properties = embed_assets_objectSpread(embed_assets_objectSpread({}, properties), {}, {
+  node.properties = embed_assets_objectSpread(embed_assets_objectSpread({}, node.properties), {}, {
     src: `data:${mime};base64,${image}`
   });
 }
@@ -1312,10 +829,8 @@ async function embedPlotSvg(imgNode, ctx) {
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
   const svgNode = getAssetHast(svg);
-  const svgProps = svgNode.properties;
-  const imgProps = imgNode.properties;
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgProps), imgProps);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
@@ -1355,24 +870,62 @@ async function getImageDataFromWeb(src) {
 async function embedTexPdfSvg(imgNode) {
   const src = getImageSrc(imgNode);
   const svgNode = await texPdfToSvg(src);
-  const svgProps = svgNode.properties;
-  const imgProps = imgNode.properties;
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgProps), imgProps);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
     properties
   });
 }
-// EXTERNAL MODULE: ./src/html-wrapper/main.ts
-var html_wrapper_main = __webpack_require__(7921);
-// EXTERNAL MODULE: ../node_modules/mdast-util-to-hast/index.js
-var mdast_util_to_hast = __webpack_require__(9376);
-var mdast_util_to_hast_default = /*#__PURE__*/__webpack_require__.n(mdast_util_to_hast);
-;// CONCATENATED MODULE: external "mdast-util-toc"
-const external_mdast_util_toc_namespaceObject = require("mdast-util-toc");
-var external_mdast_util_toc_default = /*#__PURE__*/__webpack_require__.n(external_mdast_util_toc_namespaceObject);
+;// CONCATENATED MODULE: ./src/hast/responsive-tables.ts
+
+
+function responsiveTables() {
+  return async (tree, file) => {
+    external_unist_util_visit_default()(tree, 'element', (node, idx, _parent) => {
+      if (node.tagName !== 'table') {
+        return;
+      }
+
+      const parent = _parent;
+      const properties = (parent === null || parent === void 0 ? void 0 : parent.properties) || {};
+      const className = properties.className || [];
+
+      if (!className.includes('table-wrapper')) {
+        Object.assign(node, {
+          tagName: 'div',
+          properties: {
+            className: 'table-wrapper'
+          },
+          children: [(0,external_lodash_namespaceObject.cloneDeep)(node)]
+        });
+      }
+    });
+  };
+}
+;// CONCATENATED MODULE: ./src/hast/index.ts
+
+
+
+
+async function hastPhase(mdast, unit, ctx, targetPdf) {
+  const processor = unified_default()().use((external_remark_rehype_default()), {
+    allowDangerousHtml: true
+  }).use(responsiveTables);
+
+  if (!ctx.options.noEmbedAssets) {
+    processor.use(embedAssets, ctx);
+  }
+
+  return processor.run(mdast);
+}
+;// CONCATENATED MODULE: external "rehype-document"
+const external_rehype_document_namespaceObject = require("rehype-document");
+var external_rehype_document_default = /*#__PURE__*/__webpack_require__.n(external_rehype_document_namespaceObject);
+;// CONCATENATED MODULE: external "rehype-format"
+const external_rehype_format_namespaceObject = require("rehype-format");
+var external_rehype_format_default = /*#__PURE__*/__webpack_require__.n(external_rehype_format_namespaceObject);
 ;// CONCATENATED MODULE: ./src/utils/icons.ts
 /* babel-plugin-inline-import '../../assets/hamburger-icon.svg' */
 const hamburgerSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"448\" height=\"392\" viewBox=\"0 0 448 392\">\n  <defs>\n    <style>\n      .cls-1 {\n        fill-rule: evenodd;\n      }\n    </style>\n  </defs>\n  <path id=\"Color_Fill_1\" data-name=\"Color Fill 1\" class=\"cls-1\" d=\"M16,62H432a15.8,15.8,0,0,0,16-16V16A15.8,15.8,0,0,0,432,0H16A15.8,15.8,0,0,0,0,16V46A15.8,15.8,0,0,0,16,62Zm0,165H432a15.8,15.8,0,0,0,16-16V181a15.8,15.8,0,0,0-16-16H16A15.8,15.8,0,0,0,0,181v30A15.8,15.8,0,0,0,16,227Zm0,165H432a15.8,15.8,0,0,0,16-16V346a15.8,15.8,0,0,0-16-16H16A15.8,15.8,0,0,0,0,346v30A15.8,15.8,0,0,0,16,392Z\"/>\n</svg>\n";
@@ -1453,7 +1006,37 @@ function createGroup({
     children
   };
 }
-;// CONCATENATED MODULE: ./src/html-wrapper/view-options/font.ts
+// EXTERNAL MODULE: ./src/html/wrapper/main.ts
+var wrapper_main = __webpack_require__(9060);
+;// CONCATENATED MODULE: ./src/html/pdf.ts
+// import { UnitTitles } from '../course/types';
+
+
+function pdfWrapper() {
+  return async tree => {
+    const main = await (0,wrapper_main/* createMain */.C)(tree.children);
+    const iconDefs = createDefs();
+    return {
+      type: 'root',
+      children: [{
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          id: 'root',
+          className: ['hide-sidebar', 'font-default']
+        },
+        children: [iconDefs, main]
+      }]
+    };
+  };
+}
+// EXTERNAL MODULE: ../node_modules/mdast-util-to-hast/index.js
+var mdast_util_to_hast = __webpack_require__(9376);
+var mdast_util_to_hast_default = /*#__PURE__*/__webpack_require__.n(mdast_util_to_hast);
+;// CONCATENATED MODULE: external "mdast-util-toc"
+const external_mdast_util_toc_namespaceObject = require("mdast-util-toc");
+var external_mdast_util_toc_default = /*#__PURE__*/__webpack_require__.n(external_mdast_util_toc_namespaceObject);
+;// CONCATENATED MODULE: ./src/html/wrapper/view-options/font.ts
 const fonts = [{
   value: 'default',
   label: 'Default'
@@ -1491,7 +1074,7 @@ function createFontButton(font) {
     }]
   };
 }
-;// CONCATENATED MODULE: ./src/html-wrapper/view-options/readability.ts
+;// CONCATENATED MODULE: ./src/html/wrapper/view-options/readability.ts
 const options = [{
   value: 'fontSize',
   label: 'Font-size',
@@ -1588,7 +1171,7 @@ function createOption(item) {
     }]
   };
 }
-;// CONCATENATED MODULE: ./src/html-wrapper/view-options/theme.ts
+;// CONCATENATED MODULE: ./src/html/wrapper/view-options/theme.ts
 const themes = [{
   value: 'light',
   label: 'Light'
@@ -1632,7 +1215,7 @@ function createThemeButton(theme) {
     }]
   };
 }
-;// CONCATENATED MODULE: ./src/html-wrapper/view-options/index.ts
+;// CONCATENATED MODULE: ./src/html/wrapper/view-options/index.ts
 
 
 
@@ -1663,14 +1246,14 @@ function createTitle(value) {
     }]
   };
 }
-;// CONCATENATED MODULE: ./src/html-wrapper/sidebar.ts
+;// CONCATENATED MODULE: ./src/html/wrapper/sidebar.ts
 
 
 
-/* babel-plugin-inline-import '../../assets/crest.svg' */
+/* babel-plugin-inline-import '../../../assets/crest.svg' */
 const crestSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 483.08 738.15\" class=\"crest\">\n  <path fill=\"#13385E\"\n    d=\"M477.26 392.43c0 119.82-147.87 251.55-236.25 256.22C143.28 641 5.19 503.76 5.19 393.71V6.19h472.08c-.01 0 .42 223.93-.01 386.24zM18.66 634.45c15.73-8.5 39.97-13.61 53.15-31.89 4.68 18.71-7.23 31.4-6.8 58.62l351.64-.01c2.64-13.83-11.46-40.33-6.35-58.61 13.18 18.28 37 23.39 52.73 31.89 13.61 7.23 14.03 11.06 14.03 34.87v48.48c0 9.36-11.06 14.88-23.81 14.46H27.59c-12.76.43-23.39-5.1-23.39-14.46v-48.48c0-22.96 0-28.06 14.46-34.87z\" />\n  <path fill=\"#9ADAF8\"\n    d=\"M447.72 661.24h-31.5c.27-1.43.58-2.93.89-4.6.01.68.01 1.36 0 2.05 11.48-20.84 2.13-26.36 3.83-36.14 8.93 11.48 22.54 13.18 32.32 18.28 11.89 6.38 19.55 20.41-5.54 20.41zm-83.06-204.65c12.75-12.32 21.67 0 19.12 9.35 0 .42-.42.85-.42 1.27-14.87 42.92-52.26 71.38-95.61 83.71 2.12 4.25 8.5 8.5 15.3 13.17-33.99 5.52-61.19-2.12-73.08-6.37-32.29-1.27-64.16-10.62-89.23-29.32-26.77-14.87-35.69-31.02-47.59-55.66-1.27-2.97-3.82-5.95-6.8-11.05-1.7-3.4-2.12-9.35 6.8-6.37 8.07 2.55 18.27 4.67 21.67.42.42-.85.42-1.27.42-1.7-.42-1.27 2.12-4.25 5.52-2.55 5.95-2.12 9.35-5.95 11.05-8.07 2.97.85 5.95 1.27 9.35 2.55 11.05 4.25 33.14 15.3 38.67 36.97 0-16.15-6.37-25.49-12.75-30.59 26.39.31 49.75 5.74 70.96 11.81v-15.89c6.31 2.82 11.45 6.33 14.87 8.99v11.3c2.29.69 4.56 1.38 6.8 2.06 8.07-.85 26.77-2.55 48.44.42-2.12 2.12-5.1 6.37-6.37 8.92 17.85 1.7 34.84-1.27 52.26-12.75 19.55-12.75-15.3-22.52-15.3-70.54 18.27 15.3 35.27 8.5 49.29 17.42 15.3-8.92 39.09-18.27 63.31-5.95-26.34 8.07-45.89 29.32-60.76 49.29 3.83-16.13-14.87-27.61-25.92-.84zm-237.52 19.55c-2.55 0-4.67 2.12-4.67 4.25 0 2.12 2.12 3.82 4.67 3.82s4.67-1.7 4.67-3.82c0-2.13-2.12-4.25-4.67-4.25zm110.9-307.21h14.87v24.52h-14.87v-24.52zm14.87 250.42h-14.87v-60.12c6.38 2.91 11.53 6.5 14.87 9.13v50.99zm-14.87-147.88c6.46 3 11.62 6.67 14.87 9.28v51.23h-14.87v-60.51zm2.97-141.21s-28.89-15.3-60.34-4.67c-.85-3.4-2.55-11.47-3.82-14.02 21.25-5.52 54.39-1.7 64.59 7.65 10.2-8.92 43.34-12.75 63.74-7.65-1.27 2.55-2.97 10.62-3.82 14.02-31.03-10.63-60.35 4.67-60.35 4.67zm-7.22-24.22c-3.4-2.55-8.5-5.1-15.3-5.95 10.62-20.4 11.47-27.62 14.87-62.46 3.82 2.12 5.95 5.1 8.07 8.92v7.22s-10.19 22.95-7.64 52.27zm-118.98 342.9c-2.55-.85-8.5-2.55-15.3-2.55-5.1 0-9.77-2.97-9.77-4.67.43-.85 1.7-1.7 3.82-1.7 4.67-.85 15.3 0 26.77 1.7-.84 2.55-2.54 5.1-5.52 7.22zM29.86 640.83c9.36-5.1 23.39-6.8 32.32-18.71 1.67 9.59-7.28 14.7 3.2 34.94.17 1.44.42 2.84.78 4.18H35.82c-25.94 0-18.29-14.03-5.96-20.41zm223.05-65.69h-14.87v-6.74c5.45 1.51 10.59 2.5 14.87 3.16v3.58z\" />\n  <path fill=\"#FFF\"\n    d=\"m445.32 712.41-1.56-5.63h-12.13l-1.64 5.63h-8.49l10.83-31.35h10.7l10.82 31.35h-8.53zm-6.58-22c-.12-.53-.46-1.94-1.02-4.24-.61 2.3-.95 3.71-1.09 4.24l-3.14 10.31h8.46l-3.21-10.31zm-26.92 22h-8.52v-23.93h-6.95v-7.42h22.49v7.42h-7.02v23.93zm-28.04-275.79c-1.7-9.35 4.25-26.77 30.17-30.17-12.32 4.25-24.22 17.43-30.17 30.17zm5.95 275.79h-8.63v-31.35h8.63v31.35zm-60.76-200.58c-28.47 7.65-75.63 20.4-145.32 2.97-18.7-4.67-62.46-16.15-80.31-39.09-3.4-4.67-4.67-13.17-4.67-14.45 0-1.7.85-2.55 4.67-1.7 12.32 2.12 14.45-2.55 19.12-7.65 5.52-.85 22.95-3.82 36.97 5.52 15.3 10.2 20.4 25.07 20.4 25.07s5.1-12.75-2.12-22.52c14.02-3.82 38.24 2.12 59.91 10.62 31.87 12.32 56.09 16.57 80.31 12.32s36.97-9.35 45.04-21.25c4.25-6.37 16.57-5.1 13.17 4.67-3.4 9.8-18.7 37.42-47.17 45.49zm-201.83-35.69c-2.55 0-4.67 2.12-4.67 4.25 0 2.12 2.12 3.82 4.67 3.82s4.67-1.7 4.67-3.82c0-2.13-2.12-4.25-4.67-4.25zm232.85-65.86c5.95 14.87 6.8 33.57 6.8 33.57s-14.45-23.37-6.8-33.57zm-15.3-3.83c6.8 10.2 16.57 41.22 16.57 41.22s-21.67-23.37-16.57-41.22zM241.44 111.57V46.56c11.05-21.67 26.77-5.1 54.39-13.6 5.1 22.52 9.77 62.89 11.05 70.11-20.83 5.95-39.1-16.15-65.44 8.5zm-.06-64.93-.01-.21.06.12c-.03.13-.05.28-.08.42.02-.12.03-.24.03-.33zm-1.25 6.7c.2-.91.54-2.45.81-3.85-.21 1.4-.36 2.59-.36 2.59s-.16.44-.45 1.26zm-5.07 393.7c1.12.43 2.22.89 3.27 1.36v16.83c-1.08-.31-2.18-.62-3.27-.92v-17.27zm0-89.03h.1c1.08.43 2.14.88 3.17 1.35v58.98h-3.27v-60.33zm0-87.83c1.13.46 2.21.94 3.27 1.44v60.35h-3.27v-61.79zm0-101.25h3.27v24.52h-3.27v-24.52zm-13.56-68.48c5.23.99 9.32 2.98 12.28 5.05 0 .04 0 .07.01.11-4.3-2.75-8.37-4.34-12.29-5.16zm-45.5 2.62c1.27-7.22 6.37-47.59 11.05-70.11 22.04 6.78 36.49-2.11 47.05 4.8-3.39 34.72-4.25 41.96-14.85 62.31-15.63-2.15-28.8 7.26-43.25 3zm-61.75 609.34h-8.5l-1.55-5.63H92.07l-1.65 5.63h-8.48l10.8-31.35h10.7l10.81 31.35zm-15.06-22c-.14-.53-.51-1.94-1.05-4.24-.57 2.3-.96 3.71-1.1 4.24l-3.17 10.31h8.52l-3.2-10.31zm-31.29-9.35h8.67v31.35H67.9v-31.35zm-24.54 31.35-13.15-31.35h9.05l6.29 17.53c.14.39.48 1.79 1.02 4.22.6-2.44.98-3.83 1.14-4.22l6.14-17.53h9.11l-13.12 31.35h-6.48zm103.14-13.82c.14.39.45 1.79 1.04 4.22.55-2.44.96-3.83 1.08-4.22l6.24-17.53h9.05l-13.11 31.35h-6.49l-13.16-31.35h9.09l6.26 17.53zm41.33-10.63h-10.89v5.44h10.26v6.68h-10.26v5.35h10.89v6.99h-19.19v-31.35h19.19v6.89zm17.28-6.9c4.32 0 7.67.04 10.37 2.13 2.24 1.76 3.47 4.42 3.47 7.68 0 4.83-2.44 7.93-6.99 8.92l8.54 12.63h-9.65l-7.19-12.28v12.28h-8.01v-31.35h8.93c.19-.01.35-.01.53-.01zm-1.46 14.83h1.61c3.56 0 5.28-1.13 5.28-3.92 0-3.27-1.61-4.27-5.18-4.27h-1.72v8.19zm31.12 16.52h-8.64v-31.35h8.64v31.35zm3.57-137.27h-3.27v-7.61c1.1.34 2.19.65 3.27.95v6.66zm25.54 113.33h-7.02v23.93h-8.52v-23.93h-6.98v-7.42h22.52v7.42zm24.14-7.41 10.82 31.35h-8.46l-1.61-5.63h-12.11l-1.6 5.63h-8.52l10.83-31.35h10.65zM287 700.72l-3.2-10.31c-.13-.53-.48-1.94-1.05-4.24-.55 2.3-.97 3.71-1.11 4.24l-3.14 10.31h8.5zm25.9 5.83c2.32 0 3.89-1.35 3.89-3.21 0-2.51-1.73-3.27-5.28-4.18-5.62-1.47-8.37-3.77-8.37-8.63 0-5.83 4.23-10.17 10.79-10.17 3.51 0 6.58.91 9.26 2.79l-2.66 6.12c-1.97-1.65-4.06-2.48-5.99-2.48-2.1 0-3.49 1.14-3.49 2.6 0 2.27 2.2 2.74 5 3.5 5.55 1.48 8.65 3.51 8.65 9.32 0 6.46-4.66 11.02-11.99 11.02-4.43 0-7.78-1.39-11.13-4.6l3.83-6.33c2.53 2.87 5 4.25 7.49 4.25zm45.84-7.96c.12.39.47 1.79 1.01 4.22.59-2.44.99-3.83 1.11-4.22l6.21-17.53h9.09l-13.15 31.35h-6.47l-13.16-31.35h9.08l6.28 17.53z\" />\n  <path fill=\"#0499D6\"\n    d=\"M374.44 472.74c-29.32 72.66-153.82 91.36-228.18 48.44-25.07-5.52-54.81-57.36-45.47-58.21 4.9-.31 13.11 4.46 22.4 10.17-3.06 1.76-4.87 4.93-4.56 8.1.42 4.25 4.67 7.65 9.35 7.22 5.1-.42 8.5-4.25 8.07-8.92-.42-2.3-1.66-4.18-3.31-5.5 6.31 1.3 9.26 5.53 9.26 10.18 12.32 5.95 23.79 9.35 31.44.85 3.82 7.22 10.62 11.05 17.42 13.6 15.72 3.4 44.19 5.95 47.59 1.7-9.35-12.32-28.47-16.15-44.19-19.55-2.97-4.25-2.55-12.32-8.92-17.85 8.92 2.97 9.77 8.5 13.6 12.75 19.55.85 47.17 12.75 50.14 28.89-7.65 2.97-20.82 3.82-33.57 2.55 15.3 3.82 32.72 5.95 50.14 5.52 42.92-1.27 84.13-7.65 105.38-48.01 4.68-8.93 8.08-2.13 3.41 8.07z\" />\n  <path fill=\"#FFCF39\"\n    d=\"M412.25 312.12h-74.36c-7.22 0-8.07 2.55-17 14.87-2.55 2.97-.42 5.95 4.25 6.37 8.5.43 20.82.85 35.27 1.7-2.55-3.82-2.97-8.5-2.12-11.05 4.25-3.4 10.2-3.4 12.75-3.4-5.52 18.27 17 19.97 18.7 2.55.42 1.27.85 7.65-2.97 12.32 10.62 0 22.1.42 33.99.85-14.02.42-25.92.85-36.54 1.27-2.12 1.27-5.1 2.55-9.35 2.55s-7.22-.85-9.77-2.12c-25.92.42-41.22.42-54.39-.42-6.8-.42-5.95-3.82-5.52-8.07.42-2.55 5.95-47.17 9.77-80.31 2.55-19.55 8.07-42.49 24.64-48.01-2.12-6.37-7.65-19.55-10.62-27.62-4.25-10.62 2.12-19.12 15.72-19.12h52.69c3.82 0 8.92 0 13.17 2.55 5.1 2.97 7.65 8.92 5.1 15.3-4.67 12.32-10.62 27.62-11.05 28.89 6.37 2.97 8.07 4.67 11.05 8.5 9.77 11.9 12.32 31.02 13.17 38.24 3.4 27.19 8.07 64.59 8.92 71.81-1.7-4.67-3.4-7.65-25.5-7.65zm-18.27-145.74h-49.29c-5.52 0-4.25 5.1-1.7 10.62 4.25 9.77 7.65 17.85 10.2 23.37h37.39c2.55-5.1 7.65-17 11.05-25.49 3.82-9.78-3.4-8.5-7.65-8.5zM209.99 607.86c1.27-1.7 6.37-6.8 9.35-9.35-2.12-2.55-3.4-5.52-3.4-9.35 0-7.65 6.37-14.02 14.02-14.02h23.79c7.65 0 14.02 6.37 14.02 14.02 0 3.82-1.27 7.22-3.82 9.77l8.92 8.92c-16.98 6.39-47.15 6.81-62.88.01zm43.77-161.46h-23.79c-7.65 0-14.02-6.37-14.02-14.02s6.37-14.02 14.02-14.02h23.79c7.65.42 14.02 6.37 14.02 14.02s-6.37 14.02-14.02 14.02zm-24.22-116.43h23.8c7.65 0 14.02 5.95 14.02 14.02 0 7.65-6.37 14.02-14.02 14.02h-23.8c-7.65 0-14.02-6.37-14.02-14.02 0-7.65 6.37-14.02 14.02-14.02zm24.22-60.34h-23.79c-7.65 0-14.02-6.37-14.02-14.02s6.37-14.02 14.02-14.02h23.79c7.65 0 14.02 6.37 14.02 14.02s-6.37 14.02-14.02 14.02zm-33.57-78.18h42.49v41.64h-42.49v-41.64zm13.6-40.37h15.3v17.85h-15.3v-17.85zm8.07-16.99 7.22 13.17-15.3.42 8.08-13.59zM114.81 455.32c-3.4 1.27-6.8 1.7-9.77.42-2.97-1.27-5.52-3.4-6.8-6.8-.4-.88-.7-1.8-.95-2.74.72.12 1.47.19 2.23.19 1.34 0 2.64.07 3.9.18.48 1.25 1.72 2.83 3.75 3.64 2.12.85 4.25.43 5.1-.42.64-.27 1.27-.64 1.89-1.06.24.07.46.15.65.21 2.97-2.12 4.67-4.67 5.52-7.22l-.81-.12c.82-2.09 1.23-4.16 1.23-5.83 0-4.25-1.7-7.65-4.67-8.92-2.12-.42-4.25 0-5.52.42-2.97 1.27-5.52 4.25-7.22 8.07-.48 1.45-.78 2.97-.9 4.45-2.15-.11-4.08-.14-5.71-.08.18-2.04.68-4.09 1.51-6.07 2.12-5.52 5.95-9.35 10.2-11.47 3.4-1.27 6.8-1.7 9.77 0 7.22 2.97 10.62 12.75 6.8 22.1-2.12 5.1-5.95 9.35-10.2 11.05z\" />\n  <path fill=\"#E2A034\"\n    d=\"M359.99 227.57c-1.7 12.75-1.7 57.79-2.12 76.91-9.35.42-22.1 0-24.64.85 1.7-19.97 2.97-66.71 3.82-80.73.85-14.45 7.65-17.85 17-17.42h31.87c-10.63.84-24.23 6.36-25.93 20.39zm-104.1 15.29h-28.47c0-.85.43-8.92-7.22-9.77h25.07v-41.64h11.47v41.64h5.95c-7.23 1.7-6.8 7.65-6.8 9.77zm-14.03-91.78h4.67v17.85h-4.67v-17.85zm0-16.99 4.67 13.6-4.67-.42v-13.18zm-110.05-29.32c3.82 27.62-18.27 35.69-25.07 36.12-4.67 1.27-2.12 5.95-2.12 5.95 2.12 2.97 3.82 4.25 11.05 8.92 2.12 2.55-2.97 4.25-2.97 4.25s-9.35-8.92-14.02-11.47c-2.12-.85 1.27-3.82-1.27-4.67-.85-.42-9.35-.85-10.62-1.7 16.15-1.7 41.64-15.72 26.34-35.27 11.47 24.64-31.87 32.72-35.27 33.14-12.75 2.12-21.67 15.3-25.92 11.05-4.67 4.67-14.87 5.52-10.62 2.97 3.82-2.55 17.85-14.02 27.62-27.19 21.25-28.89 39.94-31.02 41.22-36.54 2.55-14.45 26.34-19.12 30.59-2.55 2.12.42 5.1 1.27 8.5 4.25-3.4 0-6.8 0-8.92.85-5.54 2.54-8.94 7.21-8.52 11.89zm2.55-18.7c-1.27 0-2.55 1.27-2.55 2.55 0 1.27 1.27 2.55 2.55 2.55 1.27 0 2.55-.85 2.55-2.55s-1.27-2.97-2.55-2.55zm117.7 510.74c-17.42 1.27-25.92-.42-25.92-.42s23.37-2.55 32.29-14.45c2.13 2.55 3.4 14.02-6.37 14.87zm.85-155.09h-26.34s19.97-1.27 32.29-14.45c3.82 2.13 4.25 14.45-5.95 14.45zm0-88.81h-26.34s19.97-1.27 32.29-14.45c3.4 2.13 4.25 14.45-5.95 14.45zm.43-88.38H227s19.97-1.27 32.29-14.45c3.39 2.13 4.24 14.45-5.95 14.45z\" />\n  <path fill=\"#EE422D\" d=\"M132.66 111.14c0 21.25-16.57 28.04-20.82 28.89 1.28-4.67 8.07-26.76 20.82-28.89\" />\n  <path fill=\"#81C341\"\n    d=\"M174.3 274.31s21.25-10.62 23.37-21.25c-6.37-6.37-22.95-6.8-22.95-6.8s19.12-14.45 18.27-24.64c-9.35-4.25-26.34-1.7-26.34-1.7 7.65-10.62 9.77-19.55 9.77-26.77-9.77-1.7-25.07 4.25-25.07 4.25s5.1-18.27 0-27.62c-8.92-2.55-21.67 13.6-21.67 13.6s-4.67-19.97-15.3-30.17c-10.62 10.62-15.3 30.17-15.3 30.17s-12.75-16.15-22.1-13.6c-5.1 9.35 0 27.62 0 27.62s-15.3-5.95-25.07-4.25c-.42 7.65 2.12 16.15 9.77 26.77 0 0-17-2.55-26.34 1.7-.85 10.62 18.27 24.64 18.27 24.64s-16.57.42-22.95 6.8c2.12 10.62 22.95 21.25 22.95 21.25s-12.32 2.55-20.4 11.47c5.1 6.37 15.72 12.75 24.64 14.02-7.22 5.52-11.47 10.2-13.6 14.02 11.9 9.77 37.39 11.05 62.46 3.4 0 4.67 0 43.77-5.95 61.61h25.49c-5.95-17.85-5.95-56.94-5.95-61.61 25.07 7.65 50.56 6.37 62.46-3.4-1.7-3.4-5.95-8.07-13.6-14.02 8.5-1.27 19.55-7.65 24.22-14.02-6.76-8.92-19.08-11.47-19.08-11.47\" />\n  <path fill=\"#07974B\"\n    d=\"M151.36 274.73c2.55-1.27 14.45-5.1 20.82-16.15-6.37-5.95-20.82-6.37-20.82-6.37s13.17-8.5 17.42-21.25c-11.05-3.4-22.52 0-22.52 0s9.35-13.6 10.62-24.64c-10.62 1.27-22.1 6.8-22.1 6.8 3.4-7.22 4.67-17 3.4-25.49-5.1.85-10.2 7.22-13.17 11.05-2.55-8.5-7.22-11.47-10.62-13.17-5.1 7.65-6.37 12.75-5.52 22.95 1.7-1.7 4.67-4.67 8.92-7.22 2.55 14.87-2.55 25.92-2.55 25.92s6.37-4.25 15.3-5.1c.42 8.07-2.55 17-11.47 26.77 0 0 7.65-4.67 16.57-5.1-1.27 11.47-8.5 19.55-15.72 25.92 4.67-2.12 13.17-2.12 19.12-.42-2.97 8.92-9.77 13.17-19.97 18.7 6.37 0 12.75.85 16.15 3.4-4.25 7.65-14.02 11.05-20.82 13.17 15.72 5.95 31.02 8.5 45.89 5.1-.85-4.67-6.8-9.77-13.17-13.6 5.95-1.27 14.87-3.4 22.95-9.77-4.69-5.97-11.06-9.37-18.71-11.5\" />\n  <path fill=\"#fff\" fill-rule=\"evenodd\" class=\"dark-only\"\n    d=\"M483.06 0 .4.05v390.87c-.09 125.7 152.44 256.62 241.01 261.36l.32.02.33-.02c88.59-4.74 241.11-135.66 241.02-261.35L483.06 0zm-12.2 12.23-458.23.05v378.65c-.08 117.34 146.75 244.4 229.1 249.09 82.37-4.69 229.2-131.77 229.12-249.11.5-145.16.09-341.72.01-378.68zM16.27 636.17s3.41-1.95 3.41-1.98c.02 0 2.13-.92 2.22-.98 0 0 5.82-2.63 6.09-2.71 0 0 6.24-2.89 6.2-2.86 13.22-5.57 28.15-11.85 37.64-24.83l1.12-1.53c.25.98.49 1.85.49 1.85.78 3.13 1.17 6.19 1.17 9.14 0 5.78-1.47 11.25-3.04 17.11-1.7 6.31-3.83 14.16-4.19 24.5l-.05 1.63h348.32l-.05-1.63c-.36-10.36-2.48-18.21-4.29-24.9-1.57-5.92-2.91-11.01-2.91-16.7 0-3.12.39-6.09 1.18-9.13 0 0 .26-.98.48-1.83.57.82 1.07 1.5 1.07 1.5 9.51 12.97 24.46 19.26 37.63 24.8 0 0 5.17 2.32 5 2.18 0 0 .49.29.7.42 0 0 8.74 3.94 8.77 3.95 0 0 7.44 4.72 7.61 4.84 7.71 4.68 12.19 10.28 12.19 24.89 0 0-.19 5.98-.19 6.04l.01 8.42-.05 39.39c0 4.68-1.86 8.99-5.42 12.4-5.44 5.31-14.31 8.25-24.36 7.99H30.13c-10.14.26-19.08-2.68-24.5-7.99-3.56-3.47-5.44-7.72-5.44-12.29l-.02-39.19v-8.33L0 665.37c0-16.97 6.46-23.92 16.27-29.2zm46.72 17.15c-2.06-5.06-3.07-9.42-3.07-13.32 0-3.27.63-5.96 1.17-8.31l.21-1.32.8-5.37-3.32 2.95c-5.94 5.31-13.12 8.01-18.97 10.2 0 0-7.6 3.18-7.8 3.28 0 0-2.55 1.3-2.89 1.48-4.16 2.53-7.27 5.84-8.31 8.77l-.56 1.63 1.65.45c4.14 1.15 9.14 1.73 14.88 1.73h27.13l-.92-2.17zm398.9-2.25c-1.04-2.36-3.32-4.9-6.41-7.01 0 0-6-3.26-6.14-3.33 0 0-6.22-2.56-6.28-2.57-5.77-2.21-12.95-4.92-18.87-10.2l-3.24-2.83.7 5.13s.22 1.38.32 1.8c.53 2.41 1.1 4.91 1.1 7.95 0 3.8-1.03 8.16-3.14 13.32l-.91 2.18h27.13c7.68 0 12.34-1.26 14.89-2.3l1.51-.64-.66-1.5zM11.7 664.69s.2 5.36.2 5.24l-.02 8.72.02 39.09c0 1.48.61 2.75 1.86 3.97 3.05 3.06 9.29 4.84 16.24 4.66h423.17c6.84.18 12.97-1.6 15.96-4.62 1.32-1.21 1.96-2.53 1.96-4.09l.01-48.13.4-9.17-2.58 1.56c-5.65 3.45-13.53 5.28-22.77 5.28H36.79c-9.4 0-17.07-1.38-22.79-4.1l-2.38-1.08.08 2.67z\" />\n  </svg>\n";
 
-/* babel-plugin-inline-import '../../assets/uofg.svg' */
+/* babel-plugin-inline-import '../../../assets/uofg.svg' */
 const uOfGSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 117.18 48.02\" class=\"uofg\">\n  <path fill=\"#003865\"\n    d=\"m114.74 32-3.83 9.36h-.8l-3.54-8.38-3.57 8.38h-.83l-4.43-9.99c-.41-.92-.83-1.37-2.2-1.51v-.54h5.77v.54c-1.75.09-1.87.59-1.25 1.99l3.21 7.16 2.91-6.9c-.65-1.51-1.16-2.05-2.2-2.17l-.71-.09v-.54h6.15v.54c-1.46.03-1.9.47-1.28 1.96l2.91 7.07 2.85-6.95c.65-1.58.15-2.08-1.72-2.08v-.54h4.99v.54c-1.12.13-1.83.7-2.43 2.15zm-.03-21.93-5.05 12.6c-.89 2.2-1.57 3.18-2.61 3.18-.71 0-1.22-.45-1.22-1.04 0-1.22 1.72-.92 2.46-1.67.33-.33.77-1.1 1.01-1.69l.89-2.23-4.6-9.77c-.57-1.22-1.1-1.73-2.35-1.75v-.54h5.97v.54c-1.81.03-2.02.56-1.43 1.81l3.36 7.25 2.52-6.3c.89-2.26.33-2.7-1.43-2.76v-.54h4.93v.54c-1.2.14-1.88.98-2.45 2.37zm-14.79 9.22c-1.75 0-3-1.46-3-3.45V8.47h-1.37v-.48c1.16-.56 2.17-1.93 2.85-3.77h.51v2.94h3.67l-.47 1.31h-3.2v6.92c0 1.87 1.34 2.5 1.96 2.5.66 0 1.25-.51 1.81-1.49l.48.45c-.72 1.54-1.88 2.44-3.24 2.44zm-11.72-.92c1.82 0 2.47-.6 2.47-2.17v-5.97c0-1.16-.15-1.31-.92-1.46l-1.4-.27v-.48l3.86-1.34h.45v9.98c0 1.04.56 1.7 2.14 1.7v.56h-6.6v-.55zm3.24-16.11c-.71 0-1.28-.51-1.28-1.13C90.17.5 90.73 0 91.44 0c.71 0 1.31.5 1.31 1.13 0 .62-.59 1.13-1.31 1.13zM86.77 15.9c0 1.93-1.61 3.39-3.69 3.39-.56 0-.98-.09-1.31-.21-.33-.09-.57-.18-.8-.18-.18 0-.36.12-.51.35h-.45l-.33-3.33h.48c.35 1.79 1.48 2.79 2.82 2.79 1.19 0 2.11-.89 2.11-1.96 0-.62-.15-1.01-.95-1.81-2.11-2.11-4.46-2.32-4.46-4.78 0-1.96 1.55-3.33 3.8-3.33.8 0 1.63.18 2.38.48l.06 2.7h-.51c-.21-1.52-1.19-2.46-2.38-2.46-.98 0-1.81.68-1.81 1.66.03 2.62 5.55 3.06 5.55 6.69zm-3.86 15.87c-.45-.03-1.84-.15-2.97-.36.18.33.5.95.5 1.9 0 2.2-1.9 4.31-5.2 4.31-.56 0-.83-.06-1.37-.24-.47.51-1.81.83-1.81 1.51 0 .75 1.28 1.04 4.25 1.07 3.36.03 4.52.18 5.41 1.07.71.71.89 1.46.89 2.08 0 1.93-2.61 4.9-8.11 4.9-3.09 0-4.57-1.37-4.57-2.82 0-1.72 1.81-1.99 3.18-3.65-1.6-.15-2.82-1.16-2.82-2.11 0-1.37 1.99-1.43 3.03-2.2-1.81-.71-2.85-1.99-2.85-3.69 0-2.56 2.29-4.55 5.23-4.55 1.37 0 2.53.42 3.33 1.19 1.34 0 2.58-.15 3.89-.3v1.89zM71.77 44.21c0 1.4 1.96 2.97 4.4 2.97 2.53 0 4.9-1.66 4.9-3.54 0-1.1-.92-1.66-1.99-1.75-.77-.09-4.51-.12-5.38-.24-.83.99-1.93 1.41-1.93 2.56zm3.57-14.64c-1.13 0-2.88.62-2.88 3.39 0 1.75.89 4.1 3.15 4.1 1.72 0 2.85-1.43 2.85-3.48 0-2.56-1.31-4.01-3.12-4.01zm.87-20.54c-.32-.15-.68-.29-1.04-.29-.53 0-.86.36-1.16.77-.39.53-.71 1.04-.95 1.48v5.76c0 1.22.45 1.61 1.93 1.61h1.13v.56h-7.04v-.56c1.52-.03 1.99-.65 1.99-2.23V9.27l-1.99-.72v-.5l3.39-1.19h.6v3.15h.06c1.48-2.44 1.84-3 2.82-3 .36 0 .45.03 1.01.27.3.12.83.24 1.54.44l-.71 1.79a5.47 5.47 0 0 1-1.58-.48zm-7.56 29.04c0 1.93-1.61 3.39-3.68 3.39-.56 0-.98-.09-1.31-.21-.32-.09-.56-.18-.8-.18-.18 0-.35.12-.5.36h-.45l-.32-3.33h.47c.36 1.78 1.49 2.8 2.83 2.8 1.19 0 2.11-.9 2.11-1.96 0-.63-.15-1.01-.95-1.82-2.11-2.11-4.46-2.32-4.46-4.78 0-1.96 1.54-3.33 3.8-3.33.8 0 1.63.18 2.38.48l.06 2.7h-.5c-.21-1.52-1.19-2.47-2.38-2.47-.98 0-1.81.68-1.81 1.66-.01 2.61 5.51 3.06 5.51 6.69zm-9.79-25.44c0 3.09 2.17 5.17 4.51 5.17 1.49 0 2.65-.59 3.78-1.93l.33.36c-1.25 1.58-3.12 3.06-5.29 3.06-2.91 0-5.17-2.65-5.17-6.09 0-3.15 2.11-6.36 5.73-6.36 4.01 0 3.92 2.88 4.9 3.86v.68h-8.68c-.05.45-.11.86-.11 1.25zm6.3-2.02c-.33-1.93-1.51-3.21-2.94-3.21-.98 0-2.46.45-3.15 3.21h6.09zm-10.33-.74-4.1 9.33h-.86l-4.31-9.86c-.45-1.04-.83-1.4-1.31-1.49l-.92-.15v-.54h6.06v.54c-1.81.06-2.38.29-1.67 1.69l3.15 7.4 3.03-6.86c.54-1.22.27-2.08-1.9-2.23v-.54h5.17v.54c-1.12.2-1.77.86-2.34 2.17zm-11.01 9.06h-6.6v-.56c1.81 0 2.47-.6 2.47-2.17v-5.97c0-1.16-.15-1.31-.92-1.46l-1.4-.27v-.48l3.86-1.34h.45v9.98c0 1.04.56 1.7 2.14 1.7v.57zM40.46 2.26c-.72 0-1.28-.51-1.28-1.13 0-.63.57-1.13 1.28-1.13.71 0 1.31.5 1.31 1.13 0 .62-.6 1.13-1.31 1.13zM29.98 18.37c.86-.03 1.36-.24 1.69-.57.56-.57.62-2.74.62-6.69 0-2.38-1.16-3.12-2.35-3.12-.95 0-2.4.83-3.95 1.9v6.45c0 1.63.39 2.02 1.99 2.02v.56h-5.97v-.56c1.31 0 1.99-.72 1.99-1.87v-6.24c0-1.1-.12-1.31-.89-1.46l-1.01-.2v-.48l3.42-1.25H26v2.32c1.99-1.25 3.65-2.35 5.11-2.35 2.02 0 3.18 1.48 3.18 4.45 0 3.95-.21 4.72-.24 5.89-.03.8.44 1.19 1.66 1.19h.65v.56h-6.39v-.55zM19.94 3.74v8.02c0 3.68-2.35 7.64-8.8 7.64-5.67 0-8.59-3.24-8.59-7.49V3.24c0-1.9-.53-2.2-2.56-2.23V.45h7.64v.56h-.26c-1.63 0-2.35.45-2.35 2.17v8.26c0 4.01 2.35 6.42 6.77 6.42 3.36 0 6.78-1.4 6.78-6.44V4.49c0-2.85-.45-3.36-2.91-3.48V.45h6.98v.56c-1.99.03-2.7.83-2.7 2.73zM3.66 41.45c-1.4 0-2.64-2.23-2.64-4.7 0-4.81 5.17-7.79 6.95-7.79.86 0 2.7 1.19 2.7 4.37 0 5.66-5.62 8.12-7.01 8.12zm2.79-11.38c-1.87 0-3.54 3.59-3.54 6.57 0 2.49 1.07 3.71 2.08 3.71 2.38 0 3.77-3.86 3.77-6.6.01-2.08-1-3.68-2.31-3.68zm5.37-.32c.71-.09 1.43-.21 2.17-.39.45-2.44 1.34-4.99 3-6.65 1.04-1.04 2.35-1.6 3.51-1.6 1.16 0 2.11.65 2.11 1.43 0 .47-.36.86-.83.86-.98 0-1.78-1.22-2.64-1.22-1.16 0-2.11 1.31-2.53 3.27l-.8 3.89h2.55l-.3.98h-2.44L14.11 39c-1.16 6.66-4.55 9.03-7.34 9.03-1.25 0-2.29-.62-2.29-1.37 0-.48.48-.89.98-.89 1.1 0 1.69 1.31 2.82 1.31.68 0 1.28-.33 1.81-.86 1.48-1.49 2.05-6.56 2.17-7.28l1.52-8.62h-2.05l.09-.57zm23.44 3.95h-1.1v-.53h8.02v.53c-1.48.09-2.08.6-2.08 1.87v4.13c-2.94 1.52-6.71 1.87-7.96 1.87-6.51 0-9.54-5.02-9.54-9.36 0-4.46 3.12-10.04 10.37-10.04 3.18 0 5.29 1.01 5.91 1.01.27 0 .51-.06.68-.21h.42v4.81h-.59c-.81-3.71-3.33-4.87-6.09-4.87-5.23 0-7.9 4.34-7.9 9.12 0 6.09 4.28 8.79 7.7 8.79 1.37 0 2.88-.3 4.55-1.13v-3.74c-.01-1.69-.61-2.25-2.39-2.25zM43.74 23l-1.34-.15v-.5l3.8-1.22h.44v17.62c0 1.22.57 1.78 1.72 1.78h.51v.57h-6.68v-.57c1.9 0 2.46-.56 2.46-1.99V24.19c.01-.83-.08-1.1-.91-1.19zm6.6 9.87c-.06-.18-.09-.27-.09-.42 0-1.04 2.47-3.45 4.4-3.45.89 0 2.29.42 3.12 1.58.45.62.45 1.01.45 2.55v3.98c0 2.38 0 2.91.77 2.91.32 0 .71-.03 1.45-.65l.15.45c-1.6 1.31-2.44 1.63-2.94 1.63-1.22 0-1.34-1.34-1.37-1.81-2.05 1.69-2.64 1.81-3.45 1.81-1.72 0-2.76-.98-2.76-2.44 0-1.81 1.6-2.44 3.51-2.91.62-.15 1.6-.51 2.64-1.13v-2.35c0-.83 0-1.31-.51-1.9-.38-.48-1.01-.86-1.66-.86-.98 0-1.84.83-1.84 1.45 0 .18.03.3.15.57l-2.02.99zm4.13 3.53c-1.81.74-2.5 1.04-2.5 2.26 0 1.07.86 1.75 1.75 1.75.47 0 .83-.15 2.5-1.31v-3.54c-.56.34-1.03.55-1.75.84zm29.05-1.1c0-4.1 3.33-6.3 6.42-6.3 3.63 0 6.39 2.7 6.39 6.24 0 3.5-2.76 6.21-6.3 6.21-3.69 0-6.51-2.67-6.51-6.15zm10.57.69c0-3.39-2.08-6.27-4.57-6.27-1.96 0-3.78 2.02-3.78 4.58 0 3.6 2.05 6.45 4.61 6.45 1.75-.01 3.74-1.79 3.74-4.76z\" />\n</svg>\n";
 
 
@@ -1722,16 +1305,15 @@ async function createLogo() {
     }, hamburgerIcon]
   };
 }
-;// CONCATENATED MODULE: ./src/transforms-hast/html-wrapper.ts
+;// CONCATENATED MODULE: ./src/html/wrapper/index.ts
 
 
 
-function htmlWrapper(titles, mdast) {
+function htmlWrapper(mdast) {
   return async tree => {
-    const hamburgerIcon = await createSvg('hamburger-icon');
+    const hamburgerIcon = createSvg('hamburger-icon');
     const sidebar = await createSidebar(mdast);
-    const children = tree.children;
-    const main = await (0,html_wrapper_main/* createMain */.C)(titles, children);
+    const main = await (0,wrapper_main/* createMain */.C)(tree.children);
     const iconDefs = createDefs();
     return {
       type: 'root',
@@ -1746,33 +1328,261 @@ function htmlWrapper(titles, mdast) {
     };
   };
 }
-;// CONCATENATED MODULE: external "lodash"
-const external_lodash_namespaceObject = require("lodash");
-;// CONCATENATED MODULE: ./src/transforms-hast/responsive-tables.ts
+;// CONCATENATED MODULE: ./src/html/index.ts
+
+ // @ts-expect-error
 
 
-function responsiveTables() {
-  return async (tree, file) => {
-    external_unist_util_visit_default()(tree, 'element', (node, idx, parent) => {
-      if (node.tagName !== 'table') {
-        return;
-      }
 
-      const properties = (parent === null || parent === void 0 ? void 0 : parent.properties) || {};
-      const className = properties.className || [];
 
-      if (!className.includes('table-wrapper')) {
-        Object.assign(node, {
-          tagName: 'div',
-          properties: {
-            className: 'table-wrapper'
-          },
-          children: [(0,external_lodash_namespaceObject.cloneDeep)(node)]
-        });
-      }
-    });
-  };
+
+
+
+async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
+  const processor = unified_default()().use((external_rehype_format_default())).use((external_rehype_stringify_default()));
+
+  if (!ctx.options.noDoc) {
+    const templateCss = await readFile(external_path_default().join(getLibraryDir(), 'template.css'));
+    const docOptions = {
+      title: unit.titles.docTitle,
+      style: `\n${templateCss}\n`
+    };
+
+    if (!targetPdf) {
+      const templateJs = await readFile(external_path_default().join(getLibraryDir(), 'template.js2'));
+      docOptions.script = `\n${templateJs}\n`;
+      processor.use(htmlWrapper, mdast);
+    } else {
+      processor.use(pdfWrapper);
+    }
+
+    processor.use((external_rehype_document_default()), docOptions);
+  }
+
+  const result = await processor.run(hast);
+  return processor.stringify(result);
 }
+;// CONCATENATED MODULE: external "child_process"
+const external_child_process_namespaceObject = require("child_process");
+;// CONCATENATED MODULE: ./src/knitr/index.ts
+
+
+
+
+
+async function knitr(md, ctx) {
+  const fileName = getUniqueTempFileName(md);
+  const cachedFilePath = external_path_default().join(ctx.cacheDir, fileName);
+  await mkdir(ctx.cacheDir);
+  await writeFile(cachedFilePath, md); // TODO:
+  // * see what can be done with output when "quiet" turned off
+
+  return new Promise((resolve, reject) => {
+    const rFile = external_path_default().join(__dirname, 'knitr.R');
+    const cmd = `Rscript ${rFile} ${cachedFilePath} ${ctx.cacheDir}/`;
+    (0,external_child_process_namespaceObject.exec)(cmd, async (err, response, stdErr) => {
+      if (stdErr) {
+        console.log(external_chalk_default().grey(`[knitr] ${stdErr.trim()}`));
+      }
+
+      if (err) {
+        console.error('ERROR', err);
+        reject(err);
+      } else {
+        resolve(formatResponse(response));
+      }
+
+      await rmFile(cachedFilePath);
+    });
+  });
+}
+
+function getUniqueTempFileName(md) {
+  const hash = external_hash_sum_default()(md);
+  const ts = new Date().getTime().toString();
+  return `knitr-${hash}-${ts}.Rmd`;
+}
+
+function formatResponse(response) {
+  return response.replace(/\[1\]\s""$/m, '').trim();
+} // attempt at changing knitr output. doesn't completely work
+// const hooks = `
+//   knit_hooks$set(
+//     source = function(x, options) {
+//       paste(c("\`\`\`r", x, "\`\`\`"), collapse = "\n")
+//     },
+//     output = function(x, options) {
+//       paste(c("\`\`\`", x, "\`\`\`"), collapse = "\n")
+//     },
+//     error = function(x, options) {
+//       paste(
+//         c(
+//           "\`\`\`plaintext error",
+//           gsub("## Error", "\#\# Error", x),
+//           "\`\`\`"
+//         ),
+//         collapse = "\n"
+//       )
+//     }
+//   )
+// `;
+;// CONCATENATED MODULE: external "mathjax-full/js/adaptors/liteAdaptor.js"
+const liteAdaptor_js_namespaceObject = require("mathjax-full/js/adaptors/liteAdaptor.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/core/MathItem"
+const MathItem_namespaceObject = require("mathjax-full/js/core/MathItem");
+;// CONCATENATED MODULE: external "mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js"
+const SerializedMmlVisitor_js_namespaceObject = require("mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html.js"
+const html_js_namespaceObject = require("mathjax-full/js/handlers/html.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/input/tex.js"
+const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/AllPackages.js"
+const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
+const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
+;// CONCATENATED MODULE: ./src/latex/tex-to-directive.ts
+// import parser from 'fast-xml-parser';
+
+
+
+
+
+
+
+// Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
+// https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
+// Convert Tex to alias and build ctx.mmlStore
+// (Alias is replaced with SVG in ./directive-to-svg.ts in mdast phase)
+// Avoids typesetting issues:
+// If I leave the LaTeX in it gets munged
+// If I convert to SVG it gets munged
+// If I convert to MathML it gets munged
+function texToAliasDirective(html, ctx) {
+  const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
+  (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
+  const tex = new tex_js_namespaceObject.TeX({
+    packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
+    // Busproofs requires an output jax
+    tags: 'ams',
+    inlineMath: [['$', '$']],
+    processEscapes: true
+  });
+  const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
+  const store = [];
+
+  function storeTex({
+    math
+  }) {
+    const items = Array.from(math);
+
+    for (const item of items) {
+      // convert to MML
+      const mml = visitor.visitTree(item.root);
+      let newMarkdown = '';
+
+      if (isReferenceLink(item.math)) {
+        // convert tex to text link
+        const refNum = extractRefNumFromMml(mml, item.math);
+        const anchor = extractAnchorLinkFromMml(mml, item.math);
+        newMarkdown = `[${refNum}](${anchor})`;
+      } else {
+        // insert alias as a custom directive and build store of mml
+        store.push(mml);
+        const type = item.display ? 'blockMath' : 'inlineMath';
+        const idx = store.length - 1;
+        newMarkdown = `:${type}[${idx}]`;
+      }
+
+      const tree = adaptor.parse(newMarkdown, 'text/html');
+      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    }
+  } // add store to ctx
+
+
+  ctx.mmlStore = store;
+  const doc = mathjax_js_namespaceObject.mathjax.document(html, {
+    InputJax: tex,
+    renderActions: {
+      typeset: [MathItem_namespaceObject.STATE.TYPESET, storeTex]
+    }
+  });
+  doc.render();
+  const result = adaptor.innerHTML(adaptor.body(doc.document));
+  return unprotectHtml(result);
+}
+
+function isReferenceLink(tex) {
+  return /^\\ref\{(.+)\}$/.test(tex);
+}
+
+function extractRefNumFromMml(mml, tex) {
+  // TODO: should error on "???"
+  // const match = mml.match(/<mtext>(\d+)<\/mtext>/);
+  const match = mml.match(/<mtext>(.+)<\/mtext>/);
+
+  if (match === null) {
+    throw new Error(`Invalid reference: ${tex}. You may only reference numbered sections.`);
+  }
+
+  return match[1];
+}
+
+function extractAnchorLinkFromMml(mml, tex) {
+  const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
+
+  if (match === null) {
+    throw new Error(`Reference has no anchor link: ${tex}`);
+  }
+
+  return match[1];
+} // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
+
+
+function unprotectHtml(html) {
+  return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+;// CONCATENATED MODULE: external "@double-great/remark-lint-alt-text"
+const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");
+var remark_lint_alt_text_default = /*#__PURE__*/__webpack_require__.n(remark_lint_alt_text_namespaceObject);
+;// CONCATENATED MODULE: external "@mapbox/remark-lint-link-text"
+const remark_lint_link_text_namespaceObject = require("@mapbox/remark-lint-link-text");
+var remark_lint_link_text_default = /*#__PURE__*/__webpack_require__.n(remark_lint_link_text_namespaceObject);
+;// CONCATENATED MODULE: external "dictionary-en-gb"
+const external_dictionary_en_gb_namespaceObject = require("dictionary-en-gb");
+var external_dictionary_en_gb_default = /*#__PURE__*/__webpack_require__.n(external_dictionary_en_gb_namespaceObject);
+;// CONCATENATED MODULE: external "remark-retext"
+const external_remark_retext_namespaceObject = require("remark-retext");
+var external_remark_retext_default = /*#__PURE__*/__webpack_require__.n(external_remark_retext_namespaceObject);
+;// CONCATENATED MODULE: external "retext-english"
+const external_retext_english_namespaceObject = require("retext-english");
+var external_retext_english_default = /*#__PURE__*/__webpack_require__.n(external_retext_english_namespaceObject);
+;// CONCATENATED MODULE: external "retext-spell"
+const external_retext_spell_namespaceObject = require("retext-spell");
+var external_retext_spell_default = /*#__PURE__*/__webpack_require__.n(external_retext_spell_namespaceObject);
+;// CONCATENATED MODULE: external "mdast-normalize-headings"
+const external_mdast_normalize_headings_namespaceObject = require("mdast-normalize-headings");
+var external_mdast_normalize_headings_default = /*#__PURE__*/__webpack_require__.n(external_mdast_normalize_headings_namespaceObject);
+;// CONCATENATED MODULE: external "remark-autolink-headings"
+const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
+var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
+;// CONCATENATED MODULE: external "remark-directive"
+const external_remark_directive_namespaceObject = require("remark-directive");
+var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
+;// CONCATENATED MODULE: external "remark-frontmatter"
+const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
+var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
+;// CONCATENATED MODULE: external "remark-gfm"
+const external_remark_gfm_namespaceObject = require("remark-gfm");
+var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
+// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
+var remark_parse = __webpack_require__(3850);
+var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
+;// CONCATENATED MODULE: external "remark-sectionize"
+const external_remark_sectionize_namespaceObject = require("remark-sectionize");
+var external_remark_sectionize_default = /*#__PURE__*/__webpack_require__.n(external_remark_sectionize_namespaceObject);
+;// CONCATENATED MODULE: external "remark-slug"
+const external_remark_slug_namespaceObject = require("remark-slug");
+var external_remark_slug_default = /*#__PURE__*/__webpack_require__.n(external_remark_slug_namespaceObject);
 ;// CONCATENATED MODULE: external "mathjax-full/js/core/MathItem.js"
 const MathItem_js_namespaceObject = require("mathjax-full/js/core/MathItem.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/handlers/html/HTMLDocument.js"
@@ -1796,7 +1606,7 @@ const external_speech_rule_engine_namespaceObject = require("speech-rule-engine"
  // @ts-expect-error
 
 
-function mathjax_tex_texToMml(tex = '') {
+function texToMml(tex = '') {
   const adaptor = liteAdaptor(); //  Busproofs requires an output jax, which we aren't using
 
   const packages = AllPackages.filter(name => name !== 'bussproofs');
@@ -1812,7 +1622,7 @@ function mathjax_tex_texToMml(tex = '') {
   const visitor = new SerializedMmlVisitor();
   return visitor.visitTree(node);
 }
-function mathjax_tex_mmlToSvg(mml) {
+function mmlToSvg(mml) {
   const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
   (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
   const input = new mathml_js_namespaceObject.MathML();
@@ -1828,50 +1638,55 @@ function mathjax_tex_mmlToSvg(mml) {
   });
   return adaptor.outerHTML(node);
 }
-function mathjax_tex_mmlToSpeech(mml) {
+function mmlToSpeech(mml) {
   return (0,external_speech_rule_engine_namespaceObject.toSpeech)(mml);
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/_accessible-tex.ts
+;// CONCATENATED MODULE: ./src/latex/directive-to-svg.ts
+function directive_to_svg_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function directive_to_svg_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { directive_to_svg_ownKeys(Object(source), true).forEach(function (key) { directive_to_svg_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { directive_to_svg_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function directive_to_svg_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
 
-function accessibleTex(ctx) {
-  return async tree => {
-    const transformations = [];
-    visit(tree, ['math', 'inlineMath'], node => {
-      transformations.push(node);
+function aliasDirectiveToSvg(ctx) {
+  return tree => {
+    external_unist_util_visit_default()(tree, 'textDirective', node => {
+      if (!ctx.mmlStore || ctx.options.noTexSvg) {
+        return;
+      }
+
+      switch (node.name) {
+        case 'inlineMath':
+        case 'blockMath':
+          {
+            const idx = getTexIdx(node);
+            const mml = ctx.mmlStore[idx]; // console.log(mml);
+
+            const svg = renderSvg(mml);
+
+            const properties = directive_to_svg_objectSpread(directive_to_svg_objectSpread({}, svg.properties), {}, {
+              className: node.name === 'inlineMath' ? 'inline-math' : 'block-math'
+            });
+
+            node.data = {
+              hName: svg.tagName,
+              hProperties: properties,
+              hChildren: svg.children
+            };
+          }
+      }
     });
-    await Promise.all(transformations.map(node => customMath(node, ctx)));
   };
 }
 
-async function customMath(node, ctx) {
-  const value = node.value; // if (node.type === 'math') {
-  //   console.log(value);
-  // }
-
-  const svg = await cacheJsonToFile({
-    ctx,
-    prefix: 'tex',
-    key: value,
-    execFn: mathJaxSvg
-  }); // if (value.startsWith('y')) {
-  //   console.log(value);
-  //   console.log(svg);
-  // }
-
-  node.data = {
-    hName: node.type === 'inlineMath' ? 'span' : 'div',
-    hProperties: {
-      className: node.type === 'inlineMath' ? 'math-inline' : 'math'
-    },
-    hChildren: [svg]
-  };
+function getTexIdx(node) {
+  return Number(node.children[0].value);
 }
 
-async function mathJaxSvg(value) {
-  const mml = texToMml(value);
+function renderSvg(mml) {
   const label = mmlToSpeech(mml);
   const svg = mmlToSvg(mml);
   return createAccessibleSvg(svg, label);
@@ -1881,10 +1696,8 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   const tree = rehypeParser.parse(mathjaxSvg);
   const parent = tree.children[0];
   const svg = parent.children[0];
-  const properties = svg.properties; // const block = properties.width === '100%';
-
+  const properties = svg.properties;
   const newProperties = {
-    // className: block ? 'math' : 'math-inline',
     width: properties.width,
     height: properties.height,
     viewBox: properties.viewBox,
@@ -1910,53 +1723,7 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   svg.properties = newProperties;
   return svg;
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/accessible-tex.ts
-function accessible_tex_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function accessible_tex_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { accessible_tex_ownKeys(Object(source), true).forEach(function (key) { accessible_tex_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { accessible_tex_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function accessible_tex_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
-
-
-function accessible_tex_accessibleTex(ctx) {
-  return tree => {
-    external_unist_util_visit_default()(tree, 'textDirective', node => {
-      switch (node.name) {
-        case 'inlineMath':
-        case 'blockMath':
-          {
-            const idx = getTexIdx(node);
-            const mml = ctx.texStore[idx];
-            const svg = renderSvg(mml);
-
-            const properties = accessible_tex_objectSpread(accessible_tex_objectSpread({}, svg.properties), {}, {
-              className: node.name === 'inlineMath' ? 'inline-math' : 'block-math'
-            }); // console.log(svg);
-
-
-            node.data = {
-              hName: svg.tagName,
-              hProperties: properties,
-              hChildren: svg.children
-            };
-          }
-      }
-    });
-  };
-}
-
-function getTexIdx(node) {
-  return Number(node.children[0].value);
-}
-
-function renderSvg(mml) {
-  const label = mathjax_tex_mmlToSpeech(mml);
-  const svg = mathjax_tex_mmlToSvg(mml);
-  return createAccessibleSvg(svg, label);
-}
-;// CONCATENATED MODULE: ./src/transforms-mdast/boxouts.ts
+;// CONCATENATED MODULE: ./src/mdast/boxouts.ts
 
 
 
@@ -2033,8 +1800,9 @@ function createBoxout(node, count) {
 }
 
 function createAnswer(node, count) {
-  const hast = mdast_util_to_hast_default()(node);
-  const children = hast.children;
+  const {
+    children
+  } = mdast_util_to_hast_default()(node);
   return {
     type: 'element',
     tagName: 'div',
@@ -2085,25 +1853,25 @@ function boxouts_createTitle(node) {
   return {
     type: 'element',
     tagName: 'h3',
-    children: [createTitleValue(node)]
+    children: createTitleValue(node)
   };
 }
 
 function createTitleValue(node) {
   const name = node.name;
-  const title = getTitleValue(node);
+  const title = getTitleValue(node) || '';
 
   if (name !== 'weblink') {
-    return {
+    return [{
       type: 'text',
       value: title
-    };
+    }];
   }
 
   const {
     target
   } = node.attributes;
-  return {
+  return [{
     type: 'element',
     tagName: 'a',
     properties: {
@@ -2115,7 +1883,7 @@ function createTitleValue(node) {
       type: 'text',
       value: title
     }]
-  };
+  }];
 }
 
 function getTitleValue(node) {
@@ -2156,7 +1924,7 @@ function createCounter() {
 ;// CONCATENATED MODULE: external "refractor"
 const external_refractor_namespaceObject = require("refractor");
 var external_refractor_default = /*#__PURE__*/__webpack_require__.n(external_refractor_namespaceObject);
-;// CONCATENATED MODULE: ./src/transforms-mdast/code-blocks.ts
+;// CONCATENATED MODULE: ./src/mdast/code-blocks.ts
 // @ts-expect-error
 
 
@@ -2165,52 +1933,77 @@ function codeBlocks(ctx) {
     const codeBlocks = [];
     external_unist_util_visit_default()(tree, 'code', node => {
       codeBlocks.push(node);
-    }); // these need to be run in order
+    });
 
     for (const codeBlock of codeBlocks) {
-      await customCode(codeBlock, ctx, file);
+      customCode(codeBlock, ctx, file);
     }
   };
 }
 
-async function customCode(node, ctx, file) {
+function customCode(node, ctx, file) {
   // const { language, options, value } = parseCodeParams(node);
   const language = parseLanguage(node);
+  const klass = parseClass(node);
   const meta = node.meta || '';
-  node.type = 'custom-code';
-  node.data = {
-    hName: 'div',
-    hProperties: {
-      className: 'code-wrapper'
-    },
-    hChildren: [{
-      type: 'element',
-      tagName: 'pre',
-      children: [{
+  const codeProps = {};
+
+  if (meta !== '') {
+    codeProps.className = meta;
+  }
+
+  const children = [];
+
+  if (ctx.options.noSyntaxHighlight || language === '') {
+    children.push({
+      type: 'text',
+      value: node.value
+    });
+  } else {
+    children.push(...external_refractor_default().highlight(node.value, language));
+  }
+
+  Object.assign(node, {
+    type: 'custom-code',
+    data: {
+      hName: 'div',
+      hProperties: {
+        className: ['code-wrapper', klass]
+      },
+      hChildren: [{
         type: 'element',
-        tagName: 'code',
-        properties: {
-          className: [meta]
-        },
-        children: ctx.options.noSyntaxHighlight || language === '' ? [{
-          type: 'text',
-          value: node.value
-        }] : external_refractor_default().highlight(node.value, language)
+        tagName: 'pre',
+        children: [{
+          type: 'element',
+          tagName: 'code',
+          properties: codeProps,
+          children
+        }]
       }]
-    }]
-  };
+    }
+  });
 }
 
 function parseLanguage(node) {
   const lang = node.lang || '';
 
-  if (lang === 'plaintext') {
+  if (lang === 'plaintext' || lang.startsWith('{')) {
     return '';
   }
 
   return lang.toLowerCase();
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/embed-asset-url.ts
+
+function parseClass(node) {
+  const lang = node.lang || '';
+
+  if (!lang.startsWith('{.')) {
+    return '';
+  }
+
+  return lang.slice(2, -1);
+}
+;// CONCATENATED MODULE: ./src/mdast/embed-asset-url.ts
 
 
 function embedAssetUrl() {
@@ -2236,7 +2029,7 @@ function embedAssetUrl() {
 function getPath(url, dirname) {
   return external_path_default().isAbsolute(url) ? url : external_path_default().join(process.cwd(), dirname, url);
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/images.ts
+;// CONCATENATED MODULE: ./src/mdast/images.ts
 
 function images_images() {
   let count = 0;
@@ -2248,48 +2041,79 @@ function images_images() {
 }
 
 function template(node, count) {
-  node.type = 'custom-image';
-  node.data = {
-    hName: 'figure',
-    hProperties: {
-      className: ['img-wrapper']
-    },
-    hChildren: [{
-      type: 'element',
-      tagName: 'img',
-      properties: {
-        src: node.url,
-        alt: node.alt
+  Object.assign(node, {
+    type: 'custom-image',
+    data: {
+      hName: 'figure',
+      hProperties: {
+        className: ['img-wrapper']
       },
-      children: []
-    }, {
-      type: 'element',
-      tagName: 'figcaption',
-      children: [{
+      hChildren: [{
         type: 'element',
-        tagName: 'span',
+        tagName: 'img',
         properties: {
-          className: 'caption-count'
+          src: node.url,
+          alt: node.alt
         },
-        children: [{
-          type: 'text',
-          value: `Figure ${count}:`
-        }]
+        children: []
       }, {
-        type: 'text',
-        value: ` ${node.alt}`
+        type: 'element',
+        tagName: 'figcaption',
+        children: [{
+          type: 'element',
+          tagName: 'span',
+          properties: {
+            className: 'caption-count'
+          },
+          children: [{
+            type: 'text',
+            value: `Figure ${count}:`
+          }]
+        }, {
+          type: 'text',
+          value: ` ${node.alt}`
+        }]
       }]
-    }]
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
+
+function moveAnswersToEnd() {
+  return tree => {
+    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, parent) => {
+      // remove answer from task rehype
+      if (node.name === 'task' && node.data) {
+        const children = node.data.hChildren || [];
+        node.data.hChildren = children.filter(o => o.name !== 'answer');
+      }
+
+      if (node.name === 'answer') {
+        // these nodes have already been moved to the end
+        if (node.movedToEnd) {
+          return;
+        } // remove answer block from task node
+
+
+        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
+        parentChildren.splice(index, 1); // add to root node
+
+        const treeParent = tree;
+        const treeChildren = treeParent.children || [];
+        node.movedToEnd = true;
+        treeChildren.push(node);
+      }
+    });
   };
 }
-;// CONCATENATED MODULE: ./src/transforms-mdast/youtube-videos.ts
+;// CONCATENATED MODULE: ./src/mdast/youtube-videos.ts
 
 function youtubeVideos() {
   return async (tree, file) => {
     external_unist_util_visit_default()(tree, 'leafDirective', node => {
       if (node.name === 'video') {
         const attributes = node.attributes;
-        const title = youtube_videos_getTitle(node);
+        const title = getTitle(node);
         node.data = {
           hName: 'a',
           hProperties: {
@@ -2364,7 +2188,7 @@ function youtubeVideos() {
   };
 }
 
-function youtube_videos_getTitle(node) {
+function getTitle(node) {
   const children = node.children;
   const firstChild = children[0];
   return firstChild.value;
@@ -2387,23 +2211,17 @@ function formatDuration(duration = '') {
 
   return `${match[1]}:${match[2].padStart(2, '0')}`;
 }
-;// CONCATENATED MODULE: ./src/processors.ts
- // @ts-expect-error
+;// CONCATENATED MODULE: ./src/mdast/index.ts
+function mdast_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
- // @ts-expect-error
+function mdast_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { mdast_ownKeys(Object(source), true).forEach(function (key) { mdast_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { mdast_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
- // @ts-expect-error
+function mdast_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-
- // @ts-expect-error
-
-
- // @ts-expect-error
+// @ts-expect-error
 
 
 
-
- // import math from 'remark-math';
 
 
  // @ts-expect-error
@@ -2411,7 +2229,6 @@ function formatDuration(duration = '') {
 
  // @ts-expect-error
 
- // @ts-expect-error
 
 
 
@@ -2422,170 +2239,548 @@ function formatDuration(duration = '') {
 
 
 
-
-
-
-
-
- // import { moveAnswersToEnd } from './transforms-mdast/move-answers-to-end';
-
-
-
- // import { inspect } from './utils/utils';
-
-async function markdownParser(file, ctx) {
-  const processor = unified_default()().use((remark_parse_default())).use((external_remark_directive_default())) // .use(math)
-  .use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use(embedAssetUrl);
-  const parsed = processor.parse(file);
-  return processor.run(parsed, file);
-}
-async function linter(mdast, ctx, file) {
-  const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(lintLatex).use(lintAltText).use(lintLinkText);
-
-  if (ctx.options.spelling) {
-    const retextProcessor = unified().use(english).use(spell, {
-      dictionary,
-      max: 1
-    });
-    processor.use(remark2retext, retextProcessor);
-  }
-
-  return processor.run(mdast, file);
-}
-async function customCombinedTransforms(mdast, ctx) {
-  const linkIcon = createSvg('link-icon');
-  const processor = unified_default()().use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
-    content: linkIcon,
+async function mdastPhase(md, unit, ctx, targetPdf) {
+  // https://github.com/unifiedjs/unified
+  // convert markdown to syntax tree: complex transforms
+  // should be more robust and straightforward
+  const processor = unified_default()() // third-party plugins:
+  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use((external_remark_sectionize_default())).use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
+    content: createSvg('link-icon'),
     linkProperties: {
       className: 'link'
     }
-  }).use(youtubeVideos).use(accessible_tex_accessibleTex, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images); // .use(moveAnswersToEnd);
+  }) // custom plugins:
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images);
 
-  return processor.run(mdast);
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  const file = external_to_vfile_default()({
+    contents: md
+  });
+  const parsed = processor.parse(file);
+  const withTitles = addCoureTitles(parsed, unit.titles);
+  external_mdast_normalize_headings_default()(withTitles);
+  return processor.run(withTitles, file);
 }
-async function htmlCompiler(mdast, ctx, unitIdx) {
-  const {
-    titles
-  } = ctx.course.units[unitIdx];
-  const processor = unified_default()().use((external_remark_rehype_default()), {
-    allowDangerousHtml: true
-  }).use(responsiveTables).use((external_rehype_format_default())).use((external_rehype_stringify_default()));
 
-  if (!ctx.options.noEmbedAssets) {
-    processor.use(embedAssets, ctx); // TODO: try to get this inside custom transforms
+function addCoureTitles(tree, {
+  courseTitle,
+  unitTitle
+}) {
+  const titles = [{
+    type: 'heading',
+    depth: 1,
+    children: [{
+      type: 'text',
+      value: courseTitle
+    }],
+    data: {
+      hChildren: [{
+        type: 'element',
+        tagName: 'h1',
+        children: [{
+          type: 'text',
+          value: courseTitle
+        }, {
+          type: 'element',
+          tagName: 'span',
+          properties: {
+            className: 'unit'
+          },
+          children: [{
+            type: 'text',
+            value: unitTitle
+          }]
+        }]
+      }]
+    }
+  }];
+  return mdast_objectSpread(mdast_objectSpread({}, tree), {}, {
+    children: [...titles, ...tree.children]
+  });
+}
+// EXTERNAL MODULE: ./src/pre-parse/convert-macro-to-directive.ts
+var convert_macro_to_directive = __webpack_require__(9386);
+;// CONCATENATED MODULE: external "markdown-table"
+const external_markdown_table_namespaceObject = require("markdown-table");
+var external_markdown_table_default = /*#__PURE__*/__webpack_require__.n(external_markdown_table_namespaceObject);
+;// CONCATENATED MODULE: ./src/pre-parse/reformat-pandoc-simple-tables.ts
+// @ts-expect-error
+
+function reformatPandocSimpleTables(contents) {
+  const lines = contents.split('\n'); // operate on array backwards as length may change with transformation,
+  // preserving index in loop
+
+  for (var idx = lines.length - 1; idx >= 0; idx--) {
+    const line = lines[idx];
+
+    if (isValidPandocSimpleTableSeparator(line, idx)) {
+      const {
+        startIdx,
+        count
+      } = getTableBounds(lines, idx);
+      const currentLines = lines.slice(startIdx, startIdx + count + 1);
+      const newLines = convertLines(currentLines);
+      lines.splice(startIdx, count + 1, ...newLines);
+    }
   }
 
-  if (!ctx.options.noWrapper) {
-    processor.use(htmlWrapper, titles, mdast);
+  return lines.join('\n');
+}
+
+function isValidPandocSimpleTableSeparator(line, idx) {
+  if (idx === 0 || !/-{2,}/g.test(line) || !/^[\s|-]+$/.test(line)) {
+    return false;
   }
 
-  if (!ctx.options.noDoc) {
-    const templateCss = await readFile(external_path_default().join(__dirname, 'template.css'));
-    const templateJs = await readFile(external_path_default().join(__dirname, 'template.js2'));
-    processor.use((external_rehype_document_default()), {
-      title: titles.docTitle,
-      style: `\n${templateCss}\n`,
-      script: `\n${templateJs}\n`
-    });
-  }
+  return getColumnIndexes(line).length > 1;
+}
 
-  const hast = await processor.run(mdast);
-  const html = processor.stringify(hast);
+function convertLines(lines) {
+  const table = parseTable(lines);
+  const align = getColumnAlignment(table[0]);
+  return external_markdown_table_default()(table, {
+    align
+  }).split('\n');
+}
+
+function getTableBounds(arr, idx) {
+  const startIdx = idx - 1;
+  const endIdx = arr.slice(startIdx).findIndex(l => l.trim() === '');
+  const count = endIdx === -1 ? arr.length - 1 : endIdx;
   return {
-    hast,
-    html
+    startIdx,
+    count
   };
 }
-async function pdfHtmlCompiler(mdast, ctx, unitIdx) {// TODO: pdf cover
-  // const processor = unified().use(moveAnswersToEnd);
-  // const transformed = await processor.run(mdast);
-}
-;// CONCATENATED MODULE: ./src/r-markdown/knitr.ts
 
-
-async function processKnitr(files, ctx) {
-  return Promise.all(files.map(async file => {
-    file.contents = await knitr(file.path, ctx);
-    return file;
-  }));
+function parseTable(tableLines) {
+  const [titles, separator, ...body] = tableLines;
+  const columnIndexes = getColumnIndexes(separator);
+  const titleCells = parseTitleRow(titles, columnIndexes);
+  const bodyCells = body.map(line => parseBodyRow(line, columnIndexes)).reduce(multilineReducer, []);
+  return [titleCells, ...bodyCells];
 }
 
-async function knitr(filePath, ctx) {
-  return new Promise((resolve, reject) => {
-    const rFile = external_path_default().join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${ctx.cacheDir}/`;
-    (0,external_child_process_namespaceObject.exec)(cmd, (err, response, stdErr) => {
-      if (stdErr) {
-        console.error('STDERR', stdErr);
-        reject(stdErr);
-      } else if (err) {
-        console.error('ERROR', err);
-        reject(err);
-      } else {
-        resolve(knitr_formatResponse(response));
+function getColumnIndexes(line) {
+  return line.split('').reduce((acc, str, idx) => {
+    if (str === '-' && (idx === 0 || line[idx - 1] === ' ')) {
+      acc.push([idx]);
+    } else if (idx !== line.length - 1 && str === ' ' && line[idx - 1] === '-') {
+      acc[acc.length - 1].push(idx);
+    }
+
+    return acc;
+  }, []);
+}
+
+function getColumnAlignment(titleCells) {
+  return titleCells.map(title => {
+    if (title[0] === ' ') {
+      if (title[title.length - 1] === ' ') {
+        return 'center';
       }
-    });
+
+      return 'right';
+    }
+
+    return 'left';
   });
 }
 
-function knitr_formatResponse(response) {
-  return response.replace(/\[1\]\s""$/m, '').trim();
-} // attempts at changing knitr output. doesn't completely work
-// const hooks = `
-//   knit_hooks$set(
-//     source = function(x, options) {
-//       paste(c("\`\`\`r", x, "\`\`\`"), collapse = "\n")
-//     },
-//     output = function(x, options) {
-//       paste(c("\`\`\`", x, "\`\`\`"), collapse = "\n")
-//     },
-//     error = function(x, options) {
-//       paste(
-//         c(
-//           "\`\`\`plaintext error",
-//           gsub("## Error", "\#\# Error", x),
-//           "\`\`\`"
-//         ),
-//         collapse = "\n"
-//       )
-//     }
-//   )
-// `;
-;// CONCATENATED MODULE: external "html-pdf"
-const external_html_pdf_namespaceObject = require("html-pdf");
-;// CONCATENATED MODULE: ./src/utils/write-files.ts
-
-
-
-
-async function writeHtml(fileName, html, dirPath) {
-  const filePath = getFilePath(dirPath, fileName);
-  await writeFile(`${filePath}.html`, html);
-  console.log('html file written to:', `${filePath}.html`);
-}
-async function writePdf(fileName, pdfHtml, dirPath) {
-  const filePath = getFilePath(dirPath, fileName);
-  await writePdfPromise(`${filePath}.pdf`, pdfHtml);
-  console.log('pdf file written to:', `${filePath}.pdf`);
+function parseTitleRow(line, columnIndexes) {
+  return columnIndexes.map(tuple => line.slice(...tuple));
 }
 
-async function writePdfPromise(filePath, html) {
+function parseBodyRow(line, columnIndexes) {
+  return columnIndexes.map(tuple => {
+    const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
+    return line.slice(tuple[0], end).trim();
+  });
+}
+
+function multilineReducer(acc, row) {
+  if (row.some(cell => cell.trim() === '')) {
+    const prevIdx = acc.length - 1;
+    acc[prevIdx].forEach((cell, i) => {
+      const trimmed = row[i].trim();
+
+      if (trimmed !== '') {
+        acc[prevIdx][i] = cell + ' ' + trimmed;
+      }
+    });
+  } else {
+    acc.push(row);
+  }
+
+  return acc;
+}
+// EXTERNAL MODULE: ./src/pre-parse/remove-new-page.ts
+var remove_new_page = __webpack_require__(3369);
+;// CONCATENATED MODULE: ./src/pre-parse/index.ts
+
+
+ // some of the original coursework syntax can't be parsed by
+// existing plugins for unified.js, so in a "pre-parse" phase
+// I transform some syntax using regex, so it can be parsed
+
+function preParsePhase(md, ctx) {
+  let result = md; // Remove commented sections
+
+  result = result.replace(/<\!--.*?-->/g, ''); // Convert macros to directives
+
+  result = (0,convert_macro_to_directive/* convertMacroToDirective */.W)(result); // Remove \\newpage lines
+
+  result = (0,remove_new_page/* removeNewPage */.C)(result); // Reformat Pandoc simple tables
+
+  result = reformatPandocSimpleTables(result);
+  return result;
+}
+;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
+
+
+
+function assertAssetExists() {
+  async function getAssetUrl(node, file) {
+    const url = node.url || '';
+
+    if (!file.dirname) {
+      throw new Error('VFile dirname undefined');
+    }
+
+    if (!url.startsWith('http')) {
+      const exists = await checkLocalFileExists(url);
+
+      if (!exists) {
+        failMessage(file, `No asset found at ${url}`, node.position);
+      }
+    }
+  }
+
+  return async (tree, file) => {
+    const transformations = [];
+    external_unist_util_visit_default()(tree, 'image', node => {
+      transformations.push(getAssetUrl(node, file));
+    });
+    await Promise.all(transformations);
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-task-answer.ts
+
+
+function assertTaskAnswerStructure() {
+  return (tree, file) => {
+    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, _parent) => {
+      if (node.name === 'task') {
+        const children = node.children;
+        const answers = children.filter(o => o.name === 'answer');
+
+        if (answers.length < 1) {
+          failMessage(file, 'Task has no answer', node.position);
+        }
+
+        if (answers.length > 1) {
+          failMessage(file, 'Task has multiple answers', node.position);
+        }
+      }
+
+      if (node.name === 'answer') {
+        const parent = _parent;
+
+        if (!parent || parent.name !== 'task') {
+          failMessage(file, 'Answer must be nested inside task', node.position);
+        }
+      }
+    });
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-video-attributes.ts
+
+
+function assertVideoAttributes() {
+  return async (tree, file) => {
+    external_unist_util_visit_default()(tree, 'leafDirective', node => {
+      if (node.name === 'video') {
+        if (!node.attributes.id) {
+          failMessage(file, 'id attribute is required', node.position);
+        }
+
+        if (!node.attributes.duration) {
+          failMessage(file, 'duration attribute is required', node.position);
+        }
+
+        const title = assert_video_attributes_getTitle(node);
+
+        if (!title) {
+          failMessage(file, 'title is required', node.position);
+        }
+      }
+    });
+  };
+}
+
+function assert_video_attributes_getTitle(node) {
+  const children = node.children;
+  const firstChild = children[0];
+  return (firstChild === null || firstChild === void 0 ? void 0 : firstChild.value) || '';
+}
+;// CONCATENATED MODULE: ./src/linter/assert-weblink-target.ts
+
+
+function assertWeblinkTarget() {
+  return (tree, file) => {
+    external_unist_util_visit_default()(tree, 'containerDirective', node => {
+      if (node.name === 'weblink') {
+        if (node.attributes.target === undefined) {
+          failMessage(file, 'Weblink has no target attribute', node.position);
+        }
+      }
+    });
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/lint-latex.ts
+
+
+function lintLatex() {
+  return async (tree, file) => {
+    const transformations = [];
+    external_unist_util_visit_default()(tree, 'math', node => {
+      transformations.push(chktex(node, file));
+    });
+    await Promise.all(transformations);
+    return tree;
+  };
+}
+
+async function chktex(node, file) {
   return new Promise((resolve, reject) => {
-    pdf.create(html).toFile(filePath, err => {
+    (0,external_child_process_namespaceObject.exec)(`chktex -q <<< "${node.value}"`, (err, response) => {
       if (err) {
         reject(err);
       } else {
+        const messages = lint_latex_formatResponse(response);
+        const position = node.position;
+        messages.forEach(({
+          line,
+          column,
+          message
+        }) => {
+          file.message(message, {
+            line: position.start.line + line,
+            column: position.start.column + column
+          });
+        });
         resolve();
       }
     });
   });
 }
 
-function getFilePath(dirPath, unitName) {
-  const buildDir = getBuildDir(dirPath);
-  const fileName = (0,external_lodash_namespaceObject.kebabCase)(unitName);
-  return external_path_default().join(buildDir, fileName);
+function lint_latex_formatResponse(response) {
+  if (response.trim() === '') {
+    return [];
+  }
+
+  function formatMessage(message) {
+    return message.replace(/'/g, '').replace(/`/g, '');
+  }
+
+  return response.split(/Warning \d+ in stdin line /).filter(Boolean).reduce((acc, s) => {
+    const [key, value] = s.split(':');
+    const line = Number(key);
+    const trimmed = value.trim();
+    const match = trimmed.match(/(.*)\n(.*)\n(\s*)\^/m);
+
+    if (Array.isArray(match)) {
+      const message = formatMessage(match[1]);
+      acc.push({
+        line,
+        column: match[3].length,
+        message: `${message}\n\n${match[2]}\n${match[3]}^`
+      });
+    } else {
+      acc.push({
+        line,
+        column: 0,
+        message: formatMessage(trimmed)
+      });
+    }
+
+    return acc;
+  }, []);
 }
+;// CONCATENATED MODULE: external "figures"
+const external_figures_namespaceObject = require("figures");
+var external_figures_default = /*#__PURE__*/__webpack_require__.n(external_figures_namespaceObject);
+;// CONCATENATED MODULE: ./src/linter/report.ts
+
+
+
+
+function printReport(files, ctx) {
+  const {
+    reportOnlyErrors,
+    shouldFail
+  } = ctx.options;
+
+  if (reportOnlyErrors && shouldFail) {
+    return;
+  }
+
+  for (const file of files) {
+    const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
+
+    if (messages.length !== 0) {
+      console.log(`\n${getFilePath(file.path)}`);
+      messages.map(printMessage);
+    }
+  }
+}
+function reportHasFatalErrors(files, ctx) {
+  const passed = files.every(file => file.messages.every(message => message.status !== MessageStatus.fail));
+  return !passed;
+}
+
+function failingMessages(messages) {
+  return messages.filter(o => o.status === MessageStatus.fail);
+}
+
+function printMessage(message) {
+  // console.log(message);
+  const status = message.status;
+  const position = external_chalk_default().grey(`${message.line}:${message.column}`);
+  const reason = formatReason(message.reason, status);
+  console.log(`${formatStatus(status)}  ${position}  ${reason}`);
+}
+
+function getFilePath(filePath) {
+  return external_path_default().isAbsolute(filePath) ? filePath : external_path_default().join(process.cwd(), filePath);
+}
+
+function formatStatus(status) {
+  const statusColour = getStatusColour(status);
+
+  switch (status) {
+    case MessageStatus.fail:
+      return statusColour((external_figures_default()).cross);
+
+    default:
+      return statusColour((external_figures_default()).warning);
+    // TODO: fail on unsupported status?
+  }
+}
+
+function formatReason(reason, status) {
+  const statusColour = getStatusColour(status);
+  const [first, ...rest] = reason.split('\n');
+  const formattedFirst = statusColour(first);
+  const formattedRest = rest.map(line => external_chalk_default().grey(line));
+  return [formattedFirst, ...formattedRest].join('\n');
+}
+
+function getStatusColour(status) {
+  switch (status) {
+    case MessageStatus.fail:
+      return (external_chalk_default()).red;
+
+    default:
+      return (external_chalk_default()).yellow;
+  }
+}
+;// CONCATENATED MODULE: ./src/linter/index.ts
+function linter_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function linter_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { linter_ownKeys(Object(source), true).forEach(function (key) { linter_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { linter_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// @ts-expect-error
+ // @ts-expect-error
+
+ // @ts-expect-error
+
+ // @ts-expect-error
+
+ // @ts-expect-error
+
+ // @ts-expect-error
+
+
+
+
+
+
+
+
+
+
+
+async function linter_linter(unit, ctx) {
+  await Promise.all(unit.files.map(file => createReport(file, unit, ctx)));
+
+  if (!ctx.options.noReport) {
+    printReport(unit.files, ctx);
+  }
+
+  if (reportHasFatalErrors(unit.files, ctx)) {
+    if (ctx.options.noReport) {
+      printReport(unit.files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
+        options: linter_objectSpread(linter_objectSpread({}, ctx.options), {}, {
+          reportOnlyErrors: true
+        })
+      }));
+    } // TODO: should probably throw here
+    // throw new Error('Report has fatal errors');
+
+  }
+}
+
+async function createReport(file, unit, ctx) {
+  const contents = file.contents;
+  const md = preParsePhase(contents, ctx);
+  const mdast = await mdastPhase(md, unit, ctx);
+  const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
+
+  if (ctx.options.spelling) {
+    const retextProcessor = unified_default()().use((external_retext_english_default())).use((external_retext_spell_default()), {
+      dictionary: (external_dictionary_en_gb_default()),
+      max: 1
+    });
+    processor.use((external_remark_retext_default()), retextProcessor);
+  }
+
+  await processor.run(mdast, file);
+}
+;// CONCATENATED MODULE: external "puppeteer"
+const external_puppeteer_namespaceObject = require("puppeteer");
+var external_puppeteer_default = /*#__PURE__*/__webpack_require__.n(external_puppeteer_namespaceObject);
+;// CONCATENATED MODULE: ./src/utils/pdf.ts
+
+async function convertToPdf(html) {
+  const browser = await external_puppeteer_default().launch({
+    headless: true
+  });
+  const page = await browser.newPage();
+  await page.setContent(html);
+  await page.evaluateHandle('document.fonts.ready');
+  const pdf = await page.pdf({
+    format: 'a4',
+    printBackground: true,
+    displayHeaderFooter: true,
+    margin: {
+      top: '20px',
+      left: '40px',
+      right: '40px',
+      bottom: '40px'
+    }
+  });
+  await browser.close();
+  return pdf;
+}
+// EXTERNAL MODULE: ./src/utils/timer.ts
+var utils_timer = __webpack_require__(2364);
 ;// CONCATENATED MODULE: ./src/index.ts
 
 
@@ -2595,127 +2790,214 @@ function getFilePath(dirPath, unitName) {
 
 
 
-async function rMarkdown(dirPath, options = {}) {
-  const ctx = {
-    course: await collectCoursework(dirPath),
-    dirPath,
-    buildDir: getBuildDir(dirPath),
-    cacheDir: getCacheDir(dirPath),
-    options
-  };
 
-  if (ctx.buildDir) {
-    await mkdir(ctx.buildDir);
-  }
+
+
+
+
+async function rMarkdown(dirPath, options = {}) {
+  return run(dirPath, options); // try {
+  //   await run(dirPath, options);
+  // } catch (err) {
+  //   console.log(err.message);
+  // }
+}
+
+async function run(dirPath, options = {}) {
+  const ctx = await createContext(dirPath, options); // write single week
 
   if (ctx.options.week) {
-    await createUnit(ctx, ctx.options.week - 1);
-  } else {
-    for (let idx = 0; idx < ctx.course.units.length; idx++) {
-      await createUnit(ctx, idx);
-    }
-  }
-}
-
-async function createUnit(ctx, unitIdx) {
-  const unit = ctx.course.units[unitIdx];
-
-  try {
-    const built = await buildUnit(ctx, unitIdx);
-
-    if (built !== null && ctx.buildDir) {
-      await writeHtml(unit.titles.unitName, built.html, ctx.dirPath); // await writePdf(titles.unitName, pdfHtml, dirPath);
-    }
-  } catch (err) {
-    console.error(external_chalk_default().red(err.message));
+    const idx = ctx.options.week - 1;
+    const unit = ctx.course.units[idx];
+    await writeUnit(unit, ctx);
     return;
+  } // write full course
+
+
+  for (const unit of ctx.course.units) {
+    await writeUnit(unit, ctx);
   }
 }
 
-async function buildUnit(ctx, unitIdx) {
+async function writeUnit(unit, ctx) {
+  await linter_linter(unit, ctx);
+  const md = await contextTransforms(unit, ctx);
+  await mkdir(ctx.buildDir);
+  const filePath = external_path_default().join(ctx.buildDir, unit.titles.fileName);
+
+  if (!ctx.options.noHtml) {
+    const timer = (0,utils_timer/* createTimer */.e)();
+    const {
+      html
+    } = await syntaxTreeTransforms(md, unit, ctx);
+    await writeFile(filePath + '.html', html);
+    const seconds = timer.stop();
+    const status = external_chalk_default().green.bold(`Complete in ${seconds}s`);
+    console.log(`✨ ${status} ${filePath}`);
+  }
+
+  if (!ctx.options.noPdf) {
+    const timer = (0,utils_timer/* createTimer */.e)();
+    const {
+      html
+    } = await syntaxTreeTransforms(md, unit, ctx, true); // testing
+
+    await writeFile(filePath + '.pdf.html', html);
+    const pdf = await convertToPdf(html);
+    await writeFile(filePath + '.pdf', pdf);
+    const seconds = timer.stop();
+    const status = external_chalk_default().green.bold(`Complete in ${seconds}s`);
+    console.log(`✨ ${status} ${filePath}`);
+  }
+}
+
+async function buildUnit(unit, ctx, targetPdf) {
+  await linter(unit, ctx);
+  const md = await contextTransforms(unit, ctx);
   const {
-    files
-  } = ctx.course.units[unitIdx]; // files.forEach((file) => {
-  //   console.log(file.contents);
-  // });
-  ////////////
-  // 2 static analysis
-  ////////////
-  // files.forEach((file) => {
-  //   console.log(file.contents);
-  //   file.contents = embedLaTeXAsSvg(file.contents as string);
-  //   // console.log(file.contents);
-  //   file.contents = codeMod(file.contents);
-  // });
-  // const mdasts = await Promise.all(
-  //   files.map((file) => markdownParser(file, ctx))
-  // );
-  // await Promise.all(
-  //   mdasts.map((mdast, idx) => linter(mdast, ctx, files[idx]))
-  // );
-  // if (!ctx.options.noReport) {
-  //   printReport(files, ctx);
-  // }
-  // if (reportHasFatalErrors(files, ctx)) {
-  //   if (ctx.options.noReport) {
-  //     const options = { ...ctx.options, reportOnlyErrors: true };
-  //     printReport(files, { ...ctx, options });
-  //   }
-  //   return null;
-  // }
-  ////////////
-  // 3 knitr: Rmarkdown -> markdown
-  ////////////
-  // needs to re-read original files for easy
-  // compatibility with Windows Command Prompt
-
-  await processKnitr(files, ctx); // files.forEach((file) => {
-  //   file.contents = codeMod(file.contents as string);
-  //   file.contents = htmlTexToMml(file.contents as string);
-  // });
-
-  const file = files[0];
-  let contents = file.contents;
-  contents = contents.replace(/<\!--.*?-->/g, '');
-  contents = codeMod(contents);
-  const {
-    store,
-    html: contents2
-  } = storeTex(contents);
-  file.contents = contents2;
-  ctx.texStore = store; // console.log(file.contents);
-  // return;
-  // return;
-  ////////////
-  // 4 markdown -> html
-  ////////////
-
-  const mdast = await markdownParser(file, ctx); // const mdasts2 = await Promise.all(
-  //   markdowns.map((file) => markdownParser(file, ctx))
-  // );
-  // const mdast = combineMdastTrees(mdasts2);
-
-  await customCombinedTransforms(mdast, ctx);
-  const {
+    mdast,
     hast,
     html
-  } = await htmlCompiler(mdast, ctx, unitIdx); // const html2 = htmlMmlToSvg(html);
-  ////////////
-  // TODO: 5 html with LaTeX -> html with accessible SVGs
-  ////////////
-  // console.log('before:', html);
-  // console.log('INPUT:', `"${html}"`);
-  // const html2 = embedLaTeXAsSvg(html);
-  // console.log('YER MAW:', html2);
+  } = await syntaxTreeTransforms(md, unit, ctx, targetPdf);
+  return {
+    md,
+    mdast,
+    hast,
+    html
+  };
+}
 
+async function contextTransforms(unit, ctx) {
+  const combined = unit.files.map(o => o.contents).join('\n\n');
+  const md = preParsePhase(combined, ctx);
+  const withKnitr = await knitr(md, ctx);
+  return texToAliasDirective(withKnitr, ctx);
+}
+
+async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
+  const mdast = await mdastPhase(md, unit, ctx, targetPdf);
+  const hast = await hastPhase(mdast, unit, ctx, targetPdf);
+  const html = await htmlPhase(hast, mdast, unit, ctx, targetPdf);
   return {
     mdast,
     hast,
-    html: html.replace(/&#x3C;/g, '<')
+    html
   };
-} // function htmlDecode(input: string) {
-//   return input;
-// }
+}
+
+/***/ }),
+
+/***/ 9386:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "W": () => (/* binding */ convertMacroToDirective)
+/* harmony export */ });
+function convertMacroToDirective(contents) {
+  return contents.split('\n').map(line => {
+    const container = parseCustomContainer(line);
+
+    if (container !== null) {
+      return renderContainerDirective(container);
+    }
+
+    return line;
+  }).join('\n');
+}
+
+function parseCustomContainer(line) {
+  const match = line.match(/^#{1,6}\[(.+)](.*)/);
+
+  if (!Array.isArray(match)) {
+    return null;
+  }
+
+  const [, attributeStr = '', extra = ''] = match;
+  const [name, ...attributesArr] = attributeStr.split(',').map(s => s.trim());
+  const title = extra.trim();
+  const attributes = transformAttributes(name, attributesArr);
+  return {
+    name,
+    title,
+    attributes
+  };
+}
+
+function renderContainerDirective({
+  name,
+  title,
+  attributes
+}) {
+  const colons = getColons(name);
+
+  if (name.startsWith('/')) {
+    return colons;
+  }
+
+  const newTitle = title ? `[${title}]` : '';
+  const newAttributes = attributes ? `{${attributes}}` : '';
+  return colons + name + newTitle + newAttributes;
+}
+
+function getColons(name) {
+  switch (name.replace('/', '')) {
+    case 'task':
+      return '::::';
+
+    case 'video':
+      return '::';
+
+    default:
+      return ':::';
+  }
+}
+
+function transformAttributes(containerName, attributesArr) {
+  return attributesArr.map(attribute => {
+    const [key, value] = attribute.split('=').map(s => s.trim());
+
+    if (containerName === 'video' && key === 'videoid') {
+      return `id=${value}`;
+    }
+
+    return attribute;
+  }).join(' ');
+}
+
+/***/ }),
+
+/***/ 3369:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "C": () => (/* binding */ removeNewPage)
+/* harmony export */ });
+const blockList = ['\\newpage', '\\pagebreak'];
+function removeNewPage(contents) {
+  return contents.split('\n').filter(s => !blockList.includes(s.trim())).join('\n');
+}
+
+/***/ }),
+
+/***/ 2364:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "e": () => (/* binding */ createTimer)
+/* harmony export */ });
+function createTimer() {
+  const start = process.hrtime();
+  return {
+    stop() {
+      const hrtime = process.hrtime(start);
+      return (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
+    }
+
+  };
+}
 
 /***/ }),
 
@@ -2733,14 +3015,6 @@ function bail(err) {
   }
 }
 
-
-/***/ }),
-
-/***/ 3423:
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"AEli":"Æ","AElig":"Æ","AM":"&","AMP":"&","Aacut":"Á","Aacute":"Á","Abreve":"Ă","Acir":"Â","Acirc":"Â","Acy":"А","Afr":"𝔄","Agrav":"À","Agrave":"À","Alpha":"Α","Amacr":"Ā","And":"⩓","Aogon":"Ą","Aopf":"𝔸","ApplyFunction":"⁡","Arin":"Å","Aring":"Å","Ascr":"𝒜","Assign":"≔","Atild":"Ã","Atilde":"Ã","Aum":"Ä","Auml":"Ä","Backslash":"∖","Barv":"⫧","Barwed":"⌆","Bcy":"Б","Because":"∵","Bernoullis":"ℬ","Beta":"Β","Bfr":"𝔅","Bopf":"𝔹","Breve":"˘","Bscr":"ℬ","Bumpeq":"≎","CHcy":"Ч","COP":"©","COPY":"©","Cacute":"Ć","Cap":"⋒","CapitalDifferentialD":"ⅅ","Cayleys":"ℭ","Ccaron":"Č","Ccedi":"Ç","Ccedil":"Ç","Ccirc":"Ĉ","Cconint":"∰","Cdot":"Ċ","Cedilla":"¸","CenterDot":"·","Cfr":"ℭ","Chi":"Χ","CircleDot":"⊙","CircleMinus":"⊖","CirclePlus":"⊕","CircleTimes":"⊗","ClockwiseContourIntegral":"∲","CloseCurlyDoubleQuote":"”","CloseCurlyQuote":"’","Colon":"∷","Colone":"⩴","Congruent":"≡","Conint":"∯","ContourIntegral":"∮","Copf":"ℂ","Coproduct":"∐","CounterClockwiseContourIntegral":"∳","Cross":"⨯","Cscr":"𝒞","Cup":"⋓","CupCap":"≍","DD":"ⅅ","DDotrahd":"⤑","DJcy":"Ђ","DScy":"Ѕ","DZcy":"Џ","Dagger":"‡","Darr":"↡","Dashv":"⫤","Dcaron":"Ď","Dcy":"Д","Del":"∇","Delta":"Δ","Dfr":"𝔇","DiacriticalAcute":"´","DiacriticalDot":"˙","DiacriticalDoubleAcute":"˝","DiacriticalGrave":"`","DiacriticalTilde":"˜","Diamond":"⋄","DifferentialD":"ⅆ","Dopf":"𝔻","Dot":"¨","DotDot":"⃜","DotEqual":"≐","DoubleContourIntegral":"∯","DoubleDot":"¨","DoubleDownArrow":"⇓","DoubleLeftArrow":"⇐","DoubleLeftRightArrow":"⇔","DoubleLeftTee":"⫤","DoubleLongLeftArrow":"⟸","DoubleLongLeftRightArrow":"⟺","DoubleLongRightArrow":"⟹","DoubleRightArrow":"⇒","DoubleRightTee":"⊨","DoubleUpArrow":"⇑","DoubleUpDownArrow":"⇕","DoubleVerticalBar":"∥","DownArrow":"↓","DownArrowBar":"⤓","DownArrowUpArrow":"⇵","DownBreve":"̑","DownLeftRightVector":"⥐","DownLeftTeeVector":"⥞","DownLeftVector":"↽","DownLeftVectorBar":"⥖","DownRightTeeVector":"⥟","DownRightVector":"⇁","DownRightVectorBar":"⥗","DownTee":"⊤","DownTeeArrow":"↧","Downarrow":"⇓","Dscr":"𝒟","Dstrok":"Đ","ENG":"Ŋ","ET":"Ð","ETH":"Ð","Eacut":"É","Eacute":"É","Ecaron":"Ě","Ecir":"Ê","Ecirc":"Ê","Ecy":"Э","Edot":"Ė","Efr":"𝔈","Egrav":"È","Egrave":"È","Element":"∈","Emacr":"Ē","EmptySmallSquare":"◻","EmptyVerySmallSquare":"▫","Eogon":"Ę","Eopf":"𝔼","Epsilon":"Ε","Equal":"⩵","EqualTilde":"≂","Equilibrium":"⇌","Escr":"ℰ","Esim":"⩳","Eta":"Η","Eum":"Ë","Euml":"Ë","Exists":"∃","ExponentialE":"ⅇ","Fcy":"Ф","Ffr":"𝔉","FilledSmallSquare":"◼","FilledVerySmallSquare":"▪","Fopf":"𝔽","ForAll":"∀","Fouriertrf":"ℱ","Fscr":"ℱ","GJcy":"Ѓ","G":">","GT":">","Gamma":"Γ","Gammad":"Ϝ","Gbreve":"Ğ","Gcedil":"Ģ","Gcirc":"Ĝ","Gcy":"Г","Gdot":"Ġ","Gfr":"𝔊","Gg":"⋙","Gopf":"𝔾","GreaterEqual":"≥","GreaterEqualLess":"⋛","GreaterFullEqual":"≧","GreaterGreater":"⪢","GreaterLess":"≷","GreaterSlantEqual":"⩾","GreaterTilde":"≳","Gscr":"𝒢","Gt":"≫","HARDcy":"Ъ","Hacek":"ˇ","Hat":"^","Hcirc":"Ĥ","Hfr":"ℌ","HilbertSpace":"ℋ","Hopf":"ℍ","HorizontalLine":"─","Hscr":"ℋ","Hstrok":"Ħ","HumpDownHump":"≎","HumpEqual":"≏","IEcy":"Е","IJlig":"Ĳ","IOcy":"Ё","Iacut":"Í","Iacute":"Í","Icir":"Î","Icirc":"Î","Icy":"И","Idot":"İ","Ifr":"ℑ","Igrav":"Ì","Igrave":"Ì","Im":"ℑ","Imacr":"Ī","ImaginaryI":"ⅈ","Implies":"⇒","Int":"∬","Integral":"∫","Intersection":"⋂","InvisibleComma":"⁣","InvisibleTimes":"⁢","Iogon":"Į","Iopf":"𝕀","Iota":"Ι","Iscr":"ℐ","Itilde":"Ĩ","Iukcy":"І","Ium":"Ï","Iuml":"Ï","Jcirc":"Ĵ","Jcy":"Й","Jfr":"𝔍","Jopf":"𝕁","Jscr":"𝒥","Jsercy":"Ј","Jukcy":"Є","KHcy":"Х","KJcy":"Ќ","Kappa":"Κ","Kcedil":"Ķ","Kcy":"К","Kfr":"𝔎","Kopf":"𝕂","Kscr":"𝒦","LJcy":"Љ","L":"<","LT":"<","Lacute":"Ĺ","Lambda":"Λ","Lang":"⟪","Laplacetrf":"ℒ","Larr":"↞","Lcaron":"Ľ","Lcedil":"Ļ","Lcy":"Л","LeftAngleBracket":"⟨","LeftArrow":"←","LeftArrowBar":"⇤","LeftArrowRightArrow":"⇆","LeftCeiling":"⌈","LeftDoubleBracket":"⟦","LeftDownTeeVector":"⥡","LeftDownVector":"⇃","LeftDownVectorBar":"⥙","LeftFloor":"⌊","LeftRightArrow":"↔","LeftRightVector":"⥎","LeftTee":"⊣","LeftTeeArrow":"↤","LeftTeeVector":"⥚","LeftTriangle":"⊲","LeftTriangleBar":"⧏","LeftTriangleEqual":"⊴","LeftUpDownVector":"⥑","LeftUpTeeVector":"⥠","LeftUpVector":"↿","LeftUpVectorBar":"⥘","LeftVector":"↼","LeftVectorBar":"⥒","Leftarrow":"⇐","Leftrightarrow":"⇔","LessEqualGreater":"⋚","LessFullEqual":"≦","LessGreater":"≶","LessLess":"⪡","LessSlantEqual":"⩽","LessTilde":"≲","Lfr":"𝔏","Ll":"⋘","Lleftarrow":"⇚","Lmidot":"Ŀ","LongLeftArrow":"⟵","LongLeftRightArrow":"⟷","LongRightArrow":"⟶","Longleftarrow":"⟸","Longleftrightarrow":"⟺","Longrightarrow":"⟹","Lopf":"𝕃","LowerLeftArrow":"↙","LowerRightArrow":"↘","Lscr":"ℒ","Lsh":"↰","Lstrok":"Ł","Lt":"≪","Map":"⤅","Mcy":"М","MediumSpace":" ","Mellintrf":"ℳ","Mfr":"𝔐","MinusPlus":"∓","Mopf":"𝕄","Mscr":"ℳ","Mu":"Μ","NJcy":"Њ","Nacute":"Ń","Ncaron":"Ň","Ncedil":"Ņ","Ncy":"Н","NegativeMediumSpace":"​","NegativeThickSpace":"​","NegativeThinSpace":"​","NegativeVeryThinSpace":"​","NestedGreaterGreater":"≫","NestedLessLess":"≪","NewLine":"\\n","Nfr":"𝔑","NoBreak":"⁠","NonBreakingSpace":" ","Nopf":"ℕ","Not":"⫬","NotCongruent":"≢","NotCupCap":"≭","NotDoubleVerticalBar":"∦","NotElement":"∉","NotEqual":"≠","NotEqualTilde":"≂̸","NotExists":"∄","NotGreater":"≯","NotGreaterEqual":"≱","NotGreaterFullEqual":"≧̸","NotGreaterGreater":"≫̸","NotGreaterLess":"≹","NotGreaterSlantEqual":"⩾̸","NotGreaterTilde":"≵","NotHumpDownHump":"≎̸","NotHumpEqual":"≏̸","NotLeftTriangle":"⋪","NotLeftTriangleBar":"⧏̸","NotLeftTriangleEqual":"⋬","NotLess":"≮","NotLessEqual":"≰","NotLessGreater":"≸","NotLessLess":"≪̸","NotLessSlantEqual":"⩽̸","NotLessTilde":"≴","NotNestedGreaterGreater":"⪢̸","NotNestedLessLess":"⪡̸","NotPrecedes":"⊀","NotPrecedesEqual":"⪯̸","NotPrecedesSlantEqual":"⋠","NotReverseElement":"∌","NotRightTriangle":"⋫","NotRightTriangleBar":"⧐̸","NotRightTriangleEqual":"⋭","NotSquareSubset":"⊏̸","NotSquareSubsetEqual":"⋢","NotSquareSuperset":"⊐̸","NotSquareSupersetEqual":"⋣","NotSubset":"⊂⃒","NotSubsetEqual":"⊈","NotSucceeds":"⊁","NotSucceedsEqual":"⪰̸","NotSucceedsSlantEqual":"⋡","NotSucceedsTilde":"≿̸","NotSuperset":"⊃⃒","NotSupersetEqual":"⊉","NotTilde":"≁","NotTildeEqual":"≄","NotTildeFullEqual":"≇","NotTildeTilde":"≉","NotVerticalBar":"∤","Nscr":"𝒩","Ntild":"Ñ","Ntilde":"Ñ","Nu":"Ν","OElig":"Œ","Oacut":"Ó","Oacute":"Ó","Ocir":"Ô","Ocirc":"Ô","Ocy":"О","Odblac":"Ő","Ofr":"𝔒","Ograv":"Ò","Ograve":"Ò","Omacr":"Ō","Omega":"Ω","Omicron":"Ο","Oopf":"𝕆","OpenCurlyDoubleQuote":"“","OpenCurlyQuote":"‘","Or":"⩔","Oscr":"𝒪","Oslas":"Ø","Oslash":"Ø","Otild":"Õ","Otilde":"Õ","Otimes":"⨷","Oum":"Ö","Ouml":"Ö","OverBar":"‾","OverBrace":"⏞","OverBracket":"⎴","OverParenthesis":"⏜","PartialD":"∂","Pcy":"П","Pfr":"𝔓","Phi":"Φ","Pi":"Π","PlusMinus":"±","Poincareplane":"ℌ","Popf":"ℙ","Pr":"⪻","Precedes":"≺","PrecedesEqual":"⪯","PrecedesSlantEqual":"≼","PrecedesTilde":"≾","Prime":"″","Product":"∏","Proportion":"∷","Proportional":"∝","Pscr":"𝒫","Psi":"Ψ","QUO":"\\"","QUOT":"\\"","Qfr":"𝔔","Qopf":"ℚ","Qscr":"𝒬","RBarr":"⤐","RE":"®","REG":"®","Racute":"Ŕ","Rang":"⟫","Rarr":"↠","Rarrtl":"⤖","Rcaron":"Ř","Rcedil":"Ŗ","Rcy":"Р","Re":"ℜ","ReverseElement":"∋","ReverseEquilibrium":"⇋","ReverseUpEquilibrium":"⥯","Rfr":"ℜ","Rho":"Ρ","RightAngleBracket":"⟩","RightArrow":"→","RightArrowBar":"⇥","RightArrowLeftArrow":"⇄","RightCeiling":"⌉","RightDoubleBracket":"⟧","RightDownTeeVector":"⥝","RightDownVector":"⇂","RightDownVectorBar":"⥕","RightFloor":"⌋","RightTee":"⊢","RightTeeArrow":"↦","RightTeeVector":"⥛","RightTriangle":"⊳","RightTriangleBar":"⧐","RightTriangleEqual":"⊵","RightUpDownVector":"⥏","RightUpTeeVector":"⥜","RightUpVector":"↾","RightUpVectorBar":"⥔","RightVector":"⇀","RightVectorBar":"⥓","Rightarrow":"⇒","Ropf":"ℝ","RoundImplies":"⥰","Rrightarrow":"⇛","Rscr":"ℛ","Rsh":"↱","RuleDelayed":"⧴","SHCHcy":"Щ","SHcy":"Ш","SOFTcy":"Ь","Sacute":"Ś","Sc":"⪼","Scaron":"Š","Scedil":"Ş","Scirc":"Ŝ","Scy":"С","Sfr":"𝔖","ShortDownArrow":"↓","ShortLeftArrow":"←","ShortRightArrow":"→","ShortUpArrow":"↑","Sigma":"Σ","SmallCircle":"∘","Sopf":"𝕊","Sqrt":"√","Square":"□","SquareIntersection":"⊓","SquareSubset":"⊏","SquareSubsetEqual":"⊑","SquareSuperset":"⊐","SquareSupersetEqual":"⊒","SquareUnion":"⊔","Sscr":"𝒮","Star":"⋆","Sub":"⋐","Subset":"⋐","SubsetEqual":"⊆","Succeeds":"≻","SucceedsEqual":"⪰","SucceedsSlantEqual":"≽","SucceedsTilde":"≿","SuchThat":"∋","Sum":"∑","Sup":"⋑","Superset":"⊃","SupersetEqual":"⊇","Supset":"⋑","THOR":"Þ","THORN":"Þ","TRADE":"™","TSHcy":"Ћ","TScy":"Ц","Tab":"\\t","Tau":"Τ","Tcaron":"Ť","Tcedil":"Ţ","Tcy":"Т","Tfr":"𝔗","Therefore":"∴","Theta":"Θ","ThickSpace":"  ","ThinSpace":" ","Tilde":"∼","TildeEqual":"≃","TildeFullEqual":"≅","TildeTilde":"≈","Topf":"𝕋","TripleDot":"⃛","Tscr":"𝒯","Tstrok":"Ŧ","Uacut":"Ú","Uacute":"Ú","Uarr":"↟","Uarrocir":"⥉","Ubrcy":"Ў","Ubreve":"Ŭ","Ucir":"Û","Ucirc":"Û","Ucy":"У","Udblac":"Ű","Ufr":"𝔘","Ugrav":"Ù","Ugrave":"Ù","Umacr":"Ū","UnderBar":"_","UnderBrace":"⏟","UnderBracket":"⎵","UnderParenthesis":"⏝","Union":"⋃","UnionPlus":"⊎","Uogon":"Ų","Uopf":"𝕌","UpArrow":"↑","UpArrowBar":"⤒","UpArrowDownArrow":"⇅","UpDownArrow":"↕","UpEquilibrium":"⥮","UpTee":"⊥","UpTeeArrow":"↥","Uparrow":"⇑","Updownarrow":"⇕","UpperLeftArrow":"↖","UpperRightArrow":"↗","Upsi":"ϒ","Upsilon":"Υ","Uring":"Ů","Uscr":"𝒰","Utilde":"Ũ","Uum":"Ü","Uuml":"Ü","VDash":"⊫","Vbar":"⫫","Vcy":"В","Vdash":"⊩","Vdashl":"⫦","Vee":"⋁","Verbar":"‖","Vert":"‖","VerticalBar":"∣","VerticalLine":"|","VerticalSeparator":"❘","VerticalTilde":"≀","VeryThinSpace":" ","Vfr":"𝔙","Vopf":"𝕍","Vscr":"𝒱","Vvdash":"⊪","Wcirc":"Ŵ","Wedge":"⋀","Wfr":"𝔚","Wopf":"𝕎","Wscr":"𝒲","Xfr":"𝔛","Xi":"Ξ","Xopf":"𝕏","Xscr":"𝒳","YAcy":"Я","YIcy":"Ї","YUcy":"Ю","Yacut":"Ý","Yacute":"Ý","Ycirc":"Ŷ","Ycy":"Ы","Yfr":"𝔜","Yopf":"𝕐","Yscr":"𝒴","Yuml":"Ÿ","ZHcy":"Ж","Zacute":"Ź","Zcaron":"Ž","Zcy":"З","Zdot":"Ż","ZeroWidthSpace":"​","Zeta":"Ζ","Zfr":"ℨ","Zopf":"ℤ","Zscr":"𝒵","aacut":"á","aacute":"á","abreve":"ă","ac":"∾","acE":"∾̳","acd":"∿","acir":"â","acirc":"â","acut":"´","acute":"´","acy":"а","aeli":"æ","aelig":"æ","af":"⁡","afr":"𝔞","agrav":"à","agrave":"à","alefsym":"ℵ","aleph":"ℵ","alpha":"α","amacr":"ā","amalg":"⨿","am":"&","amp":"&","and":"∧","andand":"⩕","andd":"⩜","andslope":"⩘","andv":"⩚","ang":"∠","ange":"⦤","angle":"∠","angmsd":"∡","angmsdaa":"⦨","angmsdab":"⦩","angmsdac":"⦪","angmsdad":"⦫","angmsdae":"⦬","angmsdaf":"⦭","angmsdag":"⦮","angmsdah":"⦯","angrt":"∟","angrtvb":"⊾","angrtvbd":"⦝","angsph":"∢","angst":"Å","angzarr":"⍼","aogon":"ą","aopf":"𝕒","ap":"≈","apE":"⩰","apacir":"⩯","ape":"≊","apid":"≋","apos":"\'","approx":"≈","approxeq":"≊","arin":"å","aring":"å","ascr":"𝒶","ast":"*","asymp":"≈","asympeq":"≍","atild":"ã","atilde":"ã","aum":"ä","auml":"ä","awconint":"∳","awint":"⨑","bNot":"⫭","backcong":"≌","backepsilon":"϶","backprime":"‵","backsim":"∽","backsimeq":"⋍","barvee":"⊽","barwed":"⌅","barwedge":"⌅","bbrk":"⎵","bbrktbrk":"⎶","bcong":"≌","bcy":"б","bdquo":"„","becaus":"∵","because":"∵","bemptyv":"⦰","bepsi":"϶","bernou":"ℬ","beta":"β","beth":"ℶ","between":"≬","bfr":"𝔟","bigcap":"⋂","bigcirc":"◯","bigcup":"⋃","bigodot":"⨀","bigoplus":"⨁","bigotimes":"⨂","bigsqcup":"⨆","bigstar":"★","bigtriangledown":"▽","bigtriangleup":"△","biguplus":"⨄","bigvee":"⋁","bigwedge":"⋀","bkarow":"⤍","blacklozenge":"⧫","blacksquare":"▪","blacktriangle":"▴","blacktriangledown":"▾","blacktriangleleft":"◂","blacktriangleright":"▸","blank":"␣","blk12":"▒","blk14":"░","blk34":"▓","block":"█","bne":"=⃥","bnequiv":"≡⃥","bnot":"⌐","bopf":"𝕓","bot":"⊥","bottom":"⊥","bowtie":"⋈","boxDL":"╗","boxDR":"╔","boxDl":"╖","boxDr":"╓","boxH":"═","boxHD":"╦","boxHU":"╩","boxHd":"╤","boxHu":"╧","boxUL":"╝","boxUR":"╚","boxUl":"╜","boxUr":"╙","boxV":"║","boxVH":"╬","boxVL":"╣","boxVR":"╠","boxVh":"╫","boxVl":"╢","boxVr":"╟","boxbox":"⧉","boxdL":"╕","boxdR":"╒","boxdl":"┐","boxdr":"┌","boxh":"─","boxhD":"╥","boxhU":"╨","boxhd":"┬","boxhu":"┴","boxminus":"⊟","boxplus":"⊞","boxtimes":"⊠","boxuL":"╛","boxuR":"╘","boxul":"┘","boxur":"└","boxv":"│","boxvH":"╪","boxvL":"╡","boxvR":"╞","boxvh":"┼","boxvl":"┤","boxvr":"├","bprime":"‵","breve":"˘","brvba":"¦","brvbar":"¦","bscr":"𝒷","bsemi":"⁏","bsim":"∽","bsime":"⋍","bsol":"\\\\","bsolb":"⧅","bsolhsub":"⟈","bull":"•","bullet":"•","bump":"≎","bumpE":"⪮","bumpe":"≏","bumpeq":"≏","cacute":"ć","cap":"∩","capand":"⩄","capbrcup":"⩉","capcap":"⩋","capcup":"⩇","capdot":"⩀","caps":"∩︀","caret":"⁁","caron":"ˇ","ccaps":"⩍","ccaron":"č","ccedi":"ç","ccedil":"ç","ccirc":"ĉ","ccups":"⩌","ccupssm":"⩐","cdot":"ċ","cedi":"¸","cedil":"¸","cemptyv":"⦲","cen":"¢","cent":"¢","centerdot":"·","cfr":"𝔠","chcy":"ч","check":"✓","checkmark":"✓","chi":"χ","cir":"○","cirE":"⧃","circ":"ˆ","circeq":"≗","circlearrowleft":"↺","circlearrowright":"↻","circledR":"®","circledS":"Ⓢ","circledast":"⊛","circledcirc":"⊚","circleddash":"⊝","cire":"≗","cirfnint":"⨐","cirmid":"⫯","cirscir":"⧂","clubs":"♣","clubsuit":"♣","colon":":","colone":"≔","coloneq":"≔","comma":",","commat":"@","comp":"∁","compfn":"∘","complement":"∁","complexes":"ℂ","cong":"≅","congdot":"⩭","conint":"∮","copf":"𝕔","coprod":"∐","cop":"©","copy":"©","copysr":"℗","crarr":"↵","cross":"✗","cscr":"𝒸","csub":"⫏","csube":"⫑","csup":"⫐","csupe":"⫒","ctdot":"⋯","cudarrl":"⤸","cudarrr":"⤵","cuepr":"⋞","cuesc":"⋟","cularr":"↶","cularrp":"⤽","cup":"∪","cupbrcap":"⩈","cupcap":"⩆","cupcup":"⩊","cupdot":"⊍","cupor":"⩅","cups":"∪︀","curarr":"↷","curarrm":"⤼","curlyeqprec":"⋞","curlyeqsucc":"⋟","curlyvee":"⋎","curlywedge":"⋏","curre":"¤","curren":"¤","curvearrowleft":"↶","curvearrowright":"↷","cuvee":"⋎","cuwed":"⋏","cwconint":"∲","cwint":"∱","cylcty":"⌭","dArr":"⇓","dHar":"⥥","dagger":"†","daleth":"ℸ","darr":"↓","dash":"‐","dashv":"⊣","dbkarow":"⤏","dblac":"˝","dcaron":"ď","dcy":"д","dd":"ⅆ","ddagger":"‡","ddarr":"⇊","ddotseq":"⩷","de":"°","deg":"°","delta":"δ","demptyv":"⦱","dfisht":"⥿","dfr":"𝔡","dharl":"⇃","dharr":"⇂","diam":"⋄","diamond":"⋄","diamondsuit":"♦","diams":"♦","die":"¨","digamma":"ϝ","disin":"⋲","div":"÷","divid":"÷","divide":"÷","divideontimes":"⋇","divonx":"⋇","djcy":"ђ","dlcorn":"⌞","dlcrop":"⌍","dollar":"$","dopf":"𝕕","dot":"˙","doteq":"≐","doteqdot":"≑","dotminus":"∸","dotplus":"∔","dotsquare":"⊡","doublebarwedge":"⌆","downarrow":"↓","downdownarrows":"⇊","downharpoonleft":"⇃","downharpoonright":"⇂","drbkarow":"⤐","drcorn":"⌟","drcrop":"⌌","dscr":"𝒹","dscy":"ѕ","dsol":"⧶","dstrok":"đ","dtdot":"⋱","dtri":"▿","dtrif":"▾","duarr":"⇵","duhar":"⥯","dwangle":"⦦","dzcy":"џ","dzigrarr":"⟿","eDDot":"⩷","eDot":"≑","eacut":"é","eacute":"é","easter":"⩮","ecaron":"ě","ecir":"ê","ecirc":"ê","ecolon":"≕","ecy":"э","edot":"ė","ee":"ⅇ","efDot":"≒","efr":"𝔢","eg":"⪚","egrav":"è","egrave":"è","egs":"⪖","egsdot":"⪘","el":"⪙","elinters":"⏧","ell":"ℓ","els":"⪕","elsdot":"⪗","emacr":"ē","empty":"∅","emptyset":"∅","emptyv":"∅","emsp13":" ","emsp14":" ","emsp":" ","eng":"ŋ","ensp":" ","eogon":"ę","eopf":"𝕖","epar":"⋕","eparsl":"⧣","eplus":"⩱","epsi":"ε","epsilon":"ε","epsiv":"ϵ","eqcirc":"≖","eqcolon":"≕","eqsim":"≂","eqslantgtr":"⪖","eqslantless":"⪕","equals":"=","equest":"≟","equiv":"≡","equivDD":"⩸","eqvparsl":"⧥","erDot":"≓","erarr":"⥱","escr":"ℯ","esdot":"≐","esim":"≂","eta":"η","et":"ð","eth":"ð","eum":"ë","euml":"ë","euro":"€","excl":"!","exist":"∃","expectation":"ℰ","exponentiale":"ⅇ","fallingdotseq":"≒","fcy":"ф","female":"♀","ffilig":"ﬃ","fflig":"ﬀ","ffllig":"ﬄ","ffr":"𝔣","filig":"ﬁ","fjlig":"fj","flat":"♭","fllig":"ﬂ","fltns":"▱","fnof":"ƒ","fopf":"𝕗","forall":"∀","fork":"⋔","forkv":"⫙","fpartint":"⨍","frac1":"¼","frac12":"½","frac13":"⅓","frac14":"¼","frac15":"⅕","frac16":"⅙","frac18":"⅛","frac23":"⅔","frac25":"⅖","frac3":"¾","frac34":"¾","frac35":"⅗","frac38":"⅜","frac45":"⅘","frac56":"⅚","frac58":"⅝","frac78":"⅞","frasl":"⁄","frown":"⌢","fscr":"𝒻","gE":"≧","gEl":"⪌","gacute":"ǵ","gamma":"γ","gammad":"ϝ","gap":"⪆","gbreve":"ğ","gcirc":"ĝ","gcy":"г","gdot":"ġ","ge":"≥","gel":"⋛","geq":"≥","geqq":"≧","geqslant":"⩾","ges":"⩾","gescc":"⪩","gesdot":"⪀","gesdoto":"⪂","gesdotol":"⪄","gesl":"⋛︀","gesles":"⪔","gfr":"𝔤","gg":"≫","ggg":"⋙","gimel":"ℷ","gjcy":"ѓ","gl":"≷","glE":"⪒","gla":"⪥","glj":"⪤","gnE":"≩","gnap":"⪊","gnapprox":"⪊","gne":"⪈","gneq":"⪈","gneqq":"≩","gnsim":"⋧","gopf":"𝕘","grave":"`","gscr":"ℊ","gsim":"≳","gsime":"⪎","gsiml":"⪐","g":">","gt":">","gtcc":"⪧","gtcir":"⩺","gtdot":"⋗","gtlPar":"⦕","gtquest":"⩼","gtrapprox":"⪆","gtrarr":"⥸","gtrdot":"⋗","gtreqless":"⋛","gtreqqless":"⪌","gtrless":"≷","gtrsim":"≳","gvertneqq":"≩︀","gvnE":"≩︀","hArr":"⇔","hairsp":" ","half":"½","hamilt":"ℋ","hardcy":"ъ","harr":"↔","harrcir":"⥈","harrw":"↭","hbar":"ℏ","hcirc":"ĥ","hearts":"♥","heartsuit":"♥","hellip":"…","hercon":"⊹","hfr":"𝔥","hksearow":"⤥","hkswarow":"⤦","hoarr":"⇿","homtht":"∻","hookleftarrow":"↩","hookrightarrow":"↪","hopf":"𝕙","horbar":"―","hscr":"𝒽","hslash":"ℏ","hstrok":"ħ","hybull":"⁃","hyphen":"‐","iacut":"í","iacute":"í","ic":"⁣","icir":"î","icirc":"î","icy":"и","iecy":"е","iexc":"¡","iexcl":"¡","iff":"⇔","ifr":"𝔦","igrav":"ì","igrave":"ì","ii":"ⅈ","iiiint":"⨌","iiint":"∭","iinfin":"⧜","iiota":"℩","ijlig":"ĳ","imacr":"ī","image":"ℑ","imagline":"ℐ","imagpart":"ℑ","imath":"ı","imof":"⊷","imped":"Ƶ","in":"∈","incare":"℅","infin":"∞","infintie":"⧝","inodot":"ı","int":"∫","intcal":"⊺","integers":"ℤ","intercal":"⊺","intlarhk":"⨗","intprod":"⨼","iocy":"ё","iogon":"į","iopf":"𝕚","iota":"ι","iprod":"⨼","iques":"¿","iquest":"¿","iscr":"𝒾","isin":"∈","isinE":"⋹","isindot":"⋵","isins":"⋴","isinsv":"⋳","isinv":"∈","it":"⁢","itilde":"ĩ","iukcy":"і","ium":"ï","iuml":"ï","jcirc":"ĵ","jcy":"й","jfr":"𝔧","jmath":"ȷ","jopf":"𝕛","jscr":"𝒿","jsercy":"ј","jukcy":"є","kappa":"κ","kappav":"ϰ","kcedil":"ķ","kcy":"к","kfr":"𝔨","kgreen":"ĸ","khcy":"х","kjcy":"ќ","kopf":"𝕜","kscr":"𝓀","lAarr":"⇚","lArr":"⇐","lAtail":"⤛","lBarr":"⤎","lE":"≦","lEg":"⪋","lHar":"⥢","lacute":"ĺ","laemptyv":"⦴","lagran":"ℒ","lambda":"λ","lang":"⟨","langd":"⦑","langle":"⟨","lap":"⪅","laqu":"«","laquo":"«","larr":"←","larrb":"⇤","larrbfs":"⤟","larrfs":"⤝","larrhk":"↩","larrlp":"↫","larrpl":"⤹","larrsim":"⥳","larrtl":"↢","lat":"⪫","latail":"⤙","late":"⪭","lates":"⪭︀","lbarr":"⤌","lbbrk":"❲","lbrace":"{","lbrack":"[","lbrke":"⦋","lbrksld":"⦏","lbrkslu":"⦍","lcaron":"ľ","lcedil":"ļ","lceil":"⌈","lcub":"{","lcy":"л","ldca":"⤶","ldquo":"“","ldquor":"„","ldrdhar":"⥧","ldrushar":"⥋","ldsh":"↲","le":"≤","leftarrow":"←","leftarrowtail":"↢","leftharpoondown":"↽","leftharpoonup":"↼","leftleftarrows":"⇇","leftrightarrow":"↔","leftrightarrows":"⇆","leftrightharpoons":"⇋","leftrightsquigarrow":"↭","leftthreetimes":"⋋","leg":"⋚","leq":"≤","leqq":"≦","leqslant":"⩽","les":"⩽","lescc":"⪨","lesdot":"⩿","lesdoto":"⪁","lesdotor":"⪃","lesg":"⋚︀","lesges":"⪓","lessapprox":"⪅","lessdot":"⋖","lesseqgtr":"⋚","lesseqqgtr":"⪋","lessgtr":"≶","lesssim":"≲","lfisht":"⥼","lfloor":"⌊","lfr":"𝔩","lg":"≶","lgE":"⪑","lhard":"↽","lharu":"↼","lharul":"⥪","lhblk":"▄","ljcy":"љ","ll":"≪","llarr":"⇇","llcorner":"⌞","llhard":"⥫","lltri":"◺","lmidot":"ŀ","lmoust":"⎰","lmoustache":"⎰","lnE":"≨","lnap":"⪉","lnapprox":"⪉","lne":"⪇","lneq":"⪇","lneqq":"≨","lnsim":"⋦","loang":"⟬","loarr":"⇽","lobrk":"⟦","longleftarrow":"⟵","longleftrightarrow":"⟷","longmapsto":"⟼","longrightarrow":"⟶","looparrowleft":"↫","looparrowright":"↬","lopar":"⦅","lopf":"𝕝","loplus":"⨭","lotimes":"⨴","lowast":"∗","lowbar":"_","loz":"◊","lozenge":"◊","lozf":"⧫","lpar":"(","lparlt":"⦓","lrarr":"⇆","lrcorner":"⌟","lrhar":"⇋","lrhard":"⥭","lrm":"‎","lrtri":"⊿","lsaquo":"‹","lscr":"𝓁","lsh":"↰","lsim":"≲","lsime":"⪍","lsimg":"⪏","lsqb":"[","lsquo":"‘","lsquor":"‚","lstrok":"ł","l":"<","lt":"<","ltcc":"⪦","ltcir":"⩹","ltdot":"⋖","lthree":"⋋","ltimes":"⋉","ltlarr":"⥶","ltquest":"⩻","ltrPar":"⦖","ltri":"◃","ltrie":"⊴","ltrif":"◂","lurdshar":"⥊","luruhar":"⥦","lvertneqq":"≨︀","lvnE":"≨︀","mDDot":"∺","mac":"¯","macr":"¯","male":"♂","malt":"✠","maltese":"✠","map":"↦","mapsto":"↦","mapstodown":"↧","mapstoleft":"↤","mapstoup":"↥","marker":"▮","mcomma":"⨩","mcy":"м","mdash":"—","measuredangle":"∡","mfr":"𝔪","mho":"℧","micr":"µ","micro":"µ","mid":"∣","midast":"*","midcir":"⫰","middo":"·","middot":"·","minus":"−","minusb":"⊟","minusd":"∸","minusdu":"⨪","mlcp":"⫛","mldr":"…","mnplus":"∓","models":"⊧","mopf":"𝕞","mp":"∓","mscr":"𝓂","mstpos":"∾","mu":"μ","multimap":"⊸","mumap":"⊸","nGg":"⋙̸","nGt":"≫⃒","nGtv":"≫̸","nLeftarrow":"⇍","nLeftrightarrow":"⇎","nLl":"⋘̸","nLt":"≪⃒","nLtv":"≪̸","nRightarrow":"⇏","nVDash":"⊯","nVdash":"⊮","nabla":"∇","nacute":"ń","nang":"∠⃒","nap":"≉","napE":"⩰̸","napid":"≋̸","napos":"ŉ","napprox":"≉","natur":"♮","natural":"♮","naturals":"ℕ","nbs":" ","nbsp":" ","nbump":"≎̸","nbumpe":"≏̸","ncap":"⩃","ncaron":"ň","ncedil":"ņ","ncong":"≇","ncongdot":"⩭̸","ncup":"⩂","ncy":"н","ndash":"–","ne":"≠","neArr":"⇗","nearhk":"⤤","nearr":"↗","nearrow":"↗","nedot":"≐̸","nequiv":"≢","nesear":"⤨","nesim":"≂̸","nexist":"∄","nexists":"∄","nfr":"𝔫","ngE":"≧̸","nge":"≱","ngeq":"≱","ngeqq":"≧̸","ngeqslant":"⩾̸","nges":"⩾̸","ngsim":"≵","ngt":"≯","ngtr":"≯","nhArr":"⇎","nharr":"↮","nhpar":"⫲","ni":"∋","nis":"⋼","nisd":"⋺","niv":"∋","njcy":"њ","nlArr":"⇍","nlE":"≦̸","nlarr":"↚","nldr":"‥","nle":"≰","nleftarrow":"↚","nleftrightarrow":"↮","nleq":"≰","nleqq":"≦̸","nleqslant":"⩽̸","nles":"⩽̸","nless":"≮","nlsim":"≴","nlt":"≮","nltri":"⋪","nltrie":"⋬","nmid":"∤","nopf":"𝕟","no":"¬","not":"¬","notin":"∉","notinE":"⋹̸","notindot":"⋵̸","notinva":"∉","notinvb":"⋷","notinvc":"⋶","notni":"∌","notniva":"∌","notnivb":"⋾","notnivc":"⋽","npar":"∦","nparallel":"∦","nparsl":"⫽⃥","npart":"∂̸","npolint":"⨔","npr":"⊀","nprcue":"⋠","npre":"⪯̸","nprec":"⊀","npreceq":"⪯̸","nrArr":"⇏","nrarr":"↛","nrarrc":"⤳̸","nrarrw":"↝̸","nrightarrow":"↛","nrtri":"⋫","nrtrie":"⋭","nsc":"⊁","nsccue":"⋡","nsce":"⪰̸","nscr":"𝓃","nshortmid":"∤","nshortparallel":"∦","nsim":"≁","nsime":"≄","nsimeq":"≄","nsmid":"∤","nspar":"∦","nsqsube":"⋢","nsqsupe":"⋣","nsub":"⊄","nsubE":"⫅̸","nsube":"⊈","nsubset":"⊂⃒","nsubseteq":"⊈","nsubseteqq":"⫅̸","nsucc":"⊁","nsucceq":"⪰̸","nsup":"⊅","nsupE":"⫆̸","nsupe":"⊉","nsupset":"⊃⃒","nsupseteq":"⊉","nsupseteqq":"⫆̸","ntgl":"≹","ntild":"ñ","ntilde":"ñ","ntlg":"≸","ntriangleleft":"⋪","ntrianglelefteq":"⋬","ntriangleright":"⋫","ntrianglerighteq":"⋭","nu":"ν","num":"#","numero":"№","numsp":" ","nvDash":"⊭","nvHarr":"⤄","nvap":"≍⃒","nvdash":"⊬","nvge":"≥⃒","nvgt":">⃒","nvinfin":"⧞","nvlArr":"⤂","nvle":"≤⃒","nvlt":"<⃒","nvltrie":"⊴⃒","nvrArr":"⤃","nvrtrie":"⊵⃒","nvsim":"∼⃒","nwArr":"⇖","nwarhk":"⤣","nwarr":"↖","nwarrow":"↖","nwnear":"⤧","oS":"Ⓢ","oacut":"ó","oacute":"ó","oast":"⊛","ocir":"ô","ocirc":"ô","ocy":"о","odash":"⊝","odblac":"ő","odiv":"⨸","odot":"⊙","odsold":"⦼","oelig":"œ","ofcir":"⦿","ofr":"𝔬","ogon":"˛","ograv":"ò","ograve":"ò","ogt":"⧁","ohbar":"⦵","ohm":"Ω","oint":"∮","olarr":"↺","olcir":"⦾","olcross":"⦻","oline":"‾","olt":"⧀","omacr":"ō","omega":"ω","omicron":"ο","omid":"⦶","ominus":"⊖","oopf":"𝕠","opar":"⦷","operp":"⦹","oplus":"⊕","or":"∨","orarr":"↻","ord":"º","order":"ℴ","orderof":"ℴ","ordf":"ª","ordm":"º","origof":"⊶","oror":"⩖","orslope":"⩗","orv":"⩛","oscr":"ℴ","oslas":"ø","oslash":"ø","osol":"⊘","otild":"õ","otilde":"õ","otimes":"⊗","otimesas":"⨶","oum":"ö","ouml":"ö","ovbar":"⌽","par":"¶","para":"¶","parallel":"∥","parsim":"⫳","parsl":"⫽","part":"∂","pcy":"п","percnt":"%","period":".","permil":"‰","perp":"⊥","pertenk":"‱","pfr":"𝔭","phi":"φ","phiv":"ϕ","phmmat":"ℳ","phone":"☎","pi":"π","pitchfork":"⋔","piv":"ϖ","planck":"ℏ","planckh":"ℎ","plankv":"ℏ","plus":"+","plusacir":"⨣","plusb":"⊞","pluscir":"⨢","plusdo":"∔","plusdu":"⨥","pluse":"⩲","plusm":"±","plusmn":"±","plussim":"⨦","plustwo":"⨧","pm":"±","pointint":"⨕","popf":"𝕡","poun":"£","pound":"£","pr":"≺","prE":"⪳","prap":"⪷","prcue":"≼","pre":"⪯","prec":"≺","precapprox":"⪷","preccurlyeq":"≼","preceq":"⪯","precnapprox":"⪹","precneqq":"⪵","precnsim":"⋨","precsim":"≾","prime":"′","primes":"ℙ","prnE":"⪵","prnap":"⪹","prnsim":"⋨","prod":"∏","profalar":"⌮","profline":"⌒","profsurf":"⌓","prop":"∝","propto":"∝","prsim":"≾","prurel":"⊰","pscr":"𝓅","psi":"ψ","puncsp":" ","qfr":"𝔮","qint":"⨌","qopf":"𝕢","qprime":"⁗","qscr":"𝓆","quaternions":"ℍ","quatint":"⨖","quest":"?","questeq":"≟","quo":"\\"","quot":"\\"","rAarr":"⇛","rArr":"⇒","rAtail":"⤜","rBarr":"⤏","rHar":"⥤","race":"∽̱","racute":"ŕ","radic":"√","raemptyv":"⦳","rang":"⟩","rangd":"⦒","range":"⦥","rangle":"⟩","raqu":"»","raquo":"»","rarr":"→","rarrap":"⥵","rarrb":"⇥","rarrbfs":"⤠","rarrc":"⤳","rarrfs":"⤞","rarrhk":"↪","rarrlp":"↬","rarrpl":"⥅","rarrsim":"⥴","rarrtl":"↣","rarrw":"↝","ratail":"⤚","ratio":"∶","rationals":"ℚ","rbarr":"⤍","rbbrk":"❳","rbrace":"}","rbrack":"]","rbrke":"⦌","rbrksld":"⦎","rbrkslu":"⦐","rcaron":"ř","rcedil":"ŗ","rceil":"⌉","rcub":"}","rcy":"р","rdca":"⤷","rdldhar":"⥩","rdquo":"”","rdquor":"”","rdsh":"↳","real":"ℜ","realine":"ℛ","realpart":"ℜ","reals":"ℝ","rect":"▭","re":"®","reg":"®","rfisht":"⥽","rfloor":"⌋","rfr":"𝔯","rhard":"⇁","rharu":"⇀","rharul":"⥬","rho":"ρ","rhov":"ϱ","rightarrow":"→","rightarrowtail":"↣","rightharpoondown":"⇁","rightharpoonup":"⇀","rightleftarrows":"⇄","rightleftharpoons":"⇌","rightrightarrows":"⇉","rightsquigarrow":"↝","rightthreetimes":"⋌","ring":"˚","risingdotseq":"≓","rlarr":"⇄","rlhar":"⇌","rlm":"‏","rmoust":"⎱","rmoustache":"⎱","rnmid":"⫮","roang":"⟭","roarr":"⇾","robrk":"⟧","ropar":"⦆","ropf":"𝕣","roplus":"⨮","rotimes":"⨵","rpar":")","rpargt":"⦔","rppolint":"⨒","rrarr":"⇉","rsaquo":"›","rscr":"𝓇","rsh":"↱","rsqb":"]","rsquo":"’","rsquor":"’","rthree":"⋌","rtimes":"⋊","rtri":"▹","rtrie":"⊵","rtrif":"▸","rtriltri":"⧎","ruluhar":"⥨","rx":"℞","sacute":"ś","sbquo":"‚","sc":"≻","scE":"⪴","scap":"⪸","scaron":"š","sccue":"≽","sce":"⪰","scedil":"ş","scirc":"ŝ","scnE":"⪶","scnap":"⪺","scnsim":"⋩","scpolint":"⨓","scsim":"≿","scy":"с","sdot":"⋅","sdotb":"⊡","sdote":"⩦","seArr":"⇘","searhk":"⤥","searr":"↘","searrow":"↘","sec":"§","sect":"§","semi":";","seswar":"⤩","setminus":"∖","setmn":"∖","sext":"✶","sfr":"𝔰","sfrown":"⌢","sharp":"♯","shchcy":"щ","shcy":"ш","shortmid":"∣","shortparallel":"∥","sh":"­","shy":"­","sigma":"σ","sigmaf":"ς","sigmav":"ς","sim":"∼","simdot":"⩪","sime":"≃","simeq":"≃","simg":"⪞","simgE":"⪠","siml":"⪝","simlE":"⪟","simne":"≆","simplus":"⨤","simrarr":"⥲","slarr":"←","smallsetminus":"∖","smashp":"⨳","smeparsl":"⧤","smid":"∣","smile":"⌣","smt":"⪪","smte":"⪬","smtes":"⪬︀","softcy":"ь","sol":"/","solb":"⧄","solbar":"⌿","sopf":"𝕤","spades":"♠","spadesuit":"♠","spar":"∥","sqcap":"⊓","sqcaps":"⊓︀","sqcup":"⊔","sqcups":"⊔︀","sqsub":"⊏","sqsube":"⊑","sqsubset":"⊏","sqsubseteq":"⊑","sqsup":"⊐","sqsupe":"⊒","sqsupset":"⊐","sqsupseteq":"⊒","squ":"□","square":"□","squarf":"▪","squf":"▪","srarr":"→","sscr":"𝓈","ssetmn":"∖","ssmile":"⌣","sstarf":"⋆","star":"☆","starf":"★","straightepsilon":"ϵ","straightphi":"ϕ","strns":"¯","sub":"⊂","subE":"⫅","subdot":"⪽","sube":"⊆","subedot":"⫃","submult":"⫁","subnE":"⫋","subne":"⊊","subplus":"⪿","subrarr":"⥹","subset":"⊂","subseteq":"⊆","subseteqq":"⫅","subsetneq":"⊊","subsetneqq":"⫋","subsim":"⫇","subsub":"⫕","subsup":"⫓","succ":"≻","succapprox":"⪸","succcurlyeq":"≽","succeq":"⪰","succnapprox":"⪺","succneqq":"⪶","succnsim":"⋩","succsim":"≿","sum":"∑","sung":"♪","sup":"⊃","sup1":"¹","sup2":"²","sup3":"³","supE":"⫆","supdot":"⪾","supdsub":"⫘","supe":"⊇","supedot":"⫄","suphsol":"⟉","suphsub":"⫗","suplarr":"⥻","supmult":"⫂","supnE":"⫌","supne":"⊋","supplus":"⫀","supset":"⊃","supseteq":"⊇","supseteqq":"⫆","supsetneq":"⊋","supsetneqq":"⫌","supsim":"⫈","supsub":"⫔","supsup":"⫖","swArr":"⇙","swarhk":"⤦","swarr":"↙","swarrow":"↙","swnwar":"⤪","szli":"ß","szlig":"ß","target":"⌖","tau":"τ","tbrk":"⎴","tcaron":"ť","tcedil":"ţ","tcy":"т","tdot":"⃛","telrec":"⌕","tfr":"𝔱","there4":"∴","therefore":"∴","theta":"θ","thetasym":"ϑ","thetav":"ϑ","thickapprox":"≈","thicksim":"∼","thinsp":" ","thkap":"≈","thksim":"∼","thor":"þ","thorn":"þ","tilde":"˜","time":"×","times":"×","timesb":"⊠","timesbar":"⨱","timesd":"⨰","tint":"∭","toea":"⤨","top":"⊤","topbot":"⌶","topcir":"⫱","topf":"𝕥","topfork":"⫚","tosa":"⤩","tprime":"‴","trade":"™","triangle":"▵","triangledown":"▿","triangleleft":"◃","trianglelefteq":"⊴","triangleq":"≜","triangleright":"▹","trianglerighteq":"⊵","tridot":"◬","trie":"≜","triminus":"⨺","triplus":"⨹","trisb":"⧍","tritime":"⨻","trpezium":"⏢","tscr":"𝓉","tscy":"ц","tshcy":"ћ","tstrok":"ŧ","twixt":"≬","twoheadleftarrow":"↞","twoheadrightarrow":"↠","uArr":"⇑","uHar":"⥣","uacut":"ú","uacute":"ú","uarr":"↑","ubrcy":"ў","ubreve":"ŭ","ucir":"û","ucirc":"û","ucy":"у","udarr":"⇅","udblac":"ű","udhar":"⥮","ufisht":"⥾","ufr":"𝔲","ugrav":"ù","ugrave":"ù","uharl":"↿","uharr":"↾","uhblk":"▀","ulcorn":"⌜","ulcorner":"⌜","ulcrop":"⌏","ultri":"◸","umacr":"ū","um":"¨","uml":"¨","uogon":"ų","uopf":"𝕦","uparrow":"↑","updownarrow":"↕","upharpoonleft":"↿","upharpoonright":"↾","uplus":"⊎","upsi":"υ","upsih":"ϒ","upsilon":"υ","upuparrows":"⇈","urcorn":"⌝","urcorner":"⌝","urcrop":"⌎","uring":"ů","urtri":"◹","uscr":"𝓊","utdot":"⋰","utilde":"ũ","utri":"▵","utrif":"▴","uuarr":"⇈","uum":"ü","uuml":"ü","uwangle":"⦧","vArr":"⇕","vBar":"⫨","vBarv":"⫩","vDash":"⊨","vangrt":"⦜","varepsilon":"ϵ","varkappa":"ϰ","varnothing":"∅","varphi":"ϕ","varpi":"ϖ","varpropto":"∝","varr":"↕","varrho":"ϱ","varsigma":"ς","varsubsetneq":"⊊︀","varsubsetneqq":"⫋︀","varsupsetneq":"⊋︀","varsupsetneqq":"⫌︀","vartheta":"ϑ","vartriangleleft":"⊲","vartriangleright":"⊳","vcy":"в","vdash":"⊢","vee":"∨","veebar":"⊻","veeeq":"≚","vellip":"⋮","verbar":"|","vert":"|","vfr":"𝔳","vltri":"⊲","vnsub":"⊂⃒","vnsup":"⊃⃒","vopf":"𝕧","vprop":"∝","vrtri":"⊳","vscr":"𝓋","vsubnE":"⫋︀","vsubne":"⊊︀","vsupnE":"⫌︀","vsupne":"⊋︀","vzigzag":"⦚","wcirc":"ŵ","wedbar":"⩟","wedge":"∧","wedgeq":"≙","weierp":"℘","wfr":"𝔴","wopf":"𝕨","wp":"℘","wr":"≀","wreath":"≀","wscr":"𝓌","xcap":"⋂","xcirc":"◯","xcup":"⋃","xdtri":"▽","xfr":"𝔵","xhArr":"⟺","xharr":"⟷","xi":"ξ","xlArr":"⟸","xlarr":"⟵","xmap":"⟼","xnis":"⋻","xodot":"⨀","xopf":"𝕩","xoplus":"⨁","xotime":"⨂","xrArr":"⟹","xrarr":"⟶","xscr":"𝓍","xsqcup":"⨆","xuplus":"⨄","xutri":"△","xvee":"⋁","xwedge":"⋀","yacut":"ý","yacute":"ý","yacy":"я","ycirc":"ŷ","ycy":"ы","ye":"¥","yen":"¥","yfr":"𝔶","yicy":"ї","yopf":"𝕪","yscr":"𝓎","yucy":"ю","yum":"ÿ","yuml":"ÿ","zacute":"ź","zcaron":"ž","zcy":"з","zdot":"ż","zeetrf":"ℨ","zeta":"ζ","zfr":"𝔷","zhcy":"ж","zigrarr":"⇝","zopf":"𝕫","zscr":"𝓏","zwj":"‍","zwnj":"‌"}');
 
 /***/ }),
 
@@ -2883,6 +3157,24 @@ module.exports = function isBuffer (obj) {
   return obj != null && obj.constructor != null &&
     typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
+
+
+/***/ }),
+
+/***/ 7760:
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = value => {
+	if (Object.prototype.toString.call(value) !== '[object Object]') {
+		return false;
+	}
+
+	const prototype = Object.getPrototypeOf(value);
+	return prototype === null || prototype === Object.prototype;
+};
 
 
 /***/ }),
@@ -4140,7 +4432,7 @@ function heading(h, node) {
 
 /***/ }),
 
-/***/ 7973:
+/***/ 4770:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -4227,7 +4519,7 @@ module.exports = {
   footnoteReference: __webpack_require__(7123),
   footnote: __webpack_require__(8945),
   heading: __webpack_require__(2593),
-  html: __webpack_require__(7973),
+  html: __webpack_require__(4770),
   imageReference: __webpack_require__(1480),
   image: __webpack_require__(1387),
   inlineCode: __webpack_require__(8611),
@@ -5373,7 +5665,7 @@ module.exports = unicodePunctuation
 
 /***/ }),
 
-/***/ 4770:
+/***/ 8847:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -6120,7 +6412,7 @@ var text = __webpack_require__(663)
 var combineExtensions = __webpack_require__(7450)
 var createTokenizer = __webpack_require__(9708)
 var miniflat = __webpack_require__(8011)
-var constructs = __webpack_require__(4770)
+var constructs = __webpack_require__(8847)
 
 function parse(options) {
   var settings = options || {}
@@ -10871,7 +11163,7 @@ module.exports = subtokenize
 "use strict";
 
 
-var characterEntities = __webpack_require__(3423)
+var characterEntities = __webpack_require__(1622)
 
 module.exports = decodeEntity
 
@@ -11081,7 +11373,7 @@ function wrap(fn, callback) {
 var bail = __webpack_require__(1527)
 var buffer = __webpack_require__(8809)
 var extend = __webpack_require__(229)
-var plain = __webpack_require__(5530)
+var plain = __webpack_require__(7760)
 var trough = __webpack_require__(613)
 var vfile = __webpack_require__(9566)
 
@@ -11536,24 +11828,6 @@ function assertDone(name, asyncName, complete) {
     )
   }
 }
-
-
-/***/ }),
-
-/***/ 5530:
-/***/ ((module) => {
-
-"use strict";
-
-
-module.exports = value => {
-	if (Object.prototype.toString.call(value) !== '[object Object]') {
-		return false;
-	}
-
-	const prototype = Object.getPrototypeOf(value);
-	return prototype === null || prototype === Object.prototype;
-};
 
 
 /***/ }),
@@ -12094,6 +12368,14 @@ module.exports = require("path");
 "use strict";
 module.exports = require("unist-util-visit");
 
+/***/ }),
+
+/***/ 1622:
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"AEli":"Æ","AElig":"Æ","AM":"&","AMP":"&","Aacut":"Á","Aacute":"Á","Abreve":"Ă","Acir":"Â","Acirc":"Â","Acy":"А","Afr":"𝔄","Agrav":"À","Agrave":"À","Alpha":"Α","Amacr":"Ā","And":"⩓","Aogon":"Ą","Aopf":"𝔸","ApplyFunction":"⁡","Arin":"Å","Aring":"Å","Ascr":"𝒜","Assign":"≔","Atild":"Ã","Atilde":"Ã","Aum":"Ä","Auml":"Ä","Backslash":"∖","Barv":"⫧","Barwed":"⌆","Bcy":"Б","Because":"∵","Bernoullis":"ℬ","Beta":"Β","Bfr":"𝔅","Bopf":"𝔹","Breve":"˘","Bscr":"ℬ","Bumpeq":"≎","CHcy":"Ч","COP":"©","COPY":"©","Cacute":"Ć","Cap":"⋒","CapitalDifferentialD":"ⅅ","Cayleys":"ℭ","Ccaron":"Č","Ccedi":"Ç","Ccedil":"Ç","Ccirc":"Ĉ","Cconint":"∰","Cdot":"Ċ","Cedilla":"¸","CenterDot":"·","Cfr":"ℭ","Chi":"Χ","CircleDot":"⊙","CircleMinus":"⊖","CirclePlus":"⊕","CircleTimes":"⊗","ClockwiseContourIntegral":"∲","CloseCurlyDoubleQuote":"”","CloseCurlyQuote":"’","Colon":"∷","Colone":"⩴","Congruent":"≡","Conint":"∯","ContourIntegral":"∮","Copf":"ℂ","Coproduct":"∐","CounterClockwiseContourIntegral":"∳","Cross":"⨯","Cscr":"𝒞","Cup":"⋓","CupCap":"≍","DD":"ⅅ","DDotrahd":"⤑","DJcy":"Ђ","DScy":"Ѕ","DZcy":"Џ","Dagger":"‡","Darr":"↡","Dashv":"⫤","Dcaron":"Ď","Dcy":"Д","Del":"∇","Delta":"Δ","Dfr":"𝔇","DiacriticalAcute":"´","DiacriticalDot":"˙","DiacriticalDoubleAcute":"˝","DiacriticalGrave":"`","DiacriticalTilde":"˜","Diamond":"⋄","DifferentialD":"ⅆ","Dopf":"𝔻","Dot":"¨","DotDot":"⃜","DotEqual":"≐","DoubleContourIntegral":"∯","DoubleDot":"¨","DoubleDownArrow":"⇓","DoubleLeftArrow":"⇐","DoubleLeftRightArrow":"⇔","DoubleLeftTee":"⫤","DoubleLongLeftArrow":"⟸","DoubleLongLeftRightArrow":"⟺","DoubleLongRightArrow":"⟹","DoubleRightArrow":"⇒","DoubleRightTee":"⊨","DoubleUpArrow":"⇑","DoubleUpDownArrow":"⇕","DoubleVerticalBar":"∥","DownArrow":"↓","DownArrowBar":"⤓","DownArrowUpArrow":"⇵","DownBreve":"̑","DownLeftRightVector":"⥐","DownLeftTeeVector":"⥞","DownLeftVector":"↽","DownLeftVectorBar":"⥖","DownRightTeeVector":"⥟","DownRightVector":"⇁","DownRightVectorBar":"⥗","DownTee":"⊤","DownTeeArrow":"↧","Downarrow":"⇓","Dscr":"𝒟","Dstrok":"Đ","ENG":"Ŋ","ET":"Ð","ETH":"Ð","Eacut":"É","Eacute":"É","Ecaron":"Ě","Ecir":"Ê","Ecirc":"Ê","Ecy":"Э","Edot":"Ė","Efr":"𝔈","Egrav":"È","Egrave":"È","Element":"∈","Emacr":"Ē","EmptySmallSquare":"◻","EmptyVerySmallSquare":"▫","Eogon":"Ę","Eopf":"𝔼","Epsilon":"Ε","Equal":"⩵","EqualTilde":"≂","Equilibrium":"⇌","Escr":"ℰ","Esim":"⩳","Eta":"Η","Eum":"Ë","Euml":"Ë","Exists":"∃","ExponentialE":"ⅇ","Fcy":"Ф","Ffr":"𝔉","FilledSmallSquare":"◼","FilledVerySmallSquare":"▪","Fopf":"𝔽","ForAll":"∀","Fouriertrf":"ℱ","Fscr":"ℱ","GJcy":"Ѓ","G":">","GT":">","Gamma":"Γ","Gammad":"Ϝ","Gbreve":"Ğ","Gcedil":"Ģ","Gcirc":"Ĝ","Gcy":"Г","Gdot":"Ġ","Gfr":"𝔊","Gg":"⋙","Gopf":"𝔾","GreaterEqual":"≥","GreaterEqualLess":"⋛","GreaterFullEqual":"≧","GreaterGreater":"⪢","GreaterLess":"≷","GreaterSlantEqual":"⩾","GreaterTilde":"≳","Gscr":"𝒢","Gt":"≫","HARDcy":"Ъ","Hacek":"ˇ","Hat":"^","Hcirc":"Ĥ","Hfr":"ℌ","HilbertSpace":"ℋ","Hopf":"ℍ","HorizontalLine":"─","Hscr":"ℋ","Hstrok":"Ħ","HumpDownHump":"≎","HumpEqual":"≏","IEcy":"Е","IJlig":"Ĳ","IOcy":"Ё","Iacut":"Í","Iacute":"Í","Icir":"Î","Icirc":"Î","Icy":"И","Idot":"İ","Ifr":"ℑ","Igrav":"Ì","Igrave":"Ì","Im":"ℑ","Imacr":"Ī","ImaginaryI":"ⅈ","Implies":"⇒","Int":"∬","Integral":"∫","Intersection":"⋂","InvisibleComma":"⁣","InvisibleTimes":"⁢","Iogon":"Į","Iopf":"𝕀","Iota":"Ι","Iscr":"ℐ","Itilde":"Ĩ","Iukcy":"І","Ium":"Ï","Iuml":"Ï","Jcirc":"Ĵ","Jcy":"Й","Jfr":"𝔍","Jopf":"𝕁","Jscr":"𝒥","Jsercy":"Ј","Jukcy":"Є","KHcy":"Х","KJcy":"Ќ","Kappa":"Κ","Kcedil":"Ķ","Kcy":"К","Kfr":"𝔎","Kopf":"𝕂","Kscr":"𝒦","LJcy":"Љ","L":"<","LT":"<","Lacute":"Ĺ","Lambda":"Λ","Lang":"⟪","Laplacetrf":"ℒ","Larr":"↞","Lcaron":"Ľ","Lcedil":"Ļ","Lcy":"Л","LeftAngleBracket":"⟨","LeftArrow":"←","LeftArrowBar":"⇤","LeftArrowRightArrow":"⇆","LeftCeiling":"⌈","LeftDoubleBracket":"⟦","LeftDownTeeVector":"⥡","LeftDownVector":"⇃","LeftDownVectorBar":"⥙","LeftFloor":"⌊","LeftRightArrow":"↔","LeftRightVector":"⥎","LeftTee":"⊣","LeftTeeArrow":"↤","LeftTeeVector":"⥚","LeftTriangle":"⊲","LeftTriangleBar":"⧏","LeftTriangleEqual":"⊴","LeftUpDownVector":"⥑","LeftUpTeeVector":"⥠","LeftUpVector":"↿","LeftUpVectorBar":"⥘","LeftVector":"↼","LeftVectorBar":"⥒","Leftarrow":"⇐","Leftrightarrow":"⇔","LessEqualGreater":"⋚","LessFullEqual":"≦","LessGreater":"≶","LessLess":"⪡","LessSlantEqual":"⩽","LessTilde":"≲","Lfr":"𝔏","Ll":"⋘","Lleftarrow":"⇚","Lmidot":"Ŀ","LongLeftArrow":"⟵","LongLeftRightArrow":"⟷","LongRightArrow":"⟶","Longleftarrow":"⟸","Longleftrightarrow":"⟺","Longrightarrow":"⟹","Lopf":"𝕃","LowerLeftArrow":"↙","LowerRightArrow":"↘","Lscr":"ℒ","Lsh":"↰","Lstrok":"Ł","Lt":"≪","Map":"⤅","Mcy":"М","MediumSpace":" ","Mellintrf":"ℳ","Mfr":"𝔐","MinusPlus":"∓","Mopf":"𝕄","Mscr":"ℳ","Mu":"Μ","NJcy":"Њ","Nacute":"Ń","Ncaron":"Ň","Ncedil":"Ņ","Ncy":"Н","NegativeMediumSpace":"​","NegativeThickSpace":"​","NegativeThinSpace":"​","NegativeVeryThinSpace":"​","NestedGreaterGreater":"≫","NestedLessLess":"≪","NewLine":"\\n","Nfr":"𝔑","NoBreak":"⁠","NonBreakingSpace":" ","Nopf":"ℕ","Not":"⫬","NotCongruent":"≢","NotCupCap":"≭","NotDoubleVerticalBar":"∦","NotElement":"∉","NotEqual":"≠","NotEqualTilde":"≂̸","NotExists":"∄","NotGreater":"≯","NotGreaterEqual":"≱","NotGreaterFullEqual":"≧̸","NotGreaterGreater":"≫̸","NotGreaterLess":"≹","NotGreaterSlantEqual":"⩾̸","NotGreaterTilde":"≵","NotHumpDownHump":"≎̸","NotHumpEqual":"≏̸","NotLeftTriangle":"⋪","NotLeftTriangleBar":"⧏̸","NotLeftTriangleEqual":"⋬","NotLess":"≮","NotLessEqual":"≰","NotLessGreater":"≸","NotLessLess":"≪̸","NotLessSlantEqual":"⩽̸","NotLessTilde":"≴","NotNestedGreaterGreater":"⪢̸","NotNestedLessLess":"⪡̸","NotPrecedes":"⊀","NotPrecedesEqual":"⪯̸","NotPrecedesSlantEqual":"⋠","NotReverseElement":"∌","NotRightTriangle":"⋫","NotRightTriangleBar":"⧐̸","NotRightTriangleEqual":"⋭","NotSquareSubset":"⊏̸","NotSquareSubsetEqual":"⋢","NotSquareSuperset":"⊐̸","NotSquareSupersetEqual":"⋣","NotSubset":"⊂⃒","NotSubsetEqual":"⊈","NotSucceeds":"⊁","NotSucceedsEqual":"⪰̸","NotSucceedsSlantEqual":"⋡","NotSucceedsTilde":"≿̸","NotSuperset":"⊃⃒","NotSupersetEqual":"⊉","NotTilde":"≁","NotTildeEqual":"≄","NotTildeFullEqual":"≇","NotTildeTilde":"≉","NotVerticalBar":"∤","Nscr":"𝒩","Ntild":"Ñ","Ntilde":"Ñ","Nu":"Ν","OElig":"Œ","Oacut":"Ó","Oacute":"Ó","Ocir":"Ô","Ocirc":"Ô","Ocy":"О","Odblac":"Ő","Ofr":"𝔒","Ograv":"Ò","Ograve":"Ò","Omacr":"Ō","Omega":"Ω","Omicron":"Ο","Oopf":"𝕆","OpenCurlyDoubleQuote":"“","OpenCurlyQuote":"‘","Or":"⩔","Oscr":"𝒪","Oslas":"Ø","Oslash":"Ø","Otild":"Õ","Otilde":"Õ","Otimes":"⨷","Oum":"Ö","Ouml":"Ö","OverBar":"‾","OverBrace":"⏞","OverBracket":"⎴","OverParenthesis":"⏜","PartialD":"∂","Pcy":"П","Pfr":"𝔓","Phi":"Φ","Pi":"Π","PlusMinus":"±","Poincareplane":"ℌ","Popf":"ℙ","Pr":"⪻","Precedes":"≺","PrecedesEqual":"⪯","PrecedesSlantEqual":"≼","PrecedesTilde":"≾","Prime":"″","Product":"∏","Proportion":"∷","Proportional":"∝","Pscr":"𝒫","Psi":"Ψ","QUO":"\\"","QUOT":"\\"","Qfr":"𝔔","Qopf":"ℚ","Qscr":"𝒬","RBarr":"⤐","RE":"®","REG":"®","Racute":"Ŕ","Rang":"⟫","Rarr":"↠","Rarrtl":"⤖","Rcaron":"Ř","Rcedil":"Ŗ","Rcy":"Р","Re":"ℜ","ReverseElement":"∋","ReverseEquilibrium":"⇋","ReverseUpEquilibrium":"⥯","Rfr":"ℜ","Rho":"Ρ","RightAngleBracket":"⟩","RightArrow":"→","RightArrowBar":"⇥","RightArrowLeftArrow":"⇄","RightCeiling":"⌉","RightDoubleBracket":"⟧","RightDownTeeVector":"⥝","RightDownVector":"⇂","RightDownVectorBar":"⥕","RightFloor":"⌋","RightTee":"⊢","RightTeeArrow":"↦","RightTeeVector":"⥛","RightTriangle":"⊳","RightTriangleBar":"⧐","RightTriangleEqual":"⊵","RightUpDownVector":"⥏","RightUpTeeVector":"⥜","RightUpVector":"↾","RightUpVectorBar":"⥔","RightVector":"⇀","RightVectorBar":"⥓","Rightarrow":"⇒","Ropf":"ℝ","RoundImplies":"⥰","Rrightarrow":"⇛","Rscr":"ℛ","Rsh":"↱","RuleDelayed":"⧴","SHCHcy":"Щ","SHcy":"Ш","SOFTcy":"Ь","Sacute":"Ś","Sc":"⪼","Scaron":"Š","Scedil":"Ş","Scirc":"Ŝ","Scy":"С","Sfr":"𝔖","ShortDownArrow":"↓","ShortLeftArrow":"←","ShortRightArrow":"→","ShortUpArrow":"↑","Sigma":"Σ","SmallCircle":"∘","Sopf":"𝕊","Sqrt":"√","Square":"□","SquareIntersection":"⊓","SquareSubset":"⊏","SquareSubsetEqual":"⊑","SquareSuperset":"⊐","SquareSupersetEqual":"⊒","SquareUnion":"⊔","Sscr":"𝒮","Star":"⋆","Sub":"⋐","Subset":"⋐","SubsetEqual":"⊆","Succeeds":"≻","SucceedsEqual":"⪰","SucceedsSlantEqual":"≽","SucceedsTilde":"≿","SuchThat":"∋","Sum":"∑","Sup":"⋑","Superset":"⊃","SupersetEqual":"⊇","Supset":"⋑","THOR":"Þ","THORN":"Þ","TRADE":"™","TSHcy":"Ћ","TScy":"Ц","Tab":"\\t","Tau":"Τ","Tcaron":"Ť","Tcedil":"Ţ","Tcy":"Т","Tfr":"𝔗","Therefore":"∴","Theta":"Θ","ThickSpace":"  ","ThinSpace":" ","Tilde":"∼","TildeEqual":"≃","TildeFullEqual":"≅","TildeTilde":"≈","Topf":"𝕋","TripleDot":"⃛","Tscr":"𝒯","Tstrok":"Ŧ","Uacut":"Ú","Uacute":"Ú","Uarr":"↟","Uarrocir":"⥉","Ubrcy":"Ў","Ubreve":"Ŭ","Ucir":"Û","Ucirc":"Û","Ucy":"У","Udblac":"Ű","Ufr":"𝔘","Ugrav":"Ù","Ugrave":"Ù","Umacr":"Ū","UnderBar":"_","UnderBrace":"⏟","UnderBracket":"⎵","UnderParenthesis":"⏝","Union":"⋃","UnionPlus":"⊎","Uogon":"Ų","Uopf":"𝕌","UpArrow":"↑","UpArrowBar":"⤒","UpArrowDownArrow":"⇅","UpDownArrow":"↕","UpEquilibrium":"⥮","UpTee":"⊥","UpTeeArrow":"↥","Uparrow":"⇑","Updownarrow":"⇕","UpperLeftArrow":"↖","UpperRightArrow":"↗","Upsi":"ϒ","Upsilon":"Υ","Uring":"Ů","Uscr":"𝒰","Utilde":"Ũ","Uum":"Ü","Uuml":"Ü","VDash":"⊫","Vbar":"⫫","Vcy":"В","Vdash":"⊩","Vdashl":"⫦","Vee":"⋁","Verbar":"‖","Vert":"‖","VerticalBar":"∣","VerticalLine":"|","VerticalSeparator":"❘","VerticalTilde":"≀","VeryThinSpace":" ","Vfr":"𝔙","Vopf":"𝕍","Vscr":"𝒱","Vvdash":"⊪","Wcirc":"Ŵ","Wedge":"⋀","Wfr":"𝔚","Wopf":"𝕎","Wscr":"𝒲","Xfr":"𝔛","Xi":"Ξ","Xopf":"𝕏","Xscr":"𝒳","YAcy":"Я","YIcy":"Ї","YUcy":"Ю","Yacut":"Ý","Yacute":"Ý","Ycirc":"Ŷ","Ycy":"Ы","Yfr":"𝔜","Yopf":"𝕐","Yscr":"𝒴","Yuml":"Ÿ","ZHcy":"Ж","Zacute":"Ź","Zcaron":"Ž","Zcy":"З","Zdot":"Ż","ZeroWidthSpace":"​","Zeta":"Ζ","Zfr":"ℨ","Zopf":"ℤ","Zscr":"𝒵","aacut":"á","aacute":"á","abreve":"ă","ac":"∾","acE":"∾̳","acd":"∿","acir":"â","acirc":"â","acut":"´","acute":"´","acy":"а","aeli":"æ","aelig":"æ","af":"⁡","afr":"𝔞","agrav":"à","agrave":"à","alefsym":"ℵ","aleph":"ℵ","alpha":"α","amacr":"ā","amalg":"⨿","am":"&","amp":"&","and":"∧","andand":"⩕","andd":"⩜","andslope":"⩘","andv":"⩚","ang":"∠","ange":"⦤","angle":"∠","angmsd":"∡","angmsdaa":"⦨","angmsdab":"⦩","angmsdac":"⦪","angmsdad":"⦫","angmsdae":"⦬","angmsdaf":"⦭","angmsdag":"⦮","angmsdah":"⦯","angrt":"∟","angrtvb":"⊾","angrtvbd":"⦝","angsph":"∢","angst":"Å","angzarr":"⍼","aogon":"ą","aopf":"𝕒","ap":"≈","apE":"⩰","apacir":"⩯","ape":"≊","apid":"≋","apos":"\'","approx":"≈","approxeq":"≊","arin":"å","aring":"å","ascr":"𝒶","ast":"*","asymp":"≈","asympeq":"≍","atild":"ã","atilde":"ã","aum":"ä","auml":"ä","awconint":"∳","awint":"⨑","bNot":"⫭","backcong":"≌","backepsilon":"϶","backprime":"‵","backsim":"∽","backsimeq":"⋍","barvee":"⊽","barwed":"⌅","barwedge":"⌅","bbrk":"⎵","bbrktbrk":"⎶","bcong":"≌","bcy":"б","bdquo":"„","becaus":"∵","because":"∵","bemptyv":"⦰","bepsi":"϶","bernou":"ℬ","beta":"β","beth":"ℶ","between":"≬","bfr":"𝔟","bigcap":"⋂","bigcirc":"◯","bigcup":"⋃","bigodot":"⨀","bigoplus":"⨁","bigotimes":"⨂","bigsqcup":"⨆","bigstar":"★","bigtriangledown":"▽","bigtriangleup":"△","biguplus":"⨄","bigvee":"⋁","bigwedge":"⋀","bkarow":"⤍","blacklozenge":"⧫","blacksquare":"▪","blacktriangle":"▴","blacktriangledown":"▾","blacktriangleleft":"◂","blacktriangleright":"▸","blank":"␣","blk12":"▒","blk14":"░","blk34":"▓","block":"█","bne":"=⃥","bnequiv":"≡⃥","bnot":"⌐","bopf":"𝕓","bot":"⊥","bottom":"⊥","bowtie":"⋈","boxDL":"╗","boxDR":"╔","boxDl":"╖","boxDr":"╓","boxH":"═","boxHD":"╦","boxHU":"╩","boxHd":"╤","boxHu":"╧","boxUL":"╝","boxUR":"╚","boxUl":"╜","boxUr":"╙","boxV":"║","boxVH":"╬","boxVL":"╣","boxVR":"╠","boxVh":"╫","boxVl":"╢","boxVr":"╟","boxbox":"⧉","boxdL":"╕","boxdR":"╒","boxdl":"┐","boxdr":"┌","boxh":"─","boxhD":"╥","boxhU":"╨","boxhd":"┬","boxhu":"┴","boxminus":"⊟","boxplus":"⊞","boxtimes":"⊠","boxuL":"╛","boxuR":"╘","boxul":"┘","boxur":"└","boxv":"│","boxvH":"╪","boxvL":"╡","boxvR":"╞","boxvh":"┼","boxvl":"┤","boxvr":"├","bprime":"‵","breve":"˘","brvba":"¦","brvbar":"¦","bscr":"𝒷","bsemi":"⁏","bsim":"∽","bsime":"⋍","bsol":"\\\\","bsolb":"⧅","bsolhsub":"⟈","bull":"•","bullet":"•","bump":"≎","bumpE":"⪮","bumpe":"≏","bumpeq":"≏","cacute":"ć","cap":"∩","capand":"⩄","capbrcup":"⩉","capcap":"⩋","capcup":"⩇","capdot":"⩀","caps":"∩︀","caret":"⁁","caron":"ˇ","ccaps":"⩍","ccaron":"č","ccedi":"ç","ccedil":"ç","ccirc":"ĉ","ccups":"⩌","ccupssm":"⩐","cdot":"ċ","cedi":"¸","cedil":"¸","cemptyv":"⦲","cen":"¢","cent":"¢","centerdot":"·","cfr":"𝔠","chcy":"ч","check":"✓","checkmark":"✓","chi":"χ","cir":"○","cirE":"⧃","circ":"ˆ","circeq":"≗","circlearrowleft":"↺","circlearrowright":"↻","circledR":"®","circledS":"Ⓢ","circledast":"⊛","circledcirc":"⊚","circleddash":"⊝","cire":"≗","cirfnint":"⨐","cirmid":"⫯","cirscir":"⧂","clubs":"♣","clubsuit":"♣","colon":":","colone":"≔","coloneq":"≔","comma":",","commat":"@","comp":"∁","compfn":"∘","complement":"∁","complexes":"ℂ","cong":"≅","congdot":"⩭","conint":"∮","copf":"𝕔","coprod":"∐","cop":"©","copy":"©","copysr":"℗","crarr":"↵","cross":"✗","cscr":"𝒸","csub":"⫏","csube":"⫑","csup":"⫐","csupe":"⫒","ctdot":"⋯","cudarrl":"⤸","cudarrr":"⤵","cuepr":"⋞","cuesc":"⋟","cularr":"↶","cularrp":"⤽","cup":"∪","cupbrcap":"⩈","cupcap":"⩆","cupcup":"⩊","cupdot":"⊍","cupor":"⩅","cups":"∪︀","curarr":"↷","curarrm":"⤼","curlyeqprec":"⋞","curlyeqsucc":"⋟","curlyvee":"⋎","curlywedge":"⋏","curre":"¤","curren":"¤","curvearrowleft":"↶","curvearrowright":"↷","cuvee":"⋎","cuwed":"⋏","cwconint":"∲","cwint":"∱","cylcty":"⌭","dArr":"⇓","dHar":"⥥","dagger":"†","daleth":"ℸ","darr":"↓","dash":"‐","dashv":"⊣","dbkarow":"⤏","dblac":"˝","dcaron":"ď","dcy":"д","dd":"ⅆ","ddagger":"‡","ddarr":"⇊","ddotseq":"⩷","de":"°","deg":"°","delta":"δ","demptyv":"⦱","dfisht":"⥿","dfr":"𝔡","dharl":"⇃","dharr":"⇂","diam":"⋄","diamond":"⋄","diamondsuit":"♦","diams":"♦","die":"¨","digamma":"ϝ","disin":"⋲","div":"÷","divid":"÷","divide":"÷","divideontimes":"⋇","divonx":"⋇","djcy":"ђ","dlcorn":"⌞","dlcrop":"⌍","dollar":"$","dopf":"𝕕","dot":"˙","doteq":"≐","doteqdot":"≑","dotminus":"∸","dotplus":"∔","dotsquare":"⊡","doublebarwedge":"⌆","downarrow":"↓","downdownarrows":"⇊","downharpoonleft":"⇃","downharpoonright":"⇂","drbkarow":"⤐","drcorn":"⌟","drcrop":"⌌","dscr":"𝒹","dscy":"ѕ","dsol":"⧶","dstrok":"đ","dtdot":"⋱","dtri":"▿","dtrif":"▾","duarr":"⇵","duhar":"⥯","dwangle":"⦦","dzcy":"џ","dzigrarr":"⟿","eDDot":"⩷","eDot":"≑","eacut":"é","eacute":"é","easter":"⩮","ecaron":"ě","ecir":"ê","ecirc":"ê","ecolon":"≕","ecy":"э","edot":"ė","ee":"ⅇ","efDot":"≒","efr":"𝔢","eg":"⪚","egrav":"è","egrave":"è","egs":"⪖","egsdot":"⪘","el":"⪙","elinters":"⏧","ell":"ℓ","els":"⪕","elsdot":"⪗","emacr":"ē","empty":"∅","emptyset":"∅","emptyv":"∅","emsp13":" ","emsp14":" ","emsp":" ","eng":"ŋ","ensp":" ","eogon":"ę","eopf":"𝕖","epar":"⋕","eparsl":"⧣","eplus":"⩱","epsi":"ε","epsilon":"ε","epsiv":"ϵ","eqcirc":"≖","eqcolon":"≕","eqsim":"≂","eqslantgtr":"⪖","eqslantless":"⪕","equals":"=","equest":"≟","equiv":"≡","equivDD":"⩸","eqvparsl":"⧥","erDot":"≓","erarr":"⥱","escr":"ℯ","esdot":"≐","esim":"≂","eta":"η","et":"ð","eth":"ð","eum":"ë","euml":"ë","euro":"€","excl":"!","exist":"∃","expectation":"ℰ","exponentiale":"ⅇ","fallingdotseq":"≒","fcy":"ф","female":"♀","ffilig":"ﬃ","fflig":"ﬀ","ffllig":"ﬄ","ffr":"𝔣","filig":"ﬁ","fjlig":"fj","flat":"♭","fllig":"ﬂ","fltns":"▱","fnof":"ƒ","fopf":"𝕗","forall":"∀","fork":"⋔","forkv":"⫙","fpartint":"⨍","frac1":"¼","frac12":"½","frac13":"⅓","frac14":"¼","frac15":"⅕","frac16":"⅙","frac18":"⅛","frac23":"⅔","frac25":"⅖","frac3":"¾","frac34":"¾","frac35":"⅗","frac38":"⅜","frac45":"⅘","frac56":"⅚","frac58":"⅝","frac78":"⅞","frasl":"⁄","frown":"⌢","fscr":"𝒻","gE":"≧","gEl":"⪌","gacute":"ǵ","gamma":"γ","gammad":"ϝ","gap":"⪆","gbreve":"ğ","gcirc":"ĝ","gcy":"г","gdot":"ġ","ge":"≥","gel":"⋛","geq":"≥","geqq":"≧","geqslant":"⩾","ges":"⩾","gescc":"⪩","gesdot":"⪀","gesdoto":"⪂","gesdotol":"⪄","gesl":"⋛︀","gesles":"⪔","gfr":"𝔤","gg":"≫","ggg":"⋙","gimel":"ℷ","gjcy":"ѓ","gl":"≷","glE":"⪒","gla":"⪥","glj":"⪤","gnE":"≩","gnap":"⪊","gnapprox":"⪊","gne":"⪈","gneq":"⪈","gneqq":"≩","gnsim":"⋧","gopf":"𝕘","grave":"`","gscr":"ℊ","gsim":"≳","gsime":"⪎","gsiml":"⪐","g":">","gt":">","gtcc":"⪧","gtcir":"⩺","gtdot":"⋗","gtlPar":"⦕","gtquest":"⩼","gtrapprox":"⪆","gtrarr":"⥸","gtrdot":"⋗","gtreqless":"⋛","gtreqqless":"⪌","gtrless":"≷","gtrsim":"≳","gvertneqq":"≩︀","gvnE":"≩︀","hArr":"⇔","hairsp":" ","half":"½","hamilt":"ℋ","hardcy":"ъ","harr":"↔","harrcir":"⥈","harrw":"↭","hbar":"ℏ","hcirc":"ĥ","hearts":"♥","heartsuit":"♥","hellip":"…","hercon":"⊹","hfr":"𝔥","hksearow":"⤥","hkswarow":"⤦","hoarr":"⇿","homtht":"∻","hookleftarrow":"↩","hookrightarrow":"↪","hopf":"𝕙","horbar":"―","hscr":"𝒽","hslash":"ℏ","hstrok":"ħ","hybull":"⁃","hyphen":"‐","iacut":"í","iacute":"í","ic":"⁣","icir":"î","icirc":"î","icy":"и","iecy":"е","iexc":"¡","iexcl":"¡","iff":"⇔","ifr":"𝔦","igrav":"ì","igrave":"ì","ii":"ⅈ","iiiint":"⨌","iiint":"∭","iinfin":"⧜","iiota":"℩","ijlig":"ĳ","imacr":"ī","image":"ℑ","imagline":"ℐ","imagpart":"ℑ","imath":"ı","imof":"⊷","imped":"Ƶ","in":"∈","incare":"℅","infin":"∞","infintie":"⧝","inodot":"ı","int":"∫","intcal":"⊺","integers":"ℤ","intercal":"⊺","intlarhk":"⨗","intprod":"⨼","iocy":"ё","iogon":"į","iopf":"𝕚","iota":"ι","iprod":"⨼","iques":"¿","iquest":"¿","iscr":"𝒾","isin":"∈","isinE":"⋹","isindot":"⋵","isins":"⋴","isinsv":"⋳","isinv":"∈","it":"⁢","itilde":"ĩ","iukcy":"і","ium":"ï","iuml":"ï","jcirc":"ĵ","jcy":"й","jfr":"𝔧","jmath":"ȷ","jopf":"𝕛","jscr":"𝒿","jsercy":"ј","jukcy":"є","kappa":"κ","kappav":"ϰ","kcedil":"ķ","kcy":"к","kfr":"𝔨","kgreen":"ĸ","khcy":"х","kjcy":"ќ","kopf":"𝕜","kscr":"𝓀","lAarr":"⇚","lArr":"⇐","lAtail":"⤛","lBarr":"⤎","lE":"≦","lEg":"⪋","lHar":"⥢","lacute":"ĺ","laemptyv":"⦴","lagran":"ℒ","lambda":"λ","lang":"⟨","langd":"⦑","langle":"⟨","lap":"⪅","laqu":"«","laquo":"«","larr":"←","larrb":"⇤","larrbfs":"⤟","larrfs":"⤝","larrhk":"↩","larrlp":"↫","larrpl":"⤹","larrsim":"⥳","larrtl":"↢","lat":"⪫","latail":"⤙","late":"⪭","lates":"⪭︀","lbarr":"⤌","lbbrk":"❲","lbrace":"{","lbrack":"[","lbrke":"⦋","lbrksld":"⦏","lbrkslu":"⦍","lcaron":"ľ","lcedil":"ļ","lceil":"⌈","lcub":"{","lcy":"л","ldca":"⤶","ldquo":"“","ldquor":"„","ldrdhar":"⥧","ldrushar":"⥋","ldsh":"↲","le":"≤","leftarrow":"←","leftarrowtail":"↢","leftharpoondown":"↽","leftharpoonup":"↼","leftleftarrows":"⇇","leftrightarrow":"↔","leftrightarrows":"⇆","leftrightharpoons":"⇋","leftrightsquigarrow":"↭","leftthreetimes":"⋋","leg":"⋚","leq":"≤","leqq":"≦","leqslant":"⩽","les":"⩽","lescc":"⪨","lesdot":"⩿","lesdoto":"⪁","lesdotor":"⪃","lesg":"⋚︀","lesges":"⪓","lessapprox":"⪅","lessdot":"⋖","lesseqgtr":"⋚","lesseqqgtr":"⪋","lessgtr":"≶","lesssim":"≲","lfisht":"⥼","lfloor":"⌊","lfr":"𝔩","lg":"≶","lgE":"⪑","lhard":"↽","lharu":"↼","lharul":"⥪","lhblk":"▄","ljcy":"љ","ll":"≪","llarr":"⇇","llcorner":"⌞","llhard":"⥫","lltri":"◺","lmidot":"ŀ","lmoust":"⎰","lmoustache":"⎰","lnE":"≨","lnap":"⪉","lnapprox":"⪉","lne":"⪇","lneq":"⪇","lneqq":"≨","lnsim":"⋦","loang":"⟬","loarr":"⇽","lobrk":"⟦","longleftarrow":"⟵","longleftrightarrow":"⟷","longmapsto":"⟼","longrightarrow":"⟶","looparrowleft":"↫","looparrowright":"↬","lopar":"⦅","lopf":"𝕝","loplus":"⨭","lotimes":"⨴","lowast":"∗","lowbar":"_","loz":"◊","lozenge":"◊","lozf":"⧫","lpar":"(","lparlt":"⦓","lrarr":"⇆","lrcorner":"⌟","lrhar":"⇋","lrhard":"⥭","lrm":"‎","lrtri":"⊿","lsaquo":"‹","lscr":"𝓁","lsh":"↰","lsim":"≲","lsime":"⪍","lsimg":"⪏","lsqb":"[","lsquo":"‘","lsquor":"‚","lstrok":"ł","l":"<","lt":"<","ltcc":"⪦","ltcir":"⩹","ltdot":"⋖","lthree":"⋋","ltimes":"⋉","ltlarr":"⥶","ltquest":"⩻","ltrPar":"⦖","ltri":"◃","ltrie":"⊴","ltrif":"◂","lurdshar":"⥊","luruhar":"⥦","lvertneqq":"≨︀","lvnE":"≨︀","mDDot":"∺","mac":"¯","macr":"¯","male":"♂","malt":"✠","maltese":"✠","map":"↦","mapsto":"↦","mapstodown":"↧","mapstoleft":"↤","mapstoup":"↥","marker":"▮","mcomma":"⨩","mcy":"м","mdash":"—","measuredangle":"∡","mfr":"𝔪","mho":"℧","micr":"µ","micro":"µ","mid":"∣","midast":"*","midcir":"⫰","middo":"·","middot":"·","minus":"−","minusb":"⊟","minusd":"∸","minusdu":"⨪","mlcp":"⫛","mldr":"…","mnplus":"∓","models":"⊧","mopf":"𝕞","mp":"∓","mscr":"𝓂","mstpos":"∾","mu":"μ","multimap":"⊸","mumap":"⊸","nGg":"⋙̸","nGt":"≫⃒","nGtv":"≫̸","nLeftarrow":"⇍","nLeftrightarrow":"⇎","nLl":"⋘̸","nLt":"≪⃒","nLtv":"≪̸","nRightarrow":"⇏","nVDash":"⊯","nVdash":"⊮","nabla":"∇","nacute":"ń","nang":"∠⃒","nap":"≉","napE":"⩰̸","napid":"≋̸","napos":"ŉ","napprox":"≉","natur":"♮","natural":"♮","naturals":"ℕ","nbs":" ","nbsp":" ","nbump":"≎̸","nbumpe":"≏̸","ncap":"⩃","ncaron":"ň","ncedil":"ņ","ncong":"≇","ncongdot":"⩭̸","ncup":"⩂","ncy":"н","ndash":"–","ne":"≠","neArr":"⇗","nearhk":"⤤","nearr":"↗","nearrow":"↗","nedot":"≐̸","nequiv":"≢","nesear":"⤨","nesim":"≂̸","nexist":"∄","nexists":"∄","nfr":"𝔫","ngE":"≧̸","nge":"≱","ngeq":"≱","ngeqq":"≧̸","ngeqslant":"⩾̸","nges":"⩾̸","ngsim":"≵","ngt":"≯","ngtr":"≯","nhArr":"⇎","nharr":"↮","nhpar":"⫲","ni":"∋","nis":"⋼","nisd":"⋺","niv":"∋","njcy":"њ","nlArr":"⇍","nlE":"≦̸","nlarr":"↚","nldr":"‥","nle":"≰","nleftarrow":"↚","nleftrightarrow":"↮","nleq":"≰","nleqq":"≦̸","nleqslant":"⩽̸","nles":"⩽̸","nless":"≮","nlsim":"≴","nlt":"≮","nltri":"⋪","nltrie":"⋬","nmid":"∤","nopf":"𝕟","no":"¬","not":"¬","notin":"∉","notinE":"⋹̸","notindot":"⋵̸","notinva":"∉","notinvb":"⋷","notinvc":"⋶","notni":"∌","notniva":"∌","notnivb":"⋾","notnivc":"⋽","npar":"∦","nparallel":"∦","nparsl":"⫽⃥","npart":"∂̸","npolint":"⨔","npr":"⊀","nprcue":"⋠","npre":"⪯̸","nprec":"⊀","npreceq":"⪯̸","nrArr":"⇏","nrarr":"↛","nrarrc":"⤳̸","nrarrw":"↝̸","nrightarrow":"↛","nrtri":"⋫","nrtrie":"⋭","nsc":"⊁","nsccue":"⋡","nsce":"⪰̸","nscr":"𝓃","nshortmid":"∤","nshortparallel":"∦","nsim":"≁","nsime":"≄","nsimeq":"≄","nsmid":"∤","nspar":"∦","nsqsube":"⋢","nsqsupe":"⋣","nsub":"⊄","nsubE":"⫅̸","nsube":"⊈","nsubset":"⊂⃒","nsubseteq":"⊈","nsubseteqq":"⫅̸","nsucc":"⊁","nsucceq":"⪰̸","nsup":"⊅","nsupE":"⫆̸","nsupe":"⊉","nsupset":"⊃⃒","nsupseteq":"⊉","nsupseteqq":"⫆̸","ntgl":"≹","ntild":"ñ","ntilde":"ñ","ntlg":"≸","ntriangleleft":"⋪","ntrianglelefteq":"⋬","ntriangleright":"⋫","ntrianglerighteq":"⋭","nu":"ν","num":"#","numero":"№","numsp":" ","nvDash":"⊭","nvHarr":"⤄","nvap":"≍⃒","nvdash":"⊬","nvge":"≥⃒","nvgt":">⃒","nvinfin":"⧞","nvlArr":"⤂","nvle":"≤⃒","nvlt":"<⃒","nvltrie":"⊴⃒","nvrArr":"⤃","nvrtrie":"⊵⃒","nvsim":"∼⃒","nwArr":"⇖","nwarhk":"⤣","nwarr":"↖","nwarrow":"↖","nwnear":"⤧","oS":"Ⓢ","oacut":"ó","oacute":"ó","oast":"⊛","ocir":"ô","ocirc":"ô","ocy":"о","odash":"⊝","odblac":"ő","odiv":"⨸","odot":"⊙","odsold":"⦼","oelig":"œ","ofcir":"⦿","ofr":"𝔬","ogon":"˛","ograv":"ò","ograve":"ò","ogt":"⧁","ohbar":"⦵","ohm":"Ω","oint":"∮","olarr":"↺","olcir":"⦾","olcross":"⦻","oline":"‾","olt":"⧀","omacr":"ō","omega":"ω","omicron":"ο","omid":"⦶","ominus":"⊖","oopf":"𝕠","opar":"⦷","operp":"⦹","oplus":"⊕","or":"∨","orarr":"↻","ord":"º","order":"ℴ","orderof":"ℴ","ordf":"ª","ordm":"º","origof":"⊶","oror":"⩖","orslope":"⩗","orv":"⩛","oscr":"ℴ","oslas":"ø","oslash":"ø","osol":"⊘","otild":"õ","otilde":"õ","otimes":"⊗","otimesas":"⨶","oum":"ö","ouml":"ö","ovbar":"⌽","par":"¶","para":"¶","parallel":"∥","parsim":"⫳","parsl":"⫽","part":"∂","pcy":"п","percnt":"%","period":".","permil":"‰","perp":"⊥","pertenk":"‱","pfr":"𝔭","phi":"φ","phiv":"ϕ","phmmat":"ℳ","phone":"☎","pi":"π","pitchfork":"⋔","piv":"ϖ","planck":"ℏ","planckh":"ℎ","plankv":"ℏ","plus":"+","plusacir":"⨣","plusb":"⊞","pluscir":"⨢","plusdo":"∔","plusdu":"⨥","pluse":"⩲","plusm":"±","plusmn":"±","plussim":"⨦","plustwo":"⨧","pm":"±","pointint":"⨕","popf":"𝕡","poun":"£","pound":"£","pr":"≺","prE":"⪳","prap":"⪷","prcue":"≼","pre":"⪯","prec":"≺","precapprox":"⪷","preccurlyeq":"≼","preceq":"⪯","precnapprox":"⪹","precneqq":"⪵","precnsim":"⋨","precsim":"≾","prime":"′","primes":"ℙ","prnE":"⪵","prnap":"⪹","prnsim":"⋨","prod":"∏","profalar":"⌮","profline":"⌒","profsurf":"⌓","prop":"∝","propto":"∝","prsim":"≾","prurel":"⊰","pscr":"𝓅","psi":"ψ","puncsp":" ","qfr":"𝔮","qint":"⨌","qopf":"𝕢","qprime":"⁗","qscr":"𝓆","quaternions":"ℍ","quatint":"⨖","quest":"?","questeq":"≟","quo":"\\"","quot":"\\"","rAarr":"⇛","rArr":"⇒","rAtail":"⤜","rBarr":"⤏","rHar":"⥤","race":"∽̱","racute":"ŕ","radic":"√","raemptyv":"⦳","rang":"⟩","rangd":"⦒","range":"⦥","rangle":"⟩","raqu":"»","raquo":"»","rarr":"→","rarrap":"⥵","rarrb":"⇥","rarrbfs":"⤠","rarrc":"⤳","rarrfs":"⤞","rarrhk":"↪","rarrlp":"↬","rarrpl":"⥅","rarrsim":"⥴","rarrtl":"↣","rarrw":"↝","ratail":"⤚","ratio":"∶","rationals":"ℚ","rbarr":"⤍","rbbrk":"❳","rbrace":"}","rbrack":"]","rbrke":"⦌","rbrksld":"⦎","rbrkslu":"⦐","rcaron":"ř","rcedil":"ŗ","rceil":"⌉","rcub":"}","rcy":"р","rdca":"⤷","rdldhar":"⥩","rdquo":"”","rdquor":"”","rdsh":"↳","real":"ℜ","realine":"ℛ","realpart":"ℜ","reals":"ℝ","rect":"▭","re":"®","reg":"®","rfisht":"⥽","rfloor":"⌋","rfr":"𝔯","rhard":"⇁","rharu":"⇀","rharul":"⥬","rho":"ρ","rhov":"ϱ","rightarrow":"→","rightarrowtail":"↣","rightharpoondown":"⇁","rightharpoonup":"⇀","rightleftarrows":"⇄","rightleftharpoons":"⇌","rightrightarrows":"⇉","rightsquigarrow":"↝","rightthreetimes":"⋌","ring":"˚","risingdotseq":"≓","rlarr":"⇄","rlhar":"⇌","rlm":"‏","rmoust":"⎱","rmoustache":"⎱","rnmid":"⫮","roang":"⟭","roarr":"⇾","robrk":"⟧","ropar":"⦆","ropf":"𝕣","roplus":"⨮","rotimes":"⨵","rpar":")","rpargt":"⦔","rppolint":"⨒","rrarr":"⇉","rsaquo":"›","rscr":"𝓇","rsh":"↱","rsqb":"]","rsquo":"’","rsquor":"’","rthree":"⋌","rtimes":"⋊","rtri":"▹","rtrie":"⊵","rtrif":"▸","rtriltri":"⧎","ruluhar":"⥨","rx":"℞","sacute":"ś","sbquo":"‚","sc":"≻","scE":"⪴","scap":"⪸","scaron":"š","sccue":"≽","sce":"⪰","scedil":"ş","scirc":"ŝ","scnE":"⪶","scnap":"⪺","scnsim":"⋩","scpolint":"⨓","scsim":"≿","scy":"с","sdot":"⋅","sdotb":"⊡","sdote":"⩦","seArr":"⇘","searhk":"⤥","searr":"↘","searrow":"↘","sec":"§","sect":"§","semi":";","seswar":"⤩","setminus":"∖","setmn":"∖","sext":"✶","sfr":"𝔰","sfrown":"⌢","sharp":"♯","shchcy":"щ","shcy":"ш","shortmid":"∣","shortparallel":"∥","sh":"­","shy":"­","sigma":"σ","sigmaf":"ς","sigmav":"ς","sim":"∼","simdot":"⩪","sime":"≃","simeq":"≃","simg":"⪞","simgE":"⪠","siml":"⪝","simlE":"⪟","simne":"≆","simplus":"⨤","simrarr":"⥲","slarr":"←","smallsetminus":"∖","smashp":"⨳","smeparsl":"⧤","smid":"∣","smile":"⌣","smt":"⪪","smte":"⪬","smtes":"⪬︀","softcy":"ь","sol":"/","solb":"⧄","solbar":"⌿","sopf":"𝕤","spades":"♠","spadesuit":"♠","spar":"∥","sqcap":"⊓","sqcaps":"⊓︀","sqcup":"⊔","sqcups":"⊔︀","sqsub":"⊏","sqsube":"⊑","sqsubset":"⊏","sqsubseteq":"⊑","sqsup":"⊐","sqsupe":"⊒","sqsupset":"⊐","sqsupseteq":"⊒","squ":"□","square":"□","squarf":"▪","squf":"▪","srarr":"→","sscr":"𝓈","ssetmn":"∖","ssmile":"⌣","sstarf":"⋆","star":"☆","starf":"★","straightepsilon":"ϵ","straightphi":"ϕ","strns":"¯","sub":"⊂","subE":"⫅","subdot":"⪽","sube":"⊆","subedot":"⫃","submult":"⫁","subnE":"⫋","subne":"⊊","subplus":"⪿","subrarr":"⥹","subset":"⊂","subseteq":"⊆","subseteqq":"⫅","subsetneq":"⊊","subsetneqq":"⫋","subsim":"⫇","subsub":"⫕","subsup":"⫓","succ":"≻","succapprox":"⪸","succcurlyeq":"≽","succeq":"⪰","succnapprox":"⪺","succneqq":"⪶","succnsim":"⋩","succsim":"≿","sum":"∑","sung":"♪","sup":"⊃","sup1":"¹","sup2":"²","sup3":"³","supE":"⫆","supdot":"⪾","supdsub":"⫘","supe":"⊇","supedot":"⫄","suphsol":"⟉","suphsub":"⫗","suplarr":"⥻","supmult":"⫂","supnE":"⫌","supne":"⊋","supplus":"⫀","supset":"⊃","supseteq":"⊇","supseteqq":"⫆","supsetneq":"⊋","supsetneqq":"⫌","supsim":"⫈","supsub":"⫔","supsup":"⫖","swArr":"⇙","swarhk":"⤦","swarr":"↙","swarrow":"↙","swnwar":"⤪","szli":"ß","szlig":"ß","target":"⌖","tau":"τ","tbrk":"⎴","tcaron":"ť","tcedil":"ţ","tcy":"т","tdot":"⃛","telrec":"⌕","tfr":"𝔱","there4":"∴","therefore":"∴","theta":"θ","thetasym":"ϑ","thetav":"ϑ","thickapprox":"≈","thicksim":"∼","thinsp":" ","thkap":"≈","thksim":"∼","thor":"þ","thorn":"þ","tilde":"˜","time":"×","times":"×","timesb":"⊠","timesbar":"⨱","timesd":"⨰","tint":"∭","toea":"⤨","top":"⊤","topbot":"⌶","topcir":"⫱","topf":"𝕥","topfork":"⫚","tosa":"⤩","tprime":"‴","trade":"™","triangle":"▵","triangledown":"▿","triangleleft":"◃","trianglelefteq":"⊴","triangleq":"≜","triangleright":"▹","trianglerighteq":"⊵","tridot":"◬","trie":"≜","triminus":"⨺","triplus":"⨹","trisb":"⧍","tritime":"⨻","trpezium":"⏢","tscr":"𝓉","tscy":"ц","tshcy":"ћ","tstrok":"ŧ","twixt":"≬","twoheadleftarrow":"↞","twoheadrightarrow":"↠","uArr":"⇑","uHar":"⥣","uacut":"ú","uacute":"ú","uarr":"↑","ubrcy":"ў","ubreve":"ŭ","ucir":"û","ucirc":"û","ucy":"у","udarr":"⇅","udblac":"ű","udhar":"⥮","ufisht":"⥾","ufr":"𝔲","ugrav":"ù","ugrave":"ù","uharl":"↿","uharr":"↾","uhblk":"▀","ulcorn":"⌜","ulcorner":"⌜","ulcrop":"⌏","ultri":"◸","umacr":"ū","um":"¨","uml":"¨","uogon":"ų","uopf":"𝕦","uparrow":"↑","updownarrow":"↕","upharpoonleft":"↿","upharpoonright":"↾","uplus":"⊎","upsi":"υ","upsih":"ϒ","upsilon":"υ","upuparrows":"⇈","urcorn":"⌝","urcorner":"⌝","urcrop":"⌎","uring":"ů","urtri":"◹","uscr":"𝓊","utdot":"⋰","utilde":"ũ","utri":"▵","utrif":"▴","uuarr":"⇈","uum":"ü","uuml":"ü","uwangle":"⦧","vArr":"⇕","vBar":"⫨","vBarv":"⫩","vDash":"⊨","vangrt":"⦜","varepsilon":"ϵ","varkappa":"ϰ","varnothing":"∅","varphi":"ϕ","varpi":"ϖ","varpropto":"∝","varr":"↕","varrho":"ϱ","varsigma":"ς","varsubsetneq":"⊊︀","varsubsetneqq":"⫋︀","varsupsetneq":"⊋︀","varsupsetneqq":"⫌︀","vartheta":"ϑ","vartriangleleft":"⊲","vartriangleright":"⊳","vcy":"в","vdash":"⊢","vee":"∨","veebar":"⊻","veeeq":"≚","vellip":"⋮","verbar":"|","vert":"|","vfr":"𝔳","vltri":"⊲","vnsub":"⊂⃒","vnsup":"⊃⃒","vopf":"𝕧","vprop":"∝","vrtri":"⊳","vscr":"𝓋","vsubnE":"⫋︀","vsubne":"⊊︀","vsupnE":"⫌︀","vsupne":"⊋︀","vzigzag":"⦚","wcirc":"ŵ","wedbar":"⩟","wedge":"∧","wedgeq":"≙","weierp":"℘","wfr":"𝔴","wopf":"𝕨","wp":"℘","wr":"≀","wreath":"≀","wscr":"𝓌","xcap":"⋂","xcirc":"◯","xcup":"⋃","xdtri":"▽","xfr":"𝔵","xhArr":"⟺","xharr":"⟷","xi":"ξ","xlArr":"⟸","xlarr":"⟵","xmap":"⟼","xnis":"⋻","xodot":"⨀","xopf":"𝕩","xoplus":"⨁","xotime":"⨂","xrArr":"⟹","xrarr":"⟶","xscr":"𝓍","xsqcup":"⨆","xuplus":"⨄","xutri":"△","xvee":"⋁","xwedge":"⋀","yacut":"ý","yacute":"ý","yacy":"я","ycirc":"ŷ","ycy":"ы","ye":"¥","yen":"¥","yfr":"𝔶","yicy":"ї","yopf":"𝕪","yscr":"𝓎","yucy":"ю","yum":"ÿ","yuml":"ÿ","zacute":"ź","zcaron":"ž","zcy":"з","zdot":"ż","zeetrf":"ℨ","zeta":"ζ","zfr":"𝔷","zhcy":"ж","zigrarr":"⇝","zopf":"𝕫","zscr":"𝓏","zwj":"‍","zwnj":"‌"}');
+
 /***/ })
 
 /******/ 	});
@@ -12161,8 +12443,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 79 modules
-var src = __webpack_require__(4307);
+// EXTERNAL MODULE: ./src/index.ts + 88 modules
+var src = __webpack_require__(1323);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
@@ -12177,9 +12459,12 @@ const {
 }).option('noDoc', {
   type: 'boolean',
   description: 'Only compile content HTML'
-}).option('noWrapper', {
+}).option('noHtml', {
   type: 'boolean',
-  description: 'No wrapper'
+  description: 'Only compile content HTML'
+}).option('noPdf', {
+  type: 'boolean',
+  description: 'Only compile content HTML'
 }).option('noSyntaxHighlight', {
   type: 'boolean',
   description: 'No syntax highlight'
@@ -12192,6 +12477,9 @@ const {
 }).option('noCache', {
   type: 'boolean',
   description: 'No cache'
+}).option('noTexSvg', {
+  type: 'boolean',
+  description: 'No Tex Svg'
 }).option('spelling', {
   type: 'boolean',
   description: 'Check spelling'
@@ -12201,11 +12489,13 @@ const options = {
   week: argv.week,
   watch: argv.watch,
   noDoc: argv.noDoc,
-  noWrapper: argv.noWrapper,
+  noHtml: argv.noHtml,
+  noPdf: argv.noPdf,
   noSyntaxHighlight: argv.noSyntaxHighlight,
   noReport: argv.noReport,
   noEmbedAssets: argv.noEmbedAssets,
   noCache: argv.noCache,
+  noTexSvg: argv.noTexSvg,
   spelling: argv.spelling
 };
 (0,src/* rMarkdown */.C)(dirPath, options);

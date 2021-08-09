@@ -19,7 +19,7 @@ export function readFile(
   return fs.promises.readFile(filePath, encoding);
 }
 
-export function writeFile(filePath: string, contents: string) {
+export function writeFile(filePath: string, contents: string | Buffer) {
   return fs.promises.writeFile(filePath, contents);
 }
 
@@ -50,6 +50,10 @@ export function getBuildDir(dirPath: string) {
 
 export function getCacheDir(dirPath: string) {
   return path.join(process.cwd(), dirPath, 'cache');
+}
+
+export function getLibraryDir() {
+  return __dirname;
 }
 
 export function combineMdastTrees(mdasts: Parent[]): Parent {
