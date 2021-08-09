@@ -77,10 +77,10 @@ module.exports = {
         test: /\.svg$/,
         loader: 'url-loader'
       },
+      // for base-64 inlining fonts imported in CSS files via @font-face
       {
         test: /\.ttf$/,
         loader: 'base64-inline-loader',
-        // use: 'base64-inline-loader?limit=1000&name=[name].[ext]'
       },
     ]
   },
