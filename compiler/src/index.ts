@@ -53,7 +53,7 @@ async function writeUnit(unit: Unit, ctx: Context) {
     await writeFile(filePath + '.html', html);
     const seconds = timer.stop();
     const status = chalk.green.bold(`Complete in ${seconds}s`);
-    console.log(`✨ ${status} ${filePath}`);
+    console.log(`✨ ${status} ${filePath}.html`);
   }
 
   if (!ctx.options.noPdf) {
@@ -68,7 +68,7 @@ async function writeUnit(unit: Unit, ctx: Context) {
 
     const seconds = timer.stop();
     const status = chalk.green.bold(`Complete in ${seconds}s`);
-    console.log(`✨ ${status} ${filePath}`);
+    console.log(`✨ ${status} ${filePath}.pdf`);
   }
 }
 

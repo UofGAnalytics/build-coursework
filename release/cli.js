@@ -321,7 +321,7 @@ exports.unsetStubs = function (namespace) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "C": () => (/* binding */ createMain)
 /* harmony export */ });
-async function createMain(children) {
+async function createMain(titles, content) {
   return {
     type: 'element',
     tagName: 'main',
@@ -331,14 +331,35 @@ async function createMain(children) {
       properties: {
         className: 'wrapper'
       },
-      children
+      children: [createH1(titles), ...content]
+    }]
+  };
+}
+
+function createH1(titles) {
+  return {
+    type: 'element',
+    tagName: 'h1',
+    children: [{
+      type: 'text',
+      value: titles.courseTitle
+    }, {
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: 'unit'
+      },
+      children: [{
+        type: 'text',
+        value: titles.unitTitle
+      }]
     }]
   };
 }
 
 /***/ }),
 
-/***/ 1323:
+/***/ 5148:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -988,9 +1009,9 @@ var wrapper_main = __webpack_require__(9060);
 // import { UnitTitles } from '../course/types';
 
 
-function pdfWrapper() {
+function pdfWrapper(unit) {
   return async tree => {
-    const main = await (0,wrapper_main/* createMain */.C)(tree.children);
+    const main = await (0,wrapper_main/* createMain */.C)(unit.titles, tree.children);
     const iconDefs = createDefs();
     return {
       type: 'root',
@@ -1285,11 +1306,11 @@ async function createLogo() {
 
 
 
-function htmlWrapper(mdast) {
+function htmlWrapper(unit, mdast) {
   return async tree => {
     const hamburgerIcon = createSvg('hamburger-icon');
     const sidebar = await createSidebar(mdast);
-    const main = await (0,wrapper_main/* createMain */.C)(tree.children);
+    const main = await (0,wrapper_main/* createMain */.C)(unit.titles, tree.children);
     const iconDefs = createDefs();
     return {
       type: 'root',
@@ -1327,9 +1348,9 @@ async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
     if (!targetPdf) {
       const templateJs = await readFile(external_path_default().join(getLibraryDir(), 'template.js2'));
       docOptions.script = `\n${templateJs}\n`;
-      processor.use(htmlWrapper, mdast);
+      processor.use(htmlWrapper, unit, mdast);
     } else {
-      processor.use(pdfWrapper);
+      processor.use(pdfWrapper, unit);
     }
 
     processor.use((external_rehype_document_default()), docOptions);
@@ -1535,9 +1556,6 @@ var external_retext_english_default = /*#__PURE__*/__webpack_require__.n(externa
 ;// CONCATENATED MODULE: external "retext-spell"
 const external_retext_spell_namespaceObject = require("retext-spell");
 var external_retext_spell_default = /*#__PURE__*/__webpack_require__.n(external_retext_spell_namespaceObject);
-;// CONCATENATED MODULE: external "mdast-normalize-headings"
-const external_mdast_normalize_headings_namespaceObject = require("mdast-normalize-headings");
-var external_mdast_normalize_headings_default = /*#__PURE__*/__webpack_require__.n(external_mdast_normalize_headings_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
@@ -2082,6 +2100,22 @@ function moveAnswersToEnd() {
     });
   };
 }
+;// CONCATENATED MODULE: ./src/mdast/pagebreaks.ts
+
+function pagebreaks() {
+  return async tree => {
+    external_unist_util_visit_default()(tree, 'leafDirective', node => {
+      if (node.name === 'pagebreak') {
+        node.data = {
+          hName: 'hr',
+          hProperties: {
+            className: 'pagebreak'
+          }
+        };
+      }
+    });
+  };
+}
 ;// CONCATENATED MODULE: ./src/mdast/youtube-videos.ts
 
 function youtubeVideos() {
@@ -2188,22 +2222,16 @@ function formatDuration(duration = '') {
   return `${match[1]}:${match[2].padStart(2, '0')}`;
 }
 ;// CONCATENATED MODULE: ./src/mdast/index.ts
-function mdast_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function mdast_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { mdast_ownKeys(Object(source), true).forEach(function (key) { mdast_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { mdast_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function mdast_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 // @ts-expect-error
 
 
 
 
-
  // @ts-expect-error
 
 
  // @ts-expect-error
+
 
 
 
@@ -2226,7 +2254,7 @@ async function mdastPhase(md, unit, ctx, targetPdf) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images);
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks);
 
   if (targetPdf) {
     processor.use(moveAnswersToEnd);
@@ -2236,46 +2264,7 @@ async function mdastPhase(md, unit, ctx, targetPdf) {
     contents: md
   });
   const parsed = processor.parse(file);
-  const withTitles = addCoureTitles(parsed, unit.titles);
-  external_mdast_normalize_headings_default()(withTitles);
-  return processor.run(withTitles, file);
-}
-
-function addCoureTitles(tree, {
-  courseTitle,
-  unitTitle
-}) {
-  const titles = [{
-    type: 'heading',
-    depth: 1,
-    children: [{
-      type: 'text',
-      value: courseTitle
-    }],
-    data: {
-      hChildren: [{
-        type: 'element',
-        tagName: 'h1',
-        children: [{
-          type: 'text',
-          value: courseTitle
-        }, {
-          type: 'element',
-          tagName: 'span',
-          properties: {
-            className: 'unit'
-          },
-          children: [{
-            type: 'text',
-            value: unitTitle
-          }]
-        }]
-      }]
-    }
-  }];
-  return mdast_objectSpread(mdast_objectSpread({}, tree), {}, {
-    children: [...titles, ...tree.children]
-  });
+  return processor.run(parsed, file);
 }
 // EXTERNAL MODULE: ./src/pre-parse/convert-macro-to-directive.ts
 var convert_macro_to_directive = __webpack_require__(9386);
@@ -2441,6 +2430,19 @@ function assertAssetExists() {
       transformations.push(getAssetUrl(node, file));
     });
     await Promise.all(transformations);
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-h1.ts
+
+
+function assertNoH1() {
+  return (tree, file) => {
+    external_unist_util_visit_default()(tree, 'heading', node => {
+      if (node.depth === 1) {
+        failMessage(file, 'Level 1 heading (for example "# My Title") is automatically generated from .yaml file and should not be found in .Rmd file', node.position);
+        return;
+      }
+    });
   };
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-task-answer.ts
@@ -2693,6 +2695,7 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
+
 async function linter_linter(unit, ctx) {
   await Promise.all(unit.files.map(file => createReport(file, unit, ctx)));
 
@@ -2717,7 +2720,7 @@ async function createReport(file, unit, ctx) {
   const contents = file.contents;
   const md = preParsePhase(contents, ctx);
   const mdast = await mdastPhase(md, unit, ctx);
-  const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
+  const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
 
   if (ctx.options.spelling) {
     const retextProcessor = unified_default()().use((external_retext_english_default())).use((external_retext_spell_default()), {
@@ -2883,7 +2886,7 @@ function convertMacroToDirective(contents) {
 }
 
 function parseCustomContainer(line) {
-  const match = line.match(/^#{1,6}\[(.+)](.*)/);
+  const match = line.match(/^#{1,6}\s*\[(.+)](.*)/);
 
   if (!Array.isArray(match)) {
     return null;
@@ -2952,7 +2955,7 @@ function transformAttributes(containerName, attributesArr) {
 /* harmony export */ });
 const blockList = ['\\newpage', '\\pagebreak'];
 function removeNewPage(contents) {
-  return contents.split('\n').filter(s => !blockList.includes(s.trim())).join('\n');
+  return contents.split('\n').map(s => blockList.includes(s.trim()) ? '::pagebreak' : s).join('\n');
 }
 
 /***/ }),
@@ -12419,8 +12422,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 88 modules
-var src = __webpack_require__(1323);
+// EXTERNAL MODULE: ./src/index.ts + 89 modules
+var src = __webpack_require__(5148);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

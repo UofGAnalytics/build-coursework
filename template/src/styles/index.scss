@@ -14,12 +14,6 @@
   font-style: normal;
 }
 
-@media print {
-  *:not(p) {
-    break-inside: avoid;
-  }
-}
-
 * {
   margin: 0;
   border: 0;
@@ -39,3 +33,4 @@
 @import './code.scss';
 @import './boxouts.scss';
 @import './view-options.scss';
+@import './pdf.scss';

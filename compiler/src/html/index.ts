@@ -38,9 +38,9 @@ export async function htmlPhase(
       );
       docOptions.script = `\n${templateJs}\n`;
 
-      processor.use(htmlWrapper, mdast);
+      processor.use(htmlWrapper, unit, mdast);
     } else {
-      processor.use(pdfWrapper);
+      processor.use(pdfWrapper, unit);
     }
 
     processor.use(doc, docOptions);

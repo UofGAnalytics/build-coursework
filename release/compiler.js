@@ -10378,9 +10378,9 @@ function createGroup({
 // import { UnitTitles } from '../course/types';
 
 
-function pdf_pdfWrapper() {
+function pdf_pdfWrapper(unit) {
   return async tree => {
-    const main = await createMain(tree.children);
+    const main = await createMain(unit.titles, tree.children);
     const iconDefs = createDefs();
     return {
       type: 'root',
@@ -10673,11 +10673,11 @@ async function createLogo() {
 
 
 
-function wrapper_htmlWrapper(mdast) {
+function wrapper_htmlWrapper(unit, mdast) {
   return async tree => {
     const hamburgerIcon = createSvg('hamburger-icon');
     const sidebar = await createSidebar(mdast);
-    const main = await createMain(tree.children);
+    const main = await createMain(unit.titles, tree.children);
     const iconDefs = createDefs();
     return {
       type: 'root',
@@ -10715,9 +10715,9 @@ async function html_htmlPhase(hast, mdast, unit, ctx, targetPdf) {
     if (!targetPdf) {
       const templateJs = await readFile(path.join(getLibraryDir(), 'template.js2'));
       docOptions.script = `\n${templateJs}\n`;
-      processor.use(htmlWrapper, mdast);
+      processor.use(htmlWrapper, unit, mdast);
     } else {
-      processor.use(pdfWrapper);
+      processor.use(pdfWrapper, unit);
     }
 
     processor.use(doc, docOptions);
@@ -10917,8 +10917,6 @@ const external_remark_retext_namespaceObject = require("remark-retext");
 const external_retext_english_namespaceObject = require("retext-english");
 ;// CONCATENATED MODULE: external "retext-spell"
 const external_retext_spell_namespaceObject = require("retext-spell");
-;// CONCATENATED MODULE: external "mdast-normalize-headings"
-const external_mdast_normalize_headings_namespaceObject = require("mdast-normalize-headings");
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 ;// CONCATENATED MODULE: external "remark-directive"
@@ -11455,6 +11453,22 @@ function move_answers_to_end_moveAnswersToEnd() {
     });
   };
 }
+;// CONCATENATED MODULE: ./src/mdast/pagebreaks.ts
+
+function pagebreaks_pagebreaks() {
+  return async tree => {
+    visit(tree, 'leafDirective', node => {
+      if (node.name === 'pagebreak') {
+        node.data = {
+          hName: 'hr',
+          hProperties: {
+            className: 'pagebreak'
+          }
+        };
+      }
+    });
+  };
+}
 ;// CONCATENATED MODULE: ./src/mdast/youtube-videos.ts
 
 function youtube_videos_youtubeVideos() {
@@ -11561,22 +11575,16 @@ function formatDuration(duration = '') {
   return `${match[1]}:${match[2].padStart(2, '0')}`;
 }
 ;// CONCATENATED MODULE: ./src/mdast/index.ts
-function mdast_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function mdast_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { mdast_ownKeys(Object(source), true).forEach(function (key) { mdast_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { mdast_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function mdast_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 // @ts-expect-error
 
 
 
 
-
  // @ts-expect-error
 
 
  // @ts-expect-error
+
 
 
 
@@ -11599,7 +11607,7 @@ async function mdast_mdastPhase(md, unit, ctx, targetPdf) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images);
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images).use(pagebreaks);
 
   if (targetPdf) {
     processor.use(moveAnswersToEnd);
@@ -11609,46 +11617,7 @@ async function mdast_mdastPhase(md, unit, ctx, targetPdf) {
     contents: md
   });
   const parsed = processor.parse(file);
-  const withTitles = addCoureTitles(parsed, unit.titles);
-  normalizeHeadings(withTitles);
-  return processor.run(withTitles, file);
-}
-
-function addCoureTitles(tree, {
-  courseTitle,
-  unitTitle
-}) {
-  const titles = [{
-    type: 'heading',
-    depth: 1,
-    children: [{
-      type: 'text',
-      value: courseTitle
-    }],
-    data: {
-      hChildren: [{
-        type: 'element',
-        tagName: 'h1',
-        children: [{
-          type: 'text',
-          value: courseTitle
-        }, {
-          type: 'element',
-          tagName: 'span',
-          properties: {
-            className: 'unit'
-          },
-          children: [{
-            type: 'text',
-            value: unitTitle
-          }]
-        }]
-      }]
-    }
-  }];
-  return mdast_objectSpread(mdast_objectSpread({}, tree), {}, {
-    children: [...titles, ...tree.children]
-  });
+  return processor.run(parsed, file);
 }
 ;// CONCATENATED MODULE: external "markdown-table"
 const external_markdown_table_namespaceObject = require("markdown-table");
@@ -11809,6 +11778,19 @@ function assert_asset_exists_assertAssetExists() {
       transformations.push(getAssetUrl(node, file));
     });
     await Promise.all(transformations);
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-h1.ts
+
+
+function assert_no_h1_assertNoH1() {
+  return (tree, file) => {
+    visit(tree, 'heading', node => {
+      if (node.depth === 1) {
+        failMessage(file, 'Level 1 heading (for example "# My Title") is automatically generated from .yaml file and should not be found in .Rmd file', node.position);
+        return;
+      }
+    });
   };
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-task-answer.ts
@@ -12060,6 +12042,7 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
+
 async function linter_linter(unit, ctx) {
   await Promise.all(unit.files.map(file => createReport(file, unit, ctx)));
 
@@ -12084,7 +12067,7 @@ async function createReport(file, unit, ctx) {
   const contents = file.contents;
   const md = preParsePhase(contents, ctx);
   const mdast = await mdastPhase(md, unit, ctx);
-  const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(lintLatex).use(lintAltText).use(lintLinkText);
+  const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use(lintAltText).use(lintLinkText);
 
   if (ctx.options.spelling) {
     const retextProcessor = unified().use(english).use(spell, {

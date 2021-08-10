@@ -18,6 +18,7 @@ import { Unit } from '../course/types';
 import { mdastPhase } from '../mdast';
 import { preParsePhase } from '../pre-parse';
 import { assertAssetExists } from './assert-asset-exists';
+import { assertNoH1 } from './assert-no-h1';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
 import { assertWeblinkTarget } from './assert-weblink-target';
@@ -57,6 +58,7 @@ async function createReport(file: VFile, unit: Unit, ctx: Context) {
     .use(assertVideoAttributes)
     .use(assertTaskAnswerStructure)
     .use(assertWeblinkTarget)
+    .use(assertNoH1)
     .use(lintLatex)
     .use(lintAltText)
     .use(lintLinkText);

@@ -54,4 +54,22 @@ describe('convertMacroToDirective', () => {
 
     expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
   });
+
+  it('should still work with whitespace after hashes', async () => {
+    const { md } = await testProcessor(`
+      ###[supplement]
+      An example of *this*!
+      ### [/supplement]
+    `);
+
+    const { md: md2 } = await testProcessor(md);
+
+    const expected = unindentStringAndTrim(`
+      :::supplement
+      An example of *this*!
+      :::
+    `);
+
+    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
+  });
 });
