@@ -58,6 +58,30 @@ describe('reformatPandocSimpleTables', () => {
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
+  it('should reformat pandoc simple tables to markdown tables with macro syntax after', async () => {
+    const { md } = await testProcessor(String.raw`
+      **Distribution**   **Natural parameter**                         **Canonical link**
+      ------------------ --------------------------------------------- ----------------------
+      Normal             $\dfrac{\theta}{\sigma^2}$                    $g(\mu)=\mu$
+      Poisson            $\log \theta$                                 $g(\mu)=\log(\mu)$
+      Binomial           $\log\left(\dfrac{\theta}{1-\theta} \right)$  $g(\mu)=\log\left(\dfrac{\mu}{1-\mu} \right)$
+
+      ###[weblink,target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng",icon=book]
+    `);
+
+    const expected = unindentStringAndTrim(String.raw`
+      | **Distribution**   | **Natural parameter**                         | **Canonical link**                            |
+      | :----------------- | :-------------------------------------------- | :-------------------------------------------- |
+      | Normal             | :inlineMath[0]                    | :inlineMath[1]                                  |
+      | Poisson            | :inlineMath[2]                                 | :inlineMath[3]                            |
+      | Binomial           | :inlineMath[4]  | :inlineMath[5] |
+
+      :::weblink{target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng" icon=book}
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+  });
+
   it('should be idempotent', async () => {
     const { md } = await testProcessor(`
       Movie                            Gross       Budget

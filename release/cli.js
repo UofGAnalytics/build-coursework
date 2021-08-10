@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 5148:
+/***/ 9937:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2266,6 +2266,10 @@ async function mdastPhase(md, unit, ctx, targetPdf) {
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
+// EXTERNAL MODULE: ./src/pre-parse/convert-block-tex.ts
+var convert_block_tex = __webpack_require__(4474);
+// EXTERNAL MODULE: ./src/pre-parse/convert-inline-tex.ts
+var convert_inline_tex = __webpack_require__(2159);
 // EXTERNAL MODULE: ./src/pre-parse/convert-macro-to-directive.ts
 var convert_macro_to_directive = __webpack_require__(9386);
 ;// CONCATENATED MODULE: external "markdown-table"
@@ -2382,26 +2386,29 @@ function multilineReducer(acc, row) {
 
   return acc;
 }
-// EXTERNAL MODULE: ./src/pre-parse/remove-new-page.ts
-var remove_new_page = __webpack_require__(3369);
 ;// CONCATENATED MODULE: ./src/pre-parse/index.ts
 
 
- // some of the original coursework syntax can't be parsed by
+
+ // some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
-// I transform some syntax using regex, so it can be parsed
+// I transform some syntax using regex, so it can be parsed.
+// A successful technique I found is to convert problem syntax to a
+// custom markdown directive https://github.com/remarkjs/remark-directive
 
 function preParsePhase(md, ctx) {
-  let result = md; // Remove commented sections
-
-  result = result.replace(/<\!--.*?-->/g, ''); // Convert macros to directives
-
-  result = (0,convert_macro_to_directive/* convertMacroToDirective */.W)(result); // Remove \\newpage lines
-
-  result = (0,remove_new_page/* removeNewPage */.C)(result); // Reformat Pandoc simple tables
-
+  let result = md;
+  result = removeComments(result);
+  result = (0,convert_macro_to_directive/* convertMacroToDirective */.W)(result);
+  result = (0,convert_inline_tex/* convertTextBfToMd */._)(result);
+  result = (0,convert_inline_tex/* convertUrlToMd */.c)(result);
+  result = (0,convert_block_tex/* convertNewPageToDirective */.u)(result);
   result = reformatPandocSimpleTables(result);
   return result;
+}
+
+function removeComments(md) {
+  return md.replace(/<\!--.*?-->/g, '');
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
 
@@ -2735,7 +2742,12 @@ async function createReport(file, unit, ctx) {
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
 var external_puppeteer_default = /*#__PURE__*/__webpack_require__.n(external_puppeteer_namespaceObject);
-;// CONCATENATED MODULE: ./src/utils/pdf.ts
+;// CONCATENATED MODULE: ./src/pdf/index.ts
+ // const footerTemplate = `
+//   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
+//     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+//   </div>
+// `;
 
 async function convertToPdf(html) {
   const browser = await external_puppeteer_default().launch({
@@ -2747,7 +2759,8 @@ async function convertToPdf(html) {
   const pdf = await page.pdf({
     format: 'a4',
     printBackground: true,
-    displayHeaderFooter: true,
+    // displayHeaderFooter: true,
+    // footerTemplate,
     margin: {
       top: '20px',
       left: '40px',
@@ -2812,7 +2825,7 @@ async function writeUnit(unit, ctx) {
     await writeFile(filePath + '.html', html);
     const seconds = timer.stop();
     const status = external_chalk_default().green.bold(`Complete in ${seconds}s`);
-    console.log(`✨ ${status} ${filePath}`);
+    console.log(`✨ ${status} ${filePath}.html`);
   }
 
   if (!ctx.options.noPdf) {
@@ -2826,7 +2839,7 @@ async function writeUnit(unit, ctx) {
     await writeFile(filePath + '.pdf', pdf);
     const seconds = timer.stop();
     const status = external_chalk_default().green.bold(`Complete in ${seconds}s`);
-    console.log(`✨ ${status} ${filePath}`);
+    console.log(`✨ ${status} ${filePath}.pdf`);
   }
 }
 
@@ -2862,6 +2875,39 @@ async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
     hast,
     html
   };
+}
+
+/***/ }),
+
+/***/ 4474:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "u": () => (/* binding */ convertNewPageToDirective)
+/* harmony export */ });
+const blockList = ['\\newpage', '\\pagebreak'];
+function convertNewPageToDirective(contents) {
+  return contents.split('\n').map(s => blockList.includes(s.trim()) ? '::pagebreak' : s).join('\n');
+}
+
+/***/ }),
+
+/***/ 2159:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "_": () => (/* binding */ convertTextBfToMd),
+/* harmony export */   "c": () => (/* binding */ convertUrlToMd)
+/* harmony export */ });
+function convertTextBfToMd(contents) {
+  const pattern = /\\textbf\{(.*?)\}/g;
+  return contents.replace(pattern, (_, str) => `**${str}**`);
+}
+function convertUrlToMd(contents) {
+  const pattern = /\\url\{(.*?)\}/g;
+  return contents.replace(pattern, (_, str) => str);
 }
 
 /***/ }),
@@ -2942,20 +2988,6 @@ function transformAttributes(containerName, attributesArr) {
 
     return attribute;
   }).join(' ');
-}
-
-/***/ }),
-
-/***/ 3369:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "C": () => (/* binding */ removeNewPage)
-/* harmony export */ });
-const blockList = ['\\newpage', '\\pagebreak'];
-function removeNewPage(contents) {
-  return contents.split('\n').map(s => blockList.includes(s.trim()) ? '::pagebreak' : s).join('\n');
 }
 
 /***/ }),
@@ -12423,7 +12455,7 @@ var __webpack_exports__ = {};
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
 // EXTERNAL MODULE: ./src/index.ts + 89 modules
-var src = __webpack_require__(5148);
+var src = __webpack_require__(9937);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

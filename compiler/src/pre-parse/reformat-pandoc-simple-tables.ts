@@ -13,7 +13,7 @@ export function reformatPandocSimpleTables(contents: string) {
       const { startIdx, count } = getTableBounds(lines, idx);
       const currentLines = lines.slice(startIdx, startIdx + count + 1);
       const newLines = convertLines(currentLines);
-      lines.splice(startIdx, count + 1, ...newLines);
+      lines.splice(startIdx, count, ...newLines);
     }
   }
 

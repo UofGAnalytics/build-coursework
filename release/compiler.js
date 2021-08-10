@@ -11735,21 +11735,26 @@ function multilineReducer(acc, row) {
 ;// CONCATENATED MODULE: ./src/pre-parse/index.ts
 
 
- // some of the original coursework syntax can't be parsed by
+
+ // some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
-// I transform some syntax using regex, so it can be parsed
+// I transform some syntax using regex, so it can be parsed.
+// A successful technique I found is to convert problem syntax to a
+// custom markdown directive https://github.com/remarkjs/remark-directive
 
 function pre_parse_preParsePhase(md, ctx) {
-  let result = md; // Remove commented sections
-
-  result = result.replace(/<\!--.*?-->/g, ''); // Convert macros to directives
-
-  result = convertMacroToDirective(result); // Remove \\newpage lines
-
-  result = removeNewPage(result); // Reformat Pandoc simple tables
-
+  let result = md;
+  result = removeComments(result);
+  result = convertMacroToDirective(result);
+  result = convertTextBfToMd(result);
+  result = convertUrlToMd(result);
+  result = convertNewPageToDirective(result);
   result = reformatPandocSimpleTables(result);
   return result;
+}
+
+function removeComments(md) {
+  return md.replace(/<\!--.*?-->/g, '');
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
 
@@ -12081,7 +12086,12 @@ async function createReport(file, unit, ctx) {
 }
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
-;// CONCATENATED MODULE: ./src/utils/pdf.ts
+;// CONCATENATED MODULE: ./src/pdf/index.ts
+ // const footerTemplate = `
+//   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
+//     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+//   </div>
+// `;
 
 async function pdf_convertToPdf(html) {
   const browser = await puppeteer.launch({
@@ -12093,7 +12103,8 @@ async function pdf_convertToPdf(html) {
   const pdf = await page.pdf({
     format: 'a4',
     printBackground: true,
-    displayHeaderFooter: true,
+    // displayHeaderFooter: true,
+    // footerTemplate,
     margin: {
       top: '20px',
       left: '40px',
@@ -12156,7 +12167,7 @@ async function writeUnit(unit, ctx) {
     await writeFile(filePath + '.html', html);
     const seconds = timer.stop();
     const status = chalk.green.bold(`Complete in ${seconds}s`);
-    console.log(`✨ ${status} ${filePath}`);
+    console.log(`✨ ${status} ${filePath}.html`);
   }
 
   if (!ctx.options.noPdf) {
@@ -12170,7 +12181,7 @@ async function writeUnit(unit, ctx) {
     await writeFile(filePath + '.pdf', pdf);
     const seconds = timer.stop();
     const status = chalk.green.bold(`Complete in ${seconds}s`);
-    console.log(`✨ ${status} ${filePath}`);
+    console.log(`✨ ${status} ${filePath}.pdf`);
   }
 }
 
