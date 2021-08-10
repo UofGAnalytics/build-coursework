@@ -10,8 +10,8 @@ import { knitr } from './knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
 import { linter } from './linter';
 import { mdastPhase } from './mdast';
+import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
-import { convertToPdf } from './utils/pdf';
 import { createTimer } from './utils/timer';
 import { mkdir, writeFile } from './utils/utils';
 
