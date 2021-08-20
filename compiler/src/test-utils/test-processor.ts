@@ -10,8 +10,8 @@ import { VFile } from 'vfile';
 import { Options } from '../context';
 import { getUnitTitles } from '../course';
 import { writeFile } from '../utils/utils';
+import { buildUnit } from './build-unit';
 import { createHasFailingMessage } from './has-message';
-import { buildUnit } from '..';
 
 export async function testProcessor(md: string, options: Options = {}) {
   const { ctx, file } = await createTestContext(md, options);

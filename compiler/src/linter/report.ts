@@ -32,12 +32,15 @@ export function printReport(files: VFile[], ctx: Context) {
   }
 
   for (const file of files) {
+    // console.log(file.messages);
     const messages = reportOnlyErrors
       ? failingMessages(file.messages)
       : file.messages;
 
     if (messages.length !== 0) {
-      console.log(`\n${getFilePath(file.path as string)}`);
+      if (file.path !== undefined) {
+        console.log(`\n${getFilePath(file.path)}`);
+      }
       messages.map(printMessage);
     }
   }

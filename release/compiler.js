@@ -9751,12 +9751,14 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 
-// UNUSED EXPORTS: buildUnit, rMarkdown
+// UNUSED EXPORTS: contextTransforms, rMarkdown, syntaxTreeTransforms
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(5622);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
+// EXTERNAL MODULE: ../node_modules/vfile/index.js
+var vfile = __webpack_require__(9566);
 ;// CONCATENATED MODULE: external "lodash"
 const external_lodash_namespaceObject = require("lodash");
 ;// CONCATENATED MODULE: external "to-vfile"
@@ -10734,13 +10736,18 @@ const external_child_process_namespaceObject = require("child_process");
 
 
 
-async function knitr_knitr(md, ctx) {
+async function knitr_knitr(file, ctx) {
+  const md = file.contents;
+  const result = await execKnitr(md, ctx);
+  file.contents = result;
+  return file;
+} // TODO: see what can be done with output when "quiet" turned off
+
+async function execKnitr(md, ctx) {
   const fileName = getUniqueTempFileName(md);
   const cachedFilePath = path.join(ctx.cacheDir, fileName);
   await mkdir(ctx.cacheDir);
-  await writeFile(cachedFilePath, md); // TODO:
-  // * see what can be done with output when "quiet" turned off
-
+  await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
     const cmd = `Rscript ${rFile} ${cachedFilePath} ${ctx.cacheDir}/`;
@@ -10813,15 +10820,17 @@ const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
 
 
 
-// Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
+ // Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
 // https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
-// Convert Tex to alias and build ctx.mmlStore
+// Convert Tex to directive alias ie. :blockMath[13] or :inlineMath[42] and build ctx.mmlStore array
 // (Alias is replaced with SVG in ./directive-to-svg.ts in mdast phase)
 // Avoids typesetting issues:
 // If I leave the LaTeX in it gets munged
 // If I convert to SVG it gets munged
 // If I convert to MathML it gets munged
-function tex_to_directive_texToAliasDirective(html, ctx) {
+
+function tex_to_directive_texToAliasDirective(file, ctx) {
+  const md = file.contents;
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
   const tex = new TeX({
@@ -10834,7 +10843,7 @@ function tex_to_directive_texToAliasDirective(html, ctx) {
   const visitor = new SerializedMmlVisitor();
   const store = [];
 
-  function storeTex({
+  function storeTexAndDisplayAlias({
     math
   }) {
     const items = Array.from(math);
@@ -10842,11 +10851,12 @@ function tex_to_directive_texToAliasDirective(html, ctx) {
     for (const item of items) {
       // convert to MML
       const mml = visitor.visitTree(item.root);
+      assertionNoMmlError(mml, file);
       let newMarkdown = '';
 
       if (isReferenceLink(item.math)) {
         // convert tex to text link
-        const refNum = extractRefNumFromMml(mml, item.math);
+        const refNum = extractRefNumFromMml(mml, item.math, file);
         const anchor = extractAnchorLinkFromMml(mml, item.math);
         newMarkdown = `[${refNum}](${anchor})`;
       } else {
@@ -10864,28 +10874,37 @@ function tex_to_directive_texToAliasDirective(html, ctx) {
 
 
   ctx.mmlStore = store;
-  const doc = mathjax.document(html, {
+  const doc = mathjax.document(md, {
     InputJax: tex,
     renderActions: {
-      typeset: [MathItem.STATE.TYPESET, storeTex]
+      typeset: [MathItem.STATE.TYPESET, storeTexAndDisplayAlias]
     }
   });
   doc.render();
   const result = adaptor.innerHTML(adaptor.body(doc.document));
-  return unprotectHtml(result);
+  file.contents = unprotectHtml(result);
+  return file;
+}
+
+function assertionNoMmlError(mml, file) {
+  const match = mml.match(/<merror.*?title="(.+?)"/);
+
+  if (match !== null) {
+    failMessage(file, `LaTeX error: "${match[1]}".`);
+  }
 }
 
 function isReferenceLink(tex) {
   return /^\\ref\{(.+)\}$/.test(tex);
 }
 
-function extractRefNumFromMml(mml, tex) {
+function extractRefNumFromMml(mml, tex, file) {
   // TODO: should error on "???"
-  // const match = mml.match(/<mtext>(\d+)<\/mtext>/);
-  const match = mml.match(/<mtext>(.+)<\/mtext>/);
+  const match = mml.match(/<mtext>(\d+)<\/mtext>/); // const match = mml.match(/<mtext>(.+)<\/mtext>/);
 
   if (match === null) {
-    throw new Error(`Invalid reference: ${tex}. You may only reference numbered sections.`);
+    failMessage(file, `Invalid reference: ${tex}. You may only reference numbered sections.`);
+    return;
   }
 
   return match[1];
@@ -11638,7 +11657,7 @@ function reformat_pandoc_simple_tables_reformatPandocSimpleTables(contents) {
       } = getTableBounds(lines, idx);
       const currentLines = lines.slice(startIdx, startIdx + count + 1);
       const newLines = convertLines(currentLines);
-      lines.splice(startIdx, count + 1, ...newLines);
+      lines.splice(startIdx, count, ...newLines);
     }
   }
 
@@ -11736,24 +11755,25 @@ function multilineReducer(acc, row) {
 
 
 
- // some of the original coursework syntax can't easily be parsed by
+ // Some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
-// I transform some syntax using regex, so it can be parsed.
-// A successful technique I found is to convert problem syntax to a
+// I transform some syntax using regex so it can be parsed.
+// A successful generic approach I found is to convert problem syntax to a
 // custom markdown directive https://github.com/remarkjs/remark-directive
 
-function pre_parse_preParsePhase(md, ctx) {
-  let result = md;
-  result = removeComments(result);
+function pre_parse_preParsePhase(file) {
+  let result = file.contents;
+  result = removeCommentedSections(result);
   result = convertMacroToDirective(result);
   result = convertTextBfToMd(result);
   result = convertUrlToMd(result);
   result = convertNewPageToDirective(result);
   result = reformatPandocSimpleTables(result);
-  return result;
+  file.contents = result;
+  return file;
 }
 
-function removeComments(md) {
+function removeCommentedSections(md) {
   return md.replace(/<\!--.*?-->/g, '');
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
@@ -11797,6 +11817,26 @@ function assert_no_h1_assertNoH1() {
       }
     });
   };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
+
+function assert_no_tex_tabular_assertNoTexTabular(md, file) {
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('\\begin{tabular}')) {
+      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-task-answer.ts
 
@@ -11960,10 +12000,14 @@ function report_printReport(files, ctx) {
   }
 
   for (const file of files) {
+    // console.log(file.messages);
     const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
 
     if (messages.length !== 0) {
-      console.log(`\n${getFilePath(file.path)}`);
+      if (file.path !== undefined) {
+        console.log(`\n${getFilePath(file.path)}`);
+      }
+
       messages.map(printMessage);
     }
   }
@@ -12048,30 +12092,36 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
+
 async function linter_linter(unit, ctx) {
-  await Promise.all(unit.files.map(file => createReport(file, unit, ctx)));
-
-  if (!ctx.options.noReport) {
-    printReport(unit.files, ctx);
-  }
-
-  if (reportHasFatalErrors(unit.files, ctx)) {
+  await Promise.all(unit.files.map(file => createReport(file, unit, ctx))); // if (!ctx.options.noReport) {
+  //   printReport(unit.files, ctx);
+  // }
+  // reportErrors(unit.files, ctx);
+}
+function linter_reportErrors(files, ctx) {
+  if (reportHasFatalErrors(files, ctx)) {
     if (ctx.options.noReport) {
-      printReport(unit.files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
+      printReport(files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
         options: linter_objectSpread(linter_objectSpread({}, ctx.options), {}, {
           reportOnlyErrors: true
         })
       }));
-    } // TODO: should probably throw here
-    // throw new Error('Report has fatal errors');
+    }
 
+    if (ctx.options.force) {
+      console.log('Compiling using force option...');
+    } else {
+      throw new Error('Report has fatal errors');
+    }
   }
 }
 
 async function createReport(file, unit, ctx) {
-  const contents = file.contents;
-  const md = preParsePhase(contents, ctx);
-  const mdast = await mdastPhase(md, unit, ctx);
+  const preParsed = preParsePhase(file);
+  const contents = preParsed.contents;
+  assertNoTexTabular(contents, file);
+  const mdast = await mdastPhase(contents, unit, ctx);
   const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use(lintAltText).use(lintLinkText);
 
   if (ctx.options.spelling) {
@@ -12125,6 +12175,9 @@ async function pdf_convertToPdf(html) {
 
 
 
+ // import { printReport } from './linter/report';
+
+
 
 
 
@@ -12138,76 +12191,63 @@ async function rMarkdown(dirPath, options = {}) {
 }
 
 async function run(dirPath, options = {}) {
+  const timer = createTimer();
   const ctx = await createContext(dirPath, options); // write single week
 
   if (ctx.options.week) {
     const idx = ctx.options.week - 1;
     const unit = ctx.course.units[idx];
-    await writeUnit(unit, ctx);
+    await writeUnit(unit, ctx, timer);
     return;
   } // write full course
 
 
   for (const unit of ctx.course.units) {
-    await writeUnit(unit, ctx);
+    await writeUnit(unit, ctx, timer);
   }
 }
 
-async function writeUnit(unit, ctx) {
-  await linter(unit, ctx);
-  const md = await contextTransforms(unit, ctx);
+async function writeUnit(unit, ctx, timer) {
   await mkdir(ctx.buildDir);
   const filePath = path.join(ctx.buildDir, unit.titles.fileName);
+  await linter(unit, ctx);
+  const transformed = await contextTransforms(unit, ctx);
+  const combined = [...unit.files, transformed];
+  printReport(combined, ctx);
+  reportErrors(combined, ctx);
+  const md = transformed.contents;
 
   if (!ctx.options.noHtml) {
-    const timer = createTimer();
     const {
       html
     } = await syntaxTreeTransforms(md, unit, ctx);
     await writeFile(filePath + '.html', html);
-    const seconds = timer.stop();
-    const status = chalk.green.bold(`Complete in ${seconds}s`);
+    const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.html`);
   }
 
   if (!ctx.options.noPdf) {
-    const timer = createTimer();
     const {
       html
-    } = await syntaxTreeTransforms(md, unit, ctx, true); // testing
-
-    await writeFile(filePath + '.pdf.html', html);
+    } = await syntaxTreeTransforms(md, unit, ctx, true);
     const pdf = await convertToPdf(html);
-    await writeFile(filePath + '.pdf', pdf);
-    const seconds = timer.stop();
-    const status = chalk.green.bold(`Complete in ${seconds}s`);
+    await writeFile(filePath + '.pdf', pdf); // debug
+    // await writeFile(filePath + '.pdf.html', html);
+
+    const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }
 }
 
-async function buildUnit(unit, ctx, targetPdf) {
-  await linter(unit, ctx);
-  const md = await contextTransforms(unit, ctx);
-  const {
-    mdast,
-    hast,
-    html
-  } = await syntaxTreeTransforms(md, unit, ctx, targetPdf);
-  return {
-    md,
-    mdast,
-    hast,
-    html
-  };
-}
-
 async function contextTransforms(unit, ctx) {
-  const combined = unit.files.map(o => o.contents).join('\n\n');
-  const md = preParsePhase(combined, ctx);
-  const withKnitr = await knitr(md, ctx);
-  return texToAliasDirective(withKnitr, ctx);
-}
+  const file = VFile(unit.files.map(o => o.contents).join('\n\n'));
+  const preParsed = preParsePhase(file);
+  const withKnitr = await knitr(preParsed, ctx);
+  const withTexAlias = texToAliasDirective(withKnitr, ctx); // printReport([withTexAlias], ctx);
+  // return withTexAlias.contents as string;
 
+  return withTexAlias;
+}
 async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
   const mdast = await mdastPhase(md, unit, ctx, targetPdf);
   const hast = await hastPhase(mdast, unit, ctx, targetPdf);

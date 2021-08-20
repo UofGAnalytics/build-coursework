@@ -3,19 +3,25 @@ import path from 'path';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
+import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
-export async function knitr(md: string, ctx: Context) {
+export async function knitr(file: VFile, ctx: Context) {
+  const md = file.contents as string;
+  const result = await execKnitr(md, ctx);
+  file.contents = result;
+  return file;
+}
+
+// TODO: see what can be done with output when "quiet" turned off
+async function execKnitr(md: string, ctx: Context) {
   const fileName = getUniqueTempFileName(md);
   const cachedFilePath = path.join(ctx.cacheDir, fileName);
 
   await mkdir(ctx.cacheDir);
   await writeFile(cachedFilePath, md);
-
-  // TODO:
-  // * see what can be done with output when "quiet" turned off
 
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');

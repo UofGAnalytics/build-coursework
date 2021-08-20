@@ -1,4 +1,5 @@
 // import parser from 'fast-xml-parser';
+
 import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js';
 import { MathDocument } from 'mathjax-full/js/core/MathDocument';
 import * as MathItem from 'mathjax-full/js/core/MathItem';
@@ -7,13 +8,15 @@ import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
 import { TeX } from 'mathjax-full/js/input/tex.js';
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
 import { mathjax } from 'mathjax-full/js/mathjax.js';
+import { VFile } from 'vfile';
 
 import { Context } from '../context';
+import { failMessage } from '../utils/message';
 
 // Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
 // https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
 
-// Convert Tex to alias and build ctx.mmlStore
+// Convert Tex to directive alias ie. :blockMath[13] or :inlineMath[42] and build ctx.mmlStore array
 // (Alias is replaced with SVG in ./directive-to-svg.ts in mdast phase)
 
 // Avoids typesetting issues:
@@ -21,7 +24,8 @@ import { Context } from '../context';
 // If I convert to SVG it gets munged
 // If I convert to MathML it gets munged
 
-export function texToAliasDirective(html: string, ctx: Context) {
+export function texToAliasDirective(file: VFile, ctx: Context) {
+  const md = file.contents as string;
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
 
@@ -36,17 +40,18 @@ export function texToAliasDirective(html: string, ctx: Context) {
 
   const store: string[] = [];
 
-  function storeTex({ math }: MathDocument<any, any, any>) {
+  function storeTexAndDisplayAlias({ math }: MathDocument<any, any, any>) {
     const items = Array.from(math);
 
     for (const item of items) {
       // convert to MML
       const mml = visitor.visitTree(item.root);
+      assertNoMmlError(mml, file);
 
       let newMarkdown = '';
       if (isReferenceLink(item.math)) {
         // convert tex to text link
-        const refNum = extractRefNumFromMml(mml, item.math);
+        const refNum = extractRefNumFromMml(mml, item.math, file);
         const anchor = extractAnchorLinkFromMml(mml, item.math);
         newMarkdown = `[${refNum}](${anchor})`;
       } else {
@@ -65,29 +70,39 @@ export function texToAliasDirective(html: string, ctx: Context) {
   // add store to ctx
   ctx.mmlStore = store;
 
-  const doc = mathjax.document(html, {
+  const doc = mathjax.document(md, {
     InputJax: tex,
     renderActions: {
-      typeset: [MathItem.STATE.TYPESET, storeTex],
+      typeset: [MathItem.STATE.TYPESET, storeTexAndDisplayAlias],
     },
   });
   doc.render();
   const result = adaptor.innerHTML(adaptor.body(doc.document));
-  return unprotectHtml(result);
+  file.contents = unprotectHtml(result);
+  return file;
+}
+
+function assertNoMmlError(mml: string, file: VFile) {
+  const match = mml.match(/<merror.*?title="(.+?)"/);
+  if (match !== null) {
+    failMessage(file, `LaTeX error: "${match[1]}".`);
+  }
 }
 
 function isReferenceLink(tex: string) {
   return /^\\ref\{(.+)\}$/.test(tex);
 }
 
-function extractRefNumFromMml(mml: string, tex: string) {
+function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
   // TODO: should error on "???"
-  // const match = mml.match(/<mtext>(\d+)<\/mtext>/);
-  const match = mml.match(/<mtext>(.+)<\/mtext>/);
+  const match = mml.match(/<mtext>(\d+)<\/mtext>/);
+  // const match = mml.match(/<mtext>(.+)<\/mtext>/);
   if (match === null) {
-    throw new Error(
+    failMessage(
+      file,
       `Invalid reference: ${tex}. You may only reference numbered sections.`
     );
+    return;
   }
   return match[1] as string;
 }

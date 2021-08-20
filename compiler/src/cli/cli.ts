@@ -2,6 +2,7 @@
 
 import yargs from 'yargs';
 
+import { Options } from '../context';
 import { rMarkdown } from '..';
 
 const { argv } = yargs(process.argv.slice(2))
@@ -19,15 +20,15 @@ const { argv } = yargs(process.argv.slice(2))
   })
   .option('noHtml', {
     type: 'boolean',
-    description: 'Only compile content HTML',
+    description: "Don't create HTML file",
   })
   .option('noPdf', {
     type: 'boolean',
-    description: 'Only compile content HTML',
+    description: "Don't create PDF file",
   })
   .option('noSyntaxHighlight', {
     type: 'boolean',
-    description: 'No syntax highlight',
+    description: 'No syntax highlighting',
   })
   .option('noReport', {
     type: 'boolean',
@@ -35,7 +36,7 @@ const { argv } = yargs(process.argv.slice(2))
   })
   .option('noEmbedAssets', {
     type: 'boolean',
-    description: 'No embed assets',
+    description: "Don't embed assets",
   })
   .option('noCache', {
     type: 'boolean',
@@ -48,11 +49,15 @@ const { argv } = yargs(process.argv.slice(2))
   .option('spelling', {
     type: 'boolean',
     description: 'Check spelling',
+  })
+  .option('force', {
+    type: 'boolean',
+    description: 'Compile even with fatal errors',
   });
 
 const dirPath = String(argv._[0] || '.');
 
-const options = {
+const options: Options = {
   week: argv.week,
   watch: argv.watch,
   noDoc: argv.noDoc,
@@ -64,6 +69,7 @@ const options = {
   noCache: argv.noCache,
   noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
+  force: argv.force,
 };
 
 rMarkdown(dirPath, options);

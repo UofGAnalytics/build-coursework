@@ -19,6 +19,7 @@ import { mdastPhase } from '../mdast';
 import { preParsePhase } from '../pre-parse';
 import { assertAssetExists } from './assert-asset-exists';
 import { assertNoH1 } from './assert-no-h1';
+import { assertNoTexTabular } from './assert-no-tex-tabular';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
 import { assertWeblinkTarget } from './assert-weblink-target';
@@ -30,12 +31,17 @@ export async function linter(unit: Unit, ctx: Context) {
     unit.files.map((file) => createReport(file, unit, ctx))
   );
 
-  if (!ctx.options.noReport) {
-    printReport(unit.files, ctx);
-  }
-  if (reportHasFatalErrors(unit.files, ctx)) {
+  // if (!ctx.options.noReport) {
+  //   printReport(unit.files, ctx);
+  // }
+
+  // reportErrors(unit.files, ctx);
+}
+
+export function reportErrors(files: VFile[], ctx: Context) {
+  if (reportHasFatalErrors(files, ctx)) {
     if (ctx.options.noReport) {
-      printReport(unit.files, {
+      printReport(files, {
         ...ctx,
         options: {
           ...ctx.options,
@@ -43,15 +49,21 @@ export async function linter(unit: Unit, ctx: Context) {
         },
       });
     }
-    // TODO: should probably throw here
-    // throw new Error('Report has fatal errors');
+    if (ctx.options.force) {
+      console.log('Compiling using force option...');
+    } else {
+      throw new Error('Report has fatal errors');
+    }
   }
 }
 
 async function createReport(file: VFile, unit: Unit, ctx: Context) {
-  const contents = file.contents as string;
-  const md = preParsePhase(contents, ctx);
-  const mdast = await mdastPhase(md, unit, ctx);
+  const preParsed = preParsePhase(file);
+  const contents = preParsed.contents as string;
+
+  assertNoTexTabular(contents, file);
+
+  const mdast = await mdastPhase(contents, unit, ctx);
 
   const processor = unified()
     .use(assertAssetExists)
