@@ -1,5 +1,6 @@
 import { VFile } from 'vfile';
 
+import { allowNoWhitespaceBeforeHeading } from './allow-no-whitespace-before-heading';
 import { convertNewPageToDirective } from './convert-block-tex';
 import { convertTextBfToMd, convertUrlToMd } from './convert-inline-tex';
 import { convertMacroToDirective } from './convert-macro-to-directive';
@@ -14,6 +15,7 @@ import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
 export function preParsePhase(file: VFile) {
   let result = file.contents as string;
   result = removeCommentedSections(result);
+  result = allowNoWhitespaceBeforeHeading(result);
   result = convertMacroToDirective(result);
   result = convertTextBfToMd(result);
   result = convertUrlToMd(result);

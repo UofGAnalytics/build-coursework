@@ -1485,7 +1485,7 @@ function texToAliasDirective(file, ctx) {
     for (const item of items) {
       // convert to MML
       const mml = visitor.visitTree(item.root);
-      assertionNoMmlError(mml, file);
+      assertNoMmlError(mml, file);
       let newMarkdown = '';
 
       if (isReferenceLink(item.math)) {
@@ -1520,7 +1520,7 @@ function texToAliasDirective(file, ctx) {
   return file;
 }
 
-function assertionNoMmlError(mml, file) {
+function assertNoMmlError(mml, file) {
   const match = mml.match(/<merror.*?title="(.+?)"/);
 
   if (match !== null) {
@@ -2286,6 +2286,8 @@ async function mdastPhase(md, unit, ctx, targetPdf) {
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
+// EXTERNAL MODULE: ./src/pre-parse/allow-no-whitespace-before-heading.ts
+var allow_no_whitespace_before_heading = __webpack_require__(9188);
 // EXTERNAL MODULE: ./src/pre-parse/convert-block-tex.ts
 var convert_block_tex = __webpack_require__(4474);
 // EXTERNAL MODULE: ./src/pre-parse/convert-inline-tex.ts
@@ -2410,6 +2412,7 @@ function multilineReducer(acc, row) {
 
 
 
+
  // Some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
 // I transform some syntax using regex so it can be parsed.
@@ -2419,6 +2422,7 @@ function multilineReducer(acc, row) {
 function preParsePhase(file) {
   let result = file.contents;
   result = removeCommentedSections(result);
+  result = (0,allow_no_whitespace_before_heading/* allowNoWhitespaceBeforeHeading */.Q)(result);
   result = (0,convert_macro_to_directive/* convertMacroToDirective */.W)(result);
   result = (0,convert_inline_tex/* convertTextBfToMd */._)(result);
   result = (0,convert_inline_tex/* convertUrlToMd */.c)(result);
@@ -2916,6 +2920,27 @@ async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
     hast,
     html
   };
+}
+
+/***/ }),
+
+/***/ 9188:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Q": () => (/* binding */ allowNoWhitespaceBeforeHeading)
+/* harmony export */ });
+function allowNoWhitespaceBeforeHeading(contents) {
+  return contents.split('\n').map(line => {
+    const match = line.match(/^(#+)(\w+)$/);
+
+    if (match !== null) {
+      return `${match[1]} ${match[2]}`;
+    }
+
+    return line;
+  }).join('\n');
 }
 
 /***/ }),

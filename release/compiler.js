@@ -10851,7 +10851,7 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
     for (const item of items) {
       // convert to MML
       const mml = visitor.visitTree(item.root);
-      assertionNoMmlError(mml, file);
+      assertNoMmlError(mml, file);
       let newMarkdown = '';
 
       if (isReferenceLink(item.math)) {
@@ -10886,7 +10886,7 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
   return file;
 }
 
-function assertionNoMmlError(mml, file) {
+function assertNoMmlError(mml, file) {
   const match = mml.match(/<merror.*?title="(.+?)"/);
 
   if (match !== null) {
@@ -11755,6 +11755,7 @@ function multilineReducer(acc, row) {
 
 
 
+
  // Some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
 // I transform some syntax using regex so it can be parsed.
@@ -11764,6 +11765,7 @@ function multilineReducer(acc, row) {
 function pre_parse_preParsePhase(file) {
   let result = file.contents;
   result = removeCommentedSections(result);
+  result = allowNoWhitespaceBeforeHeading(result);
   result = convertMacroToDirective(result);
   result = convertTextBfToMd(result);
   result = convertUrlToMd(result);
