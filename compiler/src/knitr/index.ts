@@ -48,7 +48,28 @@ function getUniqueTempFileName(md: string) {
 }
 
 function formatResponse(response: string) {
-  return response.replace(/\[1\]\s""$/m, '').trim();
+  let result = response;
+  result = removeEmptyLog(result);
+  result = addNewLineAfterKable(result);
+  return result;
+}
+
+function removeEmptyLog(md: string) {
+  return md.replace(/\[1\]\s""$/m, '').trim();
+}
+
+function addNewLineAfterKable(md: string) {
+  return md
+    .split('\n')
+    .reduce((acc: string[], line, idx) => {
+      if (acc[idx - 1]?.startsWith('|') && !line.startsWith('|')) {
+        acc.push('', line);
+      } else {
+        acc.push(line);
+      }
+      return acc;
+    }, [])
+    .join('\n');
 }
 
 // attempt at changing knitr output. doesn't completely work

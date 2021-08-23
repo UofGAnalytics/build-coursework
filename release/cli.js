@@ -1415,7 +1415,28 @@ function getUniqueTempFileName(md) {
 }
 
 function formatResponse(response) {
-  return response.replace(/\[1\]\s""$/m, '').trim();
+  let result = response;
+  result = removeEmptyLog(result);
+  result = addNewLineAfterKable(result);
+  return result;
+}
+
+function removeEmptyLog(md) {
+  return md.replace(/\[1\]\s""$/m, '').trim();
+}
+
+function addNewLineAfterKable(md) {
+  return md.split('\n').reduce((acc, line, idx) => {
+    var _acc;
+
+    if ((_acc = acc[idx - 1]) !== null && _acc !== void 0 && _acc.startsWith('|') && !line.startsWith('|')) {
+      acc.push('', line);
+    } else {
+      acc.push(line);
+    }
+
+    return acc;
+  }, []).join('\n');
 } // attempt at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
@@ -1539,12 +1560,15 @@ function isReferenceLink(tex) {
 }
 
 function extractRefNumFromMml(mml, tex, file) {
-  // TODO: should error on "???"
-  const match = mml.match(/<mtext>(\d+)<\/mtext>/); // const match = mml.match(/<mtext>(.+)<\/mtext>/);
+  const match = mml.match(/<mtext>(.+)<\/mtext>/);
 
   if (match === null) {
-    failMessage(file, `Invalid reference: ${tex}. You may only reference numbered sections.`);
+    failMessage(file, `Invalid reference: ${tex}`);
     return;
+  }
+
+  if (match[1] === '???') {
+    failMessage(file, `Invalid reference: ${tex}. You may only reference numbered sections.`);
   }
 
   return match[1];
@@ -1562,14 +1586,18 @@ function extractAnchorLinkFromMml(mml, tex) {
 
 function postParse(html) {
   let result = html;
-  result = unprotectHtml(html);
-  result = html.replace(/\\label{def:.*?}/gm, '');
+  result = unprotectHtml(result);
+  result = removeUnresolvedLabels(result);
   return result;
 } // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
 
 
 function unprotectHtml(html) {
   return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
+function removeUnresolvedLabels(html) {
+  return html.replace(/\\label{def:.*?}/gm, '');
 }
 ;// CONCATENATED MODULE: external "@double-great/remark-lint-alt-text"
 const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");

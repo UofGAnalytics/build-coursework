@@ -94,15 +94,16 @@ function isReferenceLink(tex: string) {
 }
 
 function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
-  // TODO: should error on "???"
-  const match = mml.match(/<mtext>(\d+)<\/mtext>/);
-  // const match = mml.match(/<mtext>(.+)<\/mtext>/);
+  const match = mml.match(/<mtext>(.+)<\/mtext>/);
   if (match === null) {
+    failMessage(file, `Invalid reference: ${tex}`);
+    return;
+  }
+  if (match[1] === '???') {
     failMessage(
       file,
       `Invalid reference: ${tex}. You may only reference numbered sections.`
     );
-    return;
   }
   return match[1] as string;
 }

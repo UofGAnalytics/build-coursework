@@ -23,6 +23,22 @@ describe('latex', () => {
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));
   });
 
+  it('should error on referencing non-numbered section', async () => {
+    const { md } = await testProcessor(String.raw`
+      \label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$
+
+      (multivariate version of the score from Definition \ref{def:scoreuniv})
+    `);
+
+    const expectedMd = unindentStringAndTrim(`
+      :inlineMath[0]
+
+      (multivariate version of the score from Definition [???](#))
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));
+  });
+
   it('should add error on tabular', async () => {
     const { hasFailingMessage } = await testProcessor(String.raw`
       \begin{center}
