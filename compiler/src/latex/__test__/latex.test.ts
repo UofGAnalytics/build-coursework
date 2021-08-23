@@ -36,6 +36,10 @@ describe('latex', () => {
     `);
 
     expect(
+      hasFailingMessage('LaTeX error: "Unknown environment \'center\'".')
+    ).toBe(true);
+
+    expect(
       hasFailingMessage(
         'LaTeX tables are not allowed, please use Markdown syntax'
       )

@@ -10,6 +10,7 @@ export async function buildUnit(
 ) {
   await linter(unit, ctx);
   const transformed = await contextTransforms(unit, ctx);
+  const combined = [...unit.files, transformed];
   const md = transformed.contents as string;
   const { mdast, hast, html } = await syntaxTreeTransforms(
     md,
@@ -17,5 +18,5 @@ export async function buildUnit(
     ctx,
     targetPdf
   );
-  return { md, mdast, hast, html };
+  return { combined, md, mdast, hast, html };
 }

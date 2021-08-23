@@ -1,15 +1,20 @@
 import { VFile } from 'vfile';
+import { VFileMessage } from 'vfile-message';
 
 import { Context } from '../context';
 import { reportHasFatalErrors, reportHasWarnings } from '../linter/report';
 import { MessageStatus } from '../utils/message';
 
-export function createHasFailingMessage(ctx: Context, file: VFile) {
+export function createHasFailingMessage(ctx: Context, files: VFile[]) {
   return function hasFailingMessage(reason: string) {
-    const errors = file.messages.filter((o) => o.reason === reason);
+    const fileMessages = files.reduce(
+      (acc: VFileMessage[], o) => [...acc, ...o.messages],
+      []
+    );
+    const errors = fileMessages.filter((o) => o.reason === reason);
     if (errors.length === 0) {
       console.log('Message not found in these messages:');
-      console.log(file.messages);
+      console.log(fileMessages);
       return false;
     }
     if (errors[0].status !== MessageStatus.fail) {
@@ -17,16 +22,20 @@ export function createHasFailingMessage(ctx: Context, file: VFile) {
       console.log(errors[0]);
       return false;
     }
-    return reportHasFatalErrors([file], ctx);
+    return reportHasFatalErrors(files, ctx);
   };
 }
 
-export function createHasWarningMessage(ctx: Context, file: VFile) {
+export function createHasWarningMessage(ctx: Context, files: VFile[]) {
   return function hasWarningMessage(reason: string) {
-    const errors = file.messages.filter((o) => o.reason === reason);
+    const fileMessages = files.reduce(
+      (acc: VFileMessage[], o) => [...acc, ...o.messages],
+      []
+    );
+    const errors = fileMessages.filter((o) => o.reason === reason);
     if (errors.length === 0) {
       console.log('Message not found in these messages:');
-      console.log(file.messages);
+      console.log(fileMessages);
       return false;
     }
     if (errors[0].status !== MessageStatus.warning) {
@@ -34,6 +43,6 @@ export function createHasWarningMessage(ctx: Context, file: VFile) {
       console.log(errors[0]);
       return false;
     }
-    return reportHasWarnings([file], ctx);
+    return reportHasWarnings(files, ctx);
   };
 }

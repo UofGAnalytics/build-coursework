@@ -18,8 +18,6 @@ import {
 
 export async function testProcessor(md: string, options: Options = {}) {
   const { ctx, file } = await createTestContext(md, options);
-  const hasFailingMessage = createHasFailingMessage(ctx, file);
-  const hasWarningMessage = createHasWarningMessage(ctx, file);
   const unitFile = ctx.course.units[0];
 
   const unit = {
@@ -27,6 +25,7 @@ export async function testProcessor(md: string, options: Options = {}) {
     mdast: {} as MDastParent,
     hast: {} as HastParent,
     html: '',
+    combined: [] as VFile[],
   };
   try {
     const result = await buildUnit(unitFile, ctx);
@@ -34,9 +33,13 @@ export async function testProcessor(md: string, options: Options = {}) {
     unit.mdast = result.mdast;
     unit.hast = result.hast;
     unit.html = result.html;
+    unit.combined = result.combined;
   } catch (err) {
     console.error(err);
   }
+
+  const hasFailingMessage = createHasFailingMessage(ctx, unit.combined);
+  const hasWarningMessage = createHasWarningMessage(ctx, unit.combined);
 
   return { file, hasFailingMessage, hasWarningMessage, ...unit };
 }
