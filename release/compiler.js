@@ -11826,8 +11826,6 @@ function assert_no_h1_assertNoH1() {
   };
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
- // TODO: could possibly try converting to array here
-// https://stackoverflow.com/questions/51803244
 
 function assert_no_kbl_assertNoKbl(md, file) {
   md.split('\n').forEach((line, idx) => {
@@ -12247,7 +12245,7 @@ async function writeUnit(unit, ctx, timer) {
   const combined = [...unit.files, transformed];
   printReport(combined, ctx);
   reportErrors(combined, ctx);
-  const md = transformed.contents; // console.log(md);
+  const md = transformed.contents;
 
   if (!ctx.options.noHtml) {
     const {
