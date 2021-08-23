@@ -19,6 +19,7 @@ import { mdastPhase } from '../mdast';
 import { preParsePhase } from '../pre-parse';
 import { assertAssetExists } from './assert-asset-exists';
 import { assertNoH1 } from './assert-no-h1';
+import { assertNoKbl } from './assert-no-kbl';
 import { assertNoTexTabular } from './assert-no-tex-tabular';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
@@ -61,7 +62,9 @@ async function createReport(file: VFile, unit: Unit, ctx: Context) {
   const preParsed = preParsePhase(file);
   const contents = preParsed.contents as string;
 
+  // simple regex tests
   assertNoTexTabular(contents, file);
+  assertNoKbl(contents, file);
 
   const mdast = await mdastPhase(contents, unit, ctx);
 

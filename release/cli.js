@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 6555:
+/***/ 5266:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -563,6 +563,9 @@ async function createContext(dirPath, options = {}) {
     options
   };
 }
+;// CONCATENATED MODULE: external "rehype-raw"
+const external_rehype_raw_namespaceObject = require("rehype-raw");
+var external_rehype_raw_default = /*#__PURE__*/__webpack_require__.n(external_rehype_raw_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
 var external_remark_rehype_default = /*#__PURE__*/__webpack_require__.n(external_remark_rehype_namespaceObject);
@@ -734,24 +737,24 @@ function getAssetHast(contents) {
   return parsed.children[0];
 }
 ;// CONCATENATED MODULE: ./src/utils/message.ts
-let MessageStatus;
+let message_MessageStatus;
 
 (function (MessageStatus) {
   MessageStatus["fail"] = "fail";
   MessageStatus["warning"] = "warning";
   MessageStatus["info"] = "info";
-})(MessageStatus || (MessageStatus = {}));
+})(message_MessageStatus || (message_MessageStatus = {}));
 
 function failMessage(file, message, position) {
-  const status = MessageStatus.fail;
+  const status = message_MessageStatus.fail;
   return messageWithStatus(file, message, position, status);
 }
 function warnMessage(file, message, position) {
-  const status = MessageStatus.warning;
+  const status = message_MessageStatus.warning;
   return messageWithStatus(file, message, position, status);
 }
 function infoMessage(file, message, position) {
-  const status = MessageStatus.info;
+  const status = message_MessageStatus.info;
   return messageWithStatus(file, message, position, status);
 }
 
@@ -909,10 +912,11 @@ function responsiveTables() {
 
 
 
+
 async function hastPhase(mdast, unit, ctx, targetPdf) {
   const processor = unified_default()().use((external_remark_rehype_default()), {
     allowDangerousHtml: true
-  }).use(responsiveTables);
+  }).use((external_rehype_raw_default())).use(responsiveTables);
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -1339,7 +1343,9 @@ function htmlWrapper(unit, mdast) {
 
 
 async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
-  const processor = unified_default()().use((external_rehype_format_default())).use((external_rehype_stringify_default()));
+  const processor = unified_default()().use((external_rehype_format_default())).use((external_rehype_stringify_default()), {
+    allowDangerousHtml: true
+  });
 
   if (!ctx.options.noDoc) {
     const templateCss = await readFile(external_path_default().join(getLibraryDir(), 'template.css'));
@@ -2417,7 +2423,7 @@ function multilineReducer(acc, row) {
 // existing plugins for unified.js, so in a "pre-parse" phase
 // I transform some syntax using regex so it can be parsed.
 // A successful generic approach I found is to convert problem syntax to a
-// custom markdown directive https://github.com/remarkjs/remark-directive
+// custom markdown directive: https://github.com/remarkjs/remark-directive
 
 function preParsePhase(file) {
   let result = file.contents;
@@ -2476,6 +2482,26 @@ function assertNoH1() {
       }
     });
   };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
+
+function assertNoKbl(md, file) {
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('kbl()')) {
+      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
  // TODO: could possibly try converting to array here
@@ -2673,12 +2699,14 @@ function printReport(files, ctx) {
   }
 }
 function reportHasFatalErrors(files, ctx) {
-  const passed = files.every(file => file.messages.every(message => message.status !== MessageStatus.fail));
-  return !passed;
+  return files.some(file => file.messages.some(message => message.status === message_MessageStatus.fail));
+}
+function reportHasWarnings(files, ctx) {
+  return files.some(file => file.messages.some(message => message.status === MessageStatus.warning));
 }
 
 function failingMessages(messages) {
-  return messages.filter(o => o.status === MessageStatus.fail);
+  return messages.filter(o => o.status === message_MessageStatus.fail);
 }
 
 function printMessage(message) {
@@ -2697,7 +2725,7 @@ function formatStatus(status) {
   const statusColour = getStatusColour(status);
 
   switch (status) {
-    case MessageStatus.fail:
+    case message_MessageStatus.fail:
       return statusColour((external_figures_default()).cross);
 
     default:
@@ -2716,7 +2744,7 @@ function formatReason(reason, status) {
 
 function getStatusColour(status) {
   switch (status) {
-    case MessageStatus.fail:
+    case message_MessageStatus.fail:
       return (external_chalk_default()).red;
 
     default:
@@ -2740,6 +2768,7 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
  // @ts-expect-error
 
  // @ts-expect-error
+
 
 
 
@@ -2779,8 +2808,10 @@ function reportErrors(files, ctx) {
 
 async function createReport(file, unit, ctx) {
   const preParsed = preParsePhase(file);
-  const contents = preParsed.contents;
+  const contents = preParsed.contents; // simple regex tests
+
   assertNoTexTabular(contents, file);
+  assertNoKbl(contents, file);
   const mdast = await mdastPhase(contents, unit, ctx);
   const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
 
@@ -2878,7 +2909,7 @@ async function writeUnit(unit, ctx, timer) {
   const combined = [...unit.files, transformed];
   printReport(combined, ctx);
   reportErrors(combined, ctx);
-  const md = transformed.contents;
+  const md = transformed.contents; // console.log(md);
 
   if (!ctx.options.noHtml) {
     const {
@@ -2906,9 +2937,7 @@ async function contextTransforms(unit, ctx) {
   const file = vfile_default()(unit.files.map(o => o.contents).join('\n\n'));
   const preParsed = preParsePhase(file);
   const withKnitr = await knitr(preParsed, ctx);
-  const withTexAlias = texToAliasDirective(withKnitr, ctx); // printReport([withTexAlias], ctx);
-  // return withTexAlias.contents as string;
-
+  const withTexAlias = texToAliasDirective(withKnitr, ctx);
   return withTexAlias;
 }
 async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
@@ -2933,10 +2962,10 @@ async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
 /* harmony export */ });
 function allowNoWhitespaceBeforeHeading(contents) {
   return contents.split('\n').map(line => {
-    const match = line.match(/^(#+)(\w+)$/);
+    const match = line.match(/^(#+)(\w)(.*?)$/);
 
     if (match !== null) {
-      return `${match[1]} ${match[2]}`;
+      return `${match[1]} ${match[2]}${match[3]}`;
     }
 
     return line;
@@ -12520,8 +12549,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 90 modules
-var src = __webpack_require__(6555);
+// EXTERNAL MODULE: ./src/index.ts + 92 modules
+var src = __webpack_require__(5266);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

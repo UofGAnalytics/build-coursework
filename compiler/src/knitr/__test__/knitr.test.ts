@@ -69,7 +69,7 @@ describe('knitr', () => {
   });
 
   it('should output a graph as svg', async () => {
-    const { hast } = await testProcessor(
+    const { html } = await testProcessor(
       `
       \`\`\`{r}
       x <- rnorm(100)
@@ -79,9 +79,9 @@ describe('knitr', () => {
       { noEmbedAssets: false }
     );
 
-    const children = hast.children as any[];
-    const tagName = children[3].children[1].children[1].tagName;
-    expect(tagName).toBe('svg');
+    expect(html.includes('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(
+      true
+    );
   });
 
   it('should ignore tab whitespace', async () => {

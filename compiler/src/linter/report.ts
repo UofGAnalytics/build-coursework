@@ -47,10 +47,17 @@ export function printReport(files: VFile[], ctx: Context) {
 }
 
 export function reportHasFatalErrors(files: VFile[], ctx: Context) {
-  const passed = files.every((file) =>
-    file.messages.every((message) => message.status !== MessageStatus.fail)
+  return files.some((file) =>
+    file.messages.some((message) => message.status === MessageStatus.fail)
   );
-  return !passed;
+}
+
+export function reportHasWarnings(files: VFile[], ctx: Context) {
+  return files.some((file) =>
+    file.messages.some(
+      (message) => message.status === MessageStatus.warning
+    )
+  );
 }
 
 function failingMessages(messages: VFileMessage[]) {

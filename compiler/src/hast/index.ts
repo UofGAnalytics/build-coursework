@@ -1,5 +1,6 @@
 import { Parent as HastParent } from 'hast';
 import { Parent as MDastParent } from 'mdast';
+import rehypeRaw from 'rehype-raw';
 import remark2rehype from 'remark-rehype';
 import unified from 'unified';
 
@@ -16,6 +17,7 @@ export async function hastPhase(
 ) {
   const processor = unified()
     .use(remark2rehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
     .use(responsiveTables);
 
   if (!ctx.options.noEmbedAssets) {

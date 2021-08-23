@@ -9940,6 +9940,8 @@ async function context_createContext(dirPath, options = {}) {
     options
   };
 }
+;// CONCATENATED MODULE: external "rehype-raw"
+const external_rehype_raw_namespaceObject = require("rehype-raw");
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
 ;// CONCATENATED MODULE: external "mime/lite"
@@ -10118,7 +10120,7 @@ function message_failMessage(file, message, position) {
   const status = message_MessageStatus.fail;
   return messageWithStatus(file, message, position, status);
 }
-function warnMessage(file, message, position) {
+function message_warnMessage(file, message, position) {
   const status = message_MessageStatus.warning;
   return messageWithStatus(file, message, position, status);
 }
@@ -10281,10 +10283,11 @@ function responsive_tables_responsiveTables() {
 
 
 
+
 async function hast_hastPhase(mdast, unit, ctx, targetPdf) {
   const processor = unified().use(remark2rehype, {
     allowDangerousHtml: true
-  }).use(responsiveTables);
+  }).use(rehypeRaw).use(responsiveTables);
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -10705,7 +10708,9 @@ function wrapper_htmlWrapper(unit, mdast) {
 
 
 async function html_htmlPhase(hast, mdast, unit, ctx, targetPdf) {
-  const processor = unified().use(format).use(stringify);
+  const processor = unified().use(format).use(stringify, {
+    allowDangerousHtml: true
+  });
 
   if (!ctx.options.noDoc) {
     const templateCss = await readFile(path.join(getLibraryDir(), 'template.css'));
@@ -11760,7 +11765,7 @@ function multilineReducer(acc, row) {
 // existing plugins for unified.js, so in a "pre-parse" phase
 // I transform some syntax using regex so it can be parsed.
 // A successful generic approach I found is to convert problem syntax to a
-// custom markdown directive https://github.com/remarkjs/remark-directive
+// custom markdown directive: https://github.com/remarkjs/remark-directive
 
 function pre_parse_preParsePhase(file) {
   let result = file.contents;
@@ -11819,6 +11824,26 @@ function assert_no_h1_assertNoH1() {
       }
     });
   };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
+
+function assert_no_kbl_assertNoKbl(md, file) {
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('kbl()')) {
+      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
  // TODO: could possibly try converting to array here
@@ -12015,8 +12040,10 @@ function report_printReport(files, ctx) {
   }
 }
 function report_reportHasFatalErrors(files, ctx) {
-  const passed = files.every(file => file.messages.every(message => message.status !== MessageStatus.fail));
-  return !passed;
+  return files.some(file => file.messages.some(message => message.status === MessageStatus.fail));
+}
+function reportHasWarnings(files, ctx) {
+  return files.some(file => file.messages.some(message => message.status === MessageStatus.warning));
 }
 
 function failingMessages(messages) {
@@ -12095,6 +12122,7 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
+
 async function linter_linter(unit, ctx) {
   await Promise.all(unit.files.map(file => createReport(file, unit, ctx))); // if (!ctx.options.noReport) {
   //   printReport(unit.files, ctx);
@@ -12121,8 +12149,10 @@ function linter_reportErrors(files, ctx) {
 
 async function createReport(file, unit, ctx) {
   const preParsed = preParsePhase(file);
-  const contents = preParsed.contents;
+  const contents = preParsed.contents; // simple regex tests
+
   assertNoTexTabular(contents, file);
+  assertNoKbl(contents, file);
   const mdast = await mdastPhase(contents, unit, ctx);
   const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use(lintAltText).use(lintLinkText);
 
@@ -12217,7 +12247,7 @@ async function writeUnit(unit, ctx, timer) {
   const combined = [...unit.files, transformed];
   printReport(combined, ctx);
   reportErrors(combined, ctx);
-  const md = transformed.contents;
+  const md = transformed.contents; // console.log(md);
 
   if (!ctx.options.noHtml) {
     const {
@@ -12245,9 +12275,7 @@ async function contextTransforms(unit, ctx) {
   const file = VFile(unit.files.map(o => o.contents).join('\n\n'));
   const preParsed = preParsePhase(file);
   const withKnitr = await knitr(preParsed, ctx);
-  const withTexAlias = texToAliasDirective(withKnitr, ctx); // printReport([withTexAlias], ctx);
-  // return withTexAlias.contents as string;
-
+  const withTexAlias = texToAliasDirective(withKnitr, ctx);
   return withTexAlias;
 }
 async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {

@@ -85,8 +85,6 @@ export async function contextTransforms(unit: Unit, ctx: Context) {
   const preParsed = preParsePhase(file);
   const withKnitr = await knitr(preParsed, ctx);
   const withTexAlias = texToAliasDirective(withKnitr, ctx);
-  // printReport([withTexAlias], ctx);
-  // return withTexAlias.contents as string;
   return withTexAlias;
 }
 

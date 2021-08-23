@@ -11,11 +11,15 @@ import { Options } from '../context';
 import { getUnitTitles } from '../course';
 import { writeFile } from '../utils/utils';
 import { buildUnit } from './build-unit';
-import { createHasFailingMessage } from './has-message';
+import {
+  createHasFailingMessage,
+  createHasWarningMessage,
+} from './has-message';
 
 export async function testProcessor(md: string, options: Options = {}) {
   const { ctx, file } = await createTestContext(md, options);
   const hasFailingMessage = createHasFailingMessage(ctx, file);
+  const hasWarningMessage = createHasWarningMessage(ctx, file);
   const unitFile = ctx.course.units[0];
 
   const unit = {
@@ -34,7 +38,7 @@ export async function testProcessor(md: string, options: Options = {}) {
     console.error(err);
   }
 
-  return { file, hasFailingMessage, ...unit };
+  return { file, hasFailingMessage, hasWarningMessage, ...unit };
 }
 
 async function createTestContext(md: string, options: Options = {}) {

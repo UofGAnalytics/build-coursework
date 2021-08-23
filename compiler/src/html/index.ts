@@ -21,7 +21,9 @@ export async function htmlPhase(
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const processor = unified().use(format).use(stringify);
+  const processor = unified()
+    .use(format)
+    .use(stringify, { allowDangerousHtml: true });
 
   if (!ctx.options.noDoc) {
     const templateCss = await readFile(

@@ -43,6 +43,7 @@
     "rehype-format": "^3.1.0",
     "rehype-highlight": "^4.0.1",
     "rehype-parse": "^7.0.1",
+    "rehype-raw": "5",
     "rehype-stringify": "^8.0.0",
     "remark-autolink-headings": "^6.0.1",
     "remark-directive": "^1.0.1",
