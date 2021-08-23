@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: install curl
         if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get install curl
+        run: sudo apt install libcurl4-openssl-dev
 
       - name: Checkout repo
         uses: actions/checkout@v2
