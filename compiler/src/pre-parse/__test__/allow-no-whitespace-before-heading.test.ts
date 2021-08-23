@@ -16,6 +16,18 @@ describe('allowNoWhitespaceBeforeHeading', () => {
     expect(md).toBe(expected);
   });
 
+  it('spot and replace badly formatted multi-word heading', async () => {
+    const { md } = await testProcessor(`
+      ###Deviance and Cheese
+    `);
+
+    const expected = unindentStringAndTrim(`
+      ### Deviance and Cheese
+    `);
+
+    expect(md).toBe(expected);
+  });
+
   it('should be idempotent', async () => {
     const { md } = await testProcessor(`
       ###Deviance

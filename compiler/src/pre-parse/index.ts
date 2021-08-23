@@ -10,7 +10,7 @@ import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
 // existing plugins for unified.js, so in a "pre-parse" phase
 // I transform some syntax using regex so it can be parsed.
 // A successful generic approach I found is to convert problem syntax to a
-// custom markdown directive https://github.com/remarkjs/remark-directive
+// custom markdown directive: https://github.com/remarkjs/remark-directive
 
 export function preParsePhase(file: VFile) {
   let result = file.contents as string;
