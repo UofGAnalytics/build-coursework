@@ -1522,7 +1522,7 @@ function texToAliasDirective(file, ctx) {
   });
   doc.render();
   const result = adaptor.innerHTML(adaptor.body(doc.document));
-  file.contents = unprotectHtml(result);
+  file.contents = postParse(result);
   return file;
 }
 
@@ -1558,6 +1558,13 @@ function extractAnchorLinkFromMml(mml, tex) {
   }
 
   return match[1];
+}
+
+function postParse(html) {
+  let result = html;
+  result = unprotectHtml(html);
+  result = html.replace(/\\label{def:.*?}/gm, '');
+  return result;
 } // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
 
 

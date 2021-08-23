@@ -36,7 +36,7 @@ describe('latex', () => {
     `);
 
     expect(
-      hasFailingMessage('LaTeX error: "Unknown environment \'center\'".')
+      hasFailingMessage(`LaTeX error: "Unknown environment 'center'".`)
     ).toBe(true);
 
     expect(
@@ -44,5 +44,17 @@ describe('latex', () => {
         'LaTeX tables are not allowed, please use Markdown syntax'
       )
     ).toBe(true);
+  });
+
+  it('should remove unresolved label syntax', async () => {
+    const { md } = await testProcessor(String.raw`
+      \label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$
+    `);
+
+    const expected = unindentStringAndTrim(`
+      :inlineMath[0]
+    `);
+
+    expect(md).toBe(expected);
   });
 });

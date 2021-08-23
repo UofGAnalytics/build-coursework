@@ -78,7 +78,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   });
   doc.render();
   const result = adaptor.innerHTML(adaptor.body(doc.document));
-  file.contents = unprotectHtml(result);
+  file.contents = postParse(result);
   return file;
 }
 
@@ -115,10 +115,21 @@ function extractAnchorLinkFromMml(mml: string, tex: string) {
   return match[1] as string;
 }
 
+function postParse(html: string) {
+  let result = html;
+  result = unprotectHtml(result);
+  result = removeUnresolvedLabels(result);
+  return result;
+}
+
 // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
 function unprotectHtml(html: string) {
   return html
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>');
+}
+
+function removeUnresolvedLabels(html: string) {
+  return html.replace(/\\label{def:.*?}/gm, '');
 }
