@@ -23,6 +23,7 @@ describe('htmlTables', () => {
       \`\`\`
     `);
 
+    console.log(html);
     expect(html.includes('<table class="table"')).toBe(true);
   });
 });
