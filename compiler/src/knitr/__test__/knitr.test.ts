@@ -160,19 +160,30 @@ describe('knitr', () => {
       beetles
       \`\`\`
 
-      |   dose| number| killed|
-      |------:|------:|------:|
-      | 1.6907|     59|      6|
-      | 1.7242|     60|     13|
-      | 1.7552|     62|     18|
-      | 1.7842|     56|     28|
-      | 1.8113|     63|     52|
-      | 1.8369|     59|     53|
-      | 1.8610|     62|     61|
-      | 1.8839|     60|     60|
+      |  dose|number|killed|
+      |-----:|-----:|-----:|
+      |1.6907|    59|     6|
+      |1.7242|    60|    13|
+      |1.7552|    62|    18|
+      |1.7842|    56|    28|
+      |1.8113|    63|    52|
+      |1.8369|    59|    53|
+      |1.8610|    62|    61|
+      |1.8839|    60|    60|
 
       Since we have grouped data (multiple beetles per dose), we can visualise the probability of the outcome of interest (beetles killed) by plotting the proportion killed for each dose against the dose. We see that the proportion killed increases with increasing dose.
     `);
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+  });
+
+  it('should display knitr output correctly', async () => {
+    const { md } = await testProcessor(`
+      \`\`\`{r}
+      beetles$propkilled <- beetles$killed / beetles$number
+      \`\`\`
+    `);
+    expect(md).toContain(
+      'beetles$propkilled <- beetles$killed / beetles$number'
+    );
   });
 });

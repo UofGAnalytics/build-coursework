@@ -1,6 +1,7 @@
 import {
   ignoreWhitespace,
   testProcessor,
+  unindentString,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
@@ -67,10 +68,22 @@ describe('latex', () => {
       \label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$
     `);
 
-    const expected = unindentStringAndTrim(`
+    const expected = unindentString(`
       :inlineMath[0]
     `);
 
-    expect(md).toBe(expected);
+    expect(md.trim()).toBe(expected.trim());
+  });
+
+  it('should work with square bracket syntax', async () => {
+    const { md } = await testProcessor(String.raw`
+      \[(\exp(-2.977),\exp(-2.245))=(0.051,0.106).\]
+    `);
+
+    const expected = unindentString(`
+      :blockMath[0]
+    `);
+
+    expect(md.trim()).toBe(expected.trim());
   });
 });

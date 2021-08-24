@@ -3,6 +3,15 @@ import path from 'path';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
+import { Code } from 'mdast';
+import directive from 'remark-directive';
+import frontmatter from 'remark-frontmatter';
+import gfm from 'remark-gfm';
+import markdown from 'remark-parse';
+import remarkStringify from 'remark-stringify';
+import unified from 'unified';
+import { Node } from 'unist';
+import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -47,15 +56,16 @@ function getUniqueTempFileName(md: string) {
   return `knitr-${hash}-${ts}.Rmd`;
 }
 
-function formatResponse(response: string) {
+async function formatResponse(response: string) {
   let result = response;
   result = removeEmptyLog(result);
   result = addNewLineAfterKable(result);
+  result = await escapeDollarSymbolsInR(result);
   return result;
 }
 
 function removeEmptyLog(md: string) {
-  return md.replace(/\[1\]\s""$/m, '').trim();
+  return md.replace(/\[1\]\s""$/gm, '').trim();
 }
 
 function addNewLineAfterKable(md: string) {
@@ -70,6 +80,28 @@ function addNewLineAfterKable(md: string) {
       return acc;
     }, [])
     .join('\n');
+}
+
+// mini syntax tree processor just to escape dollar signs in embedded R code...
+async function escapeDollarSymbolsInR(md: string) {
+  const processor = unified()
+    .use(markdown)
+    .use(directive)
+    .use(gfm)
+    .use(frontmatter)
+    .use(codeBlocks)
+    .use(remarkStringify, { unsafe: [], resourceLink: true });
+
+  const processed = await processor.process(md);
+  return processed.contents as string;
+}
+
+function codeBlocks() {
+  return async (tree: Node) => {
+    visit<Code>(tree, 'code', (node) => {
+      node.value = node.value.replace(/\$/g, '\\$');
+    });
+  };
 }
 
 // attempt at changing knitr output. doesn't completely work

@@ -1,5 +1,4 @@
 import {
-  ignoreWhitespace,
   testProcessor,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
@@ -18,17 +17,17 @@ describe('reformatPandocSimpleTables', () => {
     `);
 
     const expected = unindentStringAndTrim(`
-      | Movie                            | Gross       | Budget |
-      | :------------------------------- | :---------- | :----- |
-      | Ek Villain                       | 95.64       | 36.0   |
-      | Humshakals                       | 55.65       | 77.0   |
-      | Holiday                          | 110.01      | 90.0   |
-      | Fugly                            | 11.16       | 16.0   |
-      | City Lights                      | 5.19        | 9.5    |
-      | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
+      | Movie                        | Gross  | Budget |
+      | :--------------------------- | :----- | :----- |
+      | Ek Villain                   | 95.64  | 36.0   |
+      | Humshakals                   | 55.65  | 77.0   |
+      | Holiday                      | 110.01 | 90.0   |
+      | Fugly                        | 11.16  | 16.0   |
+      | City Lights                  | 5.19   | 9.5    |
+      | Kuku Mathur Ki Jhand Ho Gayi | 2.23   | 4.5    |
     `);
 
-    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+    expect(md.trim()).toBe(expected.trim());
   });
 
   it('should reformat pandoc simple tables to markdown tables with LaTeX', async () => {
@@ -49,13 +48,13 @@ describe('reformatPandocSimpleTables', () => {
     // `);
 
     const expected = unindentStringAndTrim(String.raw`
-      | **Model**                  | **Random component**                                              | **Systematic component**                                     | **Link function**                                                                                   |
-      | :------------------------- | :---------------------------------------------------------------- | :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-      | Normal model               | :inlineMath[0] :inlineMath[1] | :inlineMath[2]    | Identity link :inlineMath[3]                                                                      |
-      | Logistic regression model  | :inlineMath[4] :inlineMath[5]          | :inlineMath[6] | Logit link: :inlineMath[7] |
+      | **Model**                 | **Random component**                                              | **Systematic component**                                     | **Link function**                                                                                   |
+      | :------------------------ | :---------------------------------------------------------------- | :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+      | Normal model              | :inlineMath[0] :inlineMath[1] | :inlineMath[2]    | Identity link :inlineMath[3]                                                                      |
+      | Logistic regression model | :inlineMath[4] :inlineMath[5]          | :inlineMath[6] | Logit link: :inlineMath[7] |
     `);
 
-    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+    expect(md.trim()).toBe(expected.trim());
   });
 
   it('should reformat pandoc simple tables to markdown tables with macro syntax after', async () => {
@@ -70,16 +69,17 @@ describe('reformatPandocSimpleTables', () => {
     `);
 
     const expected = unindentStringAndTrim(String.raw`
-      | **Distribution**   | **Natural parameter**                         | **Canonical link**                            |
-      | :----------------- | :-------------------------------------------- | :-------------------------------------------- |
-      | Normal             | :inlineMath[0]                    | :inlineMath[1]                                  |
-      | Poisson            | :inlineMath[2]                                 | :inlineMath[3]                            |
-      | Binomial           | :inlineMath[4]  | :inlineMath[5] |
+      | **Distribution** | **Natural parameter**                        | **Canonical link**                            |
+      | :--------------- | :------------------------------------------- | :-------------------------------------------- |
+      | Normal           | :inlineMath[0]                   | :inlineMath[1]                                  |
+      | Poisson          | :inlineMath[2]                                | :inlineMath[3]                            |
+      | Binomial         | :inlineMath[4] | :inlineMath[5] |
 
-      :::weblink{target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng" icon=book}
+      :::weblink{target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng" icon="book"}
+      :::
     `);
 
-    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+    expect(md.trim()).toBe(expected.trim());
   });
 
   it('should be idempotent', async () => {
@@ -97,16 +97,16 @@ describe('reformatPandocSimpleTables', () => {
     const { md: md2 } = await testProcessor(md);
 
     const expected = unindentStringAndTrim(`
-      | Movie                            | Gross       | Budget |
-      | :------------------------------- | :---------- | :----- |
-      | Ek Villain                       | 95.64       | 36.0   |
-      | Humshakals                       | 55.65       | 77.0   |
-      | Holiday                          | 110.01      | 90.0   |
-      | Fugly                            | 11.16       | 16.0   |
-      | City Lights                      | 5.19        | 9.5    |
-      | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
+      | Movie                        | Gross  | Budget |
+      | :--------------------------- | :----- | :----- |
+      | Ek Villain                   | 95.64  | 36.0   |
+      | Humshakals                   | 55.65  | 77.0   |
+      | Holiday                      | 110.01 | 90.0   |
+      | Fugly                        | 11.16  | 16.0   |
+      | City Lights                  | 5.19   | 9.5    |
+      | Kuku Mathur Ki Jhand Ho Gayi | 2.23   | 4.5    |
     `);
 
-    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
+    expect(md2.trim()).toBe(expected.trim());
   });
 });

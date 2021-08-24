@@ -1,6 +1,6 @@
 import {
   testProcessor,
-  unindentStringAndTrim,
+  unindentString,
 } from '../../test-utils/test-processor';
 
 describe('allowNoWhitespaceBeforeHeading', () => {
@@ -9,11 +9,11 @@ describe('allowNoWhitespaceBeforeHeading', () => {
       ###Deviance
     `);
 
-    const expected = unindentStringAndTrim(`
+    const expected = unindentString(`
       ### Deviance
     `);
 
-    expect(md).toBe(expected);
+    expect(md.trim()).toBe(expected.trim());
   });
 
   it('spot and replace badly formatted multi-word heading', async () => {
@@ -21,11 +21,11 @@ describe('allowNoWhitespaceBeforeHeading', () => {
       ###Deviance and Cheese
     `);
 
-    const expected = unindentStringAndTrim(`
+    const expected = unindentString(`
       ### Deviance and Cheese
     `);
 
-    expect(md).toBe(expected);
+    expect(md.trim()).toBe(expected.trim());
   });
 
   it('should be idempotent', async () => {
@@ -33,12 +33,12 @@ describe('allowNoWhitespaceBeforeHeading', () => {
       ###Deviance
     `);
 
-    const expected = unindentStringAndTrim(`
+    const expected = unindentString(`
       ### Deviance
     `);
 
     const { md: md2 } = await testProcessor(md);
 
-    expect(md2).toBe(expected);
+    expect(md2.trim()).toBe(expected.trim());
   });
 });

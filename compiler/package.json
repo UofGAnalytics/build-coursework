@@ -58,6 +58,7 @@
     "remark-retext": "^4.0.0",
     "remark-sectionize": "^1.1.1",
     "remark-slug": "^6.0.0",
+    "remark-stringify": "9",
     "retext-english": "^3.0.4",
     "retext-spell": "^4.0.0",
     "sandboxed-module": "^2.0.4",

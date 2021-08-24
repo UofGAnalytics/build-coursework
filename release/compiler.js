@@ -10735,7 +10735,24 @@ async function html_htmlPhase(hast, mdast, unit, ctx, targetPdf) {
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
+;// CONCATENATED MODULE: external "remark-directive"
+const external_remark_directive_namespaceObject = require("remark-directive");
+;// CONCATENATED MODULE: external "remark-frontmatter"
+const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
+;// CONCATENATED MODULE: external "remark-gfm"
+const external_remark_gfm_namespaceObject = require("remark-gfm");
+// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
+var remark_parse = __webpack_require__(3850);
+;// CONCATENATED MODULE: external "remark-stringify"
+const external_remark_stringify_namespaceObject = require("remark-stringify");
 ;// CONCATENATED MODULE: ./src/knitr/index.ts
+
+
+
+
+
+
+
 
 
 
@@ -10779,15 +10796,16 @@ function getUniqueTempFileName(md) {
   return `knitr-${hash}-${ts}.Rmd`;
 }
 
-function formatResponse(response) {
+async function formatResponse(response) {
   let result = response;
   result = removeEmptyLog(result);
   result = addNewLineAfterKable(result);
+  result = await escapeDollarSymbolsInR(result);
   return result;
 }
 
 function removeEmptyLog(md) {
-  return md.replace(/\[1\]\s""$/m, '').trim();
+  return md.replace(/\[1\]\s""$/gm, '').trim();
 }
 
 function addNewLineAfterKable(md) {
@@ -10802,6 +10820,24 @@ function addNewLineAfterKable(md) {
 
     return acc;
   }, []).join('\n');
+} // mini syntax tree processor just to escape dollar signs in embedded R code...
+
+
+async function escapeDollarSymbolsInR(md) {
+  const processor = unified().use(markdown).use(directive).use(gfm).use(frontmatter).use(knitr_codeBlocks).use(remarkStringify, {
+    unsafe: [],
+    resourceLink: true
+  });
+  const processed = await processor.process(md);
+  return processed.contents;
+}
+
+function knitr_codeBlocks() {
+  return async tree => {
+    visit(tree, 'code', node => {
+      node.value = node.value.replace(/\$/g, '\\$');
+    });
+  };
 } // attempt at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
@@ -10863,8 +10899,10 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
     packages: AllPackages.filter(name => name !== 'bussproofs'),
     // Busproofs requires an output jax
     tags: 'ams',
-    inlineMath: [['$', '$']],
-    processEscapes: true
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], [`\\[`, `\]`]],
+    processEscapes: true // ignoreClass: 'r-output',
+
   });
   const visitor = new SerializedMmlVisitor();
   const store = [];
@@ -10875,12 +10913,16 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
     const items = Array.from(math);
 
     for (const item of items) {
-      // convert to MML
-      const mml = visitor.visitTree(item.root);
-      assertNoMmlError(mml, file);
-      let newMarkdown = '';
+      // debug
+      // console.log(item.math);
+      let newMarkdown = ''; // convert to MML
 
-      if (isReferenceLink(item.math)) {
+      const mml = visitor.visitTree(item.root);
+      assertNoMmlError(mml, file); // escaped dollar sign...
+
+      if (item.math === '$') {
+        newMarkdown = '$';
+      } else if (isReferenceLink(item.math)) {
         // convert tex to text link
         const refNum = extractRefNumFromMml(mml, item.math, file);
         const anchor = extractAnchorLinkFromMml(mml, item.math);
@@ -10978,14 +11020,6 @@ const external_retext_english_namespaceObject = require("retext-english");
 const external_retext_spell_namespaceObject = require("retext-spell");
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
-;// CONCATENATED MODULE: external "remark-directive"
-const external_remark_directive_namespaceObject = require("remark-directive");
-;// CONCATENATED MODULE: external "remark-frontmatter"
-const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
-;// CONCATENATED MODULE: external "remark-gfm"
-const external_remark_gfm_namespaceObject = require("remark-gfm");
-// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
-var remark_parse = __webpack_require__(3850);
 ;// CONCATENATED MODULE: external "remark-sectionize"
 const external_remark_sectionize_namespaceObject = require("remark-sectionize");
 ;// CONCATENATED MODULE: external "remark-slug"

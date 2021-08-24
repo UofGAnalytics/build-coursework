@@ -32,8 +32,16 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   const tex = new TeX({
     packages: AllPackages.filter((name) => name !== 'bussproofs'), // Busproofs requires an output jax
     tags: 'ams',
-    inlineMath: [['$', '$']],
+    inlineMath: [
+      ['$', '$'],
+      ['\\(', '\\)'],
+    ],
+    displayMath: [
+      ['$$', '$$'],
+      [`\\[`, `\]`],
+    ],
     processEscapes: true,
+    // ignoreClass: 'r-output',
   });
 
   const visitor = new SerializedMmlVisitor();
@@ -44,12 +52,19 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
     const items = Array.from(math);
 
     for (const item of items) {
+      // debug
+      // console.log(item.math);
+
+      let newMarkdown = '';
+
       // convert to MML
       const mml = visitor.visitTree(item.root);
       assertNoMmlError(mml, file);
 
-      let newMarkdown = '';
-      if (isReferenceLink(item.math)) {
+      // escaped dollar sign...
+      if (item.math === '$') {
+        newMarkdown = '$';
+      } else if (isReferenceLink(item.math)) {
         // convert tex to text link
         const refNum = extractRefNumFromMml(mml, item.math, file);
         const anchor = extractAnchorLinkFromMml(mml, item.math);

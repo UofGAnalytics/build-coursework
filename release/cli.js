@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 5266:
+/***/ 9398:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1370,7 +1370,29 @@ async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
+;// CONCATENATED MODULE: external "remark-directive"
+const external_remark_directive_namespaceObject = require("remark-directive");
+var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
+;// CONCATENATED MODULE: external "remark-frontmatter"
+const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
+var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
+;// CONCATENATED MODULE: external "remark-gfm"
+const external_remark_gfm_namespaceObject = require("remark-gfm");
+var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
+// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
+var remark_parse = __webpack_require__(3850);
+var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
+;// CONCATENATED MODULE: external "remark-stringify"
+const external_remark_stringify_namespaceObject = require("remark-stringify");
+var external_remark_stringify_default = /*#__PURE__*/__webpack_require__.n(external_remark_stringify_namespaceObject);
 ;// CONCATENATED MODULE: ./src/knitr/index.ts
+
+
+
+
+
+
+
 
 
 
@@ -1414,15 +1436,16 @@ function getUniqueTempFileName(md) {
   return `knitr-${hash}-${ts}.Rmd`;
 }
 
-function formatResponse(response) {
+async function formatResponse(response) {
   let result = response;
   result = removeEmptyLog(result);
   result = addNewLineAfterKable(result);
+  result = await escapeDollarSymbolsInR(result);
   return result;
 }
 
 function removeEmptyLog(md) {
-  return md.replace(/\[1\]\s""$/m, '').trim();
+  return md.replace(/\[1\]\s""$/gm, '').trim();
 }
 
 function addNewLineAfterKable(md) {
@@ -1437,6 +1460,24 @@ function addNewLineAfterKable(md) {
 
     return acc;
   }, []).join('\n');
+} // mini syntax tree processor just to escape dollar signs in embedded R code...
+
+
+async function escapeDollarSymbolsInR(md) {
+  const processor = unified_default()().use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use(codeBlocks).use((external_remark_stringify_default()), {
+    unsafe: [],
+    resourceLink: true
+  });
+  const processed = await processor.process(md);
+  return processed.contents;
+}
+
+function codeBlocks() {
+  return async tree => {
+    external_unist_util_visit_default()(tree, 'code', node => {
+      node.value = node.value.replace(/\$/g, '\\$');
+    });
+  };
 } // attempt at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
@@ -1498,8 +1539,10 @@ function texToAliasDirective(file, ctx) {
     packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
     // Busproofs requires an output jax
     tags: 'ams',
-    inlineMath: [['$', '$']],
-    processEscapes: true
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], [`\\[`, `\]`]],
+    processEscapes: true // ignoreClass: 'r-output',
+
   });
   const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
   const store = [];
@@ -1510,12 +1553,16 @@ function texToAliasDirective(file, ctx) {
     const items = Array.from(math);
 
     for (const item of items) {
-      // convert to MML
-      const mml = visitor.visitTree(item.root);
-      assertNoMmlError(mml, file);
-      let newMarkdown = '';
+      // debug
+      // console.log(item.math);
+      let newMarkdown = ''; // convert to MML
 
-      if (isReferenceLink(item.math)) {
+      const mml = visitor.visitTree(item.root);
+      assertNoMmlError(mml, file); // escaped dollar sign...
+
+      if (item.math === '$') {
+        newMarkdown = '$';
+      } else if (isReferenceLink(item.math)) {
         // convert tex to text link
         const refNum = extractRefNumFromMml(mml, item.math, file);
         const anchor = extractAnchorLinkFromMml(mml, item.math);
@@ -1620,18 +1667,6 @@ var external_retext_spell_default = /*#__PURE__*/__webpack_require__.n(external_
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
-;// CONCATENATED MODULE: external "remark-directive"
-const external_remark_directive_namespaceObject = require("remark-directive");
-var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
-;// CONCATENATED MODULE: external "remark-frontmatter"
-const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
-var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
-;// CONCATENATED MODULE: external "remark-gfm"
-const external_remark_gfm_namespaceObject = require("remark-gfm");
-var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
-// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
-var remark_parse = __webpack_require__(3850);
-var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
 ;// CONCATENATED MODULE: external "remark-sectionize"
 const external_remark_sectionize_namespaceObject = require("remark-sectionize");
 var external_remark_sectionize_default = /*#__PURE__*/__webpack_require__.n(external_remark_sectionize_namespaceObject);
@@ -1983,7 +2018,7 @@ var external_refractor_default = /*#__PURE__*/__webpack_require__.n(external_ref
 // @ts-expect-error
 
 
-function codeBlocks(ctx) {
+function code_blocks_codeBlocks(ctx) {
   return async (tree, file) => {
     const codeBlocks = [];
     external_unist_util_visit_default()(tree, 'code', node => {
@@ -2315,7 +2350,7 @@ async function mdastPhase(md, unit, ctx, targetPdf) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks);
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(code_blocks_codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks);
 
   if (targetPdf) {
     processor.use(moveAnswersToEnd);
@@ -12582,8 +12617,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 92 modules
-var src = __webpack_require__(5266);
+// EXTERNAL MODULE: ./src/index.ts + 93 modules
+var src = __webpack_require__(9398);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

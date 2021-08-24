@@ -1,6 +1,7 @@
 import {
   ignoreWhitespace,
   testProcessor,
+  unindentString,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
@@ -38,13 +39,13 @@ describe('convertUrlToMd', () => {
       Lorem \\url{https://www.google.com} ipsum \\url{https://www.gla.ac.uk} dolor
     `);
 
-    const expectedMd = unindentStringAndTrim(`
-      Lorem https://www.google.com ipsum https://www.gla.ac.uk dolor
+    const expectedMd = unindentString(`
+      Lorem [https://www.google.com](https://www.google.com) ipsum [https://www.gla.ac.uk](https://www.gla.ac.uk) dolor
     `);
 
-    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));
+    expect(md.trim()).toBe(expectedMd.trim());
 
-    const expectedHtml = unindentStringAndTrim(`
+    const expectedHtml = unindentString(`
       <p>Lorem <a href="https://www.google.com">https://www.google.com</a> ipsum <a href="https://www.gla.ac.uk">https://www.gla.ac.uk</a> dolor</p>
     `);
 
@@ -58,10 +59,10 @@ describe('convertUrlToMd', () => {
 
     const { md: md2 } = await testProcessor(md);
 
-    const expected = unindentStringAndTrim(`
-      Lorem https://www.google.com ipsum https://www.gla.ac.uk dolor
+    const expected = unindentString(`
+      Lorem [https://www.google.com](https://www.google.com) ipsum [https://www.gla.ac.uk](https://www.gla.ac.uk) dolor
     `);
 
-    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
+    expect(md2.trim()).toBe(expected.trim());
   });
 });
