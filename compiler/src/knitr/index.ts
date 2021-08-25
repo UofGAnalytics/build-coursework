@@ -2,24 +2,31 @@ import { exec } from 'child_process';
 import path from 'path';
 
 import chalk from 'chalk';
+import hashSum from 'hash-sum';
 // import hashSum from 'hash-sum';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { failMessage } from '../utils/message';
+import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 export async function knitr(file: VFile, ctx: Context) {
-  const md = file.contents as string;
-  // console.log(cwd);
-  const result = await execKnitr(md, ctx, file);
+  const result = await execKnitr(file, ctx);
   file.contents = result;
   return file;
 }
 
 // TODO: see what can be done with output when "quiet" turned off
-async function execKnitr(md: string, ctx: Context, file: VFile) {
-  const filePath = path.join(file.cwd, file.path || '');
-  const baseDir = path.join(file.cwd, file.dirname || '');
+async function execKnitr(file: VFile, ctx: Context) {
+  const filePath = file.path || '';
+  const baseDir = file.dirname || '';
+
+  const md = file.contents as string;
+  const fileName = getUniqueTempFileName(md);
+  const cachedFilePath = path.join(ctx.cacheDir, fileName);
+
+  await mkdir(ctx.cacheDir);
+  await writeFile(cachedFilePath, md);
 
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
@@ -35,15 +42,16 @@ async function execKnitr(md: string, ctx: Context, file: VFile) {
         reportErrors(response, file);
         resolve(formatResponse(response));
       }
+      await rmFile(cachedFilePath);
     });
   });
 }
 
-// function getUniqueTempFileName(md: string) {
-//   const hash = hashSum(md);
-//   const ts = new Date().getTime().toString();
-//   return `knitr-${hash}-${ts}.Rmd`;
-// }
+function getUniqueTempFileName(md: string) {
+  const hash = hashSum(md);
+  const ts = new Date().getTime().toString();
+  return `knitr-${hash}-${ts}.Rmd`;
+}
 
 async function formatResponse(response: string) {
   let result = response;

@@ -65,7 +65,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
   const result: BuiltUnit = {
     unit,
     combined: [],
-    md: '',
+    md: combineMdFiles(unit),
   };
 
   if (!ctx.options.noHtml) {
@@ -85,6 +85,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
 
 async function inSituTransforms(file: VFileType, ctx: Context) {
   await knitr(file, ctx);
+  // console.log(file.contents);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
   // const processor = unified()
@@ -120,9 +121,9 @@ async function inSituTransforms(file: VFileType, ctx: Context) {
 //   return withTexAlias;
 // }
 
-// function combineMdFiles(unit: Unit) {
-//   return VFile(unit.files.map((o) => o.contents).join('\n\n'));
-// }
+function combineMdFiles(unit: Unit) {
+  return unit.files.map((o) => o.contents).join('\n\n');
+}
 
 async function syntaxTreeTransforms(
   mdast: MdastParent,

@@ -13,7 +13,7 @@ export function reformatPandocSimpleTables(contents: string) {
       const { startIdx, count } = getTableBounds(lines, idx);
       const currentLines = lines.slice(startIdx, startIdx + count + 1);
       const newLines = convertLines(currentLines);
-      lines.splice(startIdx, count, ...newLines);
+      lines.splice(startIdx, count + 1, ...newLines);
     }
   }
 
@@ -30,7 +30,8 @@ function isValidPandocSimpleTableSeparator(line: string, idx: number) {
 function convertLines(lines: string[]) {
   const table = parseTable(lines);
   const align = getColumnAlignment(table[0]);
-  return markdownTable(table, { align }).split('\n');
+  const result = markdownTable(table, { align });
+  return [...result.split('\n'), ''];
 }
 
 function getTableBounds(arr: string[], idx: number) {

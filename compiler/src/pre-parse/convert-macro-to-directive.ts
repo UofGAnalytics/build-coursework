@@ -18,7 +18,7 @@ type Container = {
 };
 
 function parseCustomContainer(line: string): Container | null {
-  const match = line.match(/^#{1,6}\s*\[(.+)](.*)/);
+  const match = line.match(/^#{1,6}\s*\[(\D.+)](.*)/);
   if (!Array.isArray(match)) {
     return null;
   }

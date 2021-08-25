@@ -16,9 +16,6 @@ export function preParsePhase(file: VFile) {
   let result = file.contents as string;
   result = removeCommentedSections(result);
   result = escapeDollarsInCodeBlocks(result);
-
-  console.log(result);
-
   result = allowNoWhitespaceBeforeHeading(result);
   result = convertMacroToDirective(result);
   result = convertTextBfToMd(result);

@@ -40,7 +40,7 @@ describe('convertUrlToMd', () => {
     `);
 
     const expectedMd = unindentString(`
-      Lorem [https://www.google.com](https://www.google.com) ipsum [https://www.gla.ac.uk](https://www.gla.ac.uk) dolor
+      Lorem https://www.google.com ipsum https://www.gla.ac.uk dolor
     `);
 
     expect(md.trim()).toBe(expectedMd.trim());
@@ -60,7 +60,7 @@ describe('convertUrlToMd', () => {
     const { md: md2 } = await testProcessor(md);
 
     const expected = unindentString(`
-      Lorem [https://www.google.com](https://www.google.com) ipsum [https://www.gla.ac.uk](https://www.gla.ac.uk) dolor
+      Lorem https://www.google.com ipsum https://www.gla.ac.uk dolor
     `);
 
     expect(md2.trim()).toBe(expected.trim());

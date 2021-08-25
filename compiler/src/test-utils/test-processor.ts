@@ -30,7 +30,7 @@ export async function testProcessor(md: string, options: Options = {}) {
   try {
     const result = await buildUnit(unitFile, ctx);
     unit.md = result.md;
-    unit.combined = result.combined;
+    unit.combined = [file, ...result.combined];
     if (result.html) {
       unit.mdast = result.html.mdast;
       unit.hast = result.html.hast;
