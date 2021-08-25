@@ -1,6 +1,0 @@
-name: "Week 7"
-title: "Autoregressive processes, moving average processes and the ARIMA approach"
-golive: "+1w"
-content:
-  - type: text
-    src: week7mat.Rmd

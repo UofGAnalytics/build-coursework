@@ -6,6 +6,7 @@ import unified from 'unified';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
+import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 import { embedAssets } from './embed-assets';
 import { responsiveTables } from './responsive-tables';
 
@@ -19,6 +20,12 @@ export async function hastPhase(
     .use(remark2rehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(responsiveTables);
+
+  if (targetPdf) {
+    // although an mdast transform, has been put here as
+    // it needs the full document to work correctly
+    processor.use(moveAnswersToEnd);
+  }
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);

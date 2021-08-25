@@ -23,7 +23,7 @@ export function embedAssets(ctx: Context) {
         case '.png':
         case '.jpg':
         case '.gif':
-          return embedImage(node, ctx);
+          return embedImage(node, ctx, file);
         case '.svg':
           return embedPlotSvg(node, ctx);
         case '.pdf':
@@ -46,14 +46,18 @@ export function embedAssets(ctx: Context) {
   };
 }
 
-async function embedImage(node: Element, ctx: Context) {
+async function embedImage(node: Element, ctx: Context, file: VFile) {
   const src = getImageSrc(node);
   const mime = mimes.getType(path.extname(src));
-  const image = await getImage(src, ctx);
-  node.properties = {
-    ...node.properties,
-    src: `data:${mime};base64,${image}`,
-  };
+  try {
+    const image = await getImage(src, ctx);
+    node.properties = {
+      ...node.properties,
+      src: `data:${mime};base64,${image}`,
+    };
+  } catch (err) {
+    failMessage(file, `Image not found: ${src}`);
+  }
 }
 
 async function embedPlotSvg(imgNode: Element, ctx: Context) {

@@ -12,6 +12,7 @@ import slug from 'remark-slug';
 // @ts-expect-error
 import toVFile from 'to-vfile';
 import unified from 'unified';
+import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
@@ -21,16 +22,11 @@ import { boxouts } from './boxouts';
 import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
 import { images } from './images';
-import { moveAnswersToEnd } from './move-answers-to-end';
+// import { moveAnswersToEnd } from './move-answers-to-end';
 import { pagebreaks } from './pagebreaks';
 import { youtubeVideos } from './youtube-videos';
 
-export async function mdastPhase(
-  md: string,
-  unit: Unit,
-  ctx: Context,
-  targetPdf?: boolean
-) {
+export async function mdastPhase2(file: VFile, ctx: Context) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
@@ -55,9 +51,47 @@ export async function mdastPhase(
     .use(images)
     .use(pagebreaks);
 
-  if (targetPdf) {
-    processor.use(moveAnswersToEnd);
-  }
+  // if (targetPdf) {
+  //   processor.use(moveAnswersToEnd);
+  // }
+
+  // const file = toVFile({ contents: md });
+  const parsed = processor.parse(file) as Parent;
+  return processor.run(parsed, file) as Promise<Parent>;
+}
+
+export async function mdastPhase(
+  md: string,
+  unit: Unit,
+  ctx: Context,
+  targetPdf?: boolean
+) {
+  // https://github.com/unifiedjs/unified
+  // convert markdown to syntax tree: complex transforms
+  // should be more robust and straightforward
+  const processor = unified()
+    // third-party plugins:
+    .use(markdown)
+    .use(directive)
+    .use(gfm)
+    .use(frontmatter)
+    .use(sectionize)
+    .use(slug)
+    .use(headings, {
+      content: createSvg('link-icon'),
+      linkProperties: { className: 'link' },
+    })
+    // custom plugins:
+    .use(youtubeVideos)
+    .use(aliasDirectiveToSvg, ctx)
+    .use(codeBlocks, ctx)
+    .use(boxouts)
+    .use(images)
+    .use(pagebreaks);
+
+  // if (targetPdf) {
+  //   processor.use(moveAnswersToEnd);
+  // }
 
   const file = toVFile({ contents: md });
   const parsed = processor.parse(file) as Parent;

@@ -7,10 +7,10 @@ import { Parent as MDastParent } from 'mdast';
 import toVFile from 'to-vfile';
 import { VFile } from 'vfile';
 
+import { buildUnit } from '../build-unit';
 import { Options } from '../context';
 import { getUnitTitles } from '../course';
 import { writeFile } from '../utils/utils';
-import { buildUnit } from './build-unit';
 import {
   createHasFailingMessage,
   createHasWarningMessage,
@@ -30,10 +30,16 @@ export async function testProcessor(md: string, options: Options = {}) {
   try {
     const result = await buildUnit(unitFile, ctx);
     unit.md = result.md;
-    unit.mdast = result.mdast;
-    unit.hast = result.hast;
-    unit.html = result.html;
     unit.combined = result.combined;
+    if (result.html) {
+      unit.mdast = result.html.mdast;
+      unit.hast = result.html.hast;
+      unit.html = result.html.html;
+    } else {
+      console.log(
+        '[test processor]: no html object returned from buildUnit'
+      );
+    }
   } catch (err) {
     console.error(err);
   }
@@ -76,10 +82,12 @@ async function createTestContext(md: string, options: Options = {}) {
     },
     options: {
       noDoc: true,
+      noPdf: true,
       noWrapper: true,
       noSyntaxHighlight: true,
       noReport: true,
       noEmbedAssets: true,
+      force: true,
       ...options,
     },
   };

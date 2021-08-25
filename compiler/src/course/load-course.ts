@@ -1,3 +1,5 @@
+import path from 'path';
+
 import yaml from 'js-yaml';
 import * as yup from 'yup';
 
@@ -14,7 +16,7 @@ const courseSchema = yup.object().shape({
 });
 
 export async function loadCourseYaml(dirPath: string) {
-  const fileContents = await readFile(`${dirPath}/course.yaml`);
+  const fileContents = await readFile(path.join(dirPath, 'course.yaml'));
   const course = yaml.load(fileContents);
   return courseSchema.validateSync(course) as CourseYaml;
 }

@@ -1,5 +1,0 @@
-Let's draw a single random number x.
-```{r}
-x <- rnorm(1)
-```
-The random number x is `r x`.

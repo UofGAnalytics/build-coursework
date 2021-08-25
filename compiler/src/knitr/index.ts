@@ -2,39 +2,28 @@ import { exec } from 'child_process';
 import path from 'path';
 
 import chalk from 'chalk';
-import hashSum from 'hash-sum';
-import { Code } from 'mdast';
-import directive from 'remark-directive';
-import frontmatter from 'remark-frontmatter';
-import gfm from 'remark-gfm';
-import markdown from 'remark-parse';
-import remarkStringify from 'remark-stringify';
-import unified from 'unified';
-import { Node } from 'unist';
-import visit from 'unist-util-visit';
+// import hashSum from 'hash-sum';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { mkdir, rmFile, writeFile } from '../utils/utils';
+import { failMessage } from '../utils/message';
 
 export async function knitr(file: VFile, ctx: Context) {
   const md = file.contents as string;
-  const result = await execKnitr(md, ctx);
+  // console.log(cwd);
+  const result = await execKnitr(md, ctx, file);
   file.contents = result;
   return file;
 }
 
 // TODO: see what can be done with output when "quiet" turned off
-async function execKnitr(md: string, ctx: Context) {
-  const fileName = getUniqueTempFileName(md);
-  const cachedFilePath = path.join(ctx.cacheDir, fileName);
-
-  await mkdir(ctx.cacheDir);
-  await writeFile(cachedFilePath, md);
+async function execKnitr(md: string, ctx: Context, file: VFile) {
+  const filePath = path.join(file.cwd, file.path || '');
+  const baseDir = path.join(file.cwd, file.dirname || '');
 
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${cachedFilePath} ${ctx.cacheDir}/`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
@@ -43,25 +32,42 @@ async function execKnitr(md: string, ctx: Context) {
         console.error('ERROR', err);
         reject(err);
       } else {
+        reportErrors(response, file);
         resolve(formatResponse(response));
       }
-      await rmFile(cachedFilePath);
     });
   });
 }
 
-function getUniqueTempFileName(md: string) {
-  const hash = hashSum(md);
-  const ts = new Date().getTime().toString();
-  return `knitr-${hash}-${ts}.Rmd`;
-}
+// function getUniqueTempFileName(md: string) {
+//   const hash = hashSum(md);
+//   const ts = new Date().getTime().toString();
+//   return `knitr-${hash}-${ts}.Rmd`;
+// }
 
 async function formatResponse(response: string) {
   let result = response;
   result = removeEmptyLog(result);
   result = addNewLineAfterKable(result);
-  result = await escapeDollarSymbolsInR(result);
   return result;
+}
+
+function reportErrors(response: string, file: VFile) {
+  response.split('\n').forEach((line, idx) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('## Error')) {
+      failMessage(file, trimmed.replace('##', ''), {
+        start: {
+          line: idx + 1,
+          column: 0,
+        },
+        end: {
+          line: idx + 1,
+          column: line.length,
+        },
+      });
+    }
+  });
 }
 
 function removeEmptyLog(md: string) {
@@ -80,28 +86,6 @@ function addNewLineAfterKable(md: string) {
       return acc;
     }, [])
     .join('\n');
-}
-
-// mini syntax tree processor just to escape dollar signs in embedded R code...
-async function escapeDollarSymbolsInR(md: string) {
-  const processor = unified()
-    .use(markdown)
-    .use(directive)
-    .use(gfm)
-    .use(frontmatter)
-    .use(codeBlocks)
-    .use(remarkStringify, { unsafe: [], resourceLink: true });
-
-  const processed = await processor.process(md);
-  return processed.contents as string;
-}
-
-function codeBlocks() {
-  return async (tree: Node) => {
-    visit<Code>(tree, 'code', (node) => {
-      node.value = node.value.replace(/\$/g, '\\$');
-    });
-  };
 }
 
 // attempt at changing knitr output. doesn't completely work

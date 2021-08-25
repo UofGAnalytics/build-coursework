@@ -359,17 +359,15 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 9398:
+/***/ 3426:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "Cq": () => (/* binding */ rMarkdown)
+  "C": () => (/* binding */ rMarkdown)
 });
-
-// UNUSED EXPORTS: contextTransforms, syntaxTreeTransforms
 
 // EXTERNAL MODULE: external "path"
 var external_path_ = __webpack_require__(5622);
@@ -377,207 +375,59 @@ var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
 var external_chalk_default = /*#__PURE__*/__webpack_require__.n(external_chalk_namespaceObject);
-// EXTERNAL MODULE: ../node_modules/vfile/index.js
-var vfile = __webpack_require__(9566);
-var vfile_default = /*#__PURE__*/__webpack_require__.n(vfile);
-;// CONCATENATED MODULE: external "lodash"
-const external_lodash_namespaceObject = require("lodash");
-;// CONCATENATED MODULE: external "to-vfile"
-const external_to_vfile_namespaceObject = require("to-vfile");
-var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_vfile_namespaceObject);
-;// CONCATENATED MODULE: external "js-yaml"
-const external_js_yaml_namespaceObject = require("js-yaml");
-var external_js_yaml_default = /*#__PURE__*/__webpack_require__.n(external_js_yaml_namespaceObject);
-;// CONCATENATED MODULE: external "yup"
-const external_yup_namespaceObject = require("yup");
-;// CONCATENATED MODULE: external "fs"
-const external_fs_namespaceObject = require("fs");
-var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_namespaceObject);
-;// CONCATENATED MODULE: external "rehype-parse"
-const external_rehype_parse_namespaceObject = require("rehype-parse");
-var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
-;// CONCATENATED MODULE: external "rehype-stringify"
-const external_rehype_stringify_namespaceObject = require("rehype-stringify");
-var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(external_rehype_stringify_namespaceObject);
-// EXTERNAL MODULE: ../node_modules/unified/index.js
-var unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
-;// CONCATENATED MODULE: ./src/utils/utils.ts
-
-
-
-
-
-// import visit from 'unist-util-visit';
-const rehypeParser = unified_default()().use((external_rehype_parse_default()), {
-  fragment: true
-}).use((external_rehype_stringify_default()));
-function readFile(filePath, encoding = 'utf-8') {
-  return external_fs_default().promises.readFile(filePath, encoding);
-}
-function writeFile(filePath, contents) {
-  return external_fs_default().promises.writeFile(filePath, contents);
-}
-async function checkLocalFileExists(filePath) {
-  try {
-    await external_fs_default().promises.access(filePath, (external_fs_default()).constants.F_OK);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-async function rmFile(filePath) {
-  return external_fs_default().promises.unlink(filePath);
-}
-function mkdir(dirPath) {
-  return external_fs_default().promises.mkdir(dirPath, {
-    recursive: true
-  });
-}
-function rmdir(dirPath) {
-  return fs.promises.rmdir(dirPath, {
-    recursive: true
-  });
-}
-function getBuildDir(dirPath) {
-  return external_path_default().join(process.cwd(), dirPath, 'build');
-}
-function getCacheDir(dirPath) {
-  return external_path_default().join(process.cwd(), dirPath, 'cache');
-}
-function getLibraryDir() {
-  return __dirname;
-}
-function combineMdastTrees(mdasts) {
-  const children = mdasts.flatMap(mdast => mdast.children || []);
-  return {
-    type: 'root',
-    children
-  };
-}
-function inspect() {
-  return tree => {
-    console.log(JSON.stringify(tree, null, 2)); // console.dir(tree, { depth: null });
-    // visit(tree, 'leafDirective', (node) => {
-    //   console.log('---------------------');
-    //   console.dir(node, { depth: null });
-    // });
-
-    return tree;
-  };
-}
-;// CONCATENATED MODULE: ./src/course/load-course.ts
-
-
-
-const courseSchema = external_yup_namespaceObject.object().shape({
-  title: external_yup_namespaceObject.string().required(),
-  units: external_yup_namespaceObject.array().of(external_yup_namespaceObject.object().shape({
-    src: external_yup_namespaceObject.string().required()
-  }))
-});
-async function loadCourseYaml(dirPath) {
-  const fileContents = await readFile(`${dirPath}/course.yaml`);
-  const course = external_js_yaml_default().load(fileContents);
-  return courseSchema.validateSync(course);
-}
-;// CONCATENATED MODULE: ./src/course/load-unit.ts
-
-
-
-
-const unitSchema = external_yup_namespaceObject.object().shape({
-  name: external_yup_namespaceObject.string().required(),
-  title: external_yup_namespaceObject.string().required(),
-  content: external_yup_namespaceObject.array().of(external_yup_namespaceObject.object().shape({
-    src: external_yup_namespaceObject.string().required()
-  }))
-});
-async function loadUnitYaml(dirPath, src) {
-  const fileContents = await readFile(external_path_default().join(dirPath, src));
-  const unit = external_js_yaml_default().load(fileContents);
-  return unitSchema.validateSync(unit);
-}
-;// CONCATENATED MODULE: ./src/course/index.ts
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
- // @ts-expect-error
-
-
-
-
-async function collectCoursework(dirPath) {
-  const course = await loadCourseYaml(dirPath);
-  const units = await Promise.all(course.units.map(unit => collectUnit(unit, course, dirPath)));
-  return _objectSpread(_objectSpread({}, course), {}, {
-    units
-  });
-}
-
-async function collectUnit(unit, course, dirPath) {
-  const yaml = await loadUnitYaml(dirPath, unit.src);
-  const parts = yaml.content;
-  const files = await Promise.all(yaml.content.map(c => {
-    const filePath = external_path_default().join(dirPath, unit.src, '..', c.src);
-    return external_to_vfile_default().read(filePath, 'utf-8');
-  }));
-  const titles = getUnitTitles({
-    courseTitle: course.title,
-    unitName: yaml.name,
-    unitTitle: yaml.title
-  });
-  return _objectSpread(_objectSpread({}, yaml), {}, {
-    parts,
-    files,
-    titles
-  });
-}
-
-function getUnitTitles({
-  courseTitle,
-  unitName,
-  unitTitle
-}) {
-  return {
-    courseTitle,
-    unitTitle: `${unitName}: ${unitTitle}`,
-    unitName,
-    docTitle: `${unitTitle} | ${courseTitle}`,
-    fileName: (0,external_lodash_namespaceObject.kebabCase)(unitName)
-  };
-}
-;// CONCATENATED MODULE: ./src/context.ts
-
-
-async function createContext(dirPath, options = {}) {
-  return {
-    course: await collectCoursework(dirPath),
-    dirPath,
-    buildDir: getBuildDir(dirPath),
-    cacheDir: getCacheDir(dirPath),
-    options
-  };
-}
 ;// CONCATENATED MODULE: external "rehype-raw"
 const external_rehype_raw_namespaceObject = require("rehype-raw");
 var external_rehype_raw_default = /*#__PURE__*/__webpack_require__.n(external_rehype_raw_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
 var external_remark_rehype_default = /*#__PURE__*/__webpack_require__.n(external_remark_rehype_namespaceObject);
+// EXTERNAL MODULE: ../node_modules/unified/index.js
+var unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
+// EXTERNAL MODULE: external "unist-util-visit"
+var external_unist_util_visit_ = __webpack_require__(2148);
+var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
+;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
+
+function moveAnswersToEnd() {
+  return tree => {
+    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, parent) => {
+      // remove answer from task rehype
+      if (node.name === 'task' && node.data) {
+        const children = node.data.hChildren || [];
+        node.data.hChildren = children.filter(o => o.name !== 'answer');
+      }
+
+      if (node.name === 'answer') {
+        // these nodes have already been moved to the end
+        if (node.movedToEnd) {
+          return;
+        } // remove answer block from task node
+
+
+        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
+        parentChildren.splice(index, 1); // add to root node
+
+        const treeParent = tree;
+        const treeChildren = treeParent.children || [];
+        node.movedToEnd = true;
+        treeChildren.push(node);
+      }
+    });
+  };
+}
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 var lite_default = /*#__PURE__*/__webpack_require__.n(lite_namespaceObject);
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
 var external_node_fetch_default = /*#__PURE__*/__webpack_require__.n(external_node_fetch_namespaceObject);
-// EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
-var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
+;// CONCATENATED MODULE: external "rehype-parse"
+const external_rehype_parse_namespaceObject = require("rehype-parse");
+var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
+;// CONCATENATED MODULE: external "rehype-stringify"
+const external_rehype_stringify_namespaceObject = require("rehype-stringify");
+var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(external_rehype_stringify_namespaceObject);
 ;// CONCATENATED MODULE: external "sandboxed-module"
 const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
@@ -658,12 +508,79 @@ function addWrapper() {
 ;// CONCATENATED MODULE: external "hash-sum"
 const external_hash_sum_namespaceObject = require("hash-sum");
 var external_hash_sum_default = /*#__PURE__*/__webpack_require__.n(external_hash_sum_namespaceObject);
+;// CONCATENATED MODULE: external "fs"
+const external_fs_namespaceObject = require("fs");
+var external_fs_default = /*#__PURE__*/__webpack_require__.n(external_fs_namespaceObject);
+;// CONCATENATED MODULE: ./src/utils/utils.ts
+
+
+
+
+
+// import visit from 'unist-util-visit';
+const rehypeParser = unified_default()().use((external_rehype_parse_default()), {
+  fragment: true
+}).use((external_rehype_stringify_default()));
+function readFile(filePath, encoding = 'utf-8') {
+  return external_fs_default().promises.readFile(filePath, encoding);
+}
+function writeFile(filePath, contents) {
+  return external_fs_default().promises.writeFile(filePath, contents);
+}
+async function checkLocalFileExists(filePath) {
+  try {
+    await external_fs_default().promises.access(filePath, (external_fs_default()).constants.F_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+async function rmFile(filePath) {
+  return fs.promises.unlink(filePath);
+}
+function mkdir(dirPath) {
+  return external_fs_default().promises.mkdir(dirPath, {
+    recursive: true
+  });
+}
+function rmdir(dirPath) {
+  return fs.promises.rmdir(dirPath, {
+    recursive: true
+  });
+}
+function getBuildDir(dirPath) {
+  return external_path_default().join(process.cwd(), dirPath, 'build');
+}
+function getCacheDir(dirPath) {
+  return external_path_default().join(process.cwd(), dirPath, 'cache');
+}
+function getLibraryDir() {
+  return __dirname;
+}
+function combineMdastTrees(mdasts) {
+  const children = mdasts.flatMap(mdast => mdast.children || []);
+  return {
+    type: 'root',
+    children
+  };
+}
+function inspect() {
+  return tree => {
+    console.log(JSON.stringify(tree, null, 2)); // console.dir(tree, { depth: null });
+    // visit(tree, 'leafDirective', (node) => {
+    //   console.log('---------------------');
+    //   console.dir(node, { depth: null });
+    // });
+
+    return tree;
+  };
+}
 ;// CONCATENATED MODULE: ./src/utils/cache-to-file.ts
-function cache_to_file_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function cache_to_file_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { cache_to_file_ownKeys(Object(source), true).forEach(function (key) { cache_to_file_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { cache_to_file_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function cache_to_file_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -702,7 +619,7 @@ async function cacheToFile(options) {
   return execAndCache(options, cachedFilePath);
 }
 async function cacheJsonToFile(options) {
-  return cacheToFile(cache_to_file_objectSpread(cache_to_file_objectSpread({}, options), {}, {
+  return cacheToFile(_objectSpread(_objectSpread({}, options), {}, {
     json: true
   }));
 }
@@ -719,6 +636,9 @@ async function execAndCache({
   await writeFile(cachedFilePath, str);
   return out;
 }
+;// CONCATENATED MODULE: external "to-vfile"
+const external_to_vfile_namespaceObject = require("to-vfile");
+var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_vfile_namespaceObject);
 ;// CONCATENATED MODULE: ./src/utils/get-asset-hast.ts
 // @ts-expect-error
 
@@ -790,7 +710,7 @@ function embedAssets(ctx) {
         case '.png':
         case '.jpg':
         case '.gif':
-          return embedImage(node, ctx);
+          return embedImage(node, ctx, file);
 
         case '.svg':
           return embedPlotSvg(node, ctx);
@@ -817,13 +737,18 @@ function embedAssets(ctx) {
   };
 }
 
-async function embedImage(node, ctx) {
+async function embedImage(node, ctx, file) {
   const src = getImageSrc(node);
   const mime = lite_default().getType(external_path_default().extname(src));
-  const image = await getImage(src, ctx);
-  node.properties = embed_assets_objectSpread(embed_assets_objectSpread({}, node.properties), {}, {
-    src: `data:${mime};base64,${image}`
-  });
+
+  try {
+    const image = await getImage(src, ctx);
+    node.properties = embed_assets_objectSpread(embed_assets_objectSpread({}, node.properties), {}, {
+      src: `data:${mime};base64,${image}`
+    });
+  } catch (err) {
+    failMessage(file, `Image not found: ${src}`);
+  }
 }
 
 async function embedPlotSvg(imgNode, ctx) {
@@ -881,6 +806,8 @@ async function embedTexPdfSvg(imgNode) {
     properties
   });
 }
+;// CONCATENATED MODULE: external "lodash"
+const external_lodash_namespaceObject = require("lodash");
 ;// CONCATENATED MODULE: ./src/hast/responsive-tables.ts
 
 
@@ -913,10 +840,17 @@ function responsiveTables() {
 
 
 
+
 async function hastPhase(mdast, unit, ctx, targetPdf) {
   const processor = unified_default()().use((external_remark_rehype_default()), {
     allowDangerousHtml: true
   }).use((external_rehype_raw_default())).use(responsiveTables);
+
+  if (targetPdf) {
+    // although an mdast transform, has been put here as
+    // it needs the full document to work correctly
+    processor.use(moveAnswersToEnd);
+  }
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -1370,49 +1304,26 @@ async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
-;// CONCATENATED MODULE: external "remark-directive"
-const external_remark_directive_namespaceObject = require("remark-directive");
-var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
-;// CONCATENATED MODULE: external "remark-frontmatter"
-const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
-var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
-;// CONCATENATED MODULE: external "remark-gfm"
-const external_remark_gfm_namespaceObject = require("remark-gfm");
-var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
-// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
-var remark_parse = __webpack_require__(3850);
-var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
-;// CONCATENATED MODULE: external "remark-stringify"
-const external_remark_stringify_namespaceObject = require("remark-stringify");
-var external_remark_stringify_default = /*#__PURE__*/__webpack_require__.n(external_remark_stringify_namespaceObject);
 ;// CONCATENATED MODULE: ./src/knitr/index.ts
 
 
-
-
-
-
-
-
-
-
+ // import hashSum from 'hash-sum';
 
 
 async function knitr(file, ctx) {
-  const md = file.contents;
-  const result = await execKnitr(md, ctx);
+  const md = file.contents; // console.log(cwd);
+
+  const result = await execKnitr(md, ctx, file);
   file.contents = result;
   return file;
 } // TODO: see what can be done with output when "quiet" turned off
 
-async function execKnitr(md, ctx) {
-  const fileName = getUniqueTempFileName(md);
-  const cachedFilePath = external_path_default().join(ctx.cacheDir, fileName);
-  await mkdir(ctx.cacheDir);
-  await writeFile(cachedFilePath, md);
+async function execKnitr(md, ctx, file) {
+  const filePath = external_path_default().join(file.cwd, file.path || '');
+  const baseDir = external_path_default().join(file.cwd, file.dirname || '');
   return new Promise((resolve, reject) => {
     const rFile = external_path_default().join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${cachedFilePath} ${ctx.cacheDir}/`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
     (0,external_child_process_namespaceObject.exec)(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(external_chalk_default().grey(`[knitr] ${stdErr.trim()}`));
@@ -1422,26 +1333,42 @@ async function execKnitr(md, ctx) {
         console.error('ERROR', err);
         reject(err);
       } else {
+        reportErrors(response, file);
         resolve(formatResponse(response));
       }
-
-      await rmFile(cachedFilePath);
     });
   });
-}
+} // function getUniqueTempFileName(md: string) {
+//   const hash = hashSum(md);
+//   const ts = new Date().getTime().toString();
+//   return `knitr-${hash}-${ts}.Rmd`;
+// }
 
-function getUniqueTempFileName(md) {
-  const hash = external_hash_sum_default()(md);
-  const ts = new Date().getTime().toString();
-  return `knitr-${hash}-${ts}.Rmd`;
-}
 
 async function formatResponse(response) {
   let result = response;
   result = removeEmptyLog(result);
   result = addNewLineAfterKable(result);
-  result = await escapeDollarSymbolsInR(result);
   return result;
+}
+
+function reportErrors(response, file) {
+  response.split('\n').forEach((line, idx) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('## Error')) {
+      failMessage(file, trimmed.replace('##', ''), {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
 }
 
 function removeEmptyLog(md) {
@@ -1460,24 +1387,6 @@ function addNewLineAfterKable(md) {
 
     return acc;
   }, []).join('\n');
-} // mini syntax tree processor just to escape dollar signs in embedded R code...
-
-
-async function escapeDollarSymbolsInR(md) {
-  const processor = unified_default()().use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use(codeBlocks).use((external_remark_stringify_default()), {
-    unsafe: [],
-    resourceLink: true
-  });
-  const processed = await processor.process(md);
-  return processed.contents;
-}
-
-function codeBlocks() {
-  return async tree => {
-    external_unist_util_visit_default()(tree, 'code', node => {
-      node.value = node.value.replace(/\$/g, '\\$');
-    });
-  };
 } // attempt at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
@@ -1540,7 +1449,7 @@ function texToAliasDirective(file, ctx) {
     // Busproofs requires an output jax
     tags: 'ams',
     inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], [`\\[`, `\]`]],
+    displayMath: [['$$', '$$'], [`\\[`, `\\]`]],
     processEscapes: true // ignoreClass: 'r-output',
 
   });
@@ -1667,6 +1576,18 @@ var external_retext_spell_default = /*#__PURE__*/__webpack_require__.n(external_
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
+;// CONCATENATED MODULE: external "remark-directive"
+const external_remark_directive_namespaceObject = require("remark-directive");
+var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
+;// CONCATENATED MODULE: external "remark-frontmatter"
+const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
+var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
+;// CONCATENATED MODULE: external "remark-gfm"
+const external_remark_gfm_namespaceObject = require("remark-gfm");
+var external_remark_gfm_default = /*#__PURE__*/__webpack_require__.n(external_remark_gfm_namespaceObject);
+// EXTERNAL MODULE: ../node_modules/remark-parse/index.js
+var remark_parse = __webpack_require__(3850);
+var remark_parse_default = /*#__PURE__*/__webpack_require__.n(remark_parse);
 ;// CONCATENATED MODULE: external "remark-sectionize"
 const external_remark_sectionize_namespaceObject = require("remark-sectionize");
 var external_remark_sectionize_default = /*#__PURE__*/__webpack_require__.n(external_remark_sectionize_namespaceObject);
@@ -2018,7 +1939,7 @@ var external_refractor_default = /*#__PURE__*/__webpack_require__.n(external_ref
 // @ts-expect-error
 
 
-function code_blocks_codeBlocks(ctx) {
+function codeBlocks(ctx) {
   return async (tree, file) => {
     const codeBlocks = [];
     external_unist_util_visit_default()(tree, 'code', node => {
@@ -2096,13 +2017,18 @@ function parseClass(node) {
 ;// CONCATENATED MODULE: ./src/mdast/embed-asset-url.ts
 
 
+// import { failMessage } from '../utils/message';
 function embedAssetUrl() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
-    const dirname = file.dirname || '';
+    const dirname = file.dirname; // if (dirname === undefined) {
+    //   failMessage(file, `File dirname is undefined`);
+    //   return;
+    // }
 
     if (!url.startsWith('http')) {
-      const newUrl = getPath(url, dirname);
+      const newUrl = getPath(url, dirname || ''); // console.log(newUrl);
+
       node.url = newUrl;
     }
   }
@@ -2166,35 +2092,6 @@ function template(node, count) {
       }]
     }
   });
-}
-;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
-
-function moveAnswersToEnd() {
-  return tree => {
-    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, parent) => {
-      // remove answer from task rehype
-      if (node.name === 'task' && node.data) {
-        const children = node.data.hChildren || [];
-        node.data.hChildren = children.filter(o => o.name !== 'answer');
-      }
-
-      if (node.name === 'answer') {
-        // these nodes have already been moved to the end
-        if (node.movedToEnd) {
-          return;
-        } // remove answer block from task node
-
-
-        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
-        parentChildren.splice(index, 1); // add to root node
-
-        const treeParent = tree;
-        const treeChildren = treeParent.children || [];
-        node.movedToEnd = true;
-        treeChildren.push(node);
-      }
-    });
-  };
 }
 ;// CONCATENATED MODULE: ./src/mdast/pagebreaks.ts
 
@@ -2335,10 +2232,29 @@ function formatDuration(duration = '') {
 
 
 
+ // import { moveAnswersToEnd } from './move-answers-to-end';
 
 
 
+async function mdastPhase2(file, ctx) {
+  // https://github.com/unifiedjs/unified
+  // convert markdown to syntax tree: complex transforms
+  // should be more robust and straightforward
+  const processor = unified_default()() // third-party plugins:
+  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use((external_remark_sectionize_default())).use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
+    content: createSvg('link-icon'),
+    linkProperties: {
+      className: 'link'
+    }
+  }) // custom plugins:
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks); // if (targetPdf) {
+  //   processor.use(moveAnswersToEnd);
+  // }
+  // const file = toVFile({ contents: md });
 
+  const parsed = processor.parse(file);
+  return processor.run(parsed, file);
+}
 async function mdastPhase(md, unit, ctx, targetPdf) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
@@ -2350,11 +2266,9 @@ async function mdastPhase(md, unit, ctx, targetPdf) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(code_blocks_codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks);
-
-  if (targetPdf) {
-    processor.use(moveAnswersToEnd);
-  }
+  .use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks); // if (targetPdf) {
+  //   processor.use(moveAnswersToEnd);
+  // }
 
   const file = external_to_vfile_default()({
     contents: md
@@ -2498,6 +2412,8 @@ function multilineReducer(acc, row) {
 function preParsePhase(file) {
   let result = file.contents;
   result = removeCommentedSections(result);
+  result = escapeDollarsInCodeBlocks(result);
+  console.log(result);
   result = (0,allow_no_whitespace_before_heading/* allowNoWhitespaceBeforeHeading */.Q)(result);
   result = (0,convert_macro_to_directive/* convertMacroToDirective */.W)(result);
   result = (0,convert_inline_tex/* convertTextBfToMd */._)(result);
@@ -2510,6 +2426,10 @@ function preParsePhase(file) {
 
 function removeCommentedSections(md) {
   return md.replace(/<\!--.*?-->/g, '');
+}
+
+function escapeDollarsInCodeBlocks(md) {
+  return md.replace(/(```.+?```)/gms, match => match.replace(/\$/g, '\\$'));
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
 
@@ -2559,6 +2479,24 @@ function assertNoKbl(md, file) {
   md.split('\n').forEach((line, idx) => {
     if (line.includes('kbl()')) {
       warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-out-width-height.ts
+
+function assertNoOutWidthHeight(md, file) {
+  md.split('\n').forEach((line, idx) => {
+    if (/{.*?out.width/.test(line) || /{.*?out.height/.test(line)) {
+      failMessage(file, 'knitr properties out.width and out.height are not supported', {
         start: {
           line: idx + 1,
           column: 0
@@ -2742,7 +2680,6 @@ var external_figures_default = /*#__PURE__*/__webpack_require__.n(external_figur
 
 
 
-
 function printReport(files, ctx) {
   const {
     reportOnlyErrors,
@@ -2758,10 +2695,9 @@ function printReport(files, ctx) {
     const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
 
     if (messages.length !== 0) {
-      if (file.path !== undefined) {
-        console.log(`\n${getFilePath(file.path)}`);
-      }
-
+      // if (file.path !== undefined) {
+      //   console.log(`\n${getFilePath(file.path)}`);
+      // }
       messages.map(printMessage);
     }
   }
@@ -2783,11 +2719,12 @@ function printMessage(message) {
   const position = external_chalk_default().grey(`${message.line}:${message.column}`);
   const reason = formatReason(message.reason, status);
   console.log(`${formatStatus(status)}  ${position}  ${reason}`);
-}
+} // function getFilePath(filePath: string) {
+//   return path.isAbsolute(filePath)
+//     ? filePath
+//     : path.join(process.cwd(), filePath);
+// }
 
-function getFilePath(filePath) {
-  return external_path_default().isAbsolute(filePath) ? filePath : external_path_default().join(process.cwd(), filePath);
-}
 
 function formatStatus(status) {
   const statusColour = getStatusColour(status);
@@ -2850,13 +2787,11 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 
+
 async function linter(unit, ctx) {
-  await Promise.all(unit.files.map(file => createReport(file, unit, ctx))); // if (!ctx.options.noReport) {
-  //   printReport(unit.files, ctx);
-  // }
-  // reportErrors(unit.files, ctx);
+  await Promise.all(unit.files.map(file => createReport(file, unit, ctx)));
 }
-function reportErrors(files, ctx) {
+function linter_reportErrors(files, ctx) {
   if (reportHasFatalErrors(files, ctx)) {
     if (ctx.options.noReport) {
       printReport(files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
@@ -2864,12 +2799,16 @@ function reportErrors(files, ctx) {
           reportOnlyErrors: true
         })
       }));
+    } else {
+      printReport(files, ctx);
     }
+
+    console.log('Report has fatal errors');
 
     if (ctx.options.force) {
       console.log('Compiling using force option...');
     } else {
-      throw new Error('Report has fatal errors');
+      process.exit();
     }
   }
 }
@@ -2880,6 +2819,7 @@ async function createReport(file, unit, ctx) {
 
   assertNoTexTabular(contents, file);
   assertNoKbl(contents, file);
+  assertNoOutWidthHeight(contents, file);
   const mdast = await mdastPhase(contents, unit, ctx);
   const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
 
@@ -2925,6 +2865,221 @@ async function convertToPdf(html) {
   await browser.close();
   return pdf;
 }
+;// CONCATENATED MODULE: ./src/build-unit.ts
+function build_unit_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function build_unit_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { build_unit_ownKeys(Object(source), true).forEach(function (key) { build_unit_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { build_unit_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// import { Code } from 'mdast';
+// import directive from 'remark-directive';
+// import frontmatter from 'remark-frontmatter';
+// import gfm from 'remark-gfm';
+// import markdown from 'remark-parse';
+// import remarkStringify from 'remark-stringify';
+// @ts-expect-error
+// import unified from 'unified';
+// import { Node } from 'unist';
+// import visit from 'unist-util-visit';
+
+
+
+
+
+ // import { embedAssetUrl } from './mdast/embed-asset-url';
+
+
+
+async function buildUnit(unit, ctx) {
+  await linter(unit, ctx);
+  const mdasts = [];
+
+  for (const file of unit.files) {
+    await inSituTransforms(file, ctx);
+    const mdast = await mdastPhase2(file, ctx);
+    mdasts.push(mdast);
+  } // const transformed = await contextTransforms(unit, ctx);
+  // const combined = combineMdFiles(unit);
+  // const combined = [...unit.files, transformed];
+  // const md = combined.contents as string;
+
+
+  const mdast = {
+    type: 'root',
+    children: mdasts.flatMap(o => o.children)
+  };
+  const result = {
+    unit,
+    combined: [],
+    md: ''
+  };
+
+  if (!ctx.options.noHtml) {
+    result.html = await syntaxTreeTransforms(mdast, unit, ctx);
+  }
+
+  if (!ctx.options.noPdf) {
+    const transformed = await syntaxTreeTransforms(mdast, unit, ctx, true);
+    result.pdf = build_unit_objectSpread(build_unit_objectSpread({}, transformed), {}, {
+      pdf: await convertToPdf(transformed.html)
+    });
+  }
+
+  return result;
+}
+
+async function inSituTransforms(file, ctx) {
+  await knitr(file, ctx);
+  preParsePhase(file);
+  texToAliasDirective(file, ctx); // const processor = unified()
+  //   // third-party plugins:
+  //   .use(markdown)
+  //   .use(directive)
+  //   .use(gfm)
+  //   .use(frontmatter)
+  //   .use(remarkStringify, { resourceLink: true })
+  //   // custom plugins:
+  //   // .use(escapeDollarsInCodeBlocks)
+  //   .use(embedAssetUrl);
+  // function escapeDollarsInCodeBlocks() {
+  //   return async (tree: Node) => {
+  //     visit<Code>(tree, 'code', (node) => {
+  //       node.value = node.value.replace(/\$/g, '\\$');
+  //     });
+  //   };
+  // }
+  // await processor.process(preParsed);
+
+  linter_reportErrors([file], ctx); // return mdast;
+} // async function contextTransforms(unit: Unit, ctx: Context) {
+//   const file = VFile(unit.files.map((o) => o.contents).join('\n\n'));
+//   // const preParsed = preParsePhase(file);
+//   const withTexAlias =
+//   reportErrors([file], ctx);
+//   return withTexAlias;
+// }
+// function combineMdFiles(unit: Unit) {
+//   return VFile(unit.files.map((o) => o.contents).join('\n\n'));
+// }
+
+
+async function syntaxTreeTransforms(mdast, unit, ctx, targetPdf) {
+  // TODO: use the same VFile for each phase!!!
+  // const mdast = await mdastPhase(md, unit, ctx, targetPdf);
+  const hast = await hastPhase(mdast, unit, ctx, targetPdf);
+  const html = await htmlPhase(hast, mdast, unit, ctx, targetPdf); // const file = toVFile({ contents: md });
+  // reportErrors([file], ctx);
+
+  return {
+    mdast,
+    hast,
+    html
+  };
+}
+;// CONCATENATED MODULE: external "js-yaml"
+const external_js_yaml_namespaceObject = require("js-yaml");
+var external_js_yaml_default = /*#__PURE__*/__webpack_require__.n(external_js_yaml_namespaceObject);
+;// CONCATENATED MODULE: external "yup"
+const external_yup_namespaceObject = require("yup");
+;// CONCATENATED MODULE: ./src/course/load-course.ts
+
+
+
+
+const courseSchema = external_yup_namespaceObject.object().shape({
+  title: external_yup_namespaceObject.string().required(),
+  units: external_yup_namespaceObject.array().of(external_yup_namespaceObject.object().shape({
+    src: external_yup_namespaceObject.string().required()
+  }))
+});
+async function loadCourseYaml(dirPath) {
+  const fileContents = await readFile(external_path_default().join(dirPath, 'course.yaml'));
+  const course = external_js_yaml_default().load(fileContents);
+  return courseSchema.validateSync(course);
+}
+;// CONCATENATED MODULE: ./src/course/load-unit.ts
+
+
+
+
+const unitSchema = external_yup_namespaceObject.object().shape({
+  name: external_yup_namespaceObject.string().required(),
+  title: external_yup_namespaceObject.string().required(),
+  content: external_yup_namespaceObject.array().of(external_yup_namespaceObject.object().shape({
+    src: external_yup_namespaceObject.string().required()
+  }))
+});
+async function loadUnitYaml(dirPath, src) {
+  const fileContents = await readFile(external_path_default().join(dirPath, src));
+  const unit = external_js_yaml_default().load(fileContents);
+  return unitSchema.validateSync(unit);
+}
+;// CONCATENATED MODULE: ./src/course/index.ts
+function course_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function course_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { course_ownKeys(Object(source), true).forEach(function (key) { course_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { course_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function course_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+ // @ts-expect-error
+
+
+
+
+async function collectCoursework(dirPath) {
+  const course = await loadCourseYaml(dirPath);
+  const units = await Promise.all(course.units.map(unit => collectUnit(unit, course, dirPath)));
+  return course_objectSpread(course_objectSpread({}, course), {}, {
+    units
+  });
+}
+
+async function collectUnit(unit, course, dirPath) {
+  const yaml = await loadUnitYaml(dirPath, unit.src);
+  const parts = yaml.content;
+  const files = await Promise.all(yaml.content.map(c => {
+    const filePath = external_path_default().join(dirPath, unit.src, '..', c.src);
+    return external_to_vfile_default().read(filePath, 'utf-8');
+  }));
+  const titles = getUnitTitles({
+    courseTitle: course.title,
+    unitName: yaml.name,
+    unitTitle: yaml.title
+  });
+  return course_objectSpread(course_objectSpread({}, yaml), {}, {
+    parts,
+    files,
+    titles
+  });
+}
+
+function getUnitTitles({
+  courseTitle,
+  unitName,
+  unitTitle
+}) {
+  return {
+    courseTitle,
+    unitTitle: `${unitName}: ${unitTitle}`,
+    unitName,
+    docTitle: `${unitTitle} | ${courseTitle}`,
+    fileName: (0,external_lodash_namespaceObject.kebabCase)(unitName)
+  };
+}
+;// CONCATENATED MODULE: ./src/context.ts
+
+
+async function createContext(dirPath, options = {}) {
+  return {
+    course: await collectCoursework(dirPath),
+    dirPath,
+    buildDir: getBuildDir(dirPath),
+    cacheDir: getCacheDir(dirPath),
+    options
+  };
+}
 // EXTERNAL MODULE: ./src/utils/timer.ts
 var utils_timer = __webpack_require__(2364);
 ;// CONCATENATED MODULE: ./src/index.ts
@@ -2934,89 +3089,48 @@ var utils_timer = __webpack_require__(2364);
 
 
 
-
-
-
- // import { printReport } from './linter/report';
-
-
-
-
-
-
 async function rMarkdown(dirPath, options = {}) {
-  return run(dirPath, options); // try {
-  //   await run(dirPath, options);
-  // } catch (err) {
-  //   console.log(err.message);
-  // }
-}
-
-async function run(dirPath, options = {}) {
   const timer = (0,utils_timer/* createTimer */.e)();
-  const ctx = await createContext(dirPath, options); // write single week
+  const ctx = await createContext(dirPath, options);
+  const result = [];
 
   if (ctx.options.week) {
+    // write single week
     const idx = ctx.options.week - 1;
-    const unit = ctx.course.units[idx];
-    await writeUnit(unit, ctx, timer);
-    return;
-  } // write full course
-
-
-  for (const unit of ctx.course.units) {
-    await writeUnit(unit, ctx, timer);
+    const input = ctx.course.units[idx];
+    const unit = await writeUnit(input, ctx, timer);
+    result.push(unit);
+  } else {
+    // write full course
+    for (const input of ctx.course.units) {
+      const unit = await writeUnit(input, ctx, timer);
+      result.push(unit);
+    }
   }
+
+  return result;
 }
 
 async function writeUnit(unit, ctx, timer) {
+  const built = await buildUnit(unit, ctx);
   await mkdir(ctx.buildDir);
   const filePath = external_path_default().join(ctx.buildDir, unit.titles.fileName);
-  await linter(unit, ctx);
-  const transformed = await contextTransforms(unit, ctx);
-  const combined = [...unit.files, transformed];
-  printReport(combined, ctx);
-  reportErrors(combined, ctx);
-  const md = transformed.contents;
 
-  if (!ctx.options.noHtml) {
-    const {
-      html
-    } = await syntaxTreeTransforms(md, unit, ctx);
-    await writeFile(filePath + '.html', html);
+  if (built.html) {
+    await writeFile(filePath + '.html', built.html.html);
     const status = external_chalk_default().green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.html`);
   }
 
-  if (!ctx.options.noPdf) {
-    const {
-      html
-    } = await syntaxTreeTransforms(md, unit, ctx, true);
-    const pdf = await convertToPdf(html);
-    await writeFile(filePath + '.pdf', pdf); // debug
-    // await writeFile(filePath + '.pdf.html', html);
+  if (built.pdf) {
+    await writeFile(filePath + '.pdf', built.pdf.pdf); // debug
+    // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
     const status = external_chalk_default().green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }
-}
 
-async function contextTransforms(unit, ctx) {
-  const file = vfile_default()(unit.files.map(o => o.contents).join('\n\n'));
-  const preParsed = preParsePhase(file);
-  const withKnitr = await knitr(preParsed, ctx);
-  const withTexAlias = texToAliasDirective(withKnitr, ctx);
-  return withTexAlias;
-}
-async function syntaxTreeTransforms(md, unit, ctx, targetPdf) {
-  const mdast = await mdastPhase(md, unit, ctx, targetPdf);
-  const hast = await hastPhase(mdast, unit, ctx, targetPdf);
-  const html = await htmlPhase(hast, mdast, unit, ctx, targetPdf);
-  return {
-    mdast,
-    hast,
-    html
-  };
+  return built;
 }
 
 /***/ }),
@@ -12617,8 +12731,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 93 modules
-var src = __webpack_require__(9398);
+// EXTERNAL MODULE: ./src/index.ts + 94 modules
+var src = __webpack_require__(3426);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
@@ -12676,7 +12790,7 @@ const options = {
   spelling: argv.spelling,
   force: argv.force
 };
-(0,src/* rMarkdown */.Cq)(dirPath, options);
+(0,src/* rMarkdown */.C)(dirPath, options);
 })();
 
 /******/ })()

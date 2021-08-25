@@ -1,6 +1,0 @@
-We print the first four rows of the iris data set.
-
-```{r echo=FALSE}
-library(knitr)
-kable(iris[1:4,])
-```

@@ -5,12 +5,19 @@ import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
+// import { failMessage } from '../utils/message';
+
 export function embedAssetUrl() {
   async function getAssetUrl(node: Image, file: VFile) {
     const url = (node.url || '') as string;
-    const dirname = (file.dirname || '') as string;
+    const dirname = file.dirname;
+    // if (dirname === undefined) {
+    //   failMessage(file, `File dirname is undefined`);
+    //   return;
+    // }
     if (!url.startsWith('http')) {
-      const newUrl = getPath(url, dirname);
+      const newUrl = getPath(url, dirname || '');
+      // console.log(newUrl);
       node.url = newUrl;
     }
   }

@@ -20,6 +20,7 @@ import { preParsePhase } from '../pre-parse';
 import { assertAssetExists } from './assert-asset-exists';
 import { assertNoH1 } from './assert-no-h1';
 import { assertNoKbl } from './assert-no-kbl';
+import { assertNoOutWidthHeight } from './assert-no-out-width-height';
 import { assertNoTexTabular } from './assert-no-tex-tabular';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
@@ -31,12 +32,6 @@ export async function linter(unit: Unit, ctx: Context) {
   await Promise.all(
     unit.files.map((file) => createReport(file, unit, ctx))
   );
-
-  // if (!ctx.options.noReport) {
-  //   printReport(unit.files, ctx);
-  // }
-
-  // reportErrors(unit.files, ctx);
 }
 
 export function reportErrors(files: VFile[], ctx: Context) {
@@ -49,11 +44,14 @@ export function reportErrors(files: VFile[], ctx: Context) {
           reportOnlyErrors: true,
         },
       });
+    } else {
+      printReport(files, ctx);
     }
+    console.log('Report has fatal errors');
     if (ctx.options.force) {
       console.log('Compiling using force option...');
     } else {
-      throw new Error('Report has fatal errors');
+      process.exit();
     }
   }
 }
@@ -65,6 +63,7 @@ async function createReport(file: VFile, unit: Unit, ctx: Context) {
   // simple regex tests
   assertNoTexTabular(contents, file);
   assertNoKbl(contents, file);
+  assertNoOutWidthHeight(contents, file);
 
   const mdast = await mdastPhase(contents, unit, ctx);
 

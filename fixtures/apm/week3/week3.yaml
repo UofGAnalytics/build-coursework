@@ -1,6 +1,0 @@
-name: "Week 3"
-title: "Models for binary/binomial responses"
-golive: "+1w"
-content:
-  - type: text
-    src: week3mat.Rmd

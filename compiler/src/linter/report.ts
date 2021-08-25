@@ -1,5 +1,3 @@
-import path from 'path';
-
 import chalk from 'chalk';
 import figures from 'figures';
 import { VFile } from 'vfile';
@@ -38,9 +36,9 @@ export function printReport(files: VFile[], ctx: Context) {
       : file.messages;
 
     if (messages.length !== 0) {
-      if (file.path !== undefined) {
-        console.log(`\n${getFilePath(file.path)}`);
-      }
+      // if (file.path !== undefined) {
+      //   console.log(`\n${getFilePath(file.path)}`);
+      // }
       messages.map(printMessage);
     }
   }
@@ -72,11 +70,11 @@ function printMessage(message: VFileMessage) {
   console.log(`${formatStatus(status)}  ${position}  ${reason}`);
 }
 
-function getFilePath(filePath: string) {
-  return path.isAbsolute(filePath)
-    ? filePath
-    : path.join(process.cwd(), filePath);
-}
+// function getFilePath(filePath: string) {
+//   return path.isAbsolute(filePath)
+//     ? filePath
+//     : path.join(process.cwd(), filePath);
+// }
 
 function formatStatus(status: MessageStatus) {
   const statusColour = getStatusColour(status);

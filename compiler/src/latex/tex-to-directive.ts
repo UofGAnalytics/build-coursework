@@ -38,7 +38,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
     ],
     displayMath: [
       ['$$', '$$'],
-      [`\\[`, `\]`],
+      [`\\[`, `\\]`],
     ],
     processEscapes: true,
     // ignoreClass: 'r-output',
