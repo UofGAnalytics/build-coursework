@@ -215,7 +215,7 @@ describe('knitr', () => {
       <p>Since we have grouped data (multiple beetles per dose), we can visualise the probability of the outcome of interest (beetles killed) by plotting the proportion killed for each dose against the dose. We see that the proportion killed increases with increasing dose.</p>
     `);
 
-    expect(html).toBe(expected);
+    expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
   });
 
   it('should display knitr output correctly', async () => {

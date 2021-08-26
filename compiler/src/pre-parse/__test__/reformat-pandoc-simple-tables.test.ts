@@ -67,7 +67,7 @@ describe('reformatPandocSimpleTables', () => {
       </div>
     `);
 
-    expect(html).toBe(expected);
+    expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
   });
 
   it('should reformat pandoc simple tables to markdown tables with LaTeX', async () => {
@@ -181,6 +181,6 @@ describe('reformatPandocSimpleTables', () => {
       </div>
     `);
 
-    expect(html).toBe(expected);
+    expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
   });
 });
