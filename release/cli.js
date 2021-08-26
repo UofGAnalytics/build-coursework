@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 3426:
+/***/ 9036:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -375,6 +375,9 @@ var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
 var external_chalk_default = /*#__PURE__*/__webpack_require__.n(external_chalk_namespaceObject);
+// EXTERNAL MODULE: ../node_modules/vfile/index.js
+var vfile = __webpack_require__(9566);
+var vfile_default = /*#__PURE__*/__webpack_require__.n(vfile);
 ;// CONCATENATED MODULE: external "rehype-raw"
 const external_rehype_raw_namespaceObject = require("rehype-raw");
 var external_rehype_raw_default = /*#__PURE__*/__webpack_require__.n(external_rehype_raw_namespaceObject);
@@ -536,7 +539,7 @@ async function checkLocalFileExists(filePath) {
   }
 }
 async function rmFile(filePath) {
-  return fs.promises.unlink(filePath);
+  return external_fs_default().promises.unlink(filePath);
 }
 function mkdir(dirPath) {
   return external_fs_default().promises.mkdir(dirPath, {
@@ -841,7 +844,7 @@ function responsiveTables() {
 
 
 
-async function hastPhase(mdast, unit, ctx, targetPdf) {
+async function hastPhase(mdast, ctx, file, targetPdf) {
   const processor = unified_default()().use((external_remark_rehype_default()), {
     allowDangerousHtml: true
   }).use((external_rehype_raw_default())).use(responsiveTables);
@@ -856,7 +859,7 @@ async function hastPhase(mdast, unit, ctx, targetPdf) {
     processor.use(embedAssets, ctx);
   }
 
-  return processor.run(mdast);
+  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "rehype-document"
 const external_rehype_document_namespaceObject = require("rehype-document");
@@ -1276,7 +1279,7 @@ function htmlWrapper(unit, mdast) {
 
 
 
-async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
+async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
   const processor = unified_default()().use((external_rehype_format_default())).use((external_rehype_stringify_default()), {
     allowDangerousHtml: true
   });
@@ -1299,28 +1302,33 @@ async function htmlPhase(hast, mdast, unit, ctx, targetPdf) {
     processor.use((external_rehype_document_default()), docOptions);
   }
 
-  const result = await processor.run(hast);
-  return processor.stringify(result);
+  const result = await processor.run(hast, file);
+  return processor.stringify(result, file);
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
 ;// CONCATENATED MODULE: ./src/knitr/index.ts
 
 
+
  // import hashSum from 'hash-sum';
 
 
-async function knitr(file, ctx) {
-  const md = file.contents; // console.log(cwd);
 
-  const result = await execKnitr(md, ctx, file);
+async function knitr(file, ctx) {
+  const result = await execKnitr(file, ctx);
   file.contents = result;
   return file;
 } // TODO: see what can be done with output when "quiet" turned off
 
-async function execKnitr(md, ctx, file) {
-  const filePath = external_path_default().join(file.cwd, file.path || '');
-  const baseDir = external_path_default().join(file.cwd, file.dirname || '');
+async function execKnitr(file, ctx) {
+  const filePath = file.path || '';
+  const baseDir = file.dirname || '';
+  const md = file.contents;
+  const fileName = getUniqueTempFileName(md);
+  const cachedFilePath = external_path_default().join(ctx.cacheDir, fileName);
+  await mkdir(ctx.cacheDir);
+  await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
     const rFile = external_path_default().join(__dirname, 'knitr.R');
     const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
@@ -1336,14 +1344,17 @@ async function execKnitr(md, ctx, file) {
         reportErrors(response, file);
         resolve(formatResponse(response));
       }
+
+      await rmFile(cachedFilePath);
     });
   });
-} // function getUniqueTempFileName(md: string) {
-//   const hash = hashSum(md);
-//   const ts = new Date().getTime().toString();
-//   return `knitr-${hash}-${ts}.Rmd`;
-// }
+}
 
+function getUniqueTempFileName(md) {
+  const hash = external_hash_sum_default()(md);
+  const ts = new Date().getTime().toString();
+  return `knitr-${hash}-${ts}.Rmd`;
+}
 
 async function formatResponse(response) {
   let result = response;
@@ -1573,6 +1584,395 @@ var external_retext_english_default = /*#__PURE__*/__webpack_require__.n(externa
 ;// CONCATENATED MODULE: external "retext-spell"
 const external_retext_spell_namespaceObject = require("retext-spell");
 var external_retext_spell_default = /*#__PURE__*/__webpack_require__.n(external_retext_spell_namespaceObject);
+;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
+
+
+
+function assertAssetExists() {
+  async function getAssetUrl(node, file) {
+    const url = node.url || '';
+
+    if (!file.dirname) {
+      throw new Error('VFile dirname undefined');
+    }
+
+    if (!url.startsWith('http')) {
+      const exists = await checkLocalFileExists(url);
+
+      if (!exists) {
+        failMessage(file, `No asset found at ${url}`, node.position);
+      }
+    }
+  }
+
+  return async (tree, file) => {
+    const transformations = [];
+    external_unist_util_visit_default()(tree, 'image', node => {
+      transformations.push(getAssetUrl(node, file));
+    });
+    await Promise.all(transformations);
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-h1.ts
+
+
+function assertNoH1() {
+  return (tree, file) => {
+    external_unist_util_visit_default()(tree, 'heading', node => {
+      if (node.depth === 1) {
+        failMessage(file, 'Level 1 heading (for example "# My Title") is automatically generated from .yaml file and should not be found in .Rmd file', node.position);
+        return;
+      }
+    });
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-task-answer.ts
+
+
+function assertTaskAnswerStructure() {
+  return (tree, file) => {
+    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, _parent) => {
+      if (node.name === 'task') {
+        const children = node.children;
+        const answers = children.filter(o => o.name === 'answer');
+
+        if (answers.length < 1) {
+          failMessage(file, 'Task has no answer', node.position);
+        }
+
+        if (answers.length > 1) {
+          failMessage(file, 'Task has multiple answers', node.position);
+        }
+      }
+
+      if (node.name === 'answer') {
+        const parent = _parent;
+
+        if (!parent || parent.name !== 'task') {
+          failMessage(file, 'Answer must be nested inside task', node.position);
+        }
+      }
+    });
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/assert-video-attributes.ts
+
+
+function assertVideoAttributes() {
+  return async (tree, file) => {
+    external_unist_util_visit_default()(tree, 'leafDirective', node => {
+      if (node.name === 'video') {
+        if (!node.attributes.id) {
+          failMessage(file, 'id attribute is required', node.position);
+        }
+
+        if (!node.attributes.duration) {
+          failMessage(file, 'duration attribute is required', node.position);
+        }
+
+        const title = getTitle(node);
+
+        if (!title) {
+          failMessage(file, 'title is required', node.position);
+        }
+      }
+    });
+  };
+}
+
+function getTitle(node) {
+  const children = node.children;
+  const firstChild = children[0];
+  return (firstChild === null || firstChild === void 0 ? void 0 : firstChild.value) || '';
+}
+;// CONCATENATED MODULE: ./src/linter/assert-weblink-target.ts
+
+
+function assertWeblinkTarget() {
+  return (tree, file) => {
+    external_unist_util_visit_default()(tree, 'containerDirective', node => {
+      if (node.name === 'weblink') {
+        if (node.attributes.target === undefined) {
+          failMessage(file, 'Weblink has no target attribute', node.position);
+        }
+      }
+    });
+  };
+}
+;// CONCATENATED MODULE: ./src/linter/lint-latex.ts
+
+
+function lintLatex() {
+  return async (tree, file) => {
+    const transformations = [];
+    external_unist_util_visit_default()(tree, 'math', node => {
+      transformations.push(chktex(node, file));
+    });
+    await Promise.all(transformations);
+    return tree;
+  };
+}
+
+async function chktex(node, file) {
+  return new Promise((resolve, reject) => {
+    (0,external_child_process_namespaceObject.exec)(`chktex -q <<< "${node.value}"`, (err, response) => {
+      if (err) {
+        reject(err);
+      } else {
+        const messages = lint_latex_formatResponse(response);
+        const position = node.position;
+        messages.forEach(({
+          line,
+          column,
+          message
+        }) => {
+          file.message(message, {
+            line: position.start.line + line,
+            column: position.start.column + column
+          });
+        });
+        resolve();
+      }
+    });
+  });
+}
+
+function lint_latex_formatResponse(response) {
+  if (response.trim() === '') {
+    return [];
+  }
+
+  function formatMessage(message) {
+    return message.replace(/'/g, '').replace(/`/g, '');
+  }
+
+  return response.split(/Warning \d+ in stdin line /).filter(Boolean).reduce((acc, s) => {
+    const [key, value] = s.split(':');
+    const line = Number(key);
+    const trimmed = value.trim();
+    const match = trimmed.match(/(.*)\n(.*)\n(\s*)\^/m);
+
+    if (Array.isArray(match)) {
+      const message = formatMessage(match[1]);
+      acc.push({
+        line,
+        column: match[3].length,
+        message: `${message}\n\n${match[2]}\n${match[3]}^`
+      });
+    } else {
+      acc.push({
+        line,
+        column: 0,
+        message: formatMessage(trimmed)
+      });
+    }
+
+    return acc;
+  }, []);
+}
+;// CONCATENATED MODULE: external "figures"
+const external_figures_namespaceObject = require("figures");
+var external_figures_default = /*#__PURE__*/__webpack_require__.n(external_figures_namespaceObject);
+;// CONCATENATED MODULE: ./src/linter/report.ts
+
+
+
+function printReport(files, ctx) {
+  const {
+    reportOnlyErrors,
+    shouldFail
+  } = ctx.options;
+
+  if (reportOnlyErrors && shouldFail) {
+    return;
+  }
+
+  for (const file of files) {
+    // console.log(file.messages);
+    const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
+
+    if (messages.length !== 0) {
+      // if (file.path !== undefined) {
+      //   console.log(`\n${getFilePath(file.path)}`);
+      // }
+      messages.map(printMessage);
+    }
+  }
+}
+function reportHasFatalErrors(files, ctx) {
+  return files.some(file => file.messages.some(message => message.status === message_MessageStatus.fail));
+}
+function reportHasWarnings(files, ctx) {
+  return files.some(file => file.messages.some(message => message.status === MessageStatus.warning));
+}
+
+function failingMessages(messages) {
+  return messages.filter(o => o.status === message_MessageStatus.fail);
+}
+
+function printMessage(message) {
+  // console.log(message);
+  const status = message.status;
+  const position = external_chalk_default().grey(`${message.line}:${message.column}`);
+  const reason = formatReason(message.reason, status);
+  console.log(`${formatStatus(status)}  ${position}  ${reason}`);
+} // function getFilePath(filePath: string) {
+//   return path.isAbsolute(filePath)
+//     ? filePath
+//     : path.join(process.cwd(), filePath);
+// }
+
+
+function formatStatus(status) {
+  const statusColour = getStatusColour(status);
+
+  switch (status) {
+    case message_MessageStatus.fail:
+      return statusColour((external_figures_default()).cross);
+
+    default:
+      return statusColour((external_figures_default()).warning);
+    // TODO: fail on unsupported status?
+  }
+}
+
+function formatReason(reason, status) {
+  const statusColour = getStatusColour(status);
+  const [first, ...rest] = reason.split('\n');
+  const formattedFirst = statusColour(first);
+  const formattedRest = rest.map(line => external_chalk_default().grey(line));
+  return [formattedFirst, ...formattedRest].join('\n');
+}
+
+function getStatusColour(status) {
+  switch (status) {
+    case message_MessageStatus.fail:
+      return (external_chalk_default()).red;
+
+    default:
+      return (external_chalk_default()).yellow;
+  }
+}
+;// CONCATENATED MODULE: ./src/linter/index.ts
+function linter_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function linter_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { linter_ownKeys(Object(source), true).forEach(function (key) { linter_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { linter_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// @ts-expect-error
+ // @ts-expect-error
+
+ // @ts-expect-error
+
+
+// @ts-expect-error
+ // @ts-expect-error
+
+ // @ts-expect-error
+
+
+
+
+
+
+
+
+
+
+function linter_reportErrors(files, ctx) {
+  if (reportHasFatalErrors(files, ctx)) {
+    if (ctx.options.noReport) {
+      printReport(files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
+        options: linter_objectSpread(linter_objectSpread({}, ctx.options), {}, {
+          reportOnlyErrors: true
+        })
+      }));
+    } else {
+      printReport(files, ctx);
+    }
+
+    console.log('Report has fatal errors');
+
+    if (ctx.options.force) {
+      console.log('Compiling using force option...');
+    } else {
+      process.exit();
+    }
+  }
+}
+async function createReport2(file, mdast, ctx) {
+  const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
+
+  if (ctx.options.spelling) {
+    const retextProcessor = unified_default()().use((external_retext_english_default())).use((external_retext_spell_default()), {
+      dictionary: (external_dictionary_en_gb_default()),
+      max: 1
+    });
+    processor.use((external_remark_retext_default()), retextProcessor);
+  }
+
+  await processor.run(mdast, file);
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
+
+function assertNoKbl(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('kbl()')) {
+      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-out-width-height.ts
+
+function assertNoOutWidthHeight(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (/{.*?out.width/.test(line) || /{.*?out.height/.test(line)) {
+      failMessage(file, 'knitr properties out.width and out.height are not supported', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
+
+function assertNoTexTabular(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('\\begin{tabular}')) {
+      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__.n(external_remark_autolink_headings_namespaceObject);
@@ -1749,6 +2149,7 @@ function boxouts() {
         case 'background':
         case 'definition':
         case 'weblink':
+        case 'theorem':
         case 'task':
         case 'answer':
           {
@@ -1785,7 +2186,7 @@ function createBoxout(node, count) {
   const titles = [typeTitle];
   const titleValue = getTitleValue(node);
 
-  if (titleValue !== null) {
+  if (titleValue.length > 0) {
     const title = boxouts_createTitle(node);
     titles.push(title);
   }
@@ -1870,13 +2271,16 @@ function boxouts_createTitle(node) {
 
 function createTitleValue(node) {
   const name = node.name;
-  const title = getTitleValue(node) || '';
+  const newRoot = {
+    type: 'root',
+    children: getTitleValue(node)
+  };
+  const {
+    children = []
+  } = mdast_util_to_hast_default()(newRoot);
 
   if (name !== 'weblink') {
-    return [{
-      type: 'text',
-      value: title
-    }];
+    return children;
   }
 
   const {
@@ -1890,10 +2294,7 @@ function createTitleValue(node) {
       target: '_blank',
       className: ['target']
     },
-    children: [{
-      type: 'text',
-      value: title
-    }]
+    children
   }];
 }
 
@@ -1906,20 +2307,16 @@ function getTitleValue(node) {
   if (!((_parent$data = parent.data) !== null && _parent$data !== void 0 && _parent$data.directiveLabel)) {
     if (node.name === 'weblink') {
       const attributes = node.attributes;
-      return attributes.target;
+      return [{
+        type: 'text',
+        value: attributes.target
+      }];
     }
 
-    return null;
+    return [];
   }
 
-  const parentChildren = parent.children || [];
-  const firstChild = parentChildren[0] || {};
-
-  if (typeof firstChild.value !== 'string') {
-    return null;
-  }
-
-  return String(firstChild.value);
+  return parent.children || [];
 }
 
 function createCounter() {
@@ -2116,7 +2513,7 @@ function youtubeVideos() {
     external_unist_util_visit_default()(tree, 'leafDirective', node => {
       if (node.name === 'video') {
         const attributes = node.attributes;
-        const title = getTitle(node);
+        const title = youtube_videos_getTitle(node);
         node.data = {
           hName: 'a',
           hProperties: {
@@ -2191,7 +2588,7 @@ function youtubeVideos() {
   };
 }
 
-function getTitle(node) {
+function youtube_videos_getTitle(node) {
   const children = node.children;
   const firstChild = children[0];
   return firstChild.value;
@@ -2231,7 +2628,6 @@ function formatDuration(duration = '') {
 
 
 
-
  // import { moveAnswersToEnd } from './move-answers-to-end';
 
 
@@ -2247,34 +2643,41 @@ async function mdastPhase2(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks); // if (targetPdf) {
-  //   processor.use(moveAnswersToEnd);
-  // }
-  // const file = toVFile({ contents: md });
-
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
-async function mdastPhase(md, unit, ctx, targetPdf) {
-  // https://github.com/unifiedjs/unified
-  // convert markdown to syntax tree: complex transforms
-  // should be more robust and straightforward
-  const processor = unified_default()() // third-party plugins:
-  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use((external_remark_sectionize_default())).use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
-    content: createSvg('link-icon'),
-    linkProperties: {
-      className: 'link'
-    }
-  }) // custom plugins:
-  .use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks); // if (targetPdf) {
-  //   processor.use(moveAnswersToEnd);
-  // }
+;// CONCATENATED MODULE: external "puppeteer"
+const external_puppeteer_namespaceObject = require("puppeteer");
+var external_puppeteer_default = /*#__PURE__*/__webpack_require__.n(external_puppeteer_namespaceObject);
+;// CONCATENATED MODULE: ./src/pdf/index.ts
+ // const footerTemplate = `
+//   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
+//     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+//   </div>
+// `;
 
-  const file = external_to_vfile_default()({
-    contents: md
+async function convertToPdf(html) {
+  const browser = await external_puppeteer_default().launch({
+    headless: true
   });
-  const parsed = processor.parse(file);
-  return processor.run(parsed, file);
+  const page = await browser.newPage();
+  await page.setContent(html);
+  await page.evaluateHandle('document.fonts.ready');
+  const pdf = await page.pdf({
+    format: 'a4',
+    printBackground: true,
+    // displayHeaderFooter: true,
+    // footerTemplate,
+    margin: {
+      top: '20px',
+      left: '40px',
+      right: '40px',
+      bottom: '40px'
+    }
+  });
+  await browser.close();
+  return pdf;
 }
 // EXTERNAL MODULE: ./src/pre-parse/allow-no-whitespace-before-heading.ts
 var allow_no_whitespace_before_heading = __webpack_require__(9188);
@@ -2284,14 +2687,17 @@ var convert_block_tex = __webpack_require__(4474);
 var convert_inline_tex = __webpack_require__(2159);
 // EXTERNAL MODULE: ./src/pre-parse/convert-macro-to-directive.ts
 var convert_macro_to_directive = __webpack_require__(9386);
+;// CONCATENATED MODULE: external "os"
+const external_os_namespaceObject = require("os");
 ;// CONCATENATED MODULE: external "markdown-table"
 const external_markdown_table_namespaceObject = require("markdown-table");
 var external_markdown_table_default = /*#__PURE__*/__webpack_require__.n(external_markdown_table_namespaceObject);
 ;// CONCATENATED MODULE: ./src/pre-parse/reformat-pandoc-simple-tables.ts
-// @ts-expect-error
+ // @ts-expect-error
+
 
 function reformatPandocSimpleTables(contents) {
-  const lines = contents.split('\n'); // operate on array backwards as length may change with transformation,
+  const lines = contents.split(external_os_namespaceObject.EOL); // operate on array backwards as length may change with transformation,
   // preserving index in loop
 
   for (var idx = lines.length - 1; idx >= 0; idx--) {
@@ -2304,11 +2710,11 @@ function reformatPandocSimpleTables(contents) {
       } = getTableBounds(lines, idx);
       const currentLines = lines.slice(startIdx, startIdx + count + 1);
       const newLines = convertLines(currentLines);
-      lines.splice(startIdx, count, ...newLines);
+      lines.splice(startIdx, count + 1, ...newLines);
     }
   }
 
-  return lines.join('\n');
+  return lines.join(external_os_namespaceObject.EOL);
 }
 
 function isValidPandocSimpleTableSeparator(line, idx) {
@@ -2322,9 +2728,10 @@ function isValidPandocSimpleTableSeparator(line, idx) {
 function convertLines(lines) {
   const table = parseTable(lines);
   const align = getColumnAlignment(table[0]);
-  return external_markdown_table_default()(table, {
+  const result = external_markdown_table_default()(table, {
     align
-  }).split('\n');
+  });
+  return [...result.split(external_os_namespaceObject.EOL), ''];
 }
 
 function getTableBounds(arr, idx) {
@@ -2413,7 +2820,6 @@ function preParsePhase(file) {
   let result = file.contents;
   result = removeCommentedSections(result);
   result = escapeDollarsInCodeBlocks(result);
-  console.log(result);
   result = (0,allow_no_whitespace_before_heading/* allowNoWhitespaceBeforeHeading */.Q)(result);
   result = (0,convert_macro_to_directive/* convertMacroToDirective */.W)(result);
   result = (0,convert_inline_tex/* convertTextBfToMd */._)(result);
@@ -2431,440 +2837,6 @@ function removeCommentedSections(md) {
 function escapeDollarsInCodeBlocks(md) {
   return md.replace(/(```.+?```)/gms, match => match.replace(/\$/g, '\\$'));
 }
-;// CONCATENATED MODULE: ./src/linter/assert-asset-exists.ts
-
-
-
-function assertAssetExists() {
-  async function getAssetUrl(node, file) {
-    const url = node.url || '';
-
-    if (!file.dirname) {
-      throw new Error('VFile dirname undefined');
-    }
-
-    if (!url.startsWith('http')) {
-      const exists = await checkLocalFileExists(url);
-
-      if (!exists) {
-        failMessage(file, `No asset found at ${url}`, node.position);
-      }
-    }
-  }
-
-  return async (tree, file) => {
-    const transformations = [];
-    external_unist_util_visit_default()(tree, 'image', node => {
-      transformations.push(getAssetUrl(node, file));
-    });
-    await Promise.all(transformations);
-  };
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-h1.ts
-
-
-function assertNoH1() {
-  return (tree, file) => {
-    external_unist_util_visit_default()(tree, 'heading', node => {
-      if (node.depth === 1) {
-        failMessage(file, 'Level 1 heading (for example "# My Title") is automatically generated from .yaml file and should not be found in .Rmd file', node.position);
-        return;
-      }
-    });
-  };
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
-
-function assertNoKbl(md, file) {
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('kbl()')) {
-      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-out-width-height.ts
-
-function assertNoOutWidthHeight(md, file) {
-  md.split('\n').forEach((line, idx) => {
-    if (/{.*?out.width/.test(line) || /{.*?out.height/.test(line)) {
-      failMessage(file, 'knitr properties out.width and out.height are not supported', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
- // TODO: could possibly try converting to array here
-// https://stackoverflow.com/questions/51803244
-
-function assertNoTexTabular(md, file) {
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('\\begin{tabular}')) {
-      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
-;// CONCATENATED MODULE: ./src/linter/assert-task-answer.ts
-
-
-function assertTaskAnswerStructure() {
-  return (tree, file) => {
-    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, _parent) => {
-      if (node.name === 'task') {
-        const children = node.children;
-        const answers = children.filter(o => o.name === 'answer');
-
-        if (answers.length < 1) {
-          failMessage(file, 'Task has no answer', node.position);
-        }
-
-        if (answers.length > 1) {
-          failMessage(file, 'Task has multiple answers', node.position);
-        }
-      }
-
-      if (node.name === 'answer') {
-        const parent = _parent;
-
-        if (!parent || parent.name !== 'task') {
-          failMessage(file, 'Answer must be nested inside task', node.position);
-        }
-      }
-    });
-  };
-}
-;// CONCATENATED MODULE: ./src/linter/assert-video-attributes.ts
-
-
-function assertVideoAttributes() {
-  return async (tree, file) => {
-    external_unist_util_visit_default()(tree, 'leafDirective', node => {
-      if (node.name === 'video') {
-        if (!node.attributes.id) {
-          failMessage(file, 'id attribute is required', node.position);
-        }
-
-        if (!node.attributes.duration) {
-          failMessage(file, 'duration attribute is required', node.position);
-        }
-
-        const title = assert_video_attributes_getTitle(node);
-
-        if (!title) {
-          failMessage(file, 'title is required', node.position);
-        }
-      }
-    });
-  };
-}
-
-function assert_video_attributes_getTitle(node) {
-  const children = node.children;
-  const firstChild = children[0];
-  return (firstChild === null || firstChild === void 0 ? void 0 : firstChild.value) || '';
-}
-;// CONCATENATED MODULE: ./src/linter/assert-weblink-target.ts
-
-
-function assertWeblinkTarget() {
-  return (tree, file) => {
-    external_unist_util_visit_default()(tree, 'containerDirective', node => {
-      if (node.name === 'weblink') {
-        if (node.attributes.target === undefined) {
-          failMessage(file, 'Weblink has no target attribute', node.position);
-        }
-      }
-    });
-  };
-}
-;// CONCATENATED MODULE: ./src/linter/lint-latex.ts
-
-
-function lintLatex() {
-  return async (tree, file) => {
-    const transformations = [];
-    external_unist_util_visit_default()(tree, 'math', node => {
-      transformations.push(chktex(node, file));
-    });
-    await Promise.all(transformations);
-    return tree;
-  };
-}
-
-async function chktex(node, file) {
-  return new Promise((resolve, reject) => {
-    (0,external_child_process_namespaceObject.exec)(`chktex -q <<< "${node.value}"`, (err, response) => {
-      if (err) {
-        reject(err);
-      } else {
-        const messages = lint_latex_formatResponse(response);
-        const position = node.position;
-        messages.forEach(({
-          line,
-          column,
-          message
-        }) => {
-          file.message(message, {
-            line: position.start.line + line,
-            column: position.start.column + column
-          });
-        });
-        resolve();
-      }
-    });
-  });
-}
-
-function lint_latex_formatResponse(response) {
-  if (response.trim() === '') {
-    return [];
-  }
-
-  function formatMessage(message) {
-    return message.replace(/'/g, '').replace(/`/g, '');
-  }
-
-  return response.split(/Warning \d+ in stdin line /).filter(Boolean).reduce((acc, s) => {
-    const [key, value] = s.split(':');
-    const line = Number(key);
-    const trimmed = value.trim();
-    const match = trimmed.match(/(.*)\n(.*)\n(\s*)\^/m);
-
-    if (Array.isArray(match)) {
-      const message = formatMessage(match[1]);
-      acc.push({
-        line,
-        column: match[3].length,
-        message: `${message}\n\n${match[2]}\n${match[3]}^`
-      });
-    } else {
-      acc.push({
-        line,
-        column: 0,
-        message: formatMessage(trimmed)
-      });
-    }
-
-    return acc;
-  }, []);
-}
-;// CONCATENATED MODULE: external "figures"
-const external_figures_namespaceObject = require("figures");
-var external_figures_default = /*#__PURE__*/__webpack_require__.n(external_figures_namespaceObject);
-;// CONCATENATED MODULE: ./src/linter/report.ts
-
-
-
-function printReport(files, ctx) {
-  const {
-    reportOnlyErrors,
-    shouldFail
-  } = ctx.options;
-
-  if (reportOnlyErrors && shouldFail) {
-    return;
-  }
-
-  for (const file of files) {
-    // console.log(file.messages);
-    const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
-
-    if (messages.length !== 0) {
-      // if (file.path !== undefined) {
-      //   console.log(`\n${getFilePath(file.path)}`);
-      // }
-      messages.map(printMessage);
-    }
-  }
-}
-function reportHasFatalErrors(files, ctx) {
-  return files.some(file => file.messages.some(message => message.status === message_MessageStatus.fail));
-}
-function reportHasWarnings(files, ctx) {
-  return files.some(file => file.messages.some(message => message.status === MessageStatus.warning));
-}
-
-function failingMessages(messages) {
-  return messages.filter(o => o.status === message_MessageStatus.fail);
-}
-
-function printMessage(message) {
-  // console.log(message);
-  const status = message.status;
-  const position = external_chalk_default().grey(`${message.line}:${message.column}`);
-  const reason = formatReason(message.reason, status);
-  console.log(`${formatStatus(status)}  ${position}  ${reason}`);
-} // function getFilePath(filePath: string) {
-//   return path.isAbsolute(filePath)
-//     ? filePath
-//     : path.join(process.cwd(), filePath);
-// }
-
-
-function formatStatus(status) {
-  const statusColour = getStatusColour(status);
-
-  switch (status) {
-    case message_MessageStatus.fail:
-      return statusColour((external_figures_default()).cross);
-
-    default:
-      return statusColour((external_figures_default()).warning);
-    // TODO: fail on unsupported status?
-  }
-}
-
-function formatReason(reason, status) {
-  const statusColour = getStatusColour(status);
-  const [first, ...rest] = reason.split('\n');
-  const formattedFirst = statusColour(first);
-  const formattedRest = rest.map(line => external_chalk_default().grey(line));
-  return [formattedFirst, ...formattedRest].join('\n');
-}
-
-function getStatusColour(status) {
-  switch (status) {
-    case message_MessageStatus.fail:
-      return (external_chalk_default()).red;
-
-    default:
-      return (external_chalk_default()).yellow;
-  }
-}
-;// CONCATENATED MODULE: ./src/linter/index.ts
-function linter_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function linter_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { linter_ownKeys(Object(source), true).forEach(function (key) { linter_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { linter_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-// @ts-expect-error
- // @ts-expect-error
-
- // @ts-expect-error
-
- // @ts-expect-error
-
- // @ts-expect-error
-
- // @ts-expect-error
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function linter(unit, ctx) {
-  await Promise.all(unit.files.map(file => createReport(file, unit, ctx)));
-}
-function linter_reportErrors(files, ctx) {
-  if (reportHasFatalErrors(files, ctx)) {
-    if (ctx.options.noReport) {
-      printReport(files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
-        options: linter_objectSpread(linter_objectSpread({}, ctx.options), {}, {
-          reportOnlyErrors: true
-        })
-      }));
-    } else {
-      printReport(files, ctx);
-    }
-
-    console.log('Report has fatal errors');
-
-    if (ctx.options.force) {
-      console.log('Compiling using force option...');
-    } else {
-      process.exit();
-    }
-  }
-}
-
-async function createReport(file, unit, ctx) {
-  const preParsed = preParsePhase(file);
-  const contents = preParsed.contents; // simple regex tests
-
-  assertNoTexTabular(contents, file);
-  assertNoKbl(contents, file);
-  assertNoOutWidthHeight(contents, file);
-  const mdast = await mdastPhase(contents, unit, ctx);
-  const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
-
-  if (ctx.options.spelling) {
-    const retextProcessor = unified_default()().use((external_retext_english_default())).use((external_retext_spell_default()), {
-      dictionary: (external_dictionary_en_gb_default()),
-      max: 1
-    });
-    processor.use((external_remark_retext_default()), retextProcessor);
-  }
-
-  await processor.run(mdast, file);
-}
-;// CONCATENATED MODULE: external "puppeteer"
-const external_puppeteer_namespaceObject = require("puppeteer");
-var external_puppeteer_default = /*#__PURE__*/__webpack_require__.n(external_puppeteer_namespaceObject);
-;// CONCATENATED MODULE: ./src/pdf/index.ts
- // const footerTemplate = `
-//   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
-//     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
-//   </div>
-// `;
-
-async function convertToPdf(html) {
-  const browser = await external_puppeteer_default().launch({
-    headless: true
-  });
-  const page = await browser.newPage();
-  await page.setContent(html);
-  await page.evaluateHandle('document.fonts.ready');
-  const pdf = await page.pdf({
-    format: 'a4',
-    printBackground: true,
-    // displayHeaderFooter: true,
-    // footerTemplate,
-    margin: {
-      top: '20px',
-      left: '40px',
-      right: '40px',
-      bottom: '40px'
-    }
-  });
-  await browser.close();
-  return pdf;
-}
 ;// CONCATENATED MODULE: ./src/build-unit.ts
 function build_unit_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
@@ -2872,105 +2844,79 @@ function build_unit_objectSpread(target) { for (var i = 1; i < arguments.length;
 
 function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import { Code } from 'mdast';
-// import directive from 'remark-directive';
-// import frontmatter from 'remark-frontmatter';
-// import gfm from 'remark-gfm';
-// import markdown from 'remark-parse';
-// import remarkStringify from 'remark-stringify';
-// @ts-expect-error
-// import unified from 'unified';
-// import { Node } from 'unist';
-// import visit from 'unist-util-visit';
 
 
 
 
 
- // import { embedAssetUrl } from './mdast/embed-asset-url';
+
+
+
+
 
 
 
 async function buildUnit(unit, ctx) {
-  await linter(unit, ctx);
   const mdasts = [];
 
   for (const file of unit.files) {
-    await inSituTransforms(file, ctx);
-    const mdast = await mdastPhase2(file, ctx);
+    const mdast = await inSituTransforms(file, ctx);
+    await createReport2(file, mdast, ctx);
     mdasts.push(mdast);
-  } // const transformed = await contextTransforms(unit, ctx);
-  // const combined = combineMdFiles(unit);
-  // const combined = [...unit.files, transformed];
-  // const md = combined.contents as string;
+  }
 
-
-  const mdast = {
-    type: 'root',
-    children: mdasts.flatMap(o => o.children)
-  };
+  const mdast = build_unit_combineMdastTrees(mdasts);
+  const unifiedFile = vfile_default()();
   const result = {
     unit,
-    combined: [],
-    md: ''
+    md: combineMdFiles(unit),
+    files: [...unit.files, unifiedFile]
   };
 
   if (!ctx.options.noHtml) {
-    result.html = await syntaxTreeTransforms(mdast, unit, ctx);
+    result.html = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx);
   }
 
   if (!ctx.options.noPdf) {
-    const transformed = await syntaxTreeTransforms(mdast, unit, ctx, true);
+    const transformed = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx, true);
     result.pdf = build_unit_objectSpread(build_unit_objectSpread({}, transformed), {}, {
       pdf: await convertToPdf(transformed.html)
     });
+  }
+
+  if (!ctx.options.noReport) {
+    linter_reportErrors(result.files, ctx);
   }
 
   return result;
 }
 
 async function inSituTransforms(file, ctx) {
+  // simple regex tests
+  assertNoTexTabular(file);
+  assertNoKbl(file);
+  assertNoOutWidthHeight(file);
   await knitr(file, ctx);
   preParsePhase(file);
-  texToAliasDirective(file, ctx); // const processor = unified()
-  //   // third-party plugins:
-  //   .use(markdown)
-  //   .use(directive)
-  //   .use(gfm)
-  //   .use(frontmatter)
-  //   .use(remarkStringify, { resourceLink: true })
-  //   // custom plugins:
-  //   // .use(escapeDollarsInCodeBlocks)
-  //   .use(embedAssetUrl);
-  // function escapeDollarsInCodeBlocks() {
-  //   return async (tree: Node) => {
-  //     visit<Code>(tree, 'code', (node) => {
-  //       node.value = node.value.replace(/\$/g, '\\$');
-  //     });
-  //   };
-  // }
-  // await processor.process(preParsed);
+  texToAliasDirective(file, ctx);
+  const mdast = await mdastPhase2(file, ctx);
+  return mdast;
+}
 
-  linter_reportErrors([file], ctx); // return mdast;
-} // async function contextTransforms(unit: Unit, ctx: Context) {
-//   const file = VFile(unit.files.map((o) => o.contents).join('\n\n'));
-//   // const preParsed = preParsePhase(file);
-//   const withTexAlias =
-//   reportErrors([file], ctx);
-//   return withTexAlias;
-// }
-// function combineMdFiles(unit: Unit) {
-//   return VFile(unit.files.map((o) => o.contents).join('\n\n'));
-// }
+function combineMdFiles(unit) {
+  return unit.files.map(o => o.contents).join('\n\n');
+}
 
+function build_unit_combineMdastTrees(mdasts) {
+  return {
+    type: 'root',
+    children: mdasts.flatMap(o => o.children)
+  };
+}
 
-async function syntaxTreeTransforms(mdast, unit, ctx, targetPdf) {
-  // TODO: use the same VFile for each phase!!!
-  // const mdast = await mdastPhase(md, unit, ctx, targetPdf);
-  const hast = await hastPhase(mdast, unit, ctx, targetPdf);
-  const html = await htmlPhase(hast, mdast, unit, ctx, targetPdf); // const file = toVFile({ contents: md });
-  // reportErrors([file], ctx);
-
+async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
+  const hast = await hastPhase(mdast, ctx, file, targetPdf);
+  const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
     mdast,
     hast,
@@ -3098,23 +3044,28 @@ async function rMarkdown(dirPath, options = {}) {
     // write single week
     const idx = ctx.options.week - 1;
     const input = ctx.course.units[idx];
-    const unit = await writeUnit(input, ctx, timer);
-    result.push(unit);
+    const built = await buildUnit(input, ctx);
+    await writeUnit(built, ctx, timer);
+    result.push(built);
   } else {
     // write full course
     for (const input of ctx.course.units) {
-      const unit = await writeUnit(input, ctx, timer);
-      result.push(unit);
+      const built = await buildUnit(input, ctx);
+      await writeUnit(built, ctx, timer);
+      result.push(built);
     }
   }
 
   return result;
 }
 
-async function writeUnit(unit, ctx, timer) {
-  const built = await buildUnit(unit, ctx);
+async function writeUnit(built, ctx, timer) {
+  if (ctx.options.noWrite) {
+    return;
+  }
+
   await mkdir(ctx.buildDir);
-  const filePath = external_path_default().join(ctx.buildDir, unit.titles.fileName);
+  const filePath = external_path_default().join(ctx.buildDir, built.unit.titles.fileName);
 
   if (built.html) {
     await writeFile(filePath + '.html', built.html.html);
@@ -3129,8 +3080,6 @@ async function writeUnit(unit, ctx, timer) {
     const status = external_chalk_default().green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }
-
-  return built;
 }
 
 /***/ }),
@@ -3209,7 +3158,7 @@ function convertMacroToDirective(contents) {
 }
 
 function parseCustomContainer(line) {
-  const match = line.match(/^#{1,6}\s*\[(.+)](.*)/);
+  const match = line.match(/^#{1,6}\s*\[(\D.+)](.*)/);
 
   if (!Array.isArray(match)) {
     return null;
@@ -12731,8 +12680,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 94 modules
-var src = __webpack_require__(3426);
+// EXTERNAL MODULE: ./src/index.ts + 95 modules
+var src = __webpack_require__(9036);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

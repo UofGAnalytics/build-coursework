@@ -1,4 +1,5 @@
 import {
+  ignoreWhitespace,
   testProcessor,
   unindentString,
 } from '../../test-utils/test-processor';
@@ -156,5 +157,17 @@ describe('weblink', () => {
     `);
 
     expect(html).toBe(expected);
+  });
+
+  it('should render LaTeX in a title', async () => {
+    const { html } = await testProcessor(`
+      ###[theorem] Sampling/asymptotic distribution of $X^2$
+      Bla bla
+      ###[/theorem]
+    `);
+
+    const expected = '<h3>Sampling/asymptotic distribution of <svg';
+
+    expect(ignoreWhitespace(html)).toContain(ignoreWhitespace(expected));
   });
 });

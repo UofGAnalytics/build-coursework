@@ -1,4 +1,4 @@
-import { Element, Literal } from 'hast';
+import { Element, Text } from 'hast';
 import { startCase } from 'lodash';
 import toHast from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
@@ -20,6 +20,7 @@ export function boxouts() {
         case 'background':
         case 'definition':
         case 'weblink':
+        case 'theorem':
         case 'task':
         case 'answer': {
           const name = node.name as string;
@@ -54,7 +55,7 @@ export function createBoxout(
   const titles = [typeTitle];
 
   const titleValue = getTitleValue(node);
-  if (titleValue !== null) {
+  if (titleValue.length > 0) {
     const title = createTitle(node);
     titles.push(title);
   }
@@ -141,20 +142,19 @@ function createTitle(node: ContainerDirective): Element {
   return {
     type: 'element',
     tagName: 'h3',
-    children: createTitleValue(node),
+    children: createTitleValue(node) as Element['children'],
   };
 }
 
-function createTitleValue(node: ContainerDirective): Element['children'] {
+function createTitleValue(node: ContainerDirective) {
   const name = node.name as string;
-  const title = getTitleValue(node) || '';
+  const newRoot = {
+    type: 'root',
+    children: getTitleValue(node),
+  };
+  const { children = [] } = toHast(newRoot) as Parent;
   if (name !== 'weblink') {
-    return [
-      {
-        type: 'text',
-        value: title,
-      },
-    ];
+    return children;
   }
   const { target } = node.attributes as Record<string, string>;
   return [
@@ -166,35 +166,29 @@ function createTitleValue(node: ContainerDirective): Element['children'] {
         target: '_blank',
         className: ['target'],
       },
-      children: [
-        {
-          type: 'text',
-          value: title,
-        },
-      ],
+      children,
     },
   ];
 }
 
-function getTitleValue(node: ContainerDirective) {
+function getTitleValue(node: ContainerDirective): Node[] {
   const children = (node.children || []) as Node[];
   const parent = (children[0] || {}) as Parent;
 
   if (!parent.data?.directiveLabel) {
     if (node.name === 'weblink') {
       const attributes = node.attributes as Record<string, string>;
-      return attributes.target;
+      return [
+        {
+          type: 'text',
+          value: attributes.target,
+        } as Text,
+      ];
     }
-    return null;
+    return [];
   }
 
-  const parentChildren = (parent.children || []) as Node[];
-  const firstChild = (parentChildren[0] || {}) as Literal;
-  if (typeof firstChild.value !== 'string') {
-    return null;
-  }
-
-  return String(firstChild.value);
+  return parent.children || [];
 }
 
 export type Counter = {
