@@ -1,14 +1,8 @@
-import { rMarkdown } from '../..';
+import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 
 describe('embedAssetUrl', () => {
   it('should embed asset URL for knitr graphics', async () => {
-    const result = await rMarkdown('./fixtures/relative-assets', {
-      noDoc: true,
-      noCache: true,
-      noPdf: true,
-      noReport: true,
-    });
-
-    console.log(result);
+    const { html } = await fixtureTestProcessor('relative-assets');
+    expect(html).toContain('<img src="data:image/png;base64');
   });
 });

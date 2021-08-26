@@ -4,6 +4,7 @@ import lintAltText from '@double-great/remark-lint-alt-text';
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
 import dictionary from 'dictionary-en-gb';
+import { Parent as MdastParent } from 'mdast';
 // @ts-expect-error
 import remark2retext from 'remark-retext';
 // @ts-expect-error
@@ -14,25 +15,13 @@ import unified from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { Unit } from '../course/types';
-import { mdastPhase } from '../mdast';
-import { preParsePhase } from '../pre-parse';
 import { assertAssetExists } from './assert-asset-exists';
 import { assertNoH1 } from './assert-no-h1';
-import { assertNoKbl } from './assert-no-kbl';
-import { assertNoOutWidthHeight } from './assert-no-out-width-height';
-import { assertNoTexTabular } from './assert-no-tex-tabular';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
 import { assertWeblinkTarget } from './assert-weblink-target';
 import { lintLatex } from './lint-latex';
 import { printReport, reportHasFatalErrors } from './report';
-
-export async function linter(unit: Unit, ctx: Context) {
-  await Promise.all(
-    unit.files.map((file) => createReport(file, unit, ctx))
-  );
-}
 
 export function reportErrors(files: VFile[], ctx: Context) {
   if (reportHasFatalErrors(files, ctx)) {
@@ -56,17 +45,11 @@ export function reportErrors(files: VFile[], ctx: Context) {
   }
 }
 
-async function createReport(file: VFile, unit: Unit, ctx: Context) {
-  const preParsed = preParsePhase(file);
-  const contents = preParsed.contents as string;
-
-  // simple regex tests
-  assertNoTexTabular(contents, file);
-  assertNoKbl(contents, file);
-  assertNoOutWidthHeight(contents, file);
-
-  const mdast = await mdastPhase(contents, unit, ctx);
-
+export async function createReport2(
+  file: VFile,
+  mdast: MdastParent,
+  ctx: Context
+) {
   const processor = unified()
     .use(assertAssetExists)
     .use(assertVideoAttributes)

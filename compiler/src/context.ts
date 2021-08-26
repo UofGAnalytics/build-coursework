@@ -17,6 +17,7 @@ export type Options = {
   shouldFail?: boolean;
   spelling?: boolean;
   force?: boolean;
+  noWrite?: boolean;
 };
 
 export type Context = {

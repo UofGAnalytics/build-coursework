@@ -2,7 +2,8 @@ import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';
 
-export function assertNoOutWidthHeight(md: string, file: VFile) {
+export function assertNoOutWidthHeight(file: VFile) {
+  const md = file.contents as string;
   md.split('\n').forEach((line, idx) => {
     if (/{.*?out.width/.test(line) || /{.*?out.height/.test(line)) {
       failMessage(

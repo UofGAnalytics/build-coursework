@@ -2,9 +2,8 @@ import path from 'path';
 
 import chalk from 'chalk';
 
-import { buildUnit } from './build-unit';
+import { BuiltUnit, buildUnit } from './build-unit';
 import { Context, Options, createContext } from './context';
-import { Unit } from './course/types';
 import { Timer, createTimer } from './utils/timer';
 import { mkdir, writeFile } from './utils/utils';
 
@@ -18,24 +17,28 @@ export async function rMarkdown(dirPath: string, options: Options = {}) {
     // write single week
     const idx = ctx.options.week - 1;
     const input = ctx.course.units[idx];
-    const unit = await writeUnit(input, ctx, timer);
-    result.push(unit);
+    const built = await buildUnit(input, ctx);
+    await writeUnit(built, ctx, timer);
+    result.push(built);
   } else {
     // write full course
     for (const input of ctx.course.units) {
-      const unit = await writeUnit(input, ctx, timer);
-      result.push(unit);
+      const built = await buildUnit(input, ctx);
+      await writeUnit(built, ctx, timer);
+      result.push(built);
     }
   }
 
   return result;
 }
 
-async function writeUnit(unit: Unit, ctx: Context, timer: Timer) {
-  const built = await buildUnit(unit, ctx);
+async function writeUnit(built: BuiltUnit, ctx: Context, timer: Timer) {
+  if (ctx.options.noWrite) {
+    return;
+  }
 
   await mkdir(ctx.buildDir);
-  const filePath = path.join(ctx.buildDir, unit.titles.fileName);
+  const filePath = path.join(ctx.buildDir, built.unit.titles.fileName);
 
   if (built.html) {
     await writeFile(filePath + '.html', built.html.html);
@@ -52,6 +55,4 @@ async function writeUnit(unit: Unit, ctx: Context, timer: Timer) {
     const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }
-
-  return built;
 }

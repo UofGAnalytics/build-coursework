@@ -5,7 +5,8 @@ import { failMessage } from '../utils/message';
 // TODO: could possibly try converting to array here
 // https://stackoverflow.com/questions/51803244
 
-export function assertNoTexTabular(md: string, file: VFile) {
+export function assertNoTexTabular(file: VFile) {
+  const md = file.contents as string;
   md.split('\n').forEach((line, idx) => {
     if (line.includes('\\begin{tabular}')) {
       failMessage(

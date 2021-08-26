@@ -22,15 +22,15 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   const unit = {
     md: '',
+    files: [] as VFile[],
     mdast: {} as MDastParent,
     hast: {} as HastParent,
     html: '',
-    combined: [] as VFile[],
   };
   try {
     const result = await buildUnit(unitFile, ctx);
     unit.md = result.md;
-    unit.combined = [file, ...result.combined];
+    unit.files = result.files;
     if (result.html) {
       unit.mdast = result.html.mdast;
       unit.hast = result.html.hast;
@@ -44,8 +44,8 @@ export async function testProcessor(md: string, options: Options = {}) {
     console.error(err);
   }
 
-  const hasFailingMessage = createHasFailingMessage(ctx, unit.combined);
-  const hasWarningMessage = createHasWarningMessage(ctx, unit.combined);
+  const hasFailingMessage = createHasFailingMessage(ctx, unit.files);
+  const hasWarningMessage = createHasWarningMessage(ctx, unit.files);
 
   return { file, hasFailingMessage, hasWarningMessage, ...unit };
 }

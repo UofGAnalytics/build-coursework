@@ -15,7 +15,6 @@ import unified from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { Unit } from '../course/types';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 import { createSvg } from '../utils/icons';
 import { boxouts } from './boxouts';
@@ -51,49 +50,6 @@ export async function mdastPhase2(file: VFile, ctx: Context) {
     .use(images)
     .use(pagebreaks);
 
-  // if (targetPdf) {
-  //   processor.use(moveAnswersToEnd);
-  // }
-
-  // const file = toVFile({ contents: md });
-  const parsed = processor.parse(file) as Parent;
-  return processor.run(parsed, file) as Promise<Parent>;
-}
-
-export async function mdastPhase(
-  md: string,
-  unit: Unit,
-  ctx: Context,
-  targetPdf?: boolean
-) {
-  // https://github.com/unifiedjs/unified
-  // convert markdown to syntax tree: complex transforms
-  // should be more robust and straightforward
-  const processor = unified()
-    // third-party plugins:
-    .use(markdown)
-    .use(directive)
-    .use(gfm)
-    .use(frontmatter)
-    .use(sectionize)
-    .use(slug)
-    .use(headings, {
-      content: createSvg('link-icon'),
-      linkProperties: { className: 'link' },
-    })
-    // custom plugins:
-    .use(youtubeVideos)
-    .use(aliasDirectiveToSvg, ctx)
-    .use(codeBlocks, ctx)
-    .use(boxouts)
-    .use(images)
-    .use(pagebreaks);
-
-  // if (targetPdf) {
-  //   processor.use(moveAnswersToEnd);
-  // }
-
-  const file = toVFile({ contents: md });
   const parsed = processor.parse(file) as Parent;
   return processor.run(parsed, file) as Promise<Parent>;
 }

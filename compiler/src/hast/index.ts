@@ -3,17 +3,17 @@ import { Parent as MDastParent } from 'mdast';
 import rehypeRaw from 'rehype-raw';
 import remark2rehype from 'remark-rehype';
 import unified from 'unified';
+import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { Unit } from '../course/types';
 import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 import { embedAssets } from './embed-assets';
 import { responsiveTables } from './responsive-tables';
 
 export async function hastPhase(
   mdast: MDastParent,
-  unit: Unit,
   ctx: Context,
+  file: VFile,
   targetPdf?: boolean
 ) {
   const processor = unified()
@@ -31,5 +31,5 @@ export async function hastPhase(
     processor.use(embedAssets, ctx);
   }
 
-  return processor.run(mdast) as Promise<HastParent>;
+  return processor.run(mdast, file) as Promise<HastParent>;
 }

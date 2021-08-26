@@ -7,6 +7,7 @@ import doc, { Options } from 'rehype-document';
 import format from 'rehype-format';
 import stringify from 'rehype-stringify';
 import unified from 'unified';
+import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
@@ -17,6 +18,7 @@ import { htmlWrapper } from './wrapper';
 export async function htmlPhase(
   hast: HastParent,
   mdast: MdastParent,
+  file: VFile,
   unit: Unit,
   ctx: Context,
   targetPdf?: boolean
@@ -48,7 +50,7 @@ export async function htmlPhase(
     processor.use(doc, docOptions);
   }
 
-  const result = await processor.run(hast);
+  const result = await processor.run(hast, file);
 
-  return processor.stringify(result);
+  return processor.stringify(result, file);
 }

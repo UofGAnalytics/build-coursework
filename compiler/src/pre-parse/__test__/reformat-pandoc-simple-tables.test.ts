@@ -9,6 +9,8 @@ describe('reformatPandocSimpleTables', () => {
   // slightly different spacing near the end of lines which makes no
   // actual difference
 
+  it('WINDOWS TEST', async () => {});
+
   it('should reformat pandoc simple tables to markdown tables', async () => {
     const { html } = await testProcessor(`
       Movie                            Gross       Budget
