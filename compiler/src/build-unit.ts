@@ -10,8 +10,8 @@ import { knitr } from './knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
 import { createReport2, reportErrors } from './linter';
 import { assertNoKbl } from './linter/assert-no-kbl';
-import { assertNoOutWidthHeight } from './linter/assert-no-out-width-height';
 import { assertNoTexTabular } from './linter/assert-no-tex-tabular';
+import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 import { mdastPhase2 } from './mdast';
 import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
@@ -84,7 +84,7 @@ async function inSituTransforms(file: VFileType, ctx: Context) {
   // simple regex tests
   assertNoTexTabular(file);
   assertNoKbl(file);
-  assertNoOutWidthHeight(file);
+  warnOnIncludeGraphics(file);
 
   await knitr(file, ctx);
   preParsePhase(file);

@@ -31,7 +31,7 @@ function removeCommentedSections(md: string) {
 }
 
 function escapeDollarsInCodeBlocks(md: string) {
-  return md.replace(/(```.+?```)/gms, (match) =>
-    match.replace(/\$/g, '\\$')
-  );
+  return md.replace(/(```.+?```)/gms, (match) => {
+    return match.replace(/\$/g, '\\$');
+  });
 }

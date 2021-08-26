@@ -1,4 +1,5 @@
-import { Image } from 'mdast';
+import { Element } from 'hast';
+import { Image, Text } from 'mdast';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 
@@ -29,30 +30,45 @@ function template(node: Image, count: number) {
           },
           children: [],
         },
-        {
-          type: 'element',
-          tagName: 'figcaption',
-          children: [
-            {
-              type: 'element',
-              tagName: 'span',
-              properties: {
-                className: 'caption-count',
-              },
-              children: [
-                {
-                  type: 'text',
-                  value: `Figure ${count}:`,
-                },
-              ],
-            },
-            {
-              type: 'text',
-              value: ` ${node.alt}`,
-            },
-          ],
-        },
+        createCaption(node, count),
       ],
     },
   });
+}
+
+function createCaption(node: Image, count: number) {
+  const result: Element = {
+    type: 'element',
+    tagName: 'figcaption',
+    children: [
+      {
+        type: 'element',
+        tagName: 'span',
+        properties: {
+          className: 'caption-count',
+        },
+        children: [
+          {
+            type: 'text',
+            value: `Figure ${count}`,
+          },
+        ],
+      },
+    ],
+  };
+
+  const altText = node.alt || '';
+
+  if (altText !== '' && !altText.includes('unnamed-chunk')) {
+    const currentCaption = result.children[
+      result.children.length - 1
+    ] as Text;
+    currentCaption.value += ':';
+    result.children.push({
+      type: 'text',
+      value: `${node.alt}`,
+    });
+  }
+
+  return result;
 }

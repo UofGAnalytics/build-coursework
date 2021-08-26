@@ -117,7 +117,7 @@ function getYoutubeUrl(id: string) {
 }
 
 function getYoutubeThumbnailUrl(id: string) {
-  return `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+  return `http://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 
 function formatDuration(duration: string = '') {

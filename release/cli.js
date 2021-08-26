@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 9036:
+/***/ 4360:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1933,13 +1933,15 @@ function assertNoKbl(file) {
     }
   });
 }
-;// CONCATENATED MODULE: ./src/linter/assert-no-out-width-height.ts
+;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
 
-function assertNoOutWidthHeight(file) {
+function assertNoTexTabular(file) {
   const md = file.contents;
   md.split('\n').forEach((line, idx) => {
-    if (/{.*?out.width/.test(line) || /{.*?out.height/.test(line)) {
-      failMessage(file, 'knitr properties out.width and out.height are not supported', {
+    if (line.includes('\\begin{tabular}')) {
+      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
         start: {
           line: idx + 1,
           column: 0
@@ -1952,15 +1954,13 @@ function assertNoOutWidthHeight(file) {
     }
   });
 }
-;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
- // TODO: could possibly try converting to array here
-// https://stackoverflow.com/questions/51803244
+;// CONCATENATED MODULE: ./src/linter/warn-on-include-graphics.ts
 
-function assertNoTexTabular(file) {
+function warnOnIncludeGraphics(file) {
   const md = file.contents;
   md.split('\n').forEach((line, idx) => {
-    if (line.includes('\\begin{tabular}')) {
-      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
+    if (line.includes('include_graphics')) {
+      warnMessage(file, 'Use markdown syntax instead of knitr::include_graphics to embed images: ![Alt text](image.png).  If knitr::include_graphics is necessary, use without out.width, out.height and fig.align knitr chunk properties.', {
         start: {
           line: idx + 1,
           column: 0
@@ -2469,26 +2469,39 @@ function template(node, count) {
           alt: node.alt
         },
         children: []
-      }, {
-        type: 'element',
-        tagName: 'figcaption',
-        children: [{
-          type: 'element',
-          tagName: 'span',
-          properties: {
-            className: 'caption-count'
-          },
-          children: [{
-            type: 'text',
-            value: `Figure ${count}:`
-          }]
-        }, {
-          type: 'text',
-          value: ` ${node.alt}`
-        }]
-      }]
+      }, createCaption(node, count)]
     }
   });
+}
+
+function createCaption(node, count) {
+  const result = {
+    type: 'element',
+    tagName: 'figcaption',
+    children: [{
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: 'caption-count'
+      },
+      children: [{
+        type: 'text',
+        value: `Figure ${count}`
+      }]
+    }]
+  };
+  const altText = node.alt || '';
+
+  if (altText !== '' && !altText.includes('unnamed-chunk')) {
+    const currentCaption = result.children[result.children.length - 1];
+    currentCaption.value += ':';
+    result.children.push({
+      type: 'text',
+      value: `${node.alt}`
+    });
+  }
+
+  return result;
 }
 ;// CONCATENATED MODULE: ./src/mdast/pagebreaks.ts
 
@@ -2599,7 +2612,7 @@ function getYoutubeUrl(id) {
 }
 
 function getYoutubeThumbnailUrl(id) {
-  return `http://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+  return `http://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 
 function formatDuration(duration = '') {
@@ -2835,7 +2848,9 @@ function removeCommentedSections(md) {
 }
 
 function escapeDollarsInCodeBlocks(md) {
-  return md.replace(/(```.+?```)/gms, match => match.replace(/\$/g, '\\$'));
+  return md.replace(/(```.+?```)/gms, match => {
+    return match.replace(/\$/g, '\\$');
+  });
 }
 ;// CONCATENATED MODULE: ./src/build-unit.ts
 function build_unit_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
@@ -2895,7 +2910,7 @@ async function inSituTransforms(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
   assertNoKbl(file);
-  assertNoOutWidthHeight(file);
+  warnOnIncludeGraphics(file);
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
@@ -12681,7 +12696,7 @@ var __webpack_exports__ = {};
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
 // EXTERNAL MODULE: ./src/index.ts + 95 modules
-var src = __webpack_require__(9036);
+var src = __webpack_require__(4360);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
