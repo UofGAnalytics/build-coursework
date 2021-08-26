@@ -1,8 +1,10 @@
+import { EOL } from 'os';
+
 // @ts-expect-error
 import markdownTable from 'markdown-table';
 
 export function reformatPandocSimpleTables(contents: string) {
-  const lines = contents.split('\n');
+  const lines = contents.split(EOL);
 
   // operate on array backwards as length may change with transformation,
   // preserving index in loop
@@ -17,7 +19,7 @@ export function reformatPandocSimpleTables(contents: string) {
     }
   }
 
-  return lines.join('\n');
+  return lines.join(EOL);
 }
 
 function isValidPandocSimpleTableSeparator(line: string, idx: number) {
@@ -31,7 +33,7 @@ function convertLines(lines: string[]) {
   const table = parseTable(lines);
   const align = getColumnAlignment(table[0]);
   const result = markdownTable(table, { align });
-  return [...result.split('\n'), ''];
+  return [...result.split(EOL), ''];
 }
 
 function getTableBounds(arr: string[], idx: number) {
