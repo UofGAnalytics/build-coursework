@@ -1,9 +1,14 @@
 import {
+  ignoreWhitespace,
   testProcessor,
   unindentString,
 } from '../../test-utils/test-processor';
 
 describe('reformatPandocSimpleTables', () => {
+  // ignoreWhitespace used in these tests as windows appears to have
+  // slightly different spacing near the end of lines which makes no
+  // actual difference
+
   it('should reformat pandoc simple tables to markdown tables', async () => {
     const { md } = await testProcessor(`
       Movie                            Gross       Budget
@@ -27,7 +32,7 @@ describe('reformatPandocSimpleTables', () => {
       | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
     `);
 
-    expect(md.trim()).toBe(expected.trim());
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should reformat pandoc simple tables to markdown tables with LaTeX', async () => {
@@ -54,7 +59,7 @@ describe('reformatPandocSimpleTables', () => {
       | Logistic regression model | :inlineMath[4] :inlineMath[5]          | :inlineMath[6] | Logit link: :inlineMath[7] |
     `);
 
-    expect(md.trim()).toBe(expected.trim());
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should reformat pandoc simple tables to markdown tables with macro syntax after', async () => {
@@ -78,7 +83,7 @@ describe('reformatPandocSimpleTables', () => {
       :::weblink{target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng" icon=book}
     `);
 
-    expect(md.trim()).toBe(expected.trim());
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
   it('should be idempotent', async () => {
@@ -106,6 +111,6 @@ describe('reformatPandocSimpleTables', () => {
       | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
     `);
 
-    expect(md2.trim()).toBe(expected.trim());
+    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
   });
 });
