@@ -10,7 +10,7 @@ describe('reformatPandocSimpleTables', () => {
   // actual difference
 
   it('should reformat pandoc simple tables to markdown tables', async () => {
-    const { md } = await testProcessor(`
+    const { html } = await testProcessor(`
       Movie                            Gross       Budget
       -------------------------------- ----------- -----------
         Ek Villain                       95.64       36.0
@@ -22,17 +22,52 @@ describe('reformatPandocSimpleTables', () => {
     `);
 
     const expected = unindentString(`
-      | Movie                            | Gross       | Budget |
-      | :------------------------------- | :---------- | :----- |
-      | Ek Villain                       | 95.64       | 36.0   |
-      | Humshakals                       | 55.65       | 77.0   |
-      | Holiday                          | 110.01      | 90.0   |
-      | Fugly                            | 11.16       | 16.0   |
-      | City Lights                      | 5.19        | 9.5    |
-      | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th align="left">Movie</th>
+              <th align="left">Gross</th>
+              <th align="left">Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left">Ek Villain</td>
+              <td align="left">95.64</td>
+              <td align="left">36.0</td>
+            </tr>
+            <tr>
+              <td align="left">Humshakals</td>
+              <td align="left">55.65</td>
+              <td align="left">77.0</td>
+            </tr>
+            <tr>
+              <td align="left">Holiday</td>
+              <td align="left">110.01</td>
+              <td align="left">90.0</td>
+            </tr>
+            <tr>
+              <td align="left">Fugly</td>
+              <td align="left">11.16</td>
+              <td align="left">16.0</td>
+            </tr>
+            <tr>
+              <td align="left">City Lights</td>
+              <td align="left">5.19</td>
+              <td align="left">9.5</td>
+            </tr>
+            <tr>
+              <td align="left">Kuku Mathur Ki Jhand Ho Gayi</td>
+              <td align="left">2.23</td>
+              <td align="left">4.5</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     `);
 
-    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+    expect(html).toBe(expected);
   });
 
   it('should reformat pandoc simple tables to markdown tables with LaTeX', async () => {
@@ -98,19 +133,54 @@ describe('reformatPandocSimpleTables', () => {
         Kuku Mathur Ki Jhand Ho Gayi      2.23        4.5
     `);
 
-    const { md: md2 } = await testProcessor(md);
+    const { html } = await testProcessor(md);
 
     const expected = unindentString(`
-      | Movie                            | Gross       | Budget |
-      | :------------------------------- | :---------- | :----- |
-      | Ek Villain                       | 95.64       | 36.0   |
-      | Humshakals                       | 55.65       | 77.0   |
-      | Holiday                          | 110.01      | 90.0   |
-      | Fugly                            | 11.16       | 16.0   |
-      | City Lights                      | 5.19        | 9.5    |
-      | Kuku Mathur Ki Jhand Ho Gayi     | 2.23        | 4.5    |
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th align="left">Movie</th>
+              <th align="left">Gross</th>
+              <th align="left">Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left">Ek Villain</td>
+              <td align="left">95.64</td>
+              <td align="left">36.0</td>
+            </tr>
+            <tr>
+              <td align="left">Humshakals</td>
+              <td align="left">55.65</td>
+              <td align="left">77.0</td>
+            </tr>
+            <tr>
+              <td align="left">Holiday</td>
+              <td align="left">110.01</td>
+              <td align="left">90.0</td>
+            </tr>
+            <tr>
+              <td align="left">Fugly</td>
+              <td align="left">11.16</td>
+              <td align="left">16.0</td>
+            </tr>
+            <tr>
+              <td align="left">City Lights</td>
+              <td align="left">5.19</td>
+              <td align="left">9.5</td>
+            </tr>
+            <tr>
+              <td align="left">Kuku Mathur Ki Jhand Ho Gayi</td>
+              <td align="left">2.23</td>
+              <td align="left">4.5</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     `);
 
-    expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
+    expect(html).toBe(expected);
   });
 });

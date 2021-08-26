@@ -143,7 +143,7 @@ describe('knitr', () => {
   });
 
   it('should format table correctly', async () => {
-    const { md } = await testProcessor(`
+    const { html } = await testProcessor(`
       \`\`\`{r, results = 'hide'}
       beetles <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/beetles.csv"))
       beetles
@@ -155,25 +155,67 @@ describe('knitr', () => {
     `);
 
     const expected = unindentString(`
-      \`\`\`r
-      beetles <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/beetles.csv"))
-      beetles
-      \`\`\`
-
-      |   dose| number| killed|
-      |------:|------:|------:|
-      | 1.6907|     59|      6|
-      | 1.7242|     60|     13|
-      | 1.7552|     62|     18|
-      | 1.7842|     56|     28|
-      | 1.8113|     63|     52|
-      | 1.8369|     59|     53|
-      | 1.8610|     62|     61|
-      | 1.8839|     60|     60|
-
-      Since we have grouped data (multiple beetles per dose), we can visualise the probability of the outcome of interest (beetles killed) by plotting the proportion killed for each dose against the dose. We see that the proportion killed increases with increasing dose.
+      <div class="code-wrapper">
+        <pre><code>beetles &#x3C;- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/beetles.csv"))
+      beetles</code></pre>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th align="right">dose</th>
+              <th align="right">number</th>
+              <th align="right">killed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="right">1.6907</td>
+              <td align="right">59</td>
+              <td align="right">6</td>
+            </tr>
+            <tr>
+              <td align="right">1.7242</td>
+              <td align="right">60</td>
+              <td align="right">13</td>
+            </tr>
+            <tr>
+              <td align="right">1.7552</td>
+              <td align="right">62</td>
+              <td align="right">18</td>
+            </tr>
+            <tr>
+              <td align="right">1.7842</td>
+              <td align="right">56</td>
+              <td align="right">28</td>
+            </tr>
+            <tr>
+              <td align="right">1.8113</td>
+              <td align="right">63</td>
+              <td align="right">52</td>
+            </tr>
+            <tr>
+              <td align="right">1.8369</td>
+              <td align="right">59</td>
+              <td align="right">53</td>
+            </tr>
+            <tr>
+              <td align="right">1.8610</td>
+              <td align="right">62</td>
+              <td align="right">61</td>
+            </tr>
+            <tr>
+              <td align="right">1.8839</td>
+              <td align="right">60</td>
+              <td align="right">60</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Since we have grouped data (multiple beetles per dose), we can visualise the probability of the outcome of interest (beetles killed) by plotting the proportion killed for each dose against the dose. We see that the proportion killed increases with increasing dose.</p>
     `);
-    expect(md.trim()).toBe(expected.trim());
+
+    expect(html).toBe(expected);
   });
 
   it('should display knitr output correctly', async () => {
