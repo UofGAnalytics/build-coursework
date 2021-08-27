@@ -11338,6 +11338,8 @@ function warn_on_include_graphics_warnOnIncludeGraphics(file) {
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 ;// CONCATENATED MODULE: external "remark-directive"
 const external_remark_directive_namespaceObject = require("remark-directive");
+;// CONCATENATED MODULE: external "remark-footnotes"
+const external_remark_footnotes_namespaceObject = require("remark-footnotes");
 ;// CONCATENATED MODULE: external "remark-frontmatter"
 const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
 ;// CONCATENATED MODULE: external "remark-gfm"
@@ -11983,6 +11985,7 @@ function formatDuration(duration = '') {
 
 
 
+
  // @ts-expect-error
 
 
@@ -12003,7 +12006,7 @@ async function mdast_mdastPhase2(file, ctx) {
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
   const processor = unified() // third-party plugins:
-  .use(markdown).use(directive).use(gfm).use(frontmatter).use(sectionize).use(slug).use(headings, {
+  .use(markdown).use(directive).use(gfm).use(frontmatter).use(footnotes).use(sectionize).use(slug).use(headings, {
     content: createSvg('link-icon'),
     linkProperties: {
       className: 'link'

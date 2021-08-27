@@ -3,6 +3,7 @@ import { Parent } from 'mdast';
 import normalizeHeadings from 'mdast-normalize-headings';
 import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
+import footnotes from 'remark-footnotes';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
@@ -35,6 +36,7 @@ export async function mdastPhase2(file: VFile, ctx: Context) {
     .use(directive)
     .use(gfm)
     .use(frontmatter)
+    .use(footnotes)
     .use(sectionize)
     .use(slug)
     .use(headings, {

@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 4360:
+/***/ 281:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1979,6 +1979,9 @@ var external_remark_autolink_headings_default = /*#__PURE__*/__webpack_require__
 ;// CONCATENATED MODULE: external "remark-directive"
 const external_remark_directive_namespaceObject = require("remark-directive");
 var external_remark_directive_default = /*#__PURE__*/__webpack_require__.n(external_remark_directive_namespaceObject);
+;// CONCATENATED MODULE: external "remark-footnotes"
+const external_remark_footnotes_namespaceObject = require("remark-footnotes");
+var external_remark_footnotes_default = /*#__PURE__*/__webpack_require__.n(external_remark_footnotes_namespaceObject);
 ;// CONCATENATED MODULE: external "remark-frontmatter"
 const external_remark_frontmatter_namespaceObject = require("remark-frontmatter");
 var external_remark_frontmatter_default = /*#__PURE__*/__webpack_require__.n(external_remark_frontmatter_namespaceObject);
@@ -2630,6 +2633,7 @@ function formatDuration(duration = '') {
 
 
 
+
  // @ts-expect-error
 
 
@@ -2650,7 +2654,7 @@ async function mdastPhase2(file, ctx) {
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
   const processor = unified_default()() // third-party plugins:
-  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use((external_remark_sectionize_default())).use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
+  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use((external_remark_footnotes_default())).use((external_remark_sectionize_default())).use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
     content: createSvg('link-icon'),
     linkProperties: {
       className: 'link'
@@ -12695,8 +12699,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 95 modules
-var src = __webpack_require__(4360);
+// EXTERNAL MODULE: ./src/index.ts + 96 modules
+var src = __webpack_require__(281);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
