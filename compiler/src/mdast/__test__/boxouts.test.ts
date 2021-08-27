@@ -170,4 +170,32 @@ describe('weblink', () => {
 
     expect(ignoreWhitespace(html)).toContain(ignoreWhitespace(expected));
   });
+
+  it('should render a ggplot inside', async () => {
+    const { html } = await testProcessor(`
+      ###[example] Air pollution in Glasgow
+
+      The data file \`anderstonpm10.csv\` contains daily average air pollution concentrations in Glasgow Anderston for the last three months of 2007. The pollutant measured is called particulate matter, which comprises small particles of liquid and solids that are suspended in the air. We can read in the data and plot the time series as follows:
+
+      \`\`\`{r echo=TRUE, fig.align='center', fig.width=5.5, fig.height=3}
+      library(ggplot2)
+
+      anderston <- read.csv(url("http://www.stats.gla.ac.uk/~tereza/rp/anderstonpm10.csv"))
+
+      # Create a date variable for ggplot
+      anderston$Date2 <- as.Date(anderston$Date, "%d/%m/%Y")
+
+      ggplot(anderston, aes(Date2, Glasgow.Anderston)) + geom_line(color = "#41ab5d") +
+          scale_x_date(date_labels = "%d-%b-%y", date_breaks = "2 week") +  xlab("Date") +
+          ylab("Particulate matter") + ggtitle("Pollution concentrations in Glasgow")
+
+      \`\`\`
+
+      ###[/example]
+    `);
+
+    expect(html).toMatch(
+      /<img src="(.+?)" title="plot of chunk unnamed-chunk-1"/
+    );
+  });
 });

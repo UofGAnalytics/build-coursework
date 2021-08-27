@@ -11552,9 +11552,9 @@ function createBoxout(node, count) {
     var _o$data;
 
     return !((_o$data = o.data) !== null && _o$data !== void 0 && _o$data.directiveLabel);
-  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => toHast(o), {
+  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => toHast(o, {
     allowDangerousHtml: true
-  }).filter(Boolean);
+  })).filter(Boolean);
 
   if (node.name === 'task') {
     const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');

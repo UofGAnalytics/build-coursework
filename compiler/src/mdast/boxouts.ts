@@ -65,7 +65,7 @@ export function createBoxout(
   const content = children
     .filter((o) => !o.data?.directiveLabel)
     .filter((o) => o.type !== 'containerDirective' && o.name !== 'answer')
-    .map((o) => toHast(o), { allowDangerousHtml: true })
+    .map((o) => toHast(o, { allowDangerousHtml: true }))
     .filter(Boolean);
 
   if (node.name === 'task') {
