@@ -11242,6 +11242,10 @@ function linter_defineProperty(obj, key, value) { if (key in obj) { Object.defin
 
 
 function linter_reportErrors(files, ctx) {
+  if (!ctx.options.noReport) {
+    printReport(files, ctx);
+  }
+
   if (reportHasFatalErrors(files, ctx)) {
     if (ctx.options.noReport) {
       printReport(files, linter_objectSpread(linter_objectSpread({}, ctx), {}, {
@@ -11249,8 +11253,6 @@ function linter_reportErrors(files, ctx) {
           reportOnlyErrors: true
         })
       }));
-    } else {
-      printReport(files, ctx);
     }
 
     console.log('Report has fatal errors');
@@ -11321,7 +11323,7 @@ function warn_on_include_graphics_warnOnIncludeGraphics(file) {
   const md = file.contents;
   md.split('\n').forEach((line, idx) => {
     if (line.includes('include_graphics')) {
-      warnMessage(file, 'Use markdown syntax instead of knitr::include_graphics to embed images: ![Alt text](image.png).  If knitr::include_graphics is necessary, use without out.width, out.height and fig.align knitr chunk properties.', {
+      warnMessage(file, 'knitr::include_graphics found. Properties out.width, out.height and fig.align knitr chunk properties may have no effect.', {
         start: {
           line: idx + 1,
           column: 0
@@ -11771,26 +11773,26 @@ function parseClass(node) {
 
 // import { failMessage } from '../utils/message';
 function embed_asset_url_embedAssetUrl() {
-  async function getAssetUrl(node, file) {
-    const url = node.url || '';
-    const dirname = file.dirname; // if (dirname === undefined) {
+  return async (tree, file) => {
+    const dirname = file.dirname || ''; // if (dirname === undefined) {
     //   failMessage(file, `File dirname is undefined`);
     //   return;
     // }
 
-    if (!url.startsWith('http')) {
-      const newUrl = getPath(url, dirname || ''); // console.log(newUrl);
-
-      node.url = newUrl;
-    }
-  }
-
-  return async (tree, file) => {
-    const transformations = [];
     visit(tree, 'image', node => {
-      transformations.push(getAssetUrl(node, file));
+      const url = node.url || '';
+
+      if (!url.startsWith('http')) {
+        node.url = getPath(url, dirname);
+      }
+    }); // also fix for "raw" html nodes sometimes output by knitr
+
+    visit(tree, ['html'], node => {
+      node.value = node.value.replace(/src="(.+?)"/, (...match) => {
+        const url = match[1];
+        return url.startsWith('http') ? `src="${url}"` : `src="${getPath(url, dirname)}"`;
+      });
     });
-    await Promise.all(transformations);
   };
 }
 

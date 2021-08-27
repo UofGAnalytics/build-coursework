@@ -24,6 +24,9 @@ import { lintLatex } from './lint-latex';
 import { printReport, reportHasFatalErrors } from './report';
 
 export function reportErrors(files: VFile[], ctx: Context) {
+  if (!ctx.options.noReport) {
+    printReport(files, ctx);
+  }
   if (reportHasFatalErrors(files, ctx)) {
     if (ctx.options.noReport) {
       printReport(files, {
@@ -33,8 +36,6 @@ export function reportErrors(files: VFile[], ctx: Context) {
           reportOnlyErrors: true,
         },
       });
-    } else {
-      printReport(files, ctx);
     }
     console.log('Report has fatal errors');
     if (ctx.options.force) {

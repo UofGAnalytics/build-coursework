@@ -8,7 +8,7 @@ export function warnOnIncludeGraphics(file: VFile) {
     if (line.includes('include_graphics')) {
       warnMessage(
         file,
-        'Use markdown syntax instead of knitr::include_graphics to embed images: ![Alt text](image.png).  If knitr::include_graphics is necessary, use without out.width, out.height and fig.align knitr chunk properties.',
+        'knitr::include_graphics found. Properties out.width, out.height and fig.align knitr chunk properties may have no effect.',
         {
           start: {
             line: idx + 1,
