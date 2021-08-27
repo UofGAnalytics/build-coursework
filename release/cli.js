@@ -2428,24 +2428,29 @@ function embedAssetUrl() {
     // }
 
     external_unist_util_visit_default()(tree, 'image', node => {
-      const url = node.url || '';
-
-      if (!url.startsWith('http')) {
-        node.url = getPath(url, dirname);
-      }
+      node.url = getPath(node.url, dirname);
     }); // also fix for "raw" html nodes sometimes output by knitr
 
     external_unist_util_visit_default()(tree, ['html'], node => {
-      node.value = node.value.replace(/src="(.+?)"/, (...match) => {
-        const url = match[1];
-        return url.startsWith('http') ? `src="${url}"` : `src="${getPath(url, dirname)}"`;
-      });
+      const match = node.value.match(/src="(.+?)"/);
+
+      if (match !== null) {
+        Object.assign(node, {
+          type: 'image',
+          url: getPath(match[1], dirname)
+        });
+      } // node.value = node.value.replace(/src="(.+?)"/, (...match) => {
+      //   const url = match[1];
+      //   const src = url.startsWith('http') ? url : getPath(url, dirname)
+      //   return `src="${src}"`
+      // });
+
     });
   };
 }
 
 function getPath(url, dirname) {
-  return external_path_default().isAbsolute(url) ? url : external_path_default().join(process.cwd(), dirname, url);
+  return external_path_default().isAbsolute(url) || url.startsWith('http') ? url : external_path_default().join(process.cwd(), dirname, url);
 }
 ;// CONCATENATED MODULE: ./src/mdast/images.ts
 

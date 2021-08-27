@@ -1,3 +1,5 @@
 ```{r, echo=FALSE}
 knitr::include_graphics("yl1.png")
+knitr::include_graphics("yl2.png")
+knitr::include_graphics("yl3.png")
 ```

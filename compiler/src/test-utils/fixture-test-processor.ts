@@ -21,6 +21,7 @@ export async function fixtureTestProcessor(fixture: string) {
     noPdf: true,
     noReport: true,
     noWrite: true,
+    noEmbedAssets: true,
   });
 
   unit.md = result.md;
