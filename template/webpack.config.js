@@ -49,7 +49,7 @@ module.exports = {
     pathinfo: !isProd
   },
   resolve: {
-    extensions: ['.ts', '.js', '.css', '.svg', '.html']
+    extensions: ['.ts', '.js', '.css', '.svg', '.html', '.ttf']
   },
   module: {
     rules: [
@@ -76,6 +76,11 @@ module.exports = {
       {
         test: /\.svg$/,
         loader: 'url-loader'
+      },
+      // for base-64 inlining fonts imported in CSS files via @font-face
+      {
+        test: /\.ttf$/,
+        loader: 'base64-inline-loader',
       },
     ]
   },

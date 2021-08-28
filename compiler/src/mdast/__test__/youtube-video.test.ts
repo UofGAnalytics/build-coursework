@@ -13,7 +13,7 @@ describe('youtubeVideos', () => {
       '<a class="boxout video" href="https://youtu.be/AClLyj_Oczc" target="_blank">'
     );
     expect(html).toContain(
-      '<img src="http://img.youtube.com/vi/AClLyj_Oczc/maxresdefault.jpg" alt="">'
+      '<img src="http://img.youtube.com/vi/AClLyj_Oczc/mqdefault.jpg" alt="">'
     );
   });
 });

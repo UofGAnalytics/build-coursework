@@ -1,64 +1,58 @@
+import path from 'path';
+
+import chalk from 'chalk';
+
+import { BuiltUnit, buildUnit } from './build-unit';
 import { Context, Options, createContext } from './context';
-import { Unit } from './course/types';
-import { hastPhase } from './hast';
-import { htmlPhase } from './html';
-import { linter } from './linter';
-import { markdownPhase } from './markdown';
-import { mdastPhase } from './mdast';
-// import { writeHtml } from './utils/write-files';
+import { Timer, createTimer } from './utils/timer';
+import { mkdir, writeFile } from './utils/utils';
 
 export async function rMarkdown(dirPath: string, options: Options = {}) {
-  try {
-    await run(dirPath, options);
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-async function run(dirPath: string, options: Options = {}) {
+  const timer = createTimer();
   const ctx = await createContext(dirPath, options);
 
-  // write single week
+  const result = [];
+
   if (ctx.options.week) {
+    // write single week
     const idx = ctx.options.week - 1;
-    const unit = ctx.course.units[idx];
-    return writeUnit(unit, ctx);
+    const input = ctx.course.units[idx];
+    const built = await buildUnit(input, ctx);
+    await writeUnit(built, ctx, timer);
+    result.push(built);
+  } else {
+    // write full course
+    for (const input of ctx.course.units) {
+      const built = await buildUnit(input, ctx);
+      await writeUnit(built, ctx, timer);
+      result.push(built);
+    }
   }
 
-  // write full course
-  return Promise.all(
-    ctx.course.units.map((unit) => {
-      return writeUnit(unit, ctx);
-    })
-  );
+  return result;
 }
 
-async function writeUnit(unit: Unit, ctx: Context) {
-  console.log('yo!');
-
-  if (!ctx.options.noHtml) {
-    const { html } = await buildUnit(unit, ctx);
-    console.log(html);
-    // await writeHtml(unit.titles.unitName, html, ctx.dirPath);
+async function writeUnit(built: BuiltUnit, ctx: Context, timer: Timer) {
+  if (ctx.options.noWrite) {
+    return;
   }
-  if (!ctx.options.noPdf) {
-    console.log('write pdf!');
-    // const { html } = await buildUnit(unit, ctx, true);
-    // const pdf = convertToPdf(html)
-    // await writePdf(unit.titles.unitName, pdf, ctx.dirPath);
-  }
-}
 
-export async function buildUnit(
-  unit: Unit,
-  ctx: Context,
-  targetPdf?: boolean
-) {
-  await linter(unit, ctx);
-  const combined = unit.files.map((o) => o.contents).join('\n\n');
-  const md = await markdownPhase(combined, ctx);
-  const mdast = await mdastPhase(md, ctx, targetPdf);
-  const hast = await hastPhase(mdast, unit, ctx);
-  const html = await htmlPhase(hast, unit, ctx);
-  return { md, mdast, hast, html };
+  await mkdir(ctx.buildDir);
+  const filePath = path.join(ctx.buildDir, built.unit.titles.fileName);
+
+  if (built.html) {
+    await writeFile(filePath + '.html', built.html.html);
+    const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
+    console.log(`✨ ${status} ${filePath}.html`);
+  }
+
+  if (built.pdf) {
+    await writeFile(filePath + '.pdf', built.pdf.pdf);
+
+    // debug
+    // await writeFile(filePath + '.pdf.html', built.pdf.html);
+
+    const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
+    console.log(`✨ ${status} ${filePath}.pdf`);
+  }
 }

@@ -1,11 +1,14 @@
 args <- commandArgs(trailingOnly=TRUE)
 fileName <- args[1]
-cacheDir <- args[2]
+baseDir <- args[2]
+cacheDir <- args[3]
+
+knitr::opts_knit$set(root.dir=baseDir)
 
 knitr::opts_chunk$set(
   dev='svglite',
-  fig.path=cacheDir,
-  class.output="r-output"
+  class.output='r-output',
+  fig.path=cacheDir
 )
 
 knitr::knit(

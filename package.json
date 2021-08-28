@@ -20,7 +20,7 @@
     "template": "yarn workspace template dev",
     "test": "jest --verbose",
     "check-types": "tsc",
-    "release": "./release.sh"
+    "release": "tsc && yarn workspace template build && yarn workspace compiler build && ./release.sh"
   },
   "dependencies": {},
   "devDependencies": {

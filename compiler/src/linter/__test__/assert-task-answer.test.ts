@@ -10,7 +10,7 @@ describe('assertTaskAnswerStructure', () => {
     `,
       { shouldFail: true }
     );
-    expect(hasFailingMessage('Task has no answer')).toBe(true);
+    expect(hasFailingMessage('Task 1 has no answer')).toBe(true);
   });
 
   it('should fail on task with multiple answers', async () => {

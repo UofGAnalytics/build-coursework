@@ -7,19 +7,22 @@ import { Parent as MDastParent } from 'mdast';
 import toVFile from 'to-vfile';
 import { VFile } from 'vfile';
 
+import { buildUnit } from '../build-unit';
 import { Options } from '../context';
 import { getUnitTitles } from '../course';
 import { writeFile } from '../utils/utils';
-import { createHasFailingMessage } from './has-message';
-import { buildUnit } from '..';
+import {
+  createHasFailingMessage,
+  createHasWarningMessage,
+} from './has-message';
 
 export async function testProcessor(md: string, options: Options = {}) {
   const { ctx, file } = await createTestContext(md, options);
-  const hasFailingMessage = createHasFailingMessage(ctx, file);
   const unitFile = ctx.course.units[0];
 
   const unit = {
     md: '',
+    files: [] as VFile[],
     mdast: {} as MDastParent,
     hast: {} as HastParent,
     html: '',
@@ -27,14 +30,24 @@ export async function testProcessor(md: string, options: Options = {}) {
   try {
     const result = await buildUnit(unitFile, ctx);
     unit.md = result.md;
-    unit.mdast = result.mdast;
-    unit.hast = result.hast;
-    unit.html = result.html;
+    unit.files = result.files;
+    if (result.html) {
+      unit.mdast = result.html.mdast;
+      unit.hast = result.html.hast;
+      unit.html = result.html.html;
+    } else {
+      console.log(
+        '[test processor]: no html object returned from buildUnit'
+      );
+    }
   } catch (err) {
     console.error(err);
   }
 
-  return { file, hasFailingMessage, ...unit };
+  const hasFailingMessage = createHasFailingMessage(ctx, unit.files);
+  const hasWarningMessage = createHasWarningMessage(ctx, unit.files);
+
+  return { file, hasFailingMessage, hasWarningMessage, ...unit };
 }
 
 async function createTestContext(md: string, options: Options = {}) {
@@ -69,10 +82,12 @@ async function createTestContext(md: string, options: Options = {}) {
     },
     options: {
       noDoc: true,
+      noPdf: true,
       noWrapper: true,
       noSyntaxHighlight: true,
       noReport: true,
       noEmbedAssets: true,
+      force: true,
       ...options,
     },
   };

@@ -6,16 +6,18 @@ export type Options = {
   noDoc?: boolean;
   noHtml?: boolean;
   noPdf?: boolean;
-  noWrapper?: boolean;
   noSyntaxHighlight?: boolean;
   noReport?: boolean;
   reportOnlyErrors?: boolean;
   noEmbedAssets?: boolean;
   noCache?: boolean;
+  noTexSvg?: boolean;
   week?: number;
   watch?: boolean;
   shouldFail?: boolean;
   spelling?: boolean;
+  force?: boolean;
+  noWrite?: boolean;
 };
 
 export type Context = {

@@ -1,4 +1,4 @@
-import { Properties } from 'hast';
+import { Properties, Text } from 'hast';
 import { Code } from 'mdast';
 // @ts-expect-error
 import refractor from 'refractor';
@@ -15,14 +15,13 @@ export function codeBlocks(ctx: Context) {
       codeBlocks.push(node);
     });
 
-    // these need to be run in order
     for (const codeBlock of codeBlocks) {
-      await customCode(codeBlock, ctx, file);
+      customCode(codeBlock, ctx, file);
     }
   };
 }
 
-async function customCode(node: Code, ctx: Context, file: VFile) {
+function customCode(node: Code, ctx: Context, file: VFile) {
   // const { language, options, value } = parseCodeParams(node);
   const language = parseLanguage(node);
   const klass = parseClass(node);
@@ -31,6 +30,16 @@ async function customCode(node: Code, ctx: Context, file: VFile) {
   const codeProps: Properties = {};
   if (meta !== '') {
     codeProps.className = meta;
+  }
+
+  const children: Text[] = [];
+  if (ctx.options.noSyntaxHighlight || language === '') {
+    children.push({
+      type: 'text',
+      value: node.value,
+    });
+  } else {
+    children.push(...refractor.highlight(node.value, language));
   }
 
   Object.assign(node, {
@@ -49,15 +58,7 @@ async function customCode(node: Code, ctx: Context, file: VFile) {
               type: 'element',
               tagName: 'code',
               properties: codeProps,
-              children:
-                ctx.options.noSyntaxHighlight || language === ''
-                  ? [
-                      {
-                        type: 'text',
-                        value: node.value,
-                      },
-                    ]
-                  : refractor.highlight(node.value, language),
+              children,
             },
           ],
         },
@@ -68,7 +69,7 @@ async function customCode(node: Code, ctx: Context, file: VFile) {
 
 function parseLanguage(node: Code) {
   const lang = (node.lang || '') as string;
-  if (lang === 'plaintext' || lang.startsWith('{.')) {
+  if (lang === 'plaintext' || lang.startsWith('{')) {
     return '';
   }
   return lang.toLowerCase();

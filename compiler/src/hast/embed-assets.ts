@@ -3,6 +3,7 @@ import path from 'path';
 import { Element, Properties } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
+import { optimize } from 'svgo';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
@@ -23,7 +24,7 @@ export function embedAssets(ctx: Context) {
         case '.png':
         case '.jpg':
         case '.gif':
-          return embedImage(node, ctx);
+          return embedImage(node, ctx, file);
         case '.svg':
           return embedPlotSvg(node, ctx);
         case '.pdf':
@@ -46,14 +47,18 @@ export function embedAssets(ctx: Context) {
   };
 }
 
-async function embedImage(node: Element, ctx: Context) {
+async function embedImage(node: Element, ctx: Context, file: VFile) {
   const src = getImageSrc(node);
   const mime = mimes.getType(path.extname(src));
-  const image = await getImage(src, ctx);
-  node.properties = {
-    ...node.properties,
-    src: `data:${mime};base64,${image}`,
-  };
+  try {
+    const image = await getImage(src, ctx);
+    node.properties = {
+      ...node.properties,
+      src: `data:${mime};base64,${image}`,
+    };
+  } catch (err) {
+    failMessage(file, `Image not found: ${src}`);
+  }
 }
 
 async function embedPlotSvg(imgNode: Element, ctx: Context) {
@@ -61,7 +66,8 @@ async function embedPlotSvg(imgNode: Element, ctx: Context) {
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
-  const svgNode = getAssetHast(svg) as Element;
+  const optimised = optimize(svg, { multipass: true }).data;
+  const svgNode = getAssetHast(optimised) as Element;
 
   const properties = {
     ...svgNode.properties,

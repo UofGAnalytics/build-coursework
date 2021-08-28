@@ -17,7 +17,8 @@ function setFont(e: Event) {
     elem.classList.remove('selected');
   });
   target.classList.add('selected');
-  document.documentElement.classList.replace(state.font, name);
+  const main = document.querySelector('main') as Element;
+  main.classList.replace(state.font, name);
   state.font = name;
   saveState(state);
 }

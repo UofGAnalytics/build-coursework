@@ -33,6 +33,7 @@ export type UnitTitles = {
   unitTitle: string;
   unitName: string;
   docTitle: string;
+  fileName: string;
 };
 
 export type UnitTitlesInput = {

@@ -10,15 +10,21 @@ interface ContainerDirective extends Parent {
 
 export function assertTaskAnswerStructure() {
   return (tree: Node, file: VFile) => {
+    let count = 0;
     visit<ContainerDirective>(
       tree,
       'containerDirective',
       (node, index, _parent) => {
         if (node.name === 'task') {
+          count++;
           const children = node.children as ContainerDirective[];
           const answers = children.filter((o) => o.name === 'answer');
           if (answers.length < 1) {
-            failMessage(file, 'Task has no answer', node.position);
+            failMessage(
+              file,
+              `Task ${count} has no answer`,
+              node.position
+            );
           }
           if (answers.length > 1) {
             failMessage(file, 'Task has multiple answers', node.position);

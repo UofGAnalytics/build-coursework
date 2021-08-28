@@ -1,6 +1,0 @@
-name: "Week 6"
-title: "Introduction to time series analysis"
-golive: "+1w"
-content:
-  - type: text
-    src: week6mat.Rmd

@@ -4,6 +4,7 @@ import lintAltText from '@double-great/remark-lint-alt-text';
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
 import dictionary from 'dictionary-en-gb';
+import { Parent as MdastParent } from 'mdast';
 // @ts-expect-error
 import remark2retext from 'remark-retext';
 // @ts-expect-error
@@ -14,19 +15,15 @@ import unified from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { Unit } from '../course/types';
-import { markdownPhase } from '../markdown';
-import { mdastPhase } from '../mdast';
 import { assertAssetExists } from './assert-asset-exists';
+import { assertNoH1 } from './assert-no-h1';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
 import { assertWeblinkTarget } from './assert-weblink-target';
 import { lintLatex } from './lint-latex';
 import { printReport, reportHasFatalErrors } from './report';
 
-export async function linter({ files }: Unit, ctx: Context) {
-  await Promise.all(files.map((file) => createReport(file, ctx)));
-
+export function reportErrors(files: VFile[], ctx: Context) {
   if (!ctx.options.noReport) {
     printReport(files, ctx);
   }
@@ -40,20 +37,26 @@ export async function linter({ files }: Unit, ctx: Context) {
         },
       });
     }
-    // throw new Error('Report has fatal errors');
+    console.log('Report has fatal errors');
+    if (ctx.options.force) {
+      console.log('Compiling using force option...');
+    } else {
+      process.exit();
+    }
   }
 }
 
-async function createReport(file: VFile, ctx: Context) {
-  const contents = file.contents as string;
-  const md = await markdownPhase(contents, ctx);
-  const mdast = await mdastPhase(md, ctx);
-
+export async function createReport2(
+  file: VFile,
+  mdast: MdastParent,
+  ctx: Context
+) {
   const processor = unified()
     .use(assertAssetExists)
     .use(assertVideoAttributes)
     .use(assertTaskAnswerStructure)
     .use(assertWeblinkTarget)
+    .use(assertNoH1)
     .use(lintLatex)
     .use(lintAltText)
     .use(lintLinkText);

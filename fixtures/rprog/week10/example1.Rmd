@@ -1,9 +1,0 @@
-Let's generate a random sample from the normal distribution.
-
-We then look at some summary statistics and plot a histogram.
-
-```{r}
-x <- rnorm(100)
-summary(x)
-hist(x)
-```

@@ -9,6 +9,13 @@
     ]
   },
   "Packages": {
+    "kableExtra": {
+      "Package": "kableExtra",
+      "Version": "1.3.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "49b625e6aabe4c5f091f5850aba8ff78"
+    },
     "knitr": {
       "Package": "knitr",
       "Version": "1.33",
@@ -22,6 +29,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "8fb6188960bf0f90996ce52f9c2106ac"
+    },
+    "ggplot2": {
+      "Package": "ggplot2",
+      "Version": "3.3.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d7566c471c7b17e095dd023b9ef155ad"
     }
   }
 }

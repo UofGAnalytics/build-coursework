@@ -1,19 +1,36 @@
+@font-face {
+  font-family: 'Martel';
+  src: url('../fonts/Martel-Black.ttf') format('truetype');
+  // font-weight: 700;
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  src: url('../fonts/Newsreader-Regular.ttf') format('truetype');
+  // // font-weight: 400;
+  // font-weight: normal;
+  font-style: normal;
+}
+
 * {
   margin: 0;
   border: 0;
   padding: 0;
 }
 
-@import "./variables.scss";
+@import './variables.scss';
 
-@import "./scrollbars.scss";
-@import "./structure.scss";
-@import "./typography.scss";
-@import "./logo.scss";
-@import "./nav.scss";
-@import "./tables.scss";
-@import "./images.scss";
-@import "./tex.scss";
-@import "./code.scss";
-@import "./boxouts.scss";
-@import "./view-options.scss";
+@import './scrollbars.scss';
+@import './structure.scss';
+@import './typography.scss';
+@import './logo.scss';
+@import './nav.scss';
+@import './tables.scss';
+@import './images.scss';
+@import './tex.scss';
+@import './code.scss';
+@import './boxouts.scss';
+@import './view-options.scss';
+@import './pdf.scss';

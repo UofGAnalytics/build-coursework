@@ -1,0 +1,4 @@
+title: Relative assets
+type: course
+units:
+  - src: test/test.yaml

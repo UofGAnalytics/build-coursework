@@ -1,8 +1,12 @@
-svg.pdftex {
+svg.pdftex,
+svg.svglite {
   display: block;
-  width: 100%;
   height: auto;
-  background: white;
+  margin-top: 3rem;
+  margin-right: auto;
+  margin-bottom: 3rem;
+  margin-left: auto;
+  // background: white;
   // path {
   //   stroke: white;
   // }

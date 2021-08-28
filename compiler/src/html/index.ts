@@ -1,46 +1,56 @@
 import path from 'path';
 
 import { Parent as HastParent } from 'hast';
-import doc from 'rehype-document';
+import { Parent as MdastParent } from 'mdast';
+import doc, { Options } from 'rehype-document';
 // @ts-expect-error
 import format from 'rehype-format';
 import stringify from 'rehype-stringify';
 import unified from 'unified';
+import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { readFile } from '../utils/utils';
+import { getLibraryDir, readFile } from '../utils/utils';
+import { pdfWrapper } from './pdf';
 import { htmlWrapper } from './wrapper';
 
 export async function htmlPhase(
   hast: HastParent,
+  mdast: MdastParent,
+  file: VFile,
   unit: Unit,
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const processor = unified().use(format).use(stringify);
-
-  // TODO: try to get this inside template workspace
-  if (!ctx.options.noWrapper) {
-    processor.use(htmlWrapper, unit.titles, hast);
-  }
+  const processor = unified()
+    .use(format)
+    .use(stringify, { allowDangerousHtml: true });
 
   if (!ctx.options.noDoc) {
-    // TODO: libraryFile helper
     const templateCss = await readFile(
-      path.join(__dirname, 'template.css')
+      path.join(getLibraryDir(), 'template.css')
     );
-    const templateJs = await readFile(
-      path.join(__dirname, 'template.js2')
-    );
-    processor.use(doc, {
+    const docOptions: Options = {
       title: unit.titles.docTitle,
       style: `\n${templateCss}\n`,
-      script: `\n${templateJs}\n`,
-    });
+    };
+
+    if (!targetPdf) {
+      const templateJs = await readFile(
+        path.join(getLibraryDir(), 'template.js2')
+      );
+      docOptions.script = `\n${templateJs}\n`;
+
+      processor.use(htmlWrapper, unit, mdast);
+    } else {
+      processor.use(pdfWrapper, unit);
+    }
+
+    processor.use(doc, docOptions);
   }
 
-  const result = await processor.run(hast);
+  const result = await processor.run(hast, file);
 
-  return processor.stringify(result);
+  return processor.stringify(result, file);
 }

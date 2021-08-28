@@ -16,7 +16,7 @@ const svgs: Svg[] = [
   createStoredSvg('link-icon', linkSvg),
 ];
 
-export function createSvg(name: string) {
+export function createSvg(name: string): Element {
   const { id, viewBox } = getSvg(name);
   return {
     type: 'element',

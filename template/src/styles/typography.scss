@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Martel:wght@900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Newsreader&display=swap');
+// @import url('../fonts/Martel-Black.ttf');
+// @import url('../fonts/Newsreader-Regular.ttf');
 
 // ------------------------
 // font -------------------
@@ -13,7 +13,14 @@ html {
   line-height: 1.75;
   text-rendering: geometricPrecision;
   color: #222;
+}
 
+// .pageNumber,
+// .totalPages {
+//   font-size: 14px !important;
+// }
+
+#root {
   &.font-serif main {
     font-family: 'Newsreader';
   }
@@ -30,7 +37,7 @@ html {
     h5,
     h6,
     .boxout .title {
-      font-family: 'Martel', serif;
+      font-family: 'Martel';
     }
   }
 }

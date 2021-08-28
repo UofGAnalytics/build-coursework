@@ -19,7 +19,7 @@ export enum MessageStatus {
 export function failMessage(
   file: VFile,
   message: string,
-  position: Position | undefined
+  position?: Position
 ) {
   const status = MessageStatus.fail;
   return messageWithStatus(file, message, position, status);

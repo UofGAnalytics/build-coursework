@@ -1,5 +1,3 @@
-import path from 'path';
-
 import chalk from 'chalk';
 import figures from 'figures';
 import { VFile } from 'vfile';
@@ -32,22 +30,32 @@ export function printReport(files: VFile[], ctx: Context) {
   }
 
   for (const file of files) {
+    // console.log(file.messages);
     const messages = reportOnlyErrors
       ? failingMessages(file.messages)
       : file.messages;
 
     if (messages.length !== 0) {
-      console.log(`\n${getFilePath(file.path as string)}`);
+      // if (file.path !== undefined) {
+      //   console.log(`\n${getFilePath(file.path)}`);
+      // }
       messages.map(printMessage);
     }
   }
 }
 
 export function reportHasFatalErrors(files: VFile[], ctx: Context) {
-  const passed = files.every((file) =>
-    file.messages.every((message) => message.status !== MessageStatus.fail)
+  return files.some((file) =>
+    file.messages.some((message) => message.status === MessageStatus.fail)
   );
-  return !passed;
+}
+
+export function reportHasWarnings(files: VFile[], ctx: Context) {
+  return files.some((file) =>
+    file.messages.some(
+      (message) => message.status === MessageStatus.warning
+    )
+  );
 }
 
 function failingMessages(messages: VFileMessage[]) {
@@ -62,11 +70,11 @@ function printMessage(message: VFileMessage) {
   console.log(`${formatStatus(status)}  ${position}  ${reason}`);
 }
 
-function getFilePath(filePath: string) {
-  return path.isAbsolute(filePath)
-    ? filePath
-    : path.join(process.cwd(), filePath);
-}
+// function getFilePath(filePath: string) {
+//   return path.isAbsolute(filePath)
+//     ? filePath
+//     : path.join(process.cwd(), filePath);
+// }
 
 function formatStatus(status: MessageStatus) {
   const statusColour = getStatusColour(status);

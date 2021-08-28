@@ -1,0 +1,5 @@
+name: 'Test'
+title: 'Relative assets'
+content:
+  - type: text
+    src: test.Rmd
