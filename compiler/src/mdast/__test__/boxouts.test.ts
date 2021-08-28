@@ -194,8 +194,6 @@ describe('weblink', () => {
       ###[/example]
     `);
 
-    expect(html).toMatch(
-      /<img src="(.+?)" title="plot of chunk unnamed-chunk-1"/
-    );
+    expect(html).toMatch(/<img src="(.+?)"/);
   });
 });

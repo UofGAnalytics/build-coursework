@@ -9810,9 +9810,12 @@ var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(exter
 ;// CONCATENATED MODULE: external "sandboxed-module"
 const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
+;// CONCATENATED MODULE: external "svgo"
+const external_svgo_namespaceObject = require("svgo");
 // EXTERNAL MODULE: ./src/latex/domstubs.js
 var domstubs = __webpack_require__(6209);
 ;// CONCATENATED MODULE: ./src/latex/pdf-to-svg.ts
+
 
 
 
@@ -9827,7 +9830,8 @@ const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/legacy/
     Image: domstubs.Image,
     Element: domstubs.Element,
     console,
-    process
+    process,
+    URL
   }
 });
 
@@ -9837,12 +9841,11 @@ async function pdf_to_svg_texPdfToSvg(filePath) {
     fontExtraProperties: true // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
     // cMapPacked: true,
 
-  }).promise;
-  const metadata = await doc.getMetadata();
-
-  if (!isPdfTexDocument(metadata.info)) {
-    throw new Error('Unhandled pdf file: was not produced by PdfTeX');
-  }
+  }).promise; // may come in handy again...
+  // const metadata = await doc.getMetadata();
+  // if (!isPdfTexDocument(metadata.info)) {
+  //   throw new Error('Unhandled pdf file: was not produced by PdfTeX');
+  // }
 
   const page = await doc.getPage(1);
   const opList = await page.getOperatorList();
@@ -9853,19 +9856,20 @@ async function pdf_to_svg_texPdfToSvg(filePath) {
   svgGfx.embedFonts = true;
   const svg = await svgGfx.getSVG(opList, viewport);
   return formatSvg(svg.toString());
-}
+} // function isPdfTexDocument(info: Record<string, string> = {}) {
+//   return info['Producer']?.startsWith('pdfTeX');
+// }
 
-function isPdfTexDocument(info = {}) {
-  var _info$Producer;
+async function formatSvg(_str) {
+  const str = _str.replace(/svg:/g, '');
 
-  return (_info$Producer = info.Producer) === null || _info$Producer === void 0 ? void 0 : _info$Producer.startsWith('pdfTeX');
-}
-
-async function formatSvg(str) {
+  const optimised = optimize(str, {
+    multipass: true
+  }).data;
   const processor = unified().use(rehype, {
     fragment: true
   }).use(addWrapper).use(stringify);
-  const parsed = processor.parse(str.replace(/svg:/g, ''));
+  const parsed = processor.parse(optimised);
   return processor.run(parsed);
 }
 
@@ -10993,13 +10997,15 @@ function assert_no_h1_assertNoH1() {
 
 function assert_task_answer_assertTaskAnswerStructure() {
   return (tree, file) => {
+    let count = 0;
     visit(tree, 'containerDirective', (node, index, _parent) => {
       if (node.name === 'task') {
+        count++;
         const children = node.children;
         const answers = children.filter(o => o.name === 'answer');
 
         if (answers.length < 1) {
-          failMessage(file, 'Task has no answer', node.position);
+          failMessage(file, `Task ${count} has no answer`, node.position);
         }
 
         if (answers.length > 1) {
@@ -11781,28 +11787,40 @@ function embed_asset_url_embedAssetUrl() {
 
     visit(tree, 'image', node => {
       node.url = getPath(node.url, dirname);
-    }); // also fix for "raw" html nodes sometimes output by knitr
+    }); // also fix for raw html nodes sometimes output by knitr
 
     visit(tree, ['html'], node => {
-      const match = node.value.match(/src="(.+?)"/);
+      const src = getSrc(node.value);
 
-      if (match !== null) {
+      if (src !== null) {
         Object.assign(node, {
           type: 'image',
-          url: getPath(match[1], dirname)
+          url: getPath(src, dirname),
+          value: ''
         });
-      } // node.value = node.value.replace(/src="(.+?)"/, (...match) => {
-      //   const url = match[1];
-      //   const src = url.startsWith('http') ? url : getPath(url, dirname)
-      //   return `src="${src}"`
-      // });
-
+      }
     });
   };
 }
 
 function getPath(url, dirname) {
   return path.isAbsolute(url) || url.startsWith('http') ? url : path.join(process.cwd(), dirname, url);
+}
+
+function getSrc(value) {
+  const matchImg = value.match(/<img.*?src="(.+?)".*?>/);
+
+  if (matchImg !== null) {
+    return matchImg[1];
+  }
+
+  const matchPdf = value.match(/<embed.*?src="(.+?)".*?>/);
+
+  if (matchPdf !== null) {
+    return matchPdf[1];
+  }
+
+  return null;
 }
 ;// CONCATENATED MODULE: ./src/mdast/images.ts
 

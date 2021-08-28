@@ -21,11 +21,12 @@ export function embedAssetUrl() {
 
     // also fix for raw html nodes sometimes output by knitr
     visit<Text>(tree, ['html'], (node) => {
-      const match = node.value.match(/^<img.*?src="(.+?)".*?>$/);
-      if (match !== null) {
+      const src = getSrc(node.value);
+      if (src !== null) {
         Object.assign(node, {
           type: 'image',
-          url: getPath(match[1], dirname),
+          url: getPath(src, dirname),
+          value: '',
         });
       }
     });
@@ -36,4 +37,16 @@ function getPath(url: string, dirname: string) {
   return path.isAbsolute(url) || url.startsWith('http')
     ? url
     : path.join(process.cwd(), dirname, url);
+}
+
+function getSrc(value: string) {
+  const matchImg = value.match(/<img.*?src="(.+?)".*?>/);
+  if (matchImg !== null) {
+    return matchImg[1];
+  }
+  const matchPdf = value.match(/<embed.*?src="(.+?)".*?>/);
+  if (matchPdf !== null) {
+    return matchPdf[1];
+  }
+  return null;
 }

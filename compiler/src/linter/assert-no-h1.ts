@@ -11,7 +11,7 @@ export function assertNoH1() {
       if (node.depth === 1) {
         failMessage(
           file,
-          'Level 1 heading (for example "# My Title") is automatically generated from .yaml file and should not be found in .Rmd file',
+          'Level 1 heading found. Only one Level 1 heading can be used in the document and it is automatically generated from .yaml file and should not be found in .Rmd file.  Please use Level 2 (## Example) and below.',
           node.position
         );
         return;
