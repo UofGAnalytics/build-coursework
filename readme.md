@@ -51,9 +51,9 @@ npm install -g UofGAnalytics/build-coursework
 Ensure it worked correctly:
 
 ```bash
-npm list –g
+npm list –g --depth=0
 > ...
-> build-coursework@ -> ../../your/path/build-coursework
+> build-coursework@... -> ...github:UofGAnalytics/build-coursework...
 > ...
 ```
 

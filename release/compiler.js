@@ -12421,7 +12421,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.2";
+  const currentVersion = "1.1.4";
   console.log({
     latestTag,
     currentVersion
