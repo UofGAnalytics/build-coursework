@@ -89,7 +89,7 @@ Once complete, you will find a `build` folder in beside the `course.yaml` file, 
 One day you may run the command and see a message such as:
 
 ```
-> You are running version v1.0.0 and the latest version is v1.5.0.
+> You are running version 1.0.0 and the latest version is 1.5.0.
 > Run the following command to update:
 > npm install -g UofGAnalytics/build-coursework@v1.5.0
 ```

@@ -312,6 +312,21 @@ exports.unsetStubs = function (namespace) {
 
 /***/ }),
 
+/***/ 3351:
+/***/ ((module) => {
+
+function webpackEmptyContext(req) {
+	var e = new Error("Cannot find module '" + req + "'");
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = () => ([]);
+webpackEmptyContext.resolve = webpackEmptyContext;
+webpackEmptyContext.id = 3351;
+module.exports = webpackEmptyContext;
+
+/***/ }),
+
 /***/ 1527:
 /***/ ((module) => {
 
@@ -12224,7 +12239,7 @@ function removeCommentedSections(md) {
 
 function escapeDollarsInCodeBlocks(md) {
   return md.replace(/(```.+?```)/gms, match => {
-    return match.replace(/\$/g, '\\$');
+    return '\n' + match.replace(/\$/g, '\\$') + '\n';
   });
 }
 ;// CONCATENATED MODULE: ./src/build-unit.ts
@@ -12417,10 +12432,21 @@ async function context_createContext(dirPath, options = {}) {
 }
 ;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts
 
+
 async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
   const json = await response.json();
-  console.log('release:', json.name);
+  const latestTag = json.tag_name.replace('v', '');
+
+  const packageJson = __webpack_require__(3351)(path.join(__dirname, 'package.json'));
+
+  const currentTag = packageJson.version;
+
+  if (latestTag !== currentTag) {
+    console.log(`You are running version ${currentTag} and the latest version is ${latestTag}.`);
+    console.log(`Run the following command to update:`);
+    console.log(`npm install -g UofGAnalytics/build-coursework@v${latestTag}`);
+  }
 }
 ;// CONCATENATED MODULE: ./src/index.ts
 
