@@ -3,6 +3,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const CopyPlugin = require('copy-webpack-plugin');
 const ShebangPlugin = require('webpack-shebang-plugin');
+const InlineEnvironmentVariablesPlugin = require('inline-environment-variables-webpack-plugin');
+
+const pkg = require('../package.json');
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -47,6 +50,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ShebangPlugin(),
+    new InlineEnvironmentVariablesPlugin({ VERSION: pkg.version }),
     new CopyPlugin({
       patterns: [
         { from: './src/knitr/knitr.R', to: './' },

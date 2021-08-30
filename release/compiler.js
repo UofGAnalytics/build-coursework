@@ -12415,6 +12415,24 @@ async function context_createContext(dirPath, options = {}) {
     options
   };
 }
+;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts
+
+async function check_for_latest_version_checkForLatestVersion() {
+  const response = await fetch('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
+  const json = await response.json();
+  const latestTag = json.tag_name.replace('v', '');
+  const currentVersion = "1.1.2";
+  console.log({
+    latestTag,
+    currentVersion
+  });
+
+  if (latestTag !== currentVersion) {
+    console.log(`You are running version ${currentVersion} and the latest version is ${latestTag}.`);
+    console.log(`Run the following command to update:`);
+    console.log(`npm update -g UofGAnalytics/build-coursework#v${latestTag}`);
+  }
+}
 ;// CONCATENATED MODULE: ./src/index.ts
 
 
