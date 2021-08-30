@@ -4,10 +4,13 @@ import chalk from 'chalk';
 
 import { BuiltUnit, buildUnit } from './build-unit';
 import { Context, Options, createContext } from './context';
+import { checkForLatestVersion } from './utils/check-for-latest-version';
 import { Timer, createTimer } from './utils/timer';
 import { mkdir, writeFile } from './utils/utils';
 
 export async function rMarkdown(dirPath: string, options: Options = {}) {
+  await checkForLatestVersion();
+
   const timer = createTimer();
   const ctx = await createContext(dirPath, options);
 
