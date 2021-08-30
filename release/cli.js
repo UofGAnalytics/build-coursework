@@ -3080,7 +3080,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.2";
+  const currentVersion = "1.1.4";
   console.log({
     latestTag,
     currentVersion
