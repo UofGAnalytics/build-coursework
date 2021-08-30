@@ -50,8 +50,8 @@ async function execAndCache(
   { ctx, key, execFn, json }: Options,
   cachedFilePath: string
 ) {
-  const out = await execFn(key);
-  const str = json ? JSON.stringify(out, null, 2) : (out as string);
+  const out = (await execFn(key)) as string;
+  const str = json ? JSON.stringify(out, null, 2) : out;
   await mkdir(ctx.cacheDir);
   await writeFile(cachedFilePath, str);
   return out;
