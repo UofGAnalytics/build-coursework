@@ -314,21 +314,6 @@ exports.unsetStubs = function (namespace) {
 
 /***/ }),
 
-/***/ 3351:
-/***/ ((module) => {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = () => ([]);
-webpackEmptyContext.resolve = webpackEmptyContext;
-webpackEmptyContext.id = 3351;
-module.exports = webpackEmptyContext;
-
-/***/ }),
-
 /***/ 9060:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -374,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 319:
+/***/ 7205:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3089,24 +3074,8 @@ async function createContext(dirPath, options = {}) {
     options
   };
 }
-;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts
-
-
-async function checkForLatestVersion() {
-  const response = await external_node_fetch_default()('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
-  const json = await response.json();
-  const latestTag = json.tag_name.replace('v', '');
-
-  const packageJson = __webpack_require__(3351)(external_path_default().join(__dirname, 'package.json'));
-
-  const currentTag = packageJson.version;
-
-  if (latestTag !== currentTag) {
-    console.log(`You are running version ${currentTag} and the latest version is ${latestTag}.`);
-    console.log(`Run the following command to update:`);
-    console.log(`npm install -g UofGAnalytics/build-coursework@v${latestTag}`);
-  }
-}
+// EXTERNAL MODULE: ./src/utils/check-for-latest-version.ts
+var check_for_latest_version = __webpack_require__(2240);
 // EXTERNAL MODULE: ./src/utils/timer.ts
 var utils_timer = __webpack_require__(2364);
 ;// CONCATENATED MODULE: ./src/index.ts
@@ -3118,7 +3087,7 @@ var utils_timer = __webpack_require__(2364);
 
 
 async function rMarkdown(dirPath, options = {}) {
-  await checkForLatestVersion();
+  await (0,check_for_latest_version/* checkForLatestVersion */.m)();
   const timer = (0,utils_timer/* createTimer */.e)();
   const ctx = await createContext(dirPath, options);
   const result = [];
@@ -3297,6 +3266,38 @@ function transformAttributes(containerName, attributesArr) {
 
     return attribute;
   }).join(' ');
+}
+
+/***/ }),
+
+/***/ 2240:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "m": () => (/* binding */ checkForLatestVersion)
+/* harmony export */ });
+// import path from 'path';
+// import fetch from 'node-fetch';
+async function checkForLatestVersion() {
+  // const response = await fetch(
+  //   'https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest'
+  // );
+  // const json = await response.json();
+  // const latestTag = json.tag_name.replace('v', '');
+  // const workspacePackagePath = path.join(__dirname, 'package.json');
+  console.log('__dirname:', __dirname);
+  console.log('process.cwd():', process.cwd()); // const workspacePackageJson = require(workspacePackagePath);
+  // const currentTag = workspacePackageJson.version;
+  // if (latestTag !== currentTag) {
+  //   console.log(
+  //     `You are running version ${currentTag} and the latest version is ${latestTag}.`
+  //   );
+  //   console.log(`Run the following command to update:`);
+  //   console.log(
+  //     `npm install -g UofGAnalytics/build-coursework@v${latestTag}`
+  //   );
+  // }
 }
 
 /***/ }),
@@ -12763,8 +12764,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 98 modules
-var src = __webpack_require__(319);
+// EXTERNAL MODULE: ./src/index.ts + 97 modules
+var src = __webpack_require__(7205);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
