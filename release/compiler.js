@@ -9801,6 +9801,8 @@ function move_answers_to_end_moveAnswersToEnd() {
 const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
+;// CONCATENATED MODULE: external "svgo"
+const external_svgo_namespaceObject = require("svgo");
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
@@ -9810,8 +9812,6 @@ var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(exter
 ;// CONCATENATED MODULE: external "sandboxed-module"
 const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
-;// CONCATENATED MODULE: external "svgo"
-const external_svgo_namespaceObject = require("svgo");
 // EXTERNAL MODULE: ./src/latex/domstubs.js
 var domstubs = __webpack_require__(6209);
 ;// CONCATENATED MODULE: ./src/latex/pdf-to-svg.ts
@@ -10081,6 +10081,7 @@ function embed_assets_defineProperty(obj, key, value) { if (key in obj) { Object
 
 
 
+
 function embed_assets_embedAssets(ctx) {
   async function embed(node, file) {
     const src = getImageSrc(node);
@@ -10137,7 +10138,10 @@ async function embedPlotSvg(imgNode, ctx) {
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
-  const svgNode = getAssetHast(svg);
+  const optimised = optimize(svg, {
+    multipass: true
+  }).data;
+  const svgNode = getAssetHast(optimised);
 
   const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
 
@@ -10986,7 +10990,7 @@ function assert_no_h1_assertNoH1() {
   return (tree, file) => {
     visit(tree, 'heading', node => {
       if (node.depth === 1) {
-        failMessage(file, 'Level 1 heading (for example "# My Title") is automatically generated from .yaml file and should not be found in .Rmd file', node.position);
+        failMessage(file, 'Level 1 heading found. Only one Level 1 heading can be used in the document and it is automatically generated from .yaml file and should not be found in .Rmd file.  Please use Level 2 (## Example) and below.', node.position);
         return;
       }
     });
@@ -12411,6 +12415,13 @@ async function context_createContext(dirPath, options = {}) {
     options
   };
 }
+;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts
+
+async function check_for_latest_version_checkForLatestVersion() {
+  const response = await fetch('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
+  const json = await response.json();
+  console.log('release:', json.name);
+}
 ;// CONCATENATED MODULE: ./src/index.ts
 
 
@@ -12418,7 +12429,9 @@ async function context_createContext(dirPath, options = {}) {
 
 
 
+
 async function rMarkdown(dirPath, options = {}) {
+  await checkForLatestVersion();
   const timer = createTimer();
   const ctx = await createContext(dirPath, options);
   const result = [];
