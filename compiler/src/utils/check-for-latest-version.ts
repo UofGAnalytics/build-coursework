@@ -8,15 +8,13 @@ export async function checkForLatestVersion() {
   const latestTag = json.tag_name.replace('v', '');
   const currentVersion = process.env.VERSION;
 
-  console.log({ latestTag, currentVersion });
-
   if (latestTag !== currentVersion) {
     console.log(
       `You are running version ${currentVersion} and the latest version is ${latestTag}.`
     );
     console.log(`Run the following command to update:`);
     console.log(
-      `npm update -g UofGAnalytics/build-coursework#v${latestTag}`
+      'npm install -g https://github.com/UofGAnalytics/build-coursework'
     );
   }
 }
