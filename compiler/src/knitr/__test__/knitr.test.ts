@@ -132,6 +132,7 @@ describe('knitr', () => {
       a</code></pre>
       </div>
       <div class="code-wrapper r-output">
+        <h6 class="r-console">R Console</h6>
         <pre><code>## [1] 1 4 2</code></pre>
       </div>
       <div class="code-wrapper">
