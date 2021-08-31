@@ -3,7 +3,7 @@ import path from 'path';
 import { Element, Properties } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
-import { optimize } from 'svgo';
+// import { optimize } from 'svgo';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
@@ -66,8 +66,8 @@ async function embedPlotSvg(imgNode: Element, ctx: Context) {
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
-  const optimised = optimize(svg, { multipass: true }).data;
-  const svgNode = getAssetHast(optimised) as Element;
+  // const optimised = optimize(svg, { multipass: true }).data;
+  const svgNode = getAssetHast(svg) as Element;
 
   const properties = {
     ...svgNode.properties,

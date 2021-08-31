@@ -7,8 +7,7 @@ import footnotes from 'remark-footnotes';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
-// @ts-expect-error
-import sectionize from 'remark-sectionize';
+// import sectionize from 'remark-sectionize';
 import slug from 'remark-slug';
 // @ts-expect-error
 import toVFile from 'to-vfile';
@@ -37,7 +36,7 @@ export async function mdastPhase2(file: VFile, ctx: Context) {
     .use(gfm)
     .use(frontmatter)
     .use(footnotes)
-    .use(sectionize)
+    // .use(sectionize)
     .use(slug)
     .use(headings, {
       content: createSvg('link-icon'),

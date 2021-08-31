@@ -29,6 +29,7 @@ export function aliasDirectiveToSvg(ctx: Context) {
             ...svg.properties,
             className:
               node.name === 'inlineMath' ? 'inline-math' : 'block-math',
+            id: getRefId(mml),
           };
           node.data = {
             hName: svg.tagName,
@@ -43,6 +44,14 @@ export function aliasDirectiveToSvg(ctx: Context) {
 
 function getTexIdx(node: TextDirective) {
   return Number(node.children[0].value);
+}
+
+function getRefId(mml: string) {
+  const match = mml.match(/<mtd.+?id="(.*?)"/);
+  if (match === null) {
+    return undefined;
+  }
+  return match[1];
 }
 
 function renderSvg(mml: string) {

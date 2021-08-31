@@ -122,7 +122,7 @@ function createBoxoutType(
 ): Element {
   const name = node.name as string;
   const label = startCase(name);
-  const value = name === 'task' ? `${label} ${count}` : label;
+  const value = `${label} ${count}`;
   return {
     type: 'element',
     tagName: 'span',

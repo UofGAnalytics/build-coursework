@@ -1,5 +1,5 @@
 #view-options-toggle {
-  margin: 0 2rem 2rem;
+  margin: 0 2rem;
   cursor: pointer;
 }
 
@@ -20,14 +20,14 @@ html.view-options-open {
 #view-options {
   padding: 0 calc(2rem - 15px) 2rem 2rem;
   h3 {
-    margin: 0;
+    margin: 2rem 0 0 0;
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.4;
     color: rgb(var(--primaryColor));
   }
   ul {
-    padding: 1rem 0 2rem;
+    padding: 1rem 0;
     li {
       list-style: none;
     }
@@ -41,12 +41,13 @@ ul#themes {
 
   li {
     padding: 0.75rem 0.5rem 0.5rem;
-    height: 3rem;
+    height: 4.5rem;
     border-radius: 0.3rem;
     line-height: 1.4;
     cursor: pointer;
     &.selected {
-      box-shadow: 0 0 0 0.2rem var(--boxoutBg), 0 0 0 calc(0.2rem + 2px) rgb(var(--primaryColor));
+      box-shadow: 0 0 0 0.2rem var(--boxoutBg),
+        0 0 0 calc(0.2rem + 2px) rgb(var(--primaryColor));
     }
     &.light {
       background: white;
