@@ -4,6 +4,9 @@ import fetch from 'node-fetch';
 const repo = 'UofGAnalytics/build-coursework';
 
 export async function checkForLatestVersion() {
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
   const response = await fetch(
     `https://api.github.com/repos/${repo}/releases/latest`
   );
