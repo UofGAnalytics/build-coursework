@@ -3139,8 +3139,8 @@ async function writeUnit(built, ctx, timer) {
 
   if (built.pdf) {
     await writeFile(filePath + '.pdf', built.pdf.pdf); // debug
+    // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
-    await writeFile(filePath + '.pdf.html', built.pdf.html);
     const status = external_chalk_default().green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }
