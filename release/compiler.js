@@ -11403,7 +11403,8 @@ function directive_to_svg_aliasDirectiveToSvg(ctx) {
         case 'blockMath':
           {
             const idx = getTexIdx(node);
-            const mml = ctx.mmlStore[idx];
+            const mml = ctx.mmlStore[idx]; // console.log(mml);
+
             const svg = renderSvg(mml);
 
             const properties = directive_to_svg_objectSpread(directive_to_svg_objectSpread({}, svg.properties), {}, {
