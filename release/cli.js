@@ -375,6 +375,9 @@ var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
 var external_chalk_default = /*#__PURE__*/__webpack_require__.n(external_chalk_namespaceObject);
+// EXTERNAL MODULE: ../node_modules/unified/index.js
+var unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
 // EXTERNAL MODULE: ../node_modules/vfile/index.js
 var vfile = __webpack_require__(9566);
 var vfile_default = /*#__PURE__*/__webpack_require__.n(vfile);
@@ -384,47 +387,15 @@ var external_rehype_raw_default = /*#__PURE__*/__webpack_require__.n(external_re
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
 var external_remark_rehype_default = /*#__PURE__*/__webpack_require__.n(external_remark_rehype_namespaceObject);
-// EXTERNAL MODULE: ../node_modules/unified/index.js
-var unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(unified);
-// EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
-var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
-;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
-
-function moveAnswersToEnd() {
-  return tree => {
-    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, parent) => {
-      // remove answer from task rehype
-      if (node.name === 'task' && node.data) {
-        const children = node.data.hChildren || [];
-        node.data.hChildren = children.filter(o => o.name !== 'answer');
-      }
-
-      if (node.name === 'answer') {
-        // these nodes have already been moved to the end
-        if (node.movedToEnd) {
-          return;
-        } // remove answer block from task node
-
-
-        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
-        parentChildren.splice(index, 1); // add to root node
-
-        const treeParent = tree;
-        const treeChildren = treeParent.children || [];
-        node.movedToEnd = true;
-        treeChildren.push(node);
-      }
-    });
-  };
-}
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 var lite_default = /*#__PURE__*/__webpack_require__.n(lite_namespaceObject);
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
 var external_node_fetch_default = /*#__PURE__*/__webpack_require__.n(external_node_fetch_namespaceObject);
+// EXTERNAL MODULE: external "unist-util-visit"
+var external_unist_util_visit_ = __webpack_require__(2148);
+var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
@@ -847,19 +818,17 @@ function responsiveTables() {
 
 
 
-
+// import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 
 
 async function hastPhase(mdast, ctx, file, targetPdf) {
   const processor = unified_default()().use((external_remark_rehype_default()), {
     allowDangerousHtml: true
-  }).use((external_rehype_raw_default())).use(responsiveTables);
-
-  if (targetPdf) {
-    // although an mdast transform, has been put here as
-    // it needs the full document to work correctly
-    processor.use(moveAnswersToEnd);
-  }
+  }).use((external_rehype_raw_default())).use(responsiveTables); // if (targetPdf) {
+  //   // although an mdast transform, has been put here as
+  //   // it needs the full document to work correctly
+  //   processor.use(moveAnswersToEnd);
+  // }
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -970,7 +939,7 @@ function pdfWrapper(unit) {
         tagName: 'div',
         properties: {
           id: 'root',
-          className: ['hide-sidebar', 'font-default']
+          className: ['hide-sidebar', 'font-default', 'pdf']
         },
         children: [iconDefs, main]
       }]
@@ -1876,7 +1845,7 @@ function linter_reportErrors(files, ctx) {
     }
   }
 }
-async function createReport2(file, mdast, ctx) {
+async function createReport(file, mdast, ctx) {
   const processor = unified_default()().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use((remark_lint_alt_text_default())).use((remark_lint_link_text_default()));
 
   if (ctx.options.spelling) {
@@ -2659,7 +2628,7 @@ function formatDuration(duration = '') {
 
 
 
-async function mdastPhase2(file, ctx) {
+async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
@@ -2674,6 +2643,35 @@ async function mdastPhase2(file, ctx) {
   .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images_images).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
+}
+;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
+
+function moveAnswersToEnd() {
+  return tree => {
+    external_unist_util_visit_default()(tree, 'containerDirective', (node, index, parent) => {
+      // remove answer from task rehype
+      if (node.name === 'task' && node.data) {
+        const children = node.data.hChildren || [];
+        node.data.hChildren = children.filter(o => o.name !== 'answer');
+      }
+
+      if (node.name === 'answer') {
+        // these nodes have already been moved to the end
+        if (node.movedToEnd) {
+          return;
+        } // remove answer block from task node
+
+
+        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
+        parentChildren.splice(index, 1); // add to root node
+
+        const treeParent = tree;
+        const treeChildren = treeParent.children || [];
+        node.movedToEnd = true;
+        treeChildren.push(node);
+      }
+    });
+  };
 }
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
@@ -2886,22 +2884,24 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
+
+
 async function buildUnit(unit, ctx) {
   const mdasts = [];
 
   for (const file of unit.files) {
     const mdast = await inSituTransforms(file, ctx);
-    await createReport2(file, mdast, ctx);
+    await createReport(file, mdast, ctx);
     mdasts.push(mdast);
   }
 
-  const mdast = build_unit_combineMdastTrees(mdasts);
   const unifiedFile = vfile_default()();
   const result = {
     unit,
     md: combineMdFiles(unit),
     files: [...unit.files, unifiedFile]
   };
+  const mdast = build_unit_combineMdastTrees(mdasts);
 
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx);
@@ -2929,7 +2929,7 @@ async function inSituTransforms(file, ctx) {
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase2(file, ctx);
+  const mdast = await mdastPhase(file, ctx);
   return mdast;
 }
 
@@ -2944,7 +2944,8 @@ function build_unit_combineMdastTrees(mdasts) {
   };
 }
 
-async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
+async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
+  const mdast = await mdastPhase2(_mdast, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -2952,6 +2953,16 @@ async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
     hast,
     html
   };
+}
+
+async function mdastPhase2(mdast, file, targetPdf) {
+  const processor = unified_default()();
+
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "js-yaml"
 const external_js_yaml_namespaceObject = require("js-yaml");
@@ -3061,6 +3072,8 @@ async function createContext(dirPath, options = {}) {
 
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
+  if (false) {}
+
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
@@ -3126,8 +3139,8 @@ async function writeUnit(built, ctx, timer) {
 
   if (built.pdf) {
     await writeFile(filePath + '.pdf', built.pdf.pdf); // debug
-    // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
+    await writeFile(filePath + '.pdf.html', built.pdf.html);
     const status = external_chalk_default().green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }

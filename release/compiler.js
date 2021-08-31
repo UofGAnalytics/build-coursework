@@ -9757,50 +9757,21 @@ var __webpack_exports__ = {};
 var external_path_ = __webpack_require__(5622);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
+// EXTERNAL MODULE: ../node_modules/unified/index.js
+var node_modules_unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 // EXTERNAL MODULE: ../node_modules/vfile/index.js
 var vfile = __webpack_require__(9566);
 ;// CONCATENATED MODULE: external "rehype-raw"
 const external_rehype_raw_namespaceObject = require("rehype-raw");
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
-// EXTERNAL MODULE: ../node_modules/unified/index.js
-var node_modules_unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
-// EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
-;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
-
-function move_answers_to_end_moveAnswersToEnd() {
-  return tree => {
-    visit(tree, 'containerDirective', (node, index, parent) => {
-      // remove answer from task rehype
-      if (node.name === 'task' && node.data) {
-        const children = node.data.hChildren || [];
-        node.data.hChildren = children.filter(o => o.name !== 'answer');
-      }
-
-      if (node.name === 'answer') {
-        // these nodes have already been moved to the end
-        if (node.movedToEnd) {
-          return;
-        } // remove answer block from task node
-
-
-        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
-        parentChildren.splice(index, 1); // add to root node
-
-        const treeParent = tree;
-        const treeChildren = treeParent.children || [];
-        node.movedToEnd = true;
-        treeChildren.push(node);
-      }
-    });
-  };
-}
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
+// EXTERNAL MODULE: external "unist-util-visit"
+var external_unist_util_visit_ = __webpack_require__(2148);
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
@@ -10221,19 +10192,17 @@ function responsive_tables_responsiveTables() {
 
 
 
-
+// import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 
 
 async function hast_hastPhase(mdast, ctx, file, targetPdf) {
   const processor = unified().use(remark2rehype, {
     allowDangerousHtml: true
-  }).use(rehypeRaw).use(responsiveTables);
-
-  if (targetPdf) {
-    // although an mdast transform, has been put here as
-    // it needs the full document to work correctly
-    processor.use(moveAnswersToEnd);
-  }
+  }).use(rehypeRaw).use(responsiveTables); // if (targetPdf) {
+  //   // although an mdast transform, has been put here as
+  //   // it needs the full document to work correctly
+  //   processor.use(moveAnswersToEnd);
+  // }
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -10340,7 +10309,7 @@ function pdf_pdfWrapper(unit) {
         tagName: 'div',
         properties: {
           id: 'root',
-          className: ['hide-sidebar', 'font-default']
+          className: ['hide-sidebar', 'font-default', 'pdf']
         },
         children: [iconDefs, main]
       }]
@@ -11237,7 +11206,7 @@ function linter_reportErrors(files, ctx) {
     }
   }
 }
-async function linter_createReport2(file, mdast, ctx) {
+async function linter_createReport(file, mdast, ctx) {
   const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use(lintAltText).use(lintLinkText);
 
   if (ctx.options.spelling) {
@@ -12012,7 +11981,7 @@ function formatDuration(duration = '') {
 
 
 
-async function mdast_mdastPhase2(file, ctx) {
+async function mdast_mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
@@ -12027,6 +11996,35 @@ async function mdast_mdastPhase2(file, ctx) {
   .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
+}
+;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
+
+function move_answers_to_end_moveAnswersToEnd() {
+  return tree => {
+    visit(tree, 'containerDirective', (node, index, parent) => {
+      // remove answer from task rehype
+      if (node.name === 'task' && node.data) {
+        const children = node.data.hChildren || [];
+        node.data.hChildren = children.filter(o => o.name !== 'answer');
+      }
+
+      if (node.name === 'answer') {
+        // these nodes have already been moved to the end
+        if (node.movedToEnd) {
+          return;
+        } // remove answer block from task node
+
+
+        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
+        parentChildren.splice(index, 1); // add to root node
+
+        const treeParent = tree;
+        const treeChildren = treeParent.children || [];
+        node.movedToEnd = true;
+        treeChildren.push(node);
+      }
+    });
+  };
 }
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
@@ -12229,22 +12227,24 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
+
+
 async function build_unit_buildUnit(unit, ctx) {
   const mdasts = [];
 
   for (const file of unit.files) {
     const mdast = await inSituTransforms(file, ctx);
-    await createReport2(file, mdast, ctx);
+    await createReport(file, mdast, ctx);
     mdasts.push(mdast);
   }
 
-  const mdast = build_unit_combineMdastTrees(mdasts);
   const unifiedFile = VFile();
   const result = {
     unit,
     md: combineMdFiles(unit),
     files: [...unit.files, unifiedFile]
   };
+  const mdast = build_unit_combineMdastTrees(mdasts);
 
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx);
@@ -12272,7 +12272,7 @@ async function inSituTransforms(file, ctx) {
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase2(file, ctx);
+  const mdast = await mdastPhase(file, ctx);
   return mdast;
 }
 
@@ -12287,7 +12287,8 @@ function build_unit_combineMdastTrees(mdasts) {
   };
 }
 
-async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
+async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
+  const mdast = await mdastPhase2(_mdast, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -12295,6 +12296,16 @@ async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
     hast,
     html
   };
+}
+
+async function mdastPhase2(mdast, file, targetPdf) {
+  const processor = unified();
+
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "js-yaml"
 const external_js_yaml_namespaceObject = require("js-yaml");
@@ -12403,6 +12414,8 @@ async function context_createContext(dirPath, options = {}) {
 
 const repo = 'UofGAnalytics/build-coursework';
 async function check_for_latest_version_checkForLatestVersion() {
+  if (false) {}
+
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
@@ -12466,8 +12479,8 @@ async function writeUnit(built, ctx, timer) {
 
   if (built.pdf) {
     await writeFile(filePath + '.pdf', built.pdf.pdf); // debug
-    // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
+    await writeFile(filePath + '.pdf.html', built.pdf.html);
     const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
     console.log(`✨ ${status} ${filePath}.pdf`);
   }

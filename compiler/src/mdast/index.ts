@@ -25,7 +25,7 @@ import { images } from './images';
 import { pagebreaks } from './pagebreaks';
 import { youtubeVideos } from './youtube-videos';
 
-export async function mdastPhase2(file: VFile, ctx: Context) {
+export async function mdastPhase(file: VFile, ctx: Context) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward

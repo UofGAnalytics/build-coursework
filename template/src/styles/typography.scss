@@ -20,27 +20,27 @@ html {
 //   font-size: 14px !important;
 // }
 
-#root {
-  &.font-serif main {
-    font-family: 'Newsreader';
-  }
-  &.font-monospace main {
-    font-family: monospace;
-  }
+// #root {
+//   &.font-serif main {
+//     font-family: 'Newsreader';
+//   }
+//   &.font-monospace main {
+//     font-family: monospace;
+//   }
 
-  &.font-default,
-  &.font-serif {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    .boxout .title {
-      font-family: 'Martel';
-    }
-  }
-}
+//   &.font-default,
+//   &.font-serif {
+//     h1,
+//     h2,
+//     h3,
+//     h4,
+//     h5,
+//     h6,
+//     .boxout .title {
+//       font-family: 'Martel';
+//     }
+//   }
+// }
 
 // readability
 main {
@@ -50,6 +50,13 @@ main {
   & > .wrapper {
     width: calc(66% * var(--lineWidth, 1));
     max-width: 1200px;
+  }
+
+  #root.pdf & {
+    font-size: 14px;
+    & > .wrapper {
+      width: 90%;
+    }
   }
 }
 

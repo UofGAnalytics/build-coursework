@@ -46,7 +46,7 @@ export function reportErrors(files: VFile[], ctx: Context) {
   }
 }
 
-export async function createReport2(
+export async function createReport(
   file: VFile,
   mdast: MdastParent,
   ctx: Context

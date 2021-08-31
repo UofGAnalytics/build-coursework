@@ -1,5 +1,6 @@
 import { Parent as HastParent } from 'hast';
 import { Parent as MdastParent } from 'mdast';
+import unified from 'unified';
 import VFile, { VFile as VFileType } from 'vfile';
 
 import { Context } from './context';
@@ -8,11 +9,12 @@ import { hastPhase } from './hast';
 import { htmlPhase } from './html';
 import { knitr } from './knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
-import { createReport2, reportErrors } from './linter';
+import { createReport, reportErrors } from './linter';
 import { assertNoKbl } from './linter/assert-no-kbl';
 import { assertNoTexTabular } from './linter/assert-no-tex-tabular';
 import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
-import { mdastPhase2 } from './mdast';
+import { mdastPhase } from './mdast';
+import { moveAnswersToEnd } from './mdast/move-answers-to-end';
 import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
 
@@ -37,11 +39,10 @@ export async function buildUnit(unit: Unit, ctx: Context) {
   const mdasts: MdastParent[] = [];
   for (const file of unit.files) {
     const mdast = await inSituTransforms(file, ctx);
-    await createReport2(file, mdast, ctx);
+    await createReport(file, mdast, ctx);
     mdasts.push(mdast);
   }
 
-  const mdast = combineMdastTrees(mdasts);
   const unifiedFile = VFile();
 
   const result: BuiltUnit = {
@@ -50,6 +51,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
     files: [...unit.files, unifiedFile],
   };
 
+  const mdast = combineMdastTrees(mdasts);
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(
       mdast,
@@ -89,7 +91,7 @@ async function inSituTransforms(file: VFileType, ctx: Context) {
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase2(file, ctx);
+  const mdast = await mdastPhase(file, ctx);
   return mdast;
 }
 
@@ -105,13 +107,28 @@ function combineMdastTrees(mdasts: MdastParent[]) {
 }
 
 async function syntaxTreeTransforms(
-  mdast: MdastParent,
+  _mdast: MdastParent,
   file: VFileType,
   unit: Unit,
   ctx: Context,
   targetPdf?: boolean
 ) {
+  const mdast = await mdastPhase2(_mdast, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return { mdast, hast, html };
+}
+
+async function mdastPhase2(
+  mdast: MdastParent,
+  file: VFileType,
+  targetPdf?: boolean
+) {
+  const processor = unified();
+
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  return processor.run(mdast, file) as Promise<MdastParent>;
 }

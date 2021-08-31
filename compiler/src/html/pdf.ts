@@ -17,7 +17,7 @@ export function pdfWrapper(unit: Unit) {
           tagName: 'div',
           properties: {
             id: 'root',
-            className: ['hide-sidebar', 'font-default'],
+            className: ['hide-sidebar', 'font-default', 'pdf'],
           },
           children: [iconDefs, main],
         },
