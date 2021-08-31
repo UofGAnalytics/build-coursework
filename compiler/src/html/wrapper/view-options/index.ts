@@ -1,6 +1,6 @@
 import { Node } from 'unist';
 
-import { createFontList } from './font';
+// import { createFontList } from './font';
 import { createReadabilityList } from './readability';
 import { createThemeList } from './theme';
 
@@ -24,8 +24,8 @@ export function createViewOptions(): Node[] {
   return [
     createTitle('Theme'),
     createThemeList(),
-    createTitle('Font'),
-    createFontList(),
+    // createTitle('Font'),
+    // createFontList(),
     createTitle('Readability'),
     createReadabilityList(),
   ];

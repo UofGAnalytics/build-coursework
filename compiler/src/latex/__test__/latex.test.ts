@@ -18,7 +18,7 @@ describe('latex', () => {
     const expectedMd = unindentStringAndTrim(`
       :blockMath[0]
 
-      Some text ([1](#${encodeURIComponent(`mjx-eqn:${id}`)}))
+      Some text ([1](#mjx-eqn:${id}))
     `);
 
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));

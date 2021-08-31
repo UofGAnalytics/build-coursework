@@ -78,10 +78,10 @@ module.exports = {
         loader: 'url-loader'
       },
       // for base-64 inlining fonts imported in CSS files via @font-face
-      {
-        test: /\.ttf$/,
-        loader: 'base64-inline-loader',
-      },
+      // {
+      //   test: /\.ttf$/,
+      //   loader: 'base64-inline-loader',
+      // },
     ]
   },
   plugins,

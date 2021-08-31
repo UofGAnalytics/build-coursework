@@ -13,7 +13,7 @@ describe('example', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout example" id="example-1"><span class="type">Example</span>
+      <div class="boxout example" id="example-1"><span class="type">Example 1</span>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -29,7 +29,7 @@ describe('example', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout example" id="example-1"><span class="type">Example</span>
+      <div class="boxout example" id="example-1"><span class="type">Example 1</span>
         <h3>My Example</h3>
         <p>An example of <em>this</em>!</p>
       </div>
@@ -46,7 +46,7 @@ describe('example', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout example" id="example-1"><span class="type">Example</span>
+      <div class="boxout example" id="example-1"><span class="type">Example 1</span>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -62,7 +62,7 @@ describe('example', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout example hello-icon" id="example-1"><span class="type">Example</span>
+      <div class="boxout example hello-icon" id="example-1"><span class="type">Example 1</span>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -78,7 +78,7 @@ describe('example', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout example hello-icon" id="example-1"><span class="type">Example</span>
+      <div class="boxout example hello-icon" id="example-1"><span class="type">Example 1</span>
         <h3>My Example</h3>
         <p>An example of <em>this</em>!</p>
       </div>
@@ -97,7 +97,7 @@ describe('supplement', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout supplement" id="supplement-1"><span class="type">Supplement</span>
+      <div class="boxout supplement" id="supplement-1"><span class="type">Supplement 1</span>
         <p>A supplement of <em>this</em>!</p>
       </div>
     `);
@@ -115,7 +115,7 @@ describe('background', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout background" id="background-1"><span class="type">Background</span>
+      <div class="boxout background" id="background-1"><span class="type">Background 1</span>
         <p>A background of <em>this</em>!</p>
       </div>
     `);
@@ -133,7 +133,7 @@ describe('weblink', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
+      <div class="boxout weblink" id="weblink-1"><span class="type">Weblink 1</span>
         <h3><a href="https://cran.r-project.org" target="_blank" class="target">https://cran.r-project.org</a></h3>
         <p>A weblink of <em>this</em>!</p>
       </div>
@@ -150,7 +150,7 @@ describe('weblink', () => {
     `);
 
     const expected = unindentString(`
-      <div class="boxout weblink" id="weblink-1"><span class="type">Weblink</span>
+      <div class="boxout weblink" id="weblink-1"><span class="type">Weblink 1</span>
         <h3><a href="https://cran.r-project.org" target="_blank" class="target">CRAN</a></h3>
         <p>A weblink of <em>this</em>!</p>
       </div>

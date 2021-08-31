@@ -128,7 +128,7 @@ function extractAnchorLinkFromMml(mml: string, tex: string) {
   if (match === null) {
     throw new Error(`Reference has no anchor link: ${tex}`);
   }
-  return match[1] as string;
+  return decodeURIComponent(match[1] || '') as string;
 }
 
 function postParse(html: string) {

@@ -33,13 +33,14 @@ function customCode(node: Code, ctx: Context, file: VFile) {
   }
 
   const children: Text[] = [];
+  const trimmed = node.value.trim();
   if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
       type: 'text',
-      value: node.value,
+      value: trimmed,
     });
   } else {
-    children.push(...refractor.highlight(node.value, language));
+    children.push(...refractor.highlight(trimmed, language));
   }
 
   Object.assign(node, {
@@ -50,6 +51,21 @@ function customCode(node: Code, ctx: Context, file: VFile) {
         className: ['code-wrapper', klass],
       },
       hChildren: [
+        klass !== 'r-output'
+          ? null
+          : {
+              type: 'element',
+              tagName: 'h6',
+              properties: {
+                className: 'r-console',
+              },
+              children: [
+                {
+                  type: 'text',
+                  value: 'R Console',
+                },
+              ],
+            },
         {
           type: 'element',
           tagName: 'pre',

@@ -19,8 +19,9 @@ export function htmlWrapper(unit: Unit, mdast: Node) {
           tagName: 'div',
           properties: {
             id: 'root',
+            className: ['hide-sidebar'],
           },
-          children: [iconDefs, hamburgerIcon, sidebar, main],
+          children: [iconDefs, main, hamburgerIcon, sidebar],
         },
       ],
     };

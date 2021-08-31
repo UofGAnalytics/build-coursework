@@ -2671,7 +2671,7 @@ module.exports = asciiAtext
 
 /***/ }),
 
-/***/ 841:
+/***/ 4994:
 /***/ ((module) => {
 
 "use strict";
@@ -4073,7 +4073,7 @@ module.exports = attention
 var asciiAlpha = __webpack_require__(5111)
 var asciiAlphanumeric = __webpack_require__(6102)
 var asciiAtext = __webpack_require__(5860)
-var asciiControl = __webpack_require__(841)
+var asciiControl = __webpack_require__(4994)
 
 var autolink = {
   name: 'autolink',
@@ -5086,7 +5086,7 @@ module.exports = definition
 "use strict";
 
 
-var asciiControl = __webpack_require__(841)
+var asciiControl = __webpack_require__(4994)
 var markdownLineEndingOrSpace = __webpack_require__(6430)
 var markdownLineEnding = __webpack_require__(2739)
 
@@ -9757,52 +9757,21 @@ var __webpack_exports__ = {};
 var external_path_ = __webpack_require__(5622);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
+// EXTERNAL MODULE: ../node_modules/unified/index.js
+var node_modules_unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 // EXTERNAL MODULE: ../node_modules/vfile/index.js
 var vfile = __webpack_require__(9566);
 ;// CONCATENATED MODULE: external "rehype-raw"
 const external_rehype_raw_namespaceObject = require("rehype-raw");
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
-// EXTERNAL MODULE: ../node_modules/unified/index.js
-var node_modules_unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
-// EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
-;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
-
-function move_answers_to_end_moveAnswersToEnd() {
-  return tree => {
-    visit(tree, 'containerDirective', (node, index, parent) => {
-      // remove answer from task rehype
-      if (node.name === 'task' && node.data) {
-        const children = node.data.hChildren || [];
-        node.data.hChildren = children.filter(o => o.name !== 'answer');
-      }
-
-      if (node.name === 'answer') {
-        // these nodes have already been moved to the end
-        if (node.movedToEnd) {
-          return;
-        } // remove answer block from task node
-
-
-        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
-        parentChildren.splice(index, 1); // add to root node
-
-        const treeParent = tree;
-        const treeChildren = treeParent.children || [];
-        node.movedToEnd = true;
-        treeChildren.push(node);
-      }
-    });
-  };
-}
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
-;// CONCATENATED MODULE: external "svgo"
-const external_svgo_namespaceObject = require("svgo");
+// EXTERNAL MODULE: external "unist-util-visit"
+var external_unist_util_visit_ = __webpack_require__(2148);
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
@@ -9812,6 +9781,8 @@ var external_rehype_stringify_default = /*#__PURE__*/__webpack_require__.n(exter
 ;// CONCATENATED MODULE: external "sandboxed-module"
 const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
+;// CONCATENATED MODULE: external "svgo"
+const external_svgo_namespaceObject = require("svgo");
 // EXTERNAL MODULE: ./src/latex/domstubs.js
 var domstubs = __webpack_require__(6209);
 ;// CONCATENATED MODULE: ./src/latex/pdf-to-svg.ts
@@ -10074,7 +10045,7 @@ function embed_assets_defineProperty(obj, key, value) { if (key in obj) { Object
 
 
 
-
+ // import { optimize } from 'svgo';
 
 
 
@@ -10137,11 +10108,9 @@ async function embedPlotSvg(imgNode, ctx) {
   const src = getImageSrc(imgNode);
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
-  const svg = idx === -1 ? contents : contents.slice(idx);
-  const optimised = optimize(svg, {
-    multipass: true
-  }).data;
-  const svgNode = getAssetHast(optimised);
+  const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
+
+  const svgNode = getAssetHast(svg);
 
   const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
 
@@ -10223,19 +10192,17 @@ function responsive_tables_responsiveTables() {
 
 
 
-
+// import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 
 
 async function hast_hastPhase(mdast, ctx, file, targetPdf) {
   const processor = unified().use(remark2rehype, {
     allowDangerousHtml: true
-  }).use(rehypeRaw).use(responsiveTables);
-
-  if (targetPdf) {
-    // although an mdast transform, has been put here as
-    // it needs the full document to work correctly
-    processor.use(moveAnswersToEnd);
-  }
+  }).use(rehypeRaw).use(responsiveTables); // if (targetPdf) {
+  //   // although an mdast transform, has been put here as
+  //   // it needs the full document to work correctly
+  //   processor.use(moveAnswersToEnd);
+  // }
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -10342,7 +10309,7 @@ function pdf_pdfWrapper(unit) {
         tagName: 'div',
         properties: {
           id: 'root',
-          className: ['hide-sidebar', 'font-default']
+          className: ['hide-sidebar', 'font-default', 'pdf']
         },
         children: [iconDefs, main]
       }]
@@ -10353,44 +10320,6 @@ function pdf_pdfWrapper(unit) {
 var mdast_util_to_hast = __webpack_require__(9376);
 ;// CONCATENATED MODULE: external "mdast-util-toc"
 const external_mdast_util_toc_namespaceObject = require("mdast-util-toc");
-;// CONCATENATED MODULE: ./src/html/wrapper/view-options/font.ts
-const fonts = [{
-  value: 'default',
-  label: 'Default'
-}, {
-  value: 'serif',
-  label: 'Serif'
-}, {
-  value: 'sans-serif',
-  label: 'Sans-serif'
-}, {
-  value: 'monospace',
-  label: 'Monospace'
-}];
-function font_createFontList() {
-  return {
-    type: 'element',
-    tagName: 'ul',
-    properties: {
-      id: 'fonts'
-    },
-    children: fonts.map(createFontButton)
-  };
-}
-
-function createFontButton(font) {
-  return {
-    type: 'element',
-    tagName: 'li',
-    properties: {
-      className: [font.value]
-    },
-    children: [{
-      type: 'text',
-      value: font.label
-    }]
-  };
-}
 ;// CONCATENATED MODULE: ./src/html/wrapper/view-options/readability.ts
 const options = [{
   value: 'fontSize',
@@ -10533,7 +10462,7 @@ function createThemeButton(theme) {
   };
 }
 ;// CONCATENATED MODULE: ./src/html/wrapper/view-options/index.ts
-
+// import { createFontList } from './font';
 
 
 function view_options_createViewOptionsButton() {
@@ -10550,7 +10479,9 @@ function view_options_createViewOptionsButton() {
   };
 }
 function view_options_createViewOptions() {
-  return [createTitle('Theme'), createThemeList(), createTitle('Font'), createFontList(), createTitle('Readability'), createReadabilityList()];
+  return [createTitle('Theme'), createThemeList(), // createTitle('Font'),
+  // createFontList(),
+  createTitle('Readability'), createReadabilityList()];
 }
 
 function createTitle(value) {
@@ -10638,9 +10569,10 @@ function wrapper_htmlWrapper(unit, mdast) {
         type: 'element',
         tagName: 'div',
         properties: {
-          id: 'root'
+          id: 'root',
+          className: ['hide-sidebar']
         },
-        children: [iconDefs, hamburgerIcon, sidebar, main]
+        children: [iconDefs, main, hamburgerIcon, sidebar]
       }]
     };
   };
@@ -10924,7 +10856,7 @@ function extractAnchorLinkFromMml(mml, tex) {
     throw new Error(`Reference has no anchor link: ${tex}`);
   }
 
-  return match[1];
+  return decodeURIComponent(match[1] || '');
 }
 
 function postParse(html) {
@@ -11274,7 +11206,7 @@ function linter_reportErrors(files, ctx) {
     }
   }
 }
-async function linter_createReport2(file, mdast, ctx) {
+async function linter_createReport(file, mdast, ctx) {
   const processor = unified().use(assertAssetExists).use(assertVideoAttributes).use(assertTaskAnswerStructure).use(assertWeblinkTarget).use(assertNoH1).use(lintLatex).use(lintAltText).use(lintLinkText);
 
   if (ctx.options.spelling) {
@@ -11358,8 +11290,6 @@ const external_remark_frontmatter_namespaceObject = require("remark-frontmatter"
 const external_remark_gfm_namespaceObject = require("remark-gfm");
 // EXTERNAL MODULE: ../node_modules/remark-parse/index.js
 var remark_parse = __webpack_require__(3850);
-;// CONCATENATED MODULE: external "remark-sectionize"
-const external_remark_sectionize_namespaceObject = require("remark-sectionize");
 ;// CONCATENATED MODULE: external "remark-slug"
 const external_remark_slug_namespaceObject = require("remark-slug");
 ;// CONCATENATED MODULE: external "mathjax-full/js/core/MathItem.js"
@@ -11447,7 +11377,8 @@ function directive_to_svg_aliasDirectiveToSvg(ctx) {
             const svg = renderSvg(mml);
 
             const properties = directive_to_svg_objectSpread(directive_to_svg_objectSpread({}, svg.properties), {}, {
-              className: node.name === 'inlineMath' ? 'inline-math' : 'block-math'
+              className: node.name === 'inlineMath' ? 'inline-math' : 'block-math',
+              id: getRefId(mml)
             });
 
             node.data = {
@@ -11463,6 +11394,16 @@ function directive_to_svg_aliasDirectiveToSvg(ctx) {
 
 function getTexIdx(node) {
   return Number(node.children[0].value);
+}
+
+function getRefId(mml) {
+  const match = mml.match(/<mtd.+?id="(.*?)"/);
+
+  if (match === null) {
+    return undefined;
+  }
+
+  return match[1];
 }
 
 function renderSvg(mml) {
@@ -11615,7 +11556,7 @@ function createAnswer(node, count) {
 function createBoxoutType(node, count) {
   const name = node.name;
   const label = startCase(name);
-  const value = name === 'task' ? `${label} ${count}` : label;
+  const value = `${label} ${count}`;
   return {
     type: 'element',
     tagName: 'span',
@@ -11728,14 +11669,15 @@ function customCode(node, ctx, file) {
   }
 
   const children = [];
+  const trimmed = node.value.trim();
 
   if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
       type: 'text',
-      value: node.value
+      value: trimmed
     });
   } else {
-    children.push(...refractor.highlight(node.value, language));
+    children.push(...refractor.highlight(trimmed, language));
   }
 
   Object.assign(node, {
@@ -11745,7 +11687,17 @@ function customCode(node, ctx, file) {
       hProperties: {
         className: ['code-wrapper', klass]
       },
-      hChildren: [{
+      hChildren: [klass !== 'r-output' ? null : {
+        type: 'element',
+        tagName: 'h6',
+        properties: {
+          className: 'r-console'
+        },
+        children: [{
+          type: 'text',
+          value: 'R Console'
+        }]
+      }, {
         type: 'element',
         tagName: 'pre',
         children: [{
@@ -12015,8 +11967,7 @@ function formatDuration(duration = '') {
 
 
 
- // @ts-expect-error
-
+ // import sectionize from 'remark-sectionize';
 
  // @ts-expect-error
 
@@ -12030,12 +11981,13 @@ function formatDuration(duration = '') {
 
 
 
-async function mdast_mdastPhase2(file, ctx) {
+async function mdast_mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
   const processor = unified() // third-party plugins:
-  .use(markdown).use(directive).use(gfm).use(frontmatter).use(footnotes).use(sectionize).use(slug).use(headings, {
+  .use(markdown).use(directive).use(gfm).use(frontmatter).use(footnotes) // .use(sectionize)
+  .use(slug).use(headings, {
     content: createSvg('link-icon'),
     linkProperties: {
       className: 'link'
@@ -12044,6 +11996,35 @@ async function mdast_mdastPhase2(file, ctx) {
   .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
+}
+;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
+
+function move_answers_to_end_moveAnswersToEnd() {
+  return tree => {
+    visit(tree, 'containerDirective', (node, index, parent) => {
+      // remove answer from task rehype
+      if (node.name === 'task' && node.data) {
+        const children = node.data.hChildren || [];
+        node.data.hChildren = children.filter(o => o.name !== 'answer');
+      }
+
+      if (node.name === 'answer') {
+        // these nodes have already been moved to the end
+        if (node.movedToEnd) {
+          return;
+        } // remove answer block from task node
+
+
+        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
+        parentChildren.splice(index, 1); // add to root node
+
+        const treeParent = tree;
+        const treeChildren = treeParent.children || [];
+        node.movedToEnd = true;
+        treeChildren.push(node);
+      }
+    });
+  };
 }
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
@@ -12246,22 +12227,24 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
+
+
 async function build_unit_buildUnit(unit, ctx) {
   const mdasts = [];
 
   for (const file of unit.files) {
     const mdast = await inSituTransforms(file, ctx);
-    await createReport2(file, mdast, ctx);
+    await createReport(file, mdast, ctx);
     mdasts.push(mdast);
   }
 
-  const mdast = build_unit_combineMdastTrees(mdasts);
   const unifiedFile = VFile();
   const result = {
     unit,
     md: combineMdFiles(unit),
     files: [...unit.files, unifiedFile]
   };
+  const mdast = build_unit_combineMdastTrees(mdasts);
 
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx);
@@ -12289,7 +12272,7 @@ async function inSituTransforms(file, ctx) {
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase2(file, ctx);
+  const mdast = await mdastPhase(file, ctx);
   return mdast;
 }
 
@@ -12304,7 +12287,8 @@ function build_unit_combineMdastTrees(mdasts) {
   };
 }
 
-async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
+async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
+  const mdast = await mdastPhase2(_mdast, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -12312,6 +12296,16 @@ async function syntaxTreeTransforms(mdast, file, unit, ctx, targetPdf) {
     hast,
     html
   };
+}
+
+async function mdastPhase2(mdast, file, targetPdf) {
+  const processor = unified();
+
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "js-yaml"
 const external_js_yaml_namespaceObject = require("js-yaml");
@@ -12417,16 +12411,23 @@ async function context_createContext(dirPath, options = {}) {
 }
 ;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts
 
+
+const repo = 'UofGAnalytics/build-coursework';
 async function check_for_latest_version_checkForLatestVersion() {
-  const response = await fetch('https://api.github.com/repos/UofGAnalytics/build-coursework/releases/latest');
+  if (false) {}
+
+  const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.5";
+  const currentVersion = "1.1.6";
 
   if (latestTag !== currentVersion) {
-    console.log(`You are running version ${currentVersion} and the latest version is ${latestTag}.`);
-    console.log(`Run the following command to update:`);
-    console.log('npm install -g https://github.com/UofGAnalytics/build-coursework');
+    console.log(chalk.yellow.bold('New version available'));
+    console.log(chalk.yellow(`Current version: ${currentVersion}`));
+    console.log(chalk.yellow(`Latest version: ${latestTag}`));
+    console.log(chalk.yellow(`Run the following command to update:`));
+    console.log(chalk.yellow(`npm install -g ${repo}`));
+    console.log('');
   }
 }
 ;// CONCATENATED MODULE: ./src/index.ts

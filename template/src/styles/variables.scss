@@ -18,7 +18,7 @@ $sunshine: #ffdc36;
 $mocha: #aa8066;
 
 @function toRGB($color) {
-  @return red($color) + ", " + green($color) + ", " + blue($color);
+  @return red($color) + ', ' + green($color) + ', ' + blue($color);
 }
 
 // default theme (light)

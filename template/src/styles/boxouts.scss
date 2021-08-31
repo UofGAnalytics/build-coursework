@@ -35,6 +35,10 @@
 
     .answer-trigger {
       cursor: pointer;
+
+      #root.pdf & {
+        display: none;
+      }
     }
 
     .answer-reveal {

@@ -112,16 +112,18 @@ I perform various static analysis on the coursework and report any problems foun
 
 ## Known Issues
 
+I've tried to keep necessary changes to a minimum, but there are few things that may pop up depending on how you have written the coursework.
+
 ### Heading structure
 
-There should only be one `<h1>` in a document, and it is defined in each week's .yaml file as `title`. Do not use `<h1>` headings in the .Rmd files (for example `# My heading`). Instead, please use `<h2>` to `<h6>` headings.
+There should be only one `<h1>` in a document, and it is defined in each week's .yaml file as `title`. Do not use `<h1>` headings in the .Rmd files (for example `# My heading`). Instead, please use `<h2>` to `<h6>` headings:
 
 ```
 ## Section title
 ###### Smallest title
 ```
 
-There is a Table of Contents in the HTML files with links to al the `<h2>`'s and `<h3>`'s. Please have a look at how your titles are rendered here. For best results I recommend keeping `<h2>`'s as short and concise as possible.
+There is a Table of Contents in the HTML files with links to all the `<h2>`'s and `<h3>`'s in the sidebar. Please have a look at how your titles are rendered here. It's recommended to keep titles as short and concise as possible for accessibility purposes.
 
 ### Whitespace
 
@@ -129,7 +131,15 @@ While checking the output of this too you may notice whole paragraphs have gone 
 
 You may also spot an error in the parsing of inline LaTeX due to whitespace - adding a space before and/or after the delimiters should fix it.
 
-### \textbf
+### Transparent images
+
+Due to having different background colour options for accessibility, a transparent image that looks legible against a light background will probably not be legible on a dark background. Transparent images should be avoided and a solid white background preferred.
+
+### Inline LaTeX references
+
+Due to differences in how Pandoc and [MathJax](https://www.mathjax.org) extract LaTeX, you can only reference numbered sections using, for example `\begin{align}`.
+
+### LaTeX \textbf
 
 LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bold text\*\*). If you have used `\textbf` to highlight some characters in an equation please use `\boldsymbol` instead.
 
