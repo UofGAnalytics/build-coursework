@@ -3,6 +3,8 @@ import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
+import { failMessage } from '../utils/message';
+
 interface LeafDirective extends Parent {
   name: string;
   attributes: Record<string, string>;
@@ -13,7 +15,7 @@ export function youtubeVideos() {
     visit<LeafDirective>(tree, 'leafDirective', (node) => {
       if (node.name === 'video') {
         const attributes = node.attributes as Record<string, string>;
-        const title = getTitle(node);
+        const title = getTitle(node, file);
         node.data = {
           hName: 'a',
           hProperties: {
@@ -106,10 +108,14 @@ export function youtubeVideos() {
   };
 }
 
-function getTitle(node: LeafDirective) {
+function getTitle(node: LeafDirective, file: VFile) {
   const children = node.children as Node[];
   const firstChild = children[0] as Literal;
-  return firstChild.value as string;
+  const title = firstChild?.value || '';
+  if (title.trim() === '') {
+    failMessage(file, 'Video has no title', node.position);
+  }
+  return title;
 }
 
 function getYoutubeUrl(id: string) {
