@@ -72,4 +72,29 @@ describe('convertMacroToDirective', () => {
 
     expect(ignoreWhitespace(md2)).toBe(ignoreWhitespace(expected));
   });
+
+  it('should convert video macros', async () => {
+    const { md } = await testProcessor(`
+      ##[video, videoid="5u1w6eROypI", duration="9m57s"] Introduction to GLMs
+    `);
+
+    const expected = unindentStringAndTrim(`
+      ::video[Introduction to GLMs]{id="5u1w6eROypI" duration="9m57s"}
+    `);
+
+    expect(md).toBe(expected);
+  });
+
+  it('should convert video macros with no title', async () => {
+    const { md, hasFailingMessage } = await testProcessor(`
+      ##[video, videoid="5u1w6eROypI", duration="9m57s"]
+    `);
+
+    const expected = unindentStringAndTrim(`
+      ::video{id="5u1w6eROypI" duration="9m57s"}
+    `);
+
+    expect(md).toBe(expected);
+    expect(hasFailingMessage('Video has no title')).toBe(true);
+  });
 });

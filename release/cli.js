@@ -2504,12 +2504,13 @@ function pagebreaks() {
 }
 ;// CONCATENATED MODULE: ./src/mdast/youtube-videos.ts
 
+
 function youtubeVideos() {
   return async (tree, file) => {
     external_unist_util_visit_default()(tree, 'leafDirective', node => {
       if (node.name === 'video') {
         const attributes = node.attributes;
-        const title = youtube_videos_getTitle(node);
+        const title = youtube_videos_getTitle(node, file);
         node.data = {
           hName: 'a',
           hProperties: {
@@ -2584,10 +2585,16 @@ function youtubeVideos() {
   };
 }
 
-function youtube_videos_getTitle(node) {
+function youtube_videos_getTitle(node, file) {
   const children = node.children;
   const firstChild = children[0];
-  return firstChild.value;
+  const title = (firstChild === null || firstChild === void 0 ? void 0 : firstChild.value) || '';
+
+  if (title.trim() === '') {
+    failMessage(file, 'Video has no title', node.position);
+  }
+
+  return title;
 }
 
 function getYoutubeUrl(id) {
@@ -3077,7 +3084,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.6";
+  const currentVersion = "1.1.7";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
