@@ -1,4 +1,3 @@
-import { createHasFailingMessage } from '../../test-utils/has-message';
 import {
   ignoreWhitespace,
   testProcessor,
