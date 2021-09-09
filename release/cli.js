@@ -2692,7 +2692,9 @@ var external_puppeteer_default = /*#__PURE__*/__webpack_require__.n(external_pup
 
 async function convertToPdf(html) {
   const browser = await external_puppeteer_default().launch({
-    headless: true
+    headless: true,
+    ignoreDefaultArgs: ['--disable-extensions'] // fix for windows
+
   });
   const page = await browser.newPage();
   await page.setContent(html);
@@ -3084,7 +3086,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.7";
+  const currentVersion = "1.1.8";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
@@ -3115,6 +3117,12 @@ async function rMarkdown(dirPath, options = {}) {
     // write single week
     const idx = ctx.options.week - 1;
     const input = ctx.course.units[idx];
+
+    if (input === undefined) {
+      const courseYaml = external_path_default().join(ctx.dirPath, 'course.yaml');
+      throw new Error(`Week ${ctx.options.week} not found in ${courseYaml}`);
+    }
+
     const built = await buildUnit(input, ctx);
     await writeUnit(built, ctx, timer);
     result.push(built);
@@ -12809,7 +12817,18 @@ const options = {
   noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
   force: argv.force
-};
+}; // async function rMarkdown(dirPath: string, options: Options = {}) {
+//   try {
+//     return await run(dirPath, options);
+//   } catch (err) {
+//     console.error(err);
+//     if (err instanceof Error) {
+//       console.error(err.stack);
+//     }
+//     process.exit(1);
+//   }
+// }
+
 (0,src/* rMarkdown */.C)(dirPath, options);
 })();
 

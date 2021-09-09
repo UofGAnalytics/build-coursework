@@ -12044,7 +12044,9 @@ const external_puppeteer_namespaceObject = require("puppeteer");
 
 async function pdf_convertToPdf(html) {
   const browser = await puppeteer.launch({
-    headless: true
+    headless: true,
+    ignoreDefaultArgs: ['--disable-extensions'] // fix for windows
+
   });
   const page = await browser.newPage();
   await page.setContent(html);
@@ -12426,7 +12428,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.7";
+  const currentVersion = "1.1.8";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
@@ -12455,6 +12457,12 @@ async function rMarkdown(dirPath, options = {}) {
     // write single week
     const idx = ctx.options.week - 1;
     const input = ctx.course.units[idx];
+
+    if (input === undefined) {
+      const courseYaml = path.join(ctx.dirPath, 'course.yaml');
+      throw new Error(`Week ${ctx.options.week} not found in ${courseYaml}`);
+    }
+
     const built = await buildUnit(input, ctx);
     await writeUnit(built, ctx, timer);
     result.push(built);
