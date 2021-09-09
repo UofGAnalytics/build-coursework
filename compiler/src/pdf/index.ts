@@ -7,7 +7,10 @@ import puppeteer from 'puppeteer';
 // `;
 
 export async function convertToPdf(html: string) {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    ignoreDefaultArgs: ['--disable-extensions'], // fix for windows
+  });
   const page = await browser.newPage();
   await page.setContent(html);
   await page.evaluateHandle('document.fonts.ready');

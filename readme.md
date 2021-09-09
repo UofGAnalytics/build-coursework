@@ -2,11 +2,21 @@ This tool converts ODL courses written as .Rmd and .yaml files, to accessible HT
 
 ## Installation
 
+The easiest way to install Node.js is to first install a command line tool called Node Version Manager.
+
 ### Install NVM
 
-The easiest way to install Node.js is to first install a command line tool called Node Version Manager. Follow installation instructions on the [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) project for Mac and Linux and [coreybutler/nvm-windows](https://github.com/coreybutler/nvm-windows#install-nvm-windows) on Windows.
+#### On Windows
 
-Next, you need to run a few terminal commands. If you are unfamiliar with this, here is a quick tutorial for [Mac](https://www.howtogeek.com/682770/how-to-open-the-terminal-on-a-mac) and [Windows](https://www.howtogeek.com/235101/10-ways-to-open-the-command-prompt-in-windows-10#opencommandpromptfromsearch) (Run as administrator).
+Follow installation instructions on the [coreybutler/nvm-windows](https://github.com/coreybutler/nvm-windows#install-nvm-windows) project.
+
+> If your User folder name includes a space, for example "Joe Bloggs", then please follow this [extra step](https://github.com/coreybutler/nvm-windows/issues/405#issuecomment-626359211).
+
+#### On Mac or Linux
+
+Follow installation instructions on the [nvm-sh/nvm](https://github.com/nvm-sh/nvm#installing-and-updating) project.
+
+Next, you need to run a few terminal commands. If you are unfamiliar with this, here is a quick tutorial on how to open a terminal on [Mac](https://www.howtogeek.com/682770/how-to-open-the-terminal-on-a-mac) and [Windows](https://www.howtogeek.com/235101/10-ways-to-open-the-command-prompt-in-windows-10#opencommandpromptfromsearch).
 
 ### Install Node.js
 
@@ -35,16 +45,23 @@ npm –v
 
 ```bash
 git --version
+# git version 2.30.1 (Apple Git-130) or similar
 ```
 
 If not, please follow the instructions here: https://docs.github.com/en/get-started/quickstart/set-up-git.
 
-### Install the tool from Github via Node Package Manager
-
-Use one of the commands below should install the project, depending on your Github security preferences:
+### Ensure Rscript is callable from the terminal
 
 ```bash
-# using SSH
+Rscript --version
+# R scripting front-end version 4.1.0 (2021-05-18) or similar
+```
+
+If not, please follow these instructions for [Windows](https://info201.github.io/r-intro.html#windows-command-line) or these for [Mac and Linux](https://stackoverflow.com/questions/38456144/rscript-command-not-found#67086041)
+
+### Install the tool from Github with npm
+
+```bash
 npm install -g UofGAnalytics/build-coursework
 ```
 
@@ -59,7 +76,7 @@ npm list –g --depth=0
 
 ## Usage
 
-Via the terminal, navigate to a coursework folder with a `course.yaml` file, for example:
+In your terminal, navigate to a coursework folder with a `course.yaml` file, for example:
 
 ```bash
 cd /Users/staff/my-course
@@ -86,7 +103,7 @@ Once complete, you will find a `build` folder in beside the `course.yaml` file, 
 
 ### Update
 
-One day you may run the command and see a message such as:
+One day you may run the command and see a message like this:
 
 ```
 > You are running version 1.0.0 and the latest version is 1.5.0.
@@ -142,6 +159,10 @@ Due to differences in how Pandoc and [MathJax](https://www.mathjax.org) extract 
 ### LaTeX \textbf
 
 LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bold text\*\*). If you have used `\textbf` to highlight some characters in an equation please use `\boldsymbol` instead.
+
+### LaTeX \tabular
+
+LaTeX tabular is not currently supported, as recreating all its features in HTML would be a complex project on its own. Instead, please use [Markdown table syntax](https://github.github.com/gfm/#table).
 
 ## Bug reporting
 

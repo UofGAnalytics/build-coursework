@@ -20,6 +20,14 @@ export async function rMarkdown(dirPath: string, options: Options = {}) {
     // write single week
     const idx = ctx.options.week - 1;
     const input = ctx.course.units[idx];
+
+    if (input === undefined) {
+      const courseYaml = path.join(ctx.dirPath, 'course.yaml');
+      throw new Error(
+        `Week ${ctx.options.week} not found in ${courseYaml}`
+      );
+    }
+
     const built = await buildUnit(input, ctx);
     await writeUnit(built, ctx, timer);
     result.push(built);
