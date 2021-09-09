@@ -72,4 +72,16 @@ const options: Options = {
   force: argv.force,
 };
 
+// async function rMarkdown(dirPath: string, options: Options = {}) {
+//   try {
+//     return await run(dirPath, options);
+//   } catch (err) {
+//     console.error(err);
+//     if (err instanceof Error) {
+//       console.error(err.stack);
+//     }
+//     process.exit(1);
+//   }
+// }
+
 rMarkdown(dirPath, options);

@@ -4,9 +4,13 @@ import { Parent as HastParent } from 'hast';
 import { Parent as MDastParent } from 'mdast';
 import { VFile } from 'vfile';
 
+import { Options } from '../context';
 import { rMarkdown } from '..';
 
-export async function fixtureTestProcessor(fixture: string) {
+export async function fixtureTestProcessor(
+  fixture: string,
+  options: Options = {}
+) {
   const unit = {
     md: '',
     files: [] as VFile[],
@@ -22,6 +26,7 @@ export async function fixtureTestProcessor(fixture: string) {
     noReport: true,
     noWrite: true,
     noEmbedAssets: true,
+    ...options,
   });
 
   unit.md = result.md;
