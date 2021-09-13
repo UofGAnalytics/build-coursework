@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 6209:
+/***/ 2937:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -2671,7 +2671,7 @@ module.exports = asciiAtext
 
 /***/ }),
 
-/***/ 4994:
+/***/ 841:
 /***/ ((module) => {
 
 "use strict";
@@ -4073,7 +4073,7 @@ module.exports = attention
 var asciiAlpha = __webpack_require__(5111)
 var asciiAlphanumeric = __webpack_require__(6102)
 var asciiAtext = __webpack_require__(5860)
-var asciiControl = __webpack_require__(4994)
+var asciiControl = __webpack_require__(841)
 
 var autolink = {
   name: 'autolink',
@@ -5086,7 +5086,7 @@ module.exports = definition
 "use strict";
 
 
-var asciiControl = __webpack_require__(4994)
+var asciiControl = __webpack_require__(841)
 var markdownLineEndingOrSpace = __webpack_require__(6430)
 var markdownLineEnding = __webpack_require__(2739)
 
@@ -9783,9 +9783,9 @@ const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
 ;// CONCATENATED MODULE: external "svgo"
 const external_svgo_namespaceObject = require("svgo");
-// EXTERNAL MODULE: ./src/latex/domstubs.js
-var domstubs = __webpack_require__(6209);
-;// CONCATENATED MODULE: ./src/latex/pdf-to-svg.ts
+// EXTERNAL MODULE: ./src/pdf/domstubs.js
+var domstubs = __webpack_require__(2937);
+;// CONCATENATED MODULE: ./src/pdf/pdf-to-svg.ts
 
 
 
@@ -9806,10 +9806,13 @@ const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/legacy/
   }
 });
 
-async function pdf_to_svg_texPdfToSvg(filePath) {
+async function pdf_to_svg_pdfToSvg(filePath) {
+  // pdfjsLib.setVerbosityLevel(pdfjsLib.VerbosityLevel.ERRORS);
+  // console.log(filePath);
   const doc = await pdfjsLib.getDocument({
     url: filePath,
-    fontExtraProperties: true // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
+    fontExtraProperties: true,
+    verbosity: 0 // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
     // cMapPacked: true,
 
   }).promise; // may come in handy again...
@@ -9817,16 +9820,24 @@ async function pdf_to_svg_texPdfToSvg(filePath) {
   // if (!isPdfTexDocument(metadata.info)) {
   //   throw new Error('Unhandled pdf file: was not produced by PdfTeX');
   // }
+  // console.log(2);
 
-  const page = await doc.getPage(1);
-  const opList = await page.getOperatorList();
+  const page = await doc.getPage(1); // console.log(3);
+
+  const opList = await page.getOperatorList(); // console.log(4);
+
   const viewport = page.getViewport({
     scale: 1.0
   });
-  const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+  console.log(5, viewport);
+  const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs); // console.log(6);
+
   svgGfx.embedFonts = true;
-  const svg = await svgGfx.getSVG(opList, viewport);
-  return formatSvg(svg.toString());
+  const svg = await svgGfx.getSVG(opList, viewport); // console.log(svg.toString());
+
+  const result = await formatSvg(svg.toString()); // console.log(8);
+
+  return result;
 } // function isPdfTexDocument(info: Record<string, string> = {}) {
 //   return info['Producer']?.startsWith('pdfTeX');
 // }
@@ -9850,14 +9861,22 @@ function addWrapper() {
       if (node.tagName === 'svg') {
         const properties = node.properties || {};
         node.properties = {
-          width: properties.width,
-          height: properties.height,
-          viewBox: properties.viewBox,
+          // width: properties.width,
+          // height: properties.height,
+          viewBox: getViewBox(properties),
           className: 'pdftex'
-        };
+        }; // console.log(node.properties);
       }
     });
   };
+}
+
+function getViewBox(properties) {
+  if (properties.viewBox) {
+    return properties.viewBox;
+  }
+
+  return `0 0 ${properties.width} ${properties.height}`;
 }
 ;// CONCATENATED MODULE: external "hash-sum"
 const external_hash_sum_namespaceObject = require("hash-sum");
@@ -10075,7 +10094,8 @@ function embed_assets_embedAssets(ctx) {
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (err) {
-      failMessage(file, err.message, node.position);
+      console.log('hey!');
+      failMessage(file, (err === null || err === void 0 ? void 0 : err.message) || '', node.position);
     }
   }
 
@@ -10151,7 +10171,8 @@ async function getImageDataFromWeb(src) {
 
 async function embedTexPdfSvg(imgNode) {
   const src = getImageSrc(imgNode);
-  const svgNode = await texPdfToSvg(src);
+  console.log(src);
+  const svgNode = await pdfToSvg(src);
 
   const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
 
@@ -12297,8 +12318,11 @@ function build_unit_combineMdastTrees(mdasts) {
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
+  console.log(0, file.messages);
   const mdast = await mdastPhase2(_mdast, file, targetPdf);
+  console.log(1, file.messages);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
+  console.log(2, file.messages);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
     mdast,
