@@ -29,6 +29,18 @@ describe('convertNewPageToDirective', () => {
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
+  it('should reformat a \\mbox to pagebreak directive', async () => {
+    const { md } = await testProcessor(`
+      \\mbox
+    `);
+
+    const expected = unindentStringAndTrim(`
+      ::pagebreak
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+  });
+
   it('should be idempotent', async () => {
     const { md } = await testProcessor(`
       \\newpage
