@@ -22,6 +22,7 @@ export function boxouts() {
         case 'weblink':
         case 'theorem':
         case 'task':
+        case 'proposition':
         case 'answer': {
           const name = node.name as string;
           const count = counter.increment(name);

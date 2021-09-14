@@ -124,6 +124,24 @@ describe('background', () => {
   });
 });
 
+describe('proposition', () => {
+  it('should render a proposition boxout', async () => {
+    const { html } = await testProcessor(`
+      :::proposition
+      A proposition of *this*!
+      :::
+    `);
+
+    const expected = unindentString(`
+      <div class="boxout proposition" id="proposition-1"><span class="type">Proposition 1</span>
+        <p>A proposition of <em>this</em>!</p>
+      </div>
+    `);
+
+    expect(html).toBe(expected);
+  });
+});
+
 describe('weblink', () => {
   it('should render a weblink boxout', async () => {
     const { html } = await testProcessor(`

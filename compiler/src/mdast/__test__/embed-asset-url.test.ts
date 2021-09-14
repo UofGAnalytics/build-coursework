@@ -5,7 +5,11 @@ describe('embedAssetUrl', () => {
     const { html } = await fixtureTestProcessor('relative-assets', {
       noEmbedAssets: false,
     });
-    const count = (html.match(/img-wrapper/g) || []).length;
-    expect(count).toBe(3);
+    const count1 = (html.match(/img-wrapper/g) || []).length;
+    expect(count1).toBe(3);
+
+    const count2 = (html.match(/<svg.*?style="width: 70%;".*?>/) || [])
+      .length;
+    expect(count2).toBe(1);
   });
 });
