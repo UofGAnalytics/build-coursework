@@ -123,7 +123,12 @@ function createBoxoutType(
 ): Element {
   const name = node.name as string;
   const label = startCase(name);
-  const value = `${label} ${count}`;
+  let value = `${label} ${count}`;
+
+  if (node.attributes.optional !== undefined) {
+    value += ` (Optional)`;
+  }
+
   return {
     type: 'element',
     tagName: 'span',

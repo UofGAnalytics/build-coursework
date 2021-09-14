@@ -142,6 +142,32 @@ describe('proposition', () => {
   });
 });
 
+describe('optional task', () => {
+  it('should render an optional tast boxout', async () => {
+    const { html } = await testProcessor(`
+      ###[task, optional]
+      An optional task of *this*!
+      ####[answer]
+      Ho ho!
+      ####[/answer]
+      ###[/task]
+    `);
+
+    const expected = unindentString(`
+      <div class="boxout task" id="task-1"><span class="type">Task 1 (Optional)</span>
+        <p>An optional task of <em>this</em>!</p>
+        <div class="answer"><span class="answer-trigger" data-answer-id="1">Show answer</span>
+          <div class="answer-reveal" id="answer-1">
+            <p>Ho ho!</p>
+          </div>
+        </div>
+      </div>
+    `);
+
+    expect(html).toBe(expected);
+  });
+});
+
 describe('weblink', () => {
   it('should render a weblink boxout', async () => {
     const { html } = await testProcessor(`
