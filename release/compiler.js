@@ -9807,8 +9807,6 @@ const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/legacy/
 });
 
 async function pdf_to_svg_pdfToSvg(filePath) {
-  // pdfjsLib.setVerbosityLevel(pdfjsLib.VerbosityLevel.ERRORS);
-  // console.log(filePath);
   const doc = await pdfjsLib.getDocument({
     url: filePath,
     fontExtraProperties: true,
@@ -9820,23 +9818,16 @@ async function pdf_to_svg_pdfToSvg(filePath) {
   // if (!isPdfTexDocument(metadata.info)) {
   //   throw new Error('Unhandled pdf file: was not produced by PdfTeX');
   // }
-  // console.log(2);
 
-  const page = await doc.getPage(1); // console.log(3);
-
-  const opList = await page.getOperatorList(); // console.log(4);
-
+  const page = await doc.getPage(1);
+  const opList = await page.getOperatorList();
   const viewport = page.getViewport({
     scale: 1.0
   });
-  console.log(5, viewport);
-  const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs); // console.log(6);
-
+  const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
   svgGfx.embedFonts = true;
-  const svg = await svgGfx.getSVG(opList, viewport); // console.log(svg.toString());
-
-  const result = await formatSvg(svg.toString()); // console.log(8);
-
+  const svg = await svgGfx.getSVG(opList, viewport);
+  const result = await formatSvg(svg.toString());
   return result;
 } // function isPdfTexDocument(info: Record<string, string> = {}) {
 //   return info['Producer']?.startsWith('pdfTeX');
@@ -9852,7 +9843,8 @@ async function formatSvg(_str) {
     fragment: true
   }).use(addWrapper).use(stringify);
   const parsed = processor.parse(optimised);
-  return processor.run(parsed);
+  const transformed = await processor.run(parsed);
+  return transformed.children[0];
 }
 
 function addWrapper() {
@@ -9865,7 +9857,7 @@ function addWrapper() {
           // height: properties.height,
           viewBox: getViewBox(properties),
           className: 'pdftex'
-        }; // console.log(node.properties);
+        };
       }
     });
   };
@@ -10085,16 +10077,15 @@ function embed_assets_embedAssets(ctx) {
           return embedImage(node, ctx, file);
 
         case '.svg':
-          return embedPlotSvg(node, ctx);
+          return embedSvg(node, ctx);
 
         case '.pdf':
-          return embedTexPdfSvg(node);
+          return embedPdfSvg(node);
 
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (err) {
-      console.log('hey!');
       failMessage(file, (err === null || err === void 0 ? void 0 : err.message) || '', node.position);
     }
   }
@@ -10124,7 +10115,7 @@ async function embedImage(node, ctx, file) {
   }
 }
 
-async function embedPlotSvg(imgNode, ctx) {
+async function embedSvg(imgNode, ctx) {
   const src = getImageSrc(imgNode);
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
@@ -10132,7 +10123,7 @@ async function embedPlotSvg(imgNode, ctx) {
 
   const svgNode = getAssetHast(svg);
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, imgNode.properties), svgNode.properties);
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
@@ -10169,12 +10160,11 @@ async function getImageDataFromWeb(src) {
   return buffer.toString('base64');
 }
 
-async function embedTexPdfSvg(imgNode) {
+async function embedPdfSvg(imgNode) {
   const src = getImageSrc(imgNode);
-  console.log(src);
   const svgNode = await pdfToSvg(src);
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, imgNode.properties), svgNode.properties);
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
@@ -11280,25 +11270,6 @@ function assert_no_tex_tabular_assertNoTexTabular(file) {
     }
   });
 }
-;// CONCATENATED MODULE: ./src/linter/warn-on-include-graphics.ts
-
-function warn_on_include_graphics_warnOnIncludeGraphics(file) {
-  const md = file.contents;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('include_graphics')) {
-      warnMessage(file, 'knitr::include_graphics found. Properties out.width, out.height and fig.align knitr chunk properties may have no effect.', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 ;// CONCATENATED MODULE: external "remark-directive"
@@ -11752,6 +11723,12 @@ function parseClass(node) {
   return lang.slice(2, -1);
 }
 ;// CONCATENATED MODULE: ./src/mdast/embed-asset-url.ts
+const _excluded = (/* unused pure expression or super */ null && (["src"]));
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
 // import { failMessage } from '../utils/message';
@@ -11767,13 +11744,19 @@ function embed_asset_url_embedAssetUrl() {
     }); // also fix for raw html nodes sometimes output by knitr
 
     visit(tree, ['html'], node => {
-      const src = getSrc(node.value);
+      const props = getProps(node.value);
 
-      if (src !== null) {
+      if (props !== null && props.src) {
+        const {
+          src
+        } = props,
+              otherProps = _objectWithoutProperties(props, _excluded);
+
         Object.assign(node, {
           type: 'image',
           url: getPath(src, dirname),
-          value: ''
+          value: '',
+          data: otherProps
         });
       }
     });
@@ -11784,22 +11767,39 @@ function getPath(url, dirname) {
   return path.isAbsolute(url) || url.startsWith('http') ? url : path.join(process.cwd(), dirname, url);
 }
 
-function getSrc(value) {
-  const matchImg = value.match(/<img.*?src="(.+?)".*?>/);
+function getProps(value) {
+  const matchImg = value.match(/^<img.*?src="(.+?)".*?>$/);
 
   if (matchImg !== null) {
-    return matchImg[1];
+    return propsToObject(value.slice(5, -1));
   }
 
-  const matchPdf = value.match(/<embed.*?src="(.+?)".*?>/);
+  const matchPdf = value.match(/^<embed.*?src="(.+?)".*?>$/);
 
   if (matchPdf !== null) {
-    return matchPdf[1];
+    return propsToObject(value.slice(7, -1));
   }
 
   return null;
 }
+
+function propsToObject(str) {
+  return str.split(/(\w+)="(.*?)"/).filter(s => s.trim() !== '').reduce((acc, value, idx, arr) => {
+    if (idx % 2 === 1) {
+      const key = arr[idx - 1];
+      acc[key] = value;
+    }
+
+    return acc;
+  }, {});
+}
 ;// CONCATENATED MODULE: ./src/mdast/images.ts
+function images_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function images_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { images_ownKeys(Object(source), true).forEach(function (key) { images_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { images_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function images_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 function images_images() {
   let count = 0;
@@ -11811,6 +11811,25 @@ function images_images() {
 }
 
 function template(node, count) {
+  var _node$data;
+
+  const image = {
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      src: node.url,
+      alt: node.alt
+    },
+    children: []
+  };
+
+  if ((_node$data = node.data) !== null && _node$data !== void 0 && _node$data.width) {
+    image.properties = images_objectSpread(images_objectSpread({}, image.properties), {}, {
+      style: `width: ${node.data.width};`
+    });
+  }
+
+  const caption = createCaption(node, count);
   Object.assign(node, {
     type: 'custom-image',
     data: {
@@ -11818,15 +11837,7 @@ function template(node, count) {
       hProperties: {
         className: ['img-wrapper']
       },
-      hChildren: [{
-        type: 'element',
-        tagName: 'img',
-        properties: {
-          src: node.url,
-          alt: node.alt
-        },
-        children: []
-      }, createCaption(node, count)]
+      hChildren: [image, caption]
     }
   });
 }
@@ -11995,7 +12006,6 @@ function formatDuration(duration = '') {
 
 
 
- // import sectionize from 'remark-sectionize';
 
  // @ts-expect-error
 
@@ -12005,7 +12015,6 @@ function formatDuration(duration = '') {
 
 
 
- // import { moveAnswersToEnd } from './move-answers-to-end';
 
 
 
@@ -12253,7 +12262,7 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
-
+ // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
 
@@ -12297,8 +12306,8 @@ async function build_unit_buildUnit(unit, ctx) {
 async function inSituTransforms(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
-  assertNoKbl(file);
-  warnOnIncludeGraphics(file);
+  assertNoKbl(file); // warnOnIncludeGraphics(file);
+
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
@@ -12318,11 +12327,8 @@ function build_unit_combineMdastTrees(mdasts) {
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
-  console.log(0, file.messages);
   const mdast = await mdastPhase2(_mdast, file, targetPdf);
-  console.log(1, file.messages);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
-  console.log(2, file.messages);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
     mdast,

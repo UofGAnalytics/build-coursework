@@ -4,7 +4,7 @@ import stringify from 'rehype-stringify';
 import SandboxedModule from 'sandboxed-module';
 import { optimize } from 'svgo';
 import unified from 'unified';
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
 // @ts-expect-error
@@ -52,7 +52,8 @@ async function formatSvg(_str: string) {
     .use(addWrapper)
     .use(stringify);
   const parsed = processor.parse(optimised);
-  return processor.run(parsed);
+  const transformed = (await processor.run(parsed)) as Parent;
+  return transformed.children[0];
 }
 
 function addWrapper() {

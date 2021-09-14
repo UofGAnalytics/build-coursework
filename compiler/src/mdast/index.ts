@@ -7,7 +7,6 @@ import footnotes from 'remark-footnotes';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
-// import sectionize from 'remark-sectionize';
 import slug from 'remark-slug';
 // @ts-expect-error
 import toVFile from 'to-vfile';
@@ -21,7 +20,6 @@ import { boxouts } from './boxouts';
 import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
 import { images } from './images';
-// import { moveAnswersToEnd } from './move-answers-to-end';
 import { pagebreaks } from './pagebreaks';
 import { youtubeVideos } from './youtube-videos';
 

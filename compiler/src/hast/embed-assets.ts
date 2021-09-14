@@ -26,9 +26,9 @@ export function embedAssets(ctx: Context) {
         case '.gif':
           return embedImage(node, ctx, file);
         case '.svg':
-          return embedPlotSvg(node, ctx);
+          return embedSvg(node, ctx);
         case '.pdf':
-          return embedTexPdfSvg(node);
+          return embedPdfSvg(node);
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
@@ -61,7 +61,7 @@ async function embedImage(node: Element, ctx: Context, file: VFile) {
   }
 }
 
-async function embedPlotSvg(imgNode: Element, ctx: Context) {
+async function embedSvg(imgNode: Element, ctx: Context) {
   const src = getImageSrc(imgNode);
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
@@ -70,8 +70,8 @@ async function embedPlotSvg(imgNode: Element, ctx: Context) {
   const svgNode = getAssetHast(svg) as Element;
 
   const properties = {
-    ...svgNode.properties,
     ...imgNode.properties,
+    ...svgNode.properties,
   } as Properties;
 
   delete properties.src;
@@ -105,13 +105,13 @@ async function getImageDataFromWeb(src: string) {
   return buffer.toString('base64');
 }
 
-async function embedTexPdfSvg(imgNode: Element) {
+async function embedPdfSvg(imgNode: Element) {
   const src = getImageSrc(imgNode);
   const svgNode = (await pdfToSvg(src)) as Element;
 
   const properties = {
-    ...svgNode.properties,
     ...imgNode.properties,
+    ...svgNode.properties,
   } as Properties;
 
   delete properties.src;

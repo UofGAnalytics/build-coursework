@@ -13,6 +13,25 @@ export function images() {
 }
 
 function template(node: Image, count: number) {
+  const image: Element = {
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      src: node.url,
+      alt: node.alt,
+    },
+    children: [],
+  };
+
+  if (node.data?.width) {
+    image.properties = {
+      ...image.properties,
+      style: `width: ${node.data.width};`,
+    };
+  }
+
+  const caption = createCaption(node, count);
+
   Object.assign(node, {
     type: 'custom-image',
     data: {
@@ -20,18 +39,7 @@ function template(node: Image, count: number) {
       hProperties: {
         className: ['img-wrapper'],
       },
-      hChildren: [
-        {
-          type: 'element',
-          tagName: 'img',
-          properties: {
-            src: node.url,
-            alt: node.alt,
-          },
-          children: [],
-        },
-        createCaption(node, count),
-      ],
+      hChildren: [image, caption],
     },
   });
 }
