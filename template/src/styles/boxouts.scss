@@ -100,5 +100,14 @@
         padding: 0 0 1rem;
       }
     }
+
+    .boxout & {
+      padding-left: 0;
+      padding-right: 0.3rem;
+      background: transparent;
+      &:last-child {
+        padding-bottom: 0.3rem;
+      }
+    }
   }
 }
