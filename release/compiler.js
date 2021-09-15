@@ -9757,15 +9757,15 @@ var __webpack_exports__ = {};
 var external_path_ = __webpack_require__(5622);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
-// EXTERNAL MODULE: ../node_modules/unified/index.js
-var node_modules_unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 // EXTERNAL MODULE: ../node_modules/vfile/index.js
 var vfile = __webpack_require__(9566);
 ;// CONCATENATED MODULE: external "rehype-raw"
 const external_rehype_raw_namespaceObject = require("rehype-raw");
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
+// EXTERNAL MODULE: ../node_modules/unified/index.js
+var node_modules_unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
@@ -11435,201 +11435,6 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   svg.properties = newProperties;
   return svg;
 }
-;// CONCATENATED MODULE: ./src/mdast/boxouts.ts
-
-
-
-function boxouts_boxouts() {
-  return async tree => {
-    const counter = createCounter();
-    visit(tree, 'containerDirective', node => {
-      switch (node.name) {
-        case 'example':
-        case 'error':
-        case 'supplement':
-        case 'background':
-        case 'definition':
-        case 'weblink':
-        case 'theorem':
-        case 'task':
-        case 'answer':
-          {
-            const name = node.name;
-            const count = counter.increment(name);
-            node.data = {
-              hProperties: createAttributes(node, count),
-              hChildren: createBoxout(node, count)
-            };
-          }
-      }
-    });
-  };
-}
-
-function createAttributes(node, count) {
-  const name = node.name;
-  const id = `${name}-${count}`;
-  const attributes = node.attributes;
-  const className = ['boxout', name];
-
-  if (attributes.icon) {
-    className.push(`${attributes.icon}-icon`);
-  }
-
-  return {
-    className,
-    id
-  };
-}
-
-function createBoxout(node, count) {
-  const typeTitle = createBoxoutType(node, count);
-  const titles = [typeTitle];
-  const titleValue = getTitleValue(node);
-
-  if (titleValue.length > 0) {
-    const title = boxouts_createTitle(node);
-    titles.push(title);
-  }
-
-  const children = node.children;
-  const content = children.filter(o => {
-    var _o$data;
-
-    return !((_o$data = o.data) !== null && _o$data !== void 0 && _o$data.directiveLabel);
-  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => toHast(o, {
-    allowDangerousHtml: true
-  })).filter(Boolean);
-
-  if (node.name === 'task') {
-    const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');
-
-    if (answer) {
-      content.push(createAnswer(answer, count));
-    }
-  }
-
-  return [...titles, ...content];
-}
-
-function createAnswer(node, count) {
-  const {
-    children
-  } = toHast(node);
-  return {
-    type: 'element',
-    tagName: 'div',
-    properties: {
-      className: ['answer']
-    },
-    children: [{
-      type: 'element',
-      tagName: 'span',
-      properties: {
-        className: ['answer-trigger'],
-        'data-answer-id': count
-      },
-      children: [{
-        type: 'text',
-        value: 'Show answer'
-      }]
-    }, {
-      type: 'element',
-      tagName: 'div',
-      properties: {
-        className: ['answer-reveal'],
-        id: `answer-${count}`
-      },
-      children
-    }]
-  };
-}
-
-function createBoxoutType(node, count) {
-  const name = node.name;
-  const label = startCase(name);
-  const value = `${label} ${count}`;
-  return {
-    type: 'element',
-    tagName: 'span',
-    properties: {
-      className: ['type']
-    },
-    children: [{
-      type: 'text',
-      value
-    }]
-  };
-}
-
-function boxouts_createTitle(node) {
-  return {
-    type: 'element',
-    tagName: 'h3',
-    children: createTitleValue(node)
-  };
-}
-
-function createTitleValue(node) {
-  const name = node.name;
-  const newRoot = {
-    type: 'root',
-    children: getTitleValue(node)
-  };
-  const {
-    children = []
-  } = toHast(newRoot);
-
-  if (name !== 'weblink') {
-    return children;
-  }
-
-  const {
-    target
-  } = node.attributes;
-  return [{
-    type: 'element',
-    tagName: 'a',
-    properties: {
-      href: target,
-      target: '_blank',
-      className: ['target']
-    },
-    children
-  }];
-}
-
-function getTitleValue(node) {
-  var _parent$data;
-
-  const children = node.children || [];
-  const parent = children[0] || {};
-
-  if (!((_parent$data = parent.data) !== null && _parent$data !== void 0 && _parent$data.directiveLabel)) {
-    if (node.name === 'weblink') {
-      const attributes = node.attributes;
-      return [{
-        type: 'text',
-        value: attributes.target
-      }];
-    }
-
-    return [];
-  }
-
-  return parent.children || [];
-}
-
-function createCounter() {
-  const store = {};
-  return {
-    increment(key) {
-      store[key] = (store[key] || 0) + 1;
-      return store[key];
-    }
-
-  };
-}
 ;// CONCATENATED MODULE: external "refractor"
 const external_refractor_namespaceObject = require("refractor");
 ;// CONCATENATED MODULE: ./src/mdast/code-blocks.ts
@@ -12017,7 +11822,6 @@ function formatDuration(duration = '') {
 
 
 
-
 async function mdast_mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
@@ -12030,9 +11834,200 @@ async function mdast_mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images).use(pagebreaks);
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(images).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
+}
+;// CONCATENATED MODULE: ./src/mdast/boxouts.ts
+
+
+
+
+function boxouts_boxouts() {
+  const counter = createCounter();
+  return async tree => {
+    visit(tree, 'containerDirective', node => {
+      switch (node.name) {
+        case 'example':
+        case 'error':
+        case 'supplement':
+        case 'background':
+        case 'definition':
+        case 'weblink':
+        case 'theorem':
+        case 'task':
+        case 'proposition':
+        case 'answer':
+          {
+            const name = node.name;
+            const count = counter.increment(name);
+            node.data = {
+              hProperties: createAttributes(node, count),
+              hChildren: createBoxout(node, count)
+            };
+          }
+      }
+    });
+  };
+}
+
+function createAttributes(node, count) {
+  const name = node.name;
+  const id = `${name}-${count}`;
+  const attributes = node.attributes;
+  const className = ['boxout', name];
+
+  if (attributes.icon) {
+    className.push(`${attributes.icon}-icon`);
+  }
+
+  return {
+    className,
+    id
+  };
+}
+
+function createBoxout(node, count) {
+  const typeTitle = createBoxoutType(node, count);
+  const titles = [typeTitle];
+  const titleValue = getTitleValue(node);
+
+  if (titleValue.length > 0) {
+    const title = boxouts_createTitle(node);
+    titles.push(title);
+  }
+
+  const children = node.children;
+  const content = children.filter(o => {
+    var _o$data;
+
+    return !((_o$data = o.data) !== null && _o$data !== void 0 && _o$data.directiveLabel);
+  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => toHast(o, {
+    allowDangerousHtml: true
+  })).filter(Boolean);
+
+  if (node.name === 'task') {
+    const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');
+
+    if (answer) {
+      content.push(createAnswer(answer, count));
+    }
+  }
+
+  return [...titles, ...content];
+}
+
+function createAnswer(node, count) {
+  const {
+    children
+  } = toHast(node);
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: {
+      className: ['answer']
+    },
+    children: [{
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: ['answer-trigger'],
+        'data-answer-id': count
+      },
+      children: [{
+        type: 'text',
+        value: 'Show answer'
+      }]
+    }, {
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        className: ['answer-reveal'],
+        id: `answer-${count}`
+      },
+      children
+    }]
+  };
+}
+
+function createBoxoutType(node, count) {
+  const name = node.name;
+  const label = startCase(name);
+  let value = `${label} ${count}`;
+
+  if (node.attributes.optional !== undefined) {
+    value += ` (Optional)`;
+  }
+
+  return {
+    type: 'element',
+    tagName: 'span',
+    properties: {
+      className: ['type']
+    },
+    children: [{
+      type: 'text',
+      value
+    }]
+  };
+}
+
+function boxouts_createTitle(node) {
+  return {
+    type: 'element',
+    tagName: 'h3',
+    children: createTitleValue(node)
+  };
+}
+
+function createTitleValue(node) {
+  const name = node.name;
+  const newRoot = {
+    type: 'root',
+    children: getTitleValue(node)
+  };
+  const {
+    children = []
+  } = toHast(newRoot);
+
+  if (name !== 'weblink') {
+    return children;
+  }
+
+  const {
+    target
+  } = node.attributes;
+  return [{
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: target,
+      target: '_blank',
+      className: ['target']
+    },
+    children
+  }];
+}
+
+function getTitleValue(node) {
+  var _parent$data;
+
+  const children = node.children || [];
+  const parent = children[0] || {};
+
+  if (!((_parent$data = parent.data) !== null && _parent$data !== void 0 && _parent$data.directiveLabel)) {
+    if (node.name === 'weblink') {
+      const attributes = node.attributes;
+      return [{
+        type: 'text',
+        value: attributes.target
+      }];
+    }
+
+    return [];
+  }
+
+  return parent.children || [];
 }
 ;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
 
@@ -12062,6 +12057,19 @@ function move_answers_to_end_moveAnswersToEnd() {
       }
     });
   };
+}
+;// CONCATENATED MODULE: ./src/mdast/combined.ts
+
+
+
+async function combined_combinedMdastPhase(mdast, file, targetPdf) {
+  const processor = unified().use(boxouts);
+
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
@@ -12261,7 +12269,6 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
-
  // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
@@ -12311,8 +12318,7 @@ async function inSituTransforms(file, ctx) {
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase(file, ctx);
-  return mdast;
+  return mdastPhase(file, ctx);
 }
 
 function combineMdFiles(unit) {
@@ -12327,7 +12333,7 @@ function build_unit_combineMdastTrees(mdasts) {
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
-  const mdast = await mdastPhase2(_mdast, file, targetPdf);
+  const mdast = await combinedMdastPhase(_mdast, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -12335,16 +12341,6 @@ async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
     hast,
     html
   };
-}
-
-async function mdastPhase2(mdast, file, targetPdf) {
-  const processor = unified();
-
-  if (targetPdf) {
-    processor.use(moveAnswersToEnd);
-  }
-
-  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "js-yaml"
 const external_js_yaml_namespaceObject = require("js-yaml");

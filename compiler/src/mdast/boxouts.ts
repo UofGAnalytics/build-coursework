@@ -4,14 +4,16 @@ import toHast from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
+import { createCounter } from '../utils/counter';
+
 interface ContainerDirective extends Parent {
   name: string;
   attributes: Record<string, string>;
 }
 
 export function boxouts() {
+  const counter = createCounter();
   return async (tree: Node) => {
-    const counter = createCounter();
     visit<ContainerDirective>(tree, 'containerDirective', (node) => {
       switch (node.name) {
         case 'example':
@@ -195,18 +197,4 @@ function getTitleValue(node: ContainerDirective): Node[] {
   }
 
   return parent.children || [];
-}
-
-export type Counter = {
-  increment: (key: string) => number;
-};
-
-export function createCounter() {
-  const store: Record<string, number> = {};
-  return {
-    increment(key: string) {
-      store[key] = (store[key] || 0) + 1;
-      return store[key];
-    },
-  };
 }

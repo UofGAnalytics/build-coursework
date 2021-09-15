@@ -16,7 +16,6 @@ import { VFile } from 'vfile';
 import { Context } from '../context';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 import { createSvg } from '../utils/icons';
-import { boxouts } from './boxouts';
 import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
 import { images } from './images';
@@ -45,7 +44,6 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
     .use(codeBlocks, ctx)
-    .use(boxouts)
     .use(images)
     .use(pagebreaks);
 

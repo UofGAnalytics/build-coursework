@@ -1,6 +1,5 @@
 import { Parent as HastParent } from 'hast';
 import { Parent as MdastParent } from 'mdast';
-import unified from 'unified';
 import VFile, { VFile as VFileType } from 'vfile';
 
 import { Context } from './context';
@@ -14,7 +13,7 @@ import { assertNoKbl } from './linter/assert-no-kbl';
 import { assertNoTexTabular } from './linter/assert-no-tex-tabular';
 // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 import { mdastPhase } from './mdast';
-import { moveAnswersToEnd } from './mdast/move-answers-to-end';
+import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
 
@@ -91,8 +90,7 @@ async function inSituTransforms(file: VFileType, ctx: Context) {
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase(file, ctx);
-  return mdast;
+  return mdastPhase(file, ctx);
 }
 
 function combineMdFiles(unit: Unit) {
@@ -113,22 +111,8 @@ async function syntaxTreeTransforms(
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const mdast = await mdastPhase2(_mdast, file, targetPdf);
+  const mdast = await combinedMdastPhase(_mdast, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return { mdast, hast, html };
-}
-
-async function mdastPhase2(
-  mdast: MdastParent,
-  file: VFileType,
-  targetPdf?: boolean
-) {
-  const processor = unified();
-
-  if (targetPdf) {
-    processor.use(moveAnswersToEnd);
-  }
-
-  return processor.run(mdast, file) as Promise<MdastParent>;
 }
