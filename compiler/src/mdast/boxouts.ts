@@ -4,6 +4,7 @@ import toHast from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
+import { Context } from '../context';
 import { createCounter } from '../utils/counter';
 
 interface ContainerDirective extends Parent {
@@ -11,7 +12,7 @@ interface ContainerDirective extends Parent {
   attributes: Record<string, string>;
 }
 
-export function boxouts() {
+export function boxouts(refStore: Context['refStore']) {
   const counter = createCounter();
   return async (tree: Node) => {
     visit<ContainerDirective>(tree, 'containerDirective', (node) => {
@@ -29,7 +30,7 @@ export function boxouts() {
           const name = node.name as string;
           const count = counter.increment(name);
           node.data = {
-            hProperties: createAttributes(node, count),
+            hProperties: createAttributes(node, count, refStore),
             hChildren: createBoxout(node, count),
           };
         }
@@ -38,7 +39,11 @@ export function boxouts() {
   };
 }
 
-function createAttributes(node: ContainerDirective, count: number) {
+function createAttributes(
+  node: ContainerDirective,
+  count: number,
+  refStore: Context['refStore']
+) {
   const name = node.name as string;
   const id = `${name}-${count}`;
 
@@ -47,6 +52,11 @@ function createAttributes(node: ContainerDirective, count: number) {
   if (attributes.icon) {
     className.push(`${attributes.icon}-icon`);
   }
+
+  if (node.attributes.label !== undefined) {
+    refStore[node.attributes.label] = id;
+  }
+
   return { className, id };
 }
 

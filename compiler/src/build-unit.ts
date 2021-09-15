@@ -111,7 +111,7 @@ async function syntaxTreeTransforms(
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const mdast = await combinedMdastPhase(_mdast, file, targetPdf);
+  const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return { mdast, hast, html };
