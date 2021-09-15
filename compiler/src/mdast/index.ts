@@ -30,9 +30,9 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     // third-party plugins:
     .use(markdown)
     .use(directive)
-    .use(gfm)
     .use(frontmatter)
-    .use(footnotes)
+    .use(footnotes, { inlineNotes: true })
+    .use(gfm)
     // .use(sectionize)
     .use(slug)
     .use(headings, {
