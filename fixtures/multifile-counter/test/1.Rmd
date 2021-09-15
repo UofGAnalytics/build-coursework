@@ -1,0 +1,6 @@
+###[task]
+Task one
+####[answer]
+Answer one
+####[/answer]
+###[/task]

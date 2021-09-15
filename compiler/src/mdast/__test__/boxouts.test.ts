@@ -1,3 +1,4 @@
+import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
   ignoreWhitespace,
   testProcessor,
@@ -239,5 +240,10 @@ describe('weblink', () => {
     `);
 
     expect(html).toMatch(/<img src="(.+?)"/);
+  });
+
+  it('should increment counter across .Rmd files', async () => {
+    const { html } = await fixtureTestProcessor('multifile-counter');
+    expect(html.includes('id="task-2"')).toBe(true);
   });
 });

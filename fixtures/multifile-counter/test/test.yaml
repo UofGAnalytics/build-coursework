@@ -1,0 +1,7 @@
+name: 'Test'
+title: 'Multifile counter'
+content:
+  - type: text
+    src: 1.Rmd
+  - type: text
+    src: 2.Rmd
