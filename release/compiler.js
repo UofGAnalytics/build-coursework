@@ -10661,7 +10661,7 @@ async function execKnitr(file, ctx) {
   await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${ctx.cacheDir}/"`;
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));

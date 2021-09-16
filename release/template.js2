@@ -258,7 +258,6 @@ function handlePlus(e) {
 }
 
 function handleReset(e) {
-  console.log('hey!');
   const target = e.target;
 
   if (target.classList.contains('disabled')) {
@@ -268,7 +267,6 @@ function handleReset(e) {
   const props = getProps(target);
   setDisabledClasses(Number(props.defaultValue), props);
   target.classList.add('disabled');
-  console.log(`--${props.name}`, props.defaultValue);
   document.documentElement.style.setProperty(`--${props.name}`, props.defaultValue);
   state[props.name] = props.defaultValue;
   saveState(state);

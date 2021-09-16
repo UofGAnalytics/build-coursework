@@ -1293,7 +1293,7 @@ async function execKnitr(file, ctx) {
   await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
     const rFile = external_path_default().join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${ctx.cacheDir}/"`;
     (0,external_child_process_namespaceObject.exec)(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(external_chalk_default().grey(`[knitr] ${stdErr.trim()}`));

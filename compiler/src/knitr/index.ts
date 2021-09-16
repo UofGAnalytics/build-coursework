@@ -30,7 +30,7 @@ async function execKnitr(file: VFile, ctx: Context) {
 
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${ctx.cacheDir}/"`;
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
