@@ -2750,8 +2750,8 @@ var external_puppeteer_default = /*#__PURE__*/__webpack_require__.n(external_pup
 async function convertToPdf(html) {
   const browser = await external_puppeteer_default().launch({
     headless: true,
-    ignoreDefaultArgs: ['--disable-extensions'] // fix for windows
-
+    args: [// attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
+    '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process']
   });
   const page = await browser.newPage();
   await page.setContent(html);
