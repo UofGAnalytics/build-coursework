@@ -18,7 +18,7 @@ describe('references', () => {
         <h3>My title</h3>
         <p>Argh</p>
       </div>
-      <p>And once I saw a <a href="example-1">Example 1</a> and another <a href="example-1">Example 1</a></p>
+      <p>And once I saw a <a href="#example-1">Example 1</a> and another <a href="#example-1">Example 1</a></p>
     `);
 
     expect(html).toBe(expected);

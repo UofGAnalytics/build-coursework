@@ -63,6 +63,6 @@ function referenceTransform(html: string, refStore: Context['refStore']) {
     const key = match[1];
     const link = refStore[key];
     const name = startCase(link);
-    return `<a href="${link}">${name}</a>`;
+    return `<a href="#${link}">${name}</a>`;
   });
 }
