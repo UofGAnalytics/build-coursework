@@ -1264,7 +1264,7 @@ function referenceTransform(html, refStore) {
     const key = match[1];
     const link = refStore[key];
     const name = (0,external_lodash_namespaceObject.startCase)(link);
-    return `<a href="${link}">${name}</a>`;
+    return `<a href="#${link}">${name}</a>`;
   });
 }
 ;// CONCATENATED MODULE: external "child_process"
@@ -3132,7 +3132,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.9";
+  const currentVersion = "1.1.10";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
