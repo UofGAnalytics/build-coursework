@@ -21,12 +21,14 @@ export function embedAssetUrl() {
 
     // also fix for raw html nodes sometimes output by knitr
     visit<Text>(tree, ['html'], (node) => {
-      const src = getSrc(node.value);
-      if (src !== null) {
+      const props = getProps(node.value);
+      if (props !== null && props.src) {
+        const { src, ...otherProps } = props;
         Object.assign(node, {
           type: 'image',
           url: getPath(src, dirname),
           value: '',
+          data: otherProps,
         });
       }
     });
@@ -39,14 +41,27 @@ function getPath(url: string, dirname: string) {
     : path.join(process.cwd(), dirname, url);
 }
 
-function getSrc(value: string) {
-  const matchImg = value.match(/<img.*?src="(.+?)".*?>/);
+function getProps(value: string) {
+  const matchImg = value.match(/^<img.*?src="(.+?)".*?>$/);
   if (matchImg !== null) {
-    return matchImg[1];
+    return propsToObject(value.slice(5, -1));
   }
-  const matchPdf = value.match(/<embed.*?src="(.+?)".*?>/);
+  const matchPdf = value.match(/^<embed.*?src="(.+?)".*?>$/);
   if (matchPdf !== null) {
-    return matchPdf[1];
+    return propsToObject(value.slice(7, -1));
   }
   return null;
+}
+
+function propsToObject(str: string) {
+  return str
+    .split(/(\w+)="(.*?)"/)
+    .filter((s) => s.trim() !== '')
+    .reduce((acc: Record<string, string>, value, idx, arr) => {
+      if (idx % 2 === 1) {
+        const key = arr[idx - 1];
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
 }

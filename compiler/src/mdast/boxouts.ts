@@ -4,14 +4,17 @@ import toHast from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
+import { Context } from '../context';
+import { createCounter } from '../utils/counter';
+
 interface ContainerDirective extends Parent {
   name: string;
   attributes: Record<string, string>;
 }
 
-export function boxouts() {
+export function boxouts(refStore: Context['refStore']) {
+  const counter = createCounter();
   return async (tree: Node) => {
-    const counter = createCounter();
     visit<ContainerDirective>(tree, 'containerDirective', (node) => {
       switch (node.name) {
         case 'example':
@@ -22,11 +25,12 @@ export function boxouts() {
         case 'weblink':
         case 'theorem':
         case 'task':
+        case 'proposition':
         case 'answer': {
           const name = node.name as string;
           const count = counter.increment(name);
           node.data = {
-            hProperties: createAttributes(node, count),
+            hProperties: createAttributes(node, count, refStore),
             hChildren: createBoxout(node, count),
           };
         }
@@ -35,7 +39,11 @@ export function boxouts() {
   };
 }
 
-function createAttributes(node: ContainerDirective, count: number) {
+function createAttributes(
+  node: ContainerDirective,
+  count: number,
+  refStore: Context['refStore']
+) {
   const name = node.name as string;
   const id = `${name}-${count}`;
 
@@ -44,6 +52,11 @@ function createAttributes(node: ContainerDirective, count: number) {
   if (attributes.icon) {
     className.push(`${attributes.icon}-icon`);
   }
+
+  if (node.attributes.label !== undefined) {
+    refStore[node.attributes.label] = id;
+  }
+
   return { className, id };
 }
 
@@ -122,7 +135,12 @@ function createBoxoutType(
 ): Element {
   const name = node.name as string;
   const label = startCase(name);
-  const value = `${label} ${count}`;
+  let value = `${label} ${count}`;
+
+  if (node.attributes.optional !== undefined) {
+    value += ` (Optional)`;
+  }
+
   return {
     type: 'element',
     tagName: 'span',
@@ -189,18 +207,4 @@ function getTitleValue(node: ContainerDirective): Node[] {
   }
 
   return parent.children || [];
-}
-
-export type Counter = {
-  increment: (key: string) => number;
-};
-
-export function createCounter() {
-  const store: Record<string, number> = {};
-  return {
-    increment(key: string) {
-      store[key] = (store[key] || 0) + 1;
-      return store[key];
-    },
-  };
 }

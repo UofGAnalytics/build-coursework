@@ -1,3 +1,4 @@
+import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
   ignoreWhitespace,
   testProcessor,
@@ -124,6 +125,50 @@ describe('background', () => {
   });
 });
 
+describe('proposition', () => {
+  it('should render a proposition boxout', async () => {
+    const { html } = await testProcessor(`
+      :::proposition
+      A proposition of *this*!
+      :::
+    `);
+
+    const expected = unindentString(`
+      <div class="boxout proposition" id="proposition-1"><span class="type">Proposition 1</span>
+        <p>A proposition of <em>this</em>!</p>
+      </div>
+    `);
+
+    expect(html).toBe(expected);
+  });
+});
+
+describe('optional task', () => {
+  it('should render an optional tast boxout', async () => {
+    const { html } = await testProcessor(`
+      ###[task, optional]
+      An optional task of *this*!
+      ####[answer]
+      Ho ho!
+      ####[/answer]
+      ###[/task]
+    `);
+
+    const expected = unindentString(`
+      <div class="boxout task" id="task-1"><span class="type">Task 1 (Optional)</span>
+        <p>An optional task of <em>this</em>!</p>
+        <div class="answer"><span class="answer-trigger" data-answer-id="1">Show answer</span>
+          <div class="answer-reveal" id="answer-1">
+            <p>Ho ho!</p>
+          </div>
+        </div>
+      </div>
+    `);
+
+    expect(html).toBe(expected);
+  });
+});
+
 describe('weblink', () => {
   it('should render a weblink boxout', async () => {
     const { html } = await testProcessor(`
@@ -195,5 +240,10 @@ describe('weblink', () => {
     `);
 
     expect(html).toMatch(/<img src="(.+?)"/);
+  });
+
+  it('should increment counter across .Rmd files', async () => {
+    const { html } = await fixtureTestProcessor('multifile-counter');
+    expect(html.includes('id="task-2"')).toBe(true);
   });
 });

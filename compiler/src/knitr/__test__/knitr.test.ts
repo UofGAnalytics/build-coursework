@@ -79,9 +79,10 @@ describe('knitr', () => {
       { noEmbedAssets: false }
     );
 
-    expect(html.includes('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(
-      true
-    );
+    const match =
+      html.match(/<svg alt="plot of chunk unnamed-chunk-1"/) || [];
+
+    expect(match.length).toBe(1);
   });
 
   it('should ignore tab whitespace', async () => {

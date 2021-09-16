@@ -1,10 +1,10 @@
-import { Element as HastElement } from 'hast';
+import { Element as HastElement, Properties } from 'hast';
 import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
 import SandboxedModule from 'sandboxed-module';
 import { optimize } from 'svgo';
 import unified from 'unified';
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 
 // @ts-expect-error
@@ -15,10 +15,11 @@ const pdfjsLib = SandboxedModule.require('pdfjs-dist/legacy/build/pdf', {
   globals: { document, Image, Element, console, process, URL },
 });
 
-export async function texPdfToSvg(filePath: string) {
+export async function pdfToSvg(filePath: string) {
   const doc = await pdfjsLib.getDocument({
     url: filePath,
     fontExtraProperties: true,
+    verbosity: 0,
     // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
     // cMapPacked: true,
   }).promise;
@@ -35,7 +36,8 @@ export async function texPdfToSvg(filePath: string) {
   const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
   svgGfx.embedFonts = true;
   const svg = await svgGfx.getSVG(opList, viewport);
-  return formatSvg(svg.toString());
+  const result = await formatSvg(svg.toString());
+  return result;
 }
 
 // function isPdfTexDocument(info: Record<string, string> = {}) {
@@ -50,7 +52,8 @@ async function formatSvg(_str: string) {
     .use(addWrapper)
     .use(stringify);
   const parsed = processor.parse(optimised);
-  return processor.run(parsed);
+  const transformed = (await processor.run(parsed)) as Parent;
+  return transformed.children[0];
 }
 
 function addWrapper() {
@@ -59,12 +62,19 @@ function addWrapper() {
       if (node.tagName === 'svg') {
         const properties = node.properties || {};
         node.properties = {
-          width: properties.width,
-          height: properties.height,
-          viewBox: properties.viewBox,
+          // width: properties.width,
+          // height: properties.height,
+          viewBox: getViewBox(properties),
           className: 'pdftex',
         };
       }
     });
   };
+}
+
+function getViewBox(properties: Properties) {
+  if (properties.viewBox) {
+    return properties.viewBox;
+  }
+  return `0 0 ${properties.width} ${properties.height}`;
 }

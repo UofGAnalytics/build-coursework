@@ -1,6 +1,7 @@
 import path from 'path';
 
 import { Parent as HastParent } from 'hast';
+import { startCase } from 'lodash';
 import { Parent as MdastParent } from 'mdast';
 import doc, { Options } from 'rehype-document';
 // @ts-expect-error
@@ -50,7 +51,18 @@ export async function htmlPhase(
     processor.use(doc, docOptions);
   }
 
-  const result = await processor.run(hast, file);
+  const transformed = await processor.run(hast, file);
 
-  return processor.stringify(result, file);
+  const result = processor.stringify(transformed, file);
+
+  return referenceTransform(result, ctx.refStore);
+}
+
+function referenceTransform(html: string, refStore: Context['refStore']) {
+  return html.replace(/ref:\/\/(\w+)/gms, (...match) => {
+    const key = match[1];
+    const link = refStore[key];
+    const name = startCase(link);
+    return `<a href="${link}">${name}</a>`;
+  });
 }

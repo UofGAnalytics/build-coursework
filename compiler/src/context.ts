@@ -27,6 +27,7 @@ export type Context = {
   course: Course;
   options: Options;
   mmlStore?: string[];
+  refStore: Record<string, string>;
 };
 
 export async function createContext(
@@ -39,5 +40,6 @@ export async function createContext(
     buildDir: getBuildDir(dirPath),
     cacheDir: getCacheDir(dirPath),
     options,
+    refStore: {},
   };
 }

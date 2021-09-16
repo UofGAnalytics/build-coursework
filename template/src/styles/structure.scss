@@ -11,10 +11,9 @@ body {
 }
 
 .hamburger-icon {
-  $diam: 1.3rem;
   position: absolute;
-  width: $diam;
-  height: $diam;
+  width: 22px;
+  height: 19px;
   fill: var(--highlightColor);
   top: 2.5rem;
   cursor: pointer;

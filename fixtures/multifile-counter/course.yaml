@@ -1,0 +1,4 @@
+title: Multifile counter
+type: course
+units:
+  - src: test/test.yaml

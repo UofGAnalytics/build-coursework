@@ -8,7 +8,7 @@ export function warnOnIncludeGraphics(file: VFile) {
     if (line.includes('include_graphics')) {
       warnMessage(
         file,
-        'knitr::include_graphics found. Properties out.width, out.height and fig.align knitr chunk properties may have no effect.',
+        'knitr::include_graphics found. You should probably just use Markdown syntax instead.',
         {
           start: {
             line: idx + 1,

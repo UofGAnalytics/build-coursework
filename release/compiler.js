@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 6209:
+/***/ 2937:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -2671,7 +2671,7 @@ module.exports = asciiAtext
 
 /***/ }),
 
-/***/ 4994:
+/***/ 841:
 /***/ ((module) => {
 
 "use strict";
@@ -4073,7 +4073,7 @@ module.exports = attention
 var asciiAlpha = __webpack_require__(5111)
 var asciiAlphanumeric = __webpack_require__(6102)
 var asciiAtext = __webpack_require__(5860)
-var asciiControl = __webpack_require__(4994)
+var asciiControl = __webpack_require__(841)
 
 var autolink = {
   name: 'autolink',
@@ -5086,7 +5086,7 @@ module.exports = definition
 "use strict";
 
 
-var asciiControl = __webpack_require__(4994)
+var asciiControl = __webpack_require__(841)
 var markdownLineEndingOrSpace = __webpack_require__(6430)
 var markdownLineEnding = __webpack_require__(2739)
 
@@ -9757,15 +9757,15 @@ var __webpack_exports__ = {};
 var external_path_ = __webpack_require__(5622);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
-// EXTERNAL MODULE: ../node_modules/unified/index.js
-var node_modules_unified = __webpack_require__(4338);
-var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 // EXTERNAL MODULE: ../node_modules/vfile/index.js
 var vfile = __webpack_require__(9566);
 ;// CONCATENATED MODULE: external "rehype-raw"
 const external_rehype_raw_namespaceObject = require("rehype-raw");
 ;// CONCATENATED MODULE: external "remark-rehype"
 const external_remark_rehype_namespaceObject = require("remark-rehype");
+// EXTERNAL MODULE: ../node_modules/unified/index.js
+var node_modules_unified = __webpack_require__(4338);
+var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 ;// CONCATENATED MODULE: external "mime/lite"
 const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
@@ -9783,9 +9783,9 @@ const external_sandboxed_module_namespaceObject = require("sandboxed-module");
 var external_sandboxed_module_default = /*#__PURE__*/__webpack_require__.n(external_sandboxed_module_namespaceObject);
 ;// CONCATENATED MODULE: external "svgo"
 const external_svgo_namespaceObject = require("svgo");
-// EXTERNAL MODULE: ./src/latex/domstubs.js
-var domstubs = __webpack_require__(6209);
-;// CONCATENATED MODULE: ./src/latex/pdf-to-svg.ts
+// EXTERNAL MODULE: ./src/pdf/domstubs.js
+var domstubs = __webpack_require__(2937);
+;// CONCATENATED MODULE: ./src/pdf/pdf-to-svg.ts
 
 
 
@@ -9806,10 +9806,11 @@ const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/legacy/
   }
 });
 
-async function pdf_to_svg_texPdfToSvg(filePath) {
+async function pdf_to_svg_pdfToSvg(filePath) {
   const doc = await pdfjsLib.getDocument({
     url: filePath,
-    fontExtraProperties: true // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
+    fontExtraProperties: true,
+    verbosity: 0 // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
     // cMapPacked: true,
 
   }).promise; // may come in handy again...
@@ -9826,7 +9827,8 @@ async function pdf_to_svg_texPdfToSvg(filePath) {
   const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
   svgGfx.embedFonts = true;
   const svg = await svgGfx.getSVG(opList, viewport);
-  return formatSvg(svg.toString());
+  const result = await formatSvg(svg.toString());
+  return result;
 } // function isPdfTexDocument(info: Record<string, string> = {}) {
 //   return info['Producer']?.startsWith('pdfTeX');
 // }
@@ -9841,7 +9843,8 @@ async function formatSvg(_str) {
     fragment: true
   }).use(addWrapper).use(stringify);
   const parsed = processor.parse(optimised);
-  return processor.run(parsed);
+  const transformed = await processor.run(parsed);
+  return transformed.children[0];
 }
 
 function addWrapper() {
@@ -9850,14 +9853,22 @@ function addWrapper() {
       if (node.tagName === 'svg') {
         const properties = node.properties || {};
         node.properties = {
-          width: properties.width,
-          height: properties.height,
-          viewBox: properties.viewBox,
+          // width: properties.width,
+          // height: properties.height,
+          viewBox: getViewBox(properties),
           className: 'pdftex'
         };
       }
     });
   };
+}
+
+function getViewBox(properties) {
+  if (properties.viewBox) {
+    return properties.viewBox;
+  }
+
+  return `0 0 ${properties.width} ${properties.height}`;
 }
 ;// CONCATENATED MODULE: external "hash-sum"
 const external_hash_sum_namespaceObject = require("hash-sum");
@@ -10066,16 +10077,16 @@ function embed_assets_embedAssets(ctx) {
           return embedImage(node, ctx, file);
 
         case '.svg':
-          return embedPlotSvg(node, ctx);
+          return embedSvg(node, ctx);
 
         case '.pdf':
-          return embedTexPdfSvg(node);
+          return embedPdfSvg(node);
 
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (err) {
-      failMessage(file, err.message, node.position);
+      failMessage(file, (err === null || err === void 0 ? void 0 : err.message) || '', node.position);
     }
   }
 
@@ -10104,7 +10115,7 @@ async function embedImage(node, ctx, file) {
   }
 }
 
-async function embedPlotSvg(imgNode, ctx) {
+async function embedSvg(imgNode, ctx) {
   const src = getImageSrc(imgNode);
   const contents = await readFile(src);
   const idx = contents.indexOf('<svg');
@@ -10112,7 +10123,7 @@ async function embedPlotSvg(imgNode, ctx) {
 
   const svgNode = getAssetHast(svg);
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, imgNode.properties), svgNode.properties);
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
@@ -10149,11 +10160,11 @@ async function getImageDataFromWeb(src) {
   return buffer.toString('base64');
 }
 
-async function embedTexPdfSvg(imgNode) {
+async function embedPdfSvg(imgNode) {
   const src = getImageSrc(imgNode);
-  const svgNode = await texPdfToSvg(src);
+  const svgNode = await pdfToSvg(src);
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, svgNode.properties), imgNode.properties);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, imgNode.properties), svgNode.properties);
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
@@ -10579,6 +10590,7 @@ function wrapper_htmlWrapper(unit, mdast) {
 }
 ;// CONCATENATED MODULE: ./src/html/index.ts
 
+
  // @ts-expect-error
 
 
@@ -10610,8 +10622,18 @@ async function html_htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
     processor.use(doc, docOptions);
   }
 
-  const result = await processor.run(hast, file);
-  return processor.stringify(result, file);
+  const transformed = await processor.run(hast, file);
+  const result = processor.stringify(transformed, file);
+  return referenceTransform(result, ctx.refStore);
+}
+
+function referenceTransform(html, refStore) {
+  return html.replace(/ref:\/\/(\w+)/gms, (...match) => {
+    const key = match[1];
+    const link = refStore[key];
+    const name = startCase(link);
+    return `<a href="${link}">${name}</a>`;
+  });
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
@@ -10639,7 +10661,7 @@ async function execKnitr(file, ctx) {
   await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ ${ctx.cacheDir}/`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${ctx.cacheDir}/"`;
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
@@ -11259,25 +11281,6 @@ function assert_no_tex_tabular_assertNoTexTabular(file) {
     }
   });
 }
-;// CONCATENATED MODULE: ./src/linter/warn-on-include-graphics.ts
-
-function warn_on_include_graphics_warnOnIncludeGraphics(file) {
-  const md = file.contents;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('include_graphics')) {
-      warnMessage(file, 'knitr::include_graphics found. Properties out.width, out.height and fig.align knitr chunk properties may have no effect.', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
 ;// CONCATENATED MODULE: external "remark-directive"
@@ -11443,201 +11446,6 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   svg.properties = newProperties;
   return svg;
 }
-;// CONCATENATED MODULE: ./src/mdast/boxouts.ts
-
-
-
-function boxouts_boxouts() {
-  return async tree => {
-    const counter = createCounter();
-    visit(tree, 'containerDirective', node => {
-      switch (node.name) {
-        case 'example':
-        case 'error':
-        case 'supplement':
-        case 'background':
-        case 'definition':
-        case 'weblink':
-        case 'theorem':
-        case 'task':
-        case 'answer':
-          {
-            const name = node.name;
-            const count = counter.increment(name);
-            node.data = {
-              hProperties: createAttributes(node, count),
-              hChildren: createBoxout(node, count)
-            };
-          }
-      }
-    });
-  };
-}
-
-function createAttributes(node, count) {
-  const name = node.name;
-  const id = `${name}-${count}`;
-  const attributes = node.attributes;
-  const className = ['boxout', name];
-
-  if (attributes.icon) {
-    className.push(`${attributes.icon}-icon`);
-  }
-
-  return {
-    className,
-    id
-  };
-}
-
-function createBoxout(node, count) {
-  const typeTitle = createBoxoutType(node, count);
-  const titles = [typeTitle];
-  const titleValue = getTitleValue(node);
-
-  if (titleValue.length > 0) {
-    const title = boxouts_createTitle(node);
-    titles.push(title);
-  }
-
-  const children = node.children;
-  const content = children.filter(o => {
-    var _o$data;
-
-    return !((_o$data = o.data) !== null && _o$data !== void 0 && _o$data.directiveLabel);
-  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => toHast(o, {
-    allowDangerousHtml: true
-  })).filter(Boolean);
-
-  if (node.name === 'task') {
-    const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');
-
-    if (answer) {
-      content.push(createAnswer(answer, count));
-    }
-  }
-
-  return [...titles, ...content];
-}
-
-function createAnswer(node, count) {
-  const {
-    children
-  } = toHast(node);
-  return {
-    type: 'element',
-    tagName: 'div',
-    properties: {
-      className: ['answer']
-    },
-    children: [{
-      type: 'element',
-      tagName: 'span',
-      properties: {
-        className: ['answer-trigger'],
-        'data-answer-id': count
-      },
-      children: [{
-        type: 'text',
-        value: 'Show answer'
-      }]
-    }, {
-      type: 'element',
-      tagName: 'div',
-      properties: {
-        className: ['answer-reveal'],
-        id: `answer-${count}`
-      },
-      children
-    }]
-  };
-}
-
-function createBoxoutType(node, count) {
-  const name = node.name;
-  const label = startCase(name);
-  const value = `${label} ${count}`;
-  return {
-    type: 'element',
-    tagName: 'span',
-    properties: {
-      className: ['type']
-    },
-    children: [{
-      type: 'text',
-      value
-    }]
-  };
-}
-
-function boxouts_createTitle(node) {
-  return {
-    type: 'element',
-    tagName: 'h3',
-    children: createTitleValue(node)
-  };
-}
-
-function createTitleValue(node) {
-  const name = node.name;
-  const newRoot = {
-    type: 'root',
-    children: getTitleValue(node)
-  };
-  const {
-    children = []
-  } = toHast(newRoot);
-
-  if (name !== 'weblink') {
-    return children;
-  }
-
-  const {
-    target
-  } = node.attributes;
-  return [{
-    type: 'element',
-    tagName: 'a',
-    properties: {
-      href: target,
-      target: '_blank',
-      className: ['target']
-    },
-    children
-  }];
-}
-
-function getTitleValue(node) {
-  var _parent$data;
-
-  const children = node.children || [];
-  const parent = children[0] || {};
-
-  if (!((_parent$data = parent.data) !== null && _parent$data !== void 0 && _parent$data.directiveLabel)) {
-    if (node.name === 'weblink') {
-      const attributes = node.attributes;
-      return [{
-        type: 'text',
-        value: attributes.target
-      }];
-    }
-
-    return [];
-  }
-
-  return parent.children || [];
-}
-
-function createCounter() {
-  const store = {};
-  return {
-    increment(key) {
-      store[key] = (store[key] || 0) + 1;
-      return store[key];
-    }
-
-  };
-}
 ;// CONCATENATED MODULE: external "refractor"
 const external_refractor_namespaceObject = require("refractor");
 ;// CONCATENATED MODULE: ./src/mdast/code-blocks.ts
@@ -11731,6 +11539,12 @@ function parseClass(node) {
   return lang.slice(2, -1);
 }
 ;// CONCATENATED MODULE: ./src/mdast/embed-asset-url.ts
+const _excluded = (/* unused pure expression or super */ null && (["src"]));
+
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 
 
 // import { failMessage } from '../utils/message';
@@ -11746,13 +11560,19 @@ function embed_asset_url_embedAssetUrl() {
     }); // also fix for raw html nodes sometimes output by knitr
 
     visit(tree, ['html'], node => {
-      const src = getSrc(node.value);
+      const props = getProps(node.value);
 
-      if (src !== null) {
+      if (props !== null && props.src) {
+        const {
+          src
+        } = props,
+              otherProps = _objectWithoutProperties(props, _excluded);
+
         Object.assign(node, {
           type: 'image',
           url: getPath(src, dirname),
-          value: ''
+          value: '',
+          data: otherProps
         });
       }
     });
@@ -11763,22 +11583,39 @@ function getPath(url, dirname) {
   return path.isAbsolute(url) || url.startsWith('http') ? url : path.join(process.cwd(), dirname, url);
 }
 
-function getSrc(value) {
-  const matchImg = value.match(/<img.*?src="(.+?)".*?>/);
+function getProps(value) {
+  const matchImg = value.match(/^<img.*?src="(.+?)".*?>$/);
 
   if (matchImg !== null) {
-    return matchImg[1];
+    return propsToObject(value.slice(5, -1));
   }
 
-  const matchPdf = value.match(/<embed.*?src="(.+?)".*?>/);
+  const matchPdf = value.match(/^<embed.*?src="(.+?)".*?>$/);
 
   if (matchPdf !== null) {
-    return matchPdf[1];
+    return propsToObject(value.slice(7, -1));
   }
 
   return null;
 }
+
+function propsToObject(str) {
+  return str.split(/(\w+)="(.*?)"/).filter(s => s.trim() !== '').reduce((acc, value, idx, arr) => {
+    if (idx % 2 === 1) {
+      const key = arr[idx - 1];
+      acc[key] = value;
+    }
+
+    return acc;
+  }, {});
+}
 ;// CONCATENATED MODULE: ./src/mdast/images.ts
+function images_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function images_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { images_ownKeys(Object(source), true).forEach(function (key) { images_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { images_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function images_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 function images_images() {
   let count = 0;
@@ -11790,6 +11627,25 @@ function images_images() {
 }
 
 function template(node, count) {
+  var _node$data;
+
+  const image = {
+    type: 'element',
+    tagName: 'img',
+    properties: {
+      src: node.url,
+      alt: node.alt
+    },
+    children: []
+  };
+
+  if ((_node$data = node.data) !== null && _node$data !== void 0 && _node$data.width) {
+    image.properties = images_objectSpread(images_objectSpread({}, image.properties), {}, {
+      style: `width: ${node.data.width};`
+    });
+  }
+
+  const caption = createCaption(node, count);
   Object.assign(node, {
     type: 'custom-image',
     data: {
@@ -11797,15 +11653,7 @@ function template(node, count) {
       hProperties: {
         className: ['img-wrapper']
       },
-      hChildren: [{
-        type: 'element',
-        tagName: 'img',
-        properties: {
-          src: node.url,
-          alt: node.alt
-        },
-        children: []
-      }, createCaption(node, count)]
+      hChildren: [image, caption]
     }
   });
 }
@@ -11974,7 +11822,6 @@ function formatDuration(duration = '') {
 
 
 
- // import sectionize from 'remark-sectionize';
 
  // @ts-expect-error
 
@@ -11984,8 +11831,6 @@ function formatDuration(duration = '') {
 
 
 
- // import { moveAnswersToEnd } from './move-answers-to-end';
-
 
 
 async function mdast_mdastPhase(file, ctx) {
@@ -11993,16 +11838,213 @@ async function mdast_mdastPhase(file, ctx) {
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
   const processor = unified() // third-party plugins:
-  .use(markdown).use(directive).use(gfm).use(frontmatter).use(footnotes) // .use(sectionize)
+  .use(markdown).use(directive).use(frontmatter).use(footnotes, {
+    inlineNotes: true
+  }).use(gfm) // .use(sectionize)
   .use(slug).use(headings, {
     content: createSvg('link-icon'),
     linkProperties: {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(boxouts).use(images).use(pagebreaks);
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(images).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
+}
+;// CONCATENATED MODULE: ./src/mdast/boxouts.ts
+
+
+
+
+function boxouts_boxouts(refStore) {
+  const counter = createCounter();
+  return async tree => {
+    visit(tree, 'containerDirective', node => {
+      switch (node.name) {
+        case 'example':
+        case 'error':
+        case 'supplement':
+        case 'background':
+        case 'definition':
+        case 'weblink':
+        case 'theorem':
+        case 'task':
+        case 'proposition':
+        case 'answer':
+          {
+            const name = node.name;
+            const count = counter.increment(name);
+            node.data = {
+              hProperties: createAttributes(node, count, refStore),
+              hChildren: createBoxout(node, count)
+            };
+          }
+      }
+    });
+  };
+}
+
+function createAttributes(node, count, refStore) {
+  const name = node.name;
+  const id = `${name}-${count}`;
+  const attributes = node.attributes;
+  const className = ['boxout', name];
+
+  if (attributes.icon) {
+    className.push(`${attributes.icon}-icon`);
+  }
+
+  if (node.attributes.label !== undefined) {
+    refStore[node.attributes.label] = id;
+  }
+
+  return {
+    className,
+    id
+  };
+}
+
+function createBoxout(node, count) {
+  const typeTitle = createBoxoutType(node, count);
+  const titles = [typeTitle];
+  const titleValue = getTitleValue(node);
+
+  if (titleValue.length > 0) {
+    const title = boxouts_createTitle(node);
+    titles.push(title);
+  }
+
+  const children = node.children;
+  const content = children.filter(o => {
+    var _o$data;
+
+    return !((_o$data = o.data) !== null && _o$data !== void 0 && _o$data.directiveLabel);
+  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => toHast(o, {
+    allowDangerousHtml: true
+  })).filter(Boolean);
+
+  if (node.name === 'task') {
+    const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');
+
+    if (answer) {
+      content.push(createAnswer(answer, count));
+    }
+  }
+
+  return [...titles, ...content];
+}
+
+function createAnswer(node, count) {
+  const {
+    children
+  } = toHast(node);
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: {
+      className: ['answer']
+    },
+    children: [{
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: ['answer-trigger'],
+        'data-answer-id': count
+      },
+      children: [{
+        type: 'text',
+        value: 'Show answer'
+      }]
+    }, {
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        className: ['answer-reveal'],
+        id: `answer-${count}`
+      },
+      children
+    }]
+  };
+}
+
+function createBoxoutType(node, count) {
+  const name = node.name;
+  const label = startCase(name);
+  let value = `${label} ${count}`;
+
+  if (node.attributes.optional !== undefined) {
+    value += ` (Optional)`;
+  }
+
+  return {
+    type: 'element',
+    tagName: 'span',
+    properties: {
+      className: ['type']
+    },
+    children: [{
+      type: 'text',
+      value
+    }]
+  };
+}
+
+function boxouts_createTitle(node) {
+  return {
+    type: 'element',
+    tagName: 'h3',
+    children: createTitleValue(node)
+  };
+}
+
+function createTitleValue(node) {
+  const name = node.name;
+  const newRoot = {
+    type: 'root',
+    children: getTitleValue(node)
+  };
+  const {
+    children = []
+  } = toHast(newRoot);
+
+  if (name !== 'weblink') {
+    return children;
+  }
+
+  const {
+    target
+  } = node.attributes;
+  return [{
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: target,
+      target: '_blank',
+      className: ['target']
+    },
+    children
+  }];
+}
+
+function getTitleValue(node) {
+  var _parent$data;
+
+  const children = node.children || [];
+  const parent = children[0] || {};
+
+  if (!((_parent$data = parent.data) !== null && _parent$data !== void 0 && _parent$data.directiveLabel)) {
+    if (node.name === 'weblink') {
+      const attributes = node.attributes;
+      return [{
+        type: 'text',
+        value: attributes.target
+      }];
+    }
+
+    return [];
+  }
+
+  return parent.children || [];
 }
 ;// CONCATENATED MODULE: ./src/mdast/move-answers-to-end.ts
 
@@ -12033,6 +12075,19 @@ function move_answers_to_end_moveAnswersToEnd() {
     });
   };
 }
+;// CONCATENATED MODULE: ./src/mdast/combined.ts
+
+
+
+async function combined_combinedMdastPhase(mdast, ctx, file, targetPdf) {
+  const processor = unified().use(boxouts, ctx.refStore);
+
+  if (targetPdf) {
+    processor.use(moveAnswersToEnd);
+  }
+
+  return processor.run(mdast, file);
+}
 ;// CONCATENATED MODULE: external "puppeteer"
 const external_puppeteer_namespaceObject = require("puppeteer");
 ;// CONCATENATED MODULE: ./src/pdf/index.ts
@@ -12045,8 +12100,8 @@ const external_puppeteer_namespaceObject = require("puppeteer");
 async function pdf_convertToPdf(html) {
   const browser = await puppeteer.launch({
     headless: true,
-    ignoreDefaultArgs: ['--disable-extensions'] // fix for windows
-
+    args: [// attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
+    '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process']
   });
   const page = await browser.newPage();
   await page.setContent(html);
@@ -12231,8 +12286,7 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
-
-
+ // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
 
@@ -12276,13 +12330,12 @@ async function build_unit_buildUnit(unit, ctx) {
 async function inSituTransforms(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
-  assertNoKbl(file);
-  warnOnIncludeGraphics(file);
+  assertNoKbl(file); // warnOnIncludeGraphics(file);
+
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
-  const mdast = await mdastPhase(file, ctx);
-  return mdast;
+  return mdastPhase(file, ctx);
 }
 
 function combineMdFiles(unit) {
@@ -12297,7 +12350,7 @@ function build_unit_combineMdastTrees(mdasts) {
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
-  const mdast = await mdastPhase2(_mdast, file, targetPdf);
+  const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -12305,16 +12358,6 @@ async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
     hast,
     html
   };
-}
-
-async function mdastPhase2(mdast, file, targetPdf) {
-  const processor = unified();
-
-  if (targetPdf) {
-    processor.use(moveAnswersToEnd);
-  }
-
-  return processor.run(mdast, file);
 }
 ;// CONCATENATED MODULE: external "js-yaml"
 const external_js_yaml_namespaceObject = require("js-yaml");
@@ -12415,7 +12458,8 @@ async function context_createContext(dirPath, options = {}) {
     dirPath,
     buildDir: getBuildDir(dirPath),
     cacheDir: getCacheDir(dirPath),
-    options
+    options,
+    refStore: {}
   };
 }
 ;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts

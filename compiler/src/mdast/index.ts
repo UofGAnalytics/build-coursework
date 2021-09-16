@@ -7,7 +7,6 @@ import footnotes from 'remark-footnotes';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
-// import sectionize from 'remark-sectionize';
 import slug from 'remark-slug';
 // @ts-expect-error
 import toVFile from 'to-vfile';
@@ -17,11 +16,9 @@ import { VFile } from 'vfile';
 import { Context } from '../context';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 import { createSvg } from '../utils/icons';
-import { boxouts } from './boxouts';
 import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
 import { images } from './images';
-// import { moveAnswersToEnd } from './move-answers-to-end';
 import { pagebreaks } from './pagebreaks';
 import { youtubeVideos } from './youtube-videos';
 
@@ -33,9 +30,9 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     // third-party plugins:
     .use(markdown)
     .use(directive)
-    .use(gfm)
     .use(frontmatter)
-    .use(footnotes)
+    .use(footnotes, { inlineNotes: true })
+    .use(gfm)
     // .use(sectionize)
     .use(slug)
     .use(headings, {
@@ -47,7 +44,6 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
     .use(codeBlocks, ctx)
-    .use(boxouts)
     .use(images)
     .use(pagebreaks);
 

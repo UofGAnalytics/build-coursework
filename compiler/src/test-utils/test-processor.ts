@@ -90,6 +90,7 @@ async function createTestContext(md: string, options: Options = {}) {
       force: true,
       ...options,
     },
+    refStore: {},
   };
 
   return { ctx, file };
