@@ -10632,7 +10632,7 @@ function referenceTransform(html, refStore) {
     const key = match[1];
     const link = refStore[key];
     const name = startCase(link);
-    return `<a href="${link}">${name}</a>`;
+    return `<a href="#${link}">${name}</a>`;
   });
 }
 ;// CONCATENATED MODULE: external "child_process"
@@ -12472,7 +12472,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.9";
+  const currentVersion = "1.1.10";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
