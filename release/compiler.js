@@ -10590,6 +10590,7 @@ function wrapper_htmlWrapper(unit, mdast) {
 }
 ;// CONCATENATED MODULE: ./src/html/index.ts
 
+
  // @ts-expect-error
 
 
@@ -10621,8 +10622,18 @@ async function html_htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
     processor.use(doc, docOptions);
   }
 
-  const result = await processor.run(hast, file);
-  return processor.stringify(result, file);
+  const transformed = await processor.run(hast, file);
+  const result = processor.stringify(transformed, file);
+  return referenceTransform(result, ctx.refStore);
+}
+
+function referenceTransform(html, refStore) {
+  return html.replace(/ref:\/\/(\w+)/gms, (...match) => {
+    const key = match[1];
+    const link = refStore[key];
+    const name = startCase(link);
+    return `<a href="${link}">${name}</a>`;
+  });
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
@@ -11827,7 +11838,9 @@ async function mdast_mdastPhase(file, ctx) {
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
   const processor = unified() // third-party plugins:
-  .use(markdown).use(directive).use(gfm).use(frontmatter).use(footnotes) // .use(sectionize)
+  .use(markdown).use(directive).use(frontmatter).use(footnotes, {
+    inlineNotes: true
+  }).use(gfm) // .use(sectionize)
   .use(slug).use(headings, {
     content: createSvg('link-icon'),
     linkProperties: {
@@ -11843,7 +11856,7 @@ async function mdast_mdastPhase(file, ctx) {
 
 
 
-function boxouts_boxouts() {
+function boxouts_boxouts(refStore) {
   const counter = createCounter();
   return async tree => {
     visit(tree, 'containerDirective', node => {
@@ -11862,7 +11875,7 @@ function boxouts_boxouts() {
             const name = node.name;
             const count = counter.increment(name);
             node.data = {
-              hProperties: createAttributes(node, count),
+              hProperties: createAttributes(node, count, refStore),
               hChildren: createBoxout(node, count)
             };
           }
@@ -11871,7 +11884,7 @@ function boxouts_boxouts() {
   };
 }
 
-function createAttributes(node, count) {
+function createAttributes(node, count, refStore) {
   const name = node.name;
   const id = `${name}-${count}`;
   const attributes = node.attributes;
@@ -11879,6 +11892,10 @@ function createAttributes(node, count) {
 
   if (attributes.icon) {
     className.push(`${attributes.icon}-icon`);
+  }
+
+  if (node.attributes.label !== undefined) {
+    refStore[node.attributes.label] = id;
   }
 
   return {
@@ -12062,8 +12079,8 @@ function move_answers_to_end_moveAnswersToEnd() {
 
 
 
-async function combined_combinedMdastPhase(mdast, file, targetPdf) {
-  const processor = unified().use(boxouts);
+async function combined_combinedMdastPhase(mdast, ctx, file, targetPdf) {
+  const processor = unified().use(boxouts, ctx.refStore);
 
   if (targetPdf) {
     processor.use(moveAnswersToEnd);
@@ -12333,7 +12350,7 @@ function build_unit_combineMdastTrees(mdasts) {
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
-  const mdast = await combinedMdastPhase(_mdast, file, targetPdf);
+  const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -12441,7 +12458,8 @@ async function context_createContext(dirPath, options = {}) {
     dirPath,
     buildDir: getBuildDir(dirPath),
     cacheDir: getCacheDir(dirPath),
-    options
+    options,
+    refStore: {}
   };
 }
 ;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts

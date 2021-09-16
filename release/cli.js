@@ -1222,6 +1222,7 @@ function htmlWrapper(unit, mdast) {
 }
 ;// CONCATENATED MODULE: ./src/html/index.ts
 
+
  // @ts-expect-error
 
 
@@ -1253,8 +1254,18 @@ async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
     processor.use((external_rehype_document_default()), docOptions);
   }
 
-  const result = await processor.run(hast, file);
-  return processor.stringify(result, file);
+  const transformed = await processor.run(hast, file);
+  const result = processor.stringify(transformed, file);
+  return referenceTransform(result, ctx.refStore);
+}
+
+function referenceTransform(html, refStore) {
+  return html.replace(/ref:\/\/(\w+)/gms, (...match) => {
+    const key = match[1];
+    const link = refStore[key];
+    const name = (0,external_lodash_namespaceObject.startCase)(link);
+    return `<a href="${link}">${name}</a>`;
+  });
 }
 ;// CONCATENATED MODULE: external "child_process"
 const external_child_process_namespaceObject = require("child_process");
@@ -2474,7 +2485,9 @@ async function mdastPhase(file, ctx) {
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
   const processor = unified_default()() // third-party plugins:
-  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_gfm_default())).use((external_remark_frontmatter_default())).use((external_remark_footnotes_default())) // .use(sectionize)
+  .use((remark_parse_default())).use((external_remark_directive_default())).use((external_remark_frontmatter_default())).use((external_remark_footnotes_default()), {
+    inlineNotes: true
+  }).use((external_remark_gfm_default())) // .use(sectionize)
   .use((external_remark_slug_default())).use((external_remark_autolink_headings_default()), {
     content: createSvg('link-icon'),
     linkProperties: {
@@ -2492,7 +2505,7 @@ var utils_counter = __webpack_require__(6639);
 
 
 
-function boxouts() {
+function boxouts(refStore) {
   const counter = (0,utils_counter/* createCounter */.G)();
   return async tree => {
     external_unist_util_visit_default()(tree, 'containerDirective', node => {
@@ -2511,7 +2524,7 @@ function boxouts() {
             const name = node.name;
             const count = counter.increment(name);
             node.data = {
-              hProperties: createAttributes(node, count),
+              hProperties: createAttributes(node, count, refStore),
               hChildren: createBoxout(node, count)
             };
           }
@@ -2520,7 +2533,7 @@ function boxouts() {
   };
 }
 
-function createAttributes(node, count) {
+function createAttributes(node, count, refStore) {
   const name = node.name;
   const id = `${name}-${count}`;
   const attributes = node.attributes;
@@ -2528,6 +2541,10 @@ function createAttributes(node, count) {
 
   if (attributes.icon) {
     className.push(`${attributes.icon}-icon`);
+  }
+
+  if (node.attributes.label !== undefined) {
+    refStore[node.attributes.label] = id;
   }
 
   return {
@@ -2711,8 +2728,8 @@ function moveAnswersToEnd() {
 
 
 
-async function combinedMdastPhase(mdast, file, targetPdf) {
-  const processor = unified_default()().use(boxouts);
+async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
+  const processor = unified_default()().use(boxouts, ctx.refStore);
 
   if (targetPdf) {
     processor.use(moveAnswersToEnd);
@@ -2992,7 +3009,7 @@ function build_unit_combineMdastTrees(mdasts) {
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
-  const mdast = await combinedMdastPhase(_mdast, file, targetPdf);
+  const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
   const hast = await hastPhase(mdast, ctx, file, targetPdf);
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return {
@@ -3101,7 +3118,8 @@ async function createContext(dirPath, options = {}) {
     dirPath,
     buildDir: getBuildDir(dirPath),
     cacheDir: getCacheDir(dirPath),
-    options
+    options,
+    refStore: {}
   };
 }
 ;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts

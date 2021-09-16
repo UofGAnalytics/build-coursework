@@ -7,14 +7,14 @@ export type State = {
   lineWidth: string;
 };
 
-export const defaultState: State = {
+export const defaultState: State = Object.freeze({
   theme: 'theme-light',
   font: 'font-default',
   fontSize: '1',
   lineSpacing: '1',
   letterSpacing: '0',
   lineWidth: '1',
-};
+});
 
 export const state = getSavedState();
 
@@ -25,7 +25,7 @@ export function saveState(state: State) {
 function getSavedState() {
   const saved = localStorage.getItem('view-options');
   if (saved === null) {
-    return defaultState;
+    return { ...defaultState };
   }
   const savedState = JSON.parse(saved) as State;
   return Object.entries(defaultState).reduce((acc, tuple) => {

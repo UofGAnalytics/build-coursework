@@ -120,14 +120,20 @@ var html_font_size = __webpack_require__(48);
 // EXTERNAL MODULE: ./src/view-options/toggle.ts
 var toggle = __webpack_require__(512);
 ;// CONCATENATED MODULE: ./src/view-options/util.ts
-const defaultState = {
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+const defaultState = Object.freeze({
   theme: 'theme-light',
   font: 'font-default',
   fontSize: '1',
   lineSpacing: '1',
   letterSpacing: '0',
   lineWidth: '1'
-};
+});
 const state = getSavedState();
 function saveState(state) {
   localStorage.setItem('view-options', JSON.stringify(state));
@@ -137,7 +143,7 @@ function getSavedState() {
   const saved = localStorage.getItem('view-options');
 
   if (saved === null) {
-    return defaultState;
+    return _objectSpread({}, defaultState);
   }
 
   const savedState = JSON.parse(saved);
@@ -252,6 +258,7 @@ function handlePlus(e) {
 }
 
 function handleReset(e) {
+  console.log('hey!');
   const target = e.target;
 
   if (target.classList.contains('disabled')) {
@@ -261,6 +268,7 @@ function handleReset(e) {
   const props = getProps(target);
   setDisabledClasses(Number(props.defaultValue), props);
   target.classList.add('disabled');
+  console.log(`--${props.name}`, props.defaultValue);
   document.documentElement.style.setProperty(`--${props.name}`, props.defaultValue);
   state[props.name] = props.defaultValue;
   saveState(state);
