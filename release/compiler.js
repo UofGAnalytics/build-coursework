@@ -10763,8 +10763,30 @@ const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
 const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
 const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
+;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
+
+function assert_no_tex_tabular_assertNoTexTabular(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('\\begin{tabular}')) {
+      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
 ;// CONCATENATED MODULE: ./src/latex/tex-to-directive.ts
 // import parser from 'fast-xml-parser';
+
 
 
 
@@ -10782,6 +10804,8 @@ const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
 // If I convert to MathML it gets munged
 
 function tex_to_directive_texToAliasDirective(file, ctx) {
+  // simple regex tests
+  assertNoTexTabular(file);
   const md = file.contents;
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
@@ -10812,6 +10836,8 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
 
       if (item.math === '$') {
         newMarkdown = '$';
+      } else if (item.math === '\\') {
+        newMarkdown = '\\\\';
       } else if (isReferenceLink(item.math)) {
         // convert tex to text link
         const refNum = extractRefNumFromMml(mml, item.math, file);
@@ -11248,27 +11274,6 @@ function assert_no_kbl_assertNoKbl(file) {
   md.split('\n').forEach((line, idx) => {
     if (line.includes('kbl()')) {
       warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
- // TODO: could possibly try converting to array here
-// https://stackoverflow.com/questions/51803244
-
-function assert_no_tex_tabular_assertNoTexTabular(file) {
-  const md = file.contents;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('\\begin{tabular}')) {
-      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
         start: {
           line: idx + 1,
           column: 0
@@ -12285,7 +12290,6 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
-
  // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
@@ -12329,9 +12333,7 @@ async function build_unit_buildUnit(unit, ctx) {
 
 async function inSituTransforms(file, ctx) {
   // simple regex tests
-  assertNoTexTabular(file);
-  assertNoKbl(file); // warnOnIncludeGraphics(file);
-
+  assertNoKbl(file);
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
@@ -12472,7 +12474,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.10";
+  const currentVersion = "1.1.11";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));

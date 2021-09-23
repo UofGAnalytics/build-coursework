@@ -1,1 +1,3 @@
-## Hello!
+####[background] Path names on Windows
+Path names in Windows typically contain backslashes (`\`). In R you need to either use a forward slash instead (for example `c:/Users/Craig/data.RData`) or escape the backslash, i.e. use a double `\\` (for example `c:\\Users\\Craig\\data.RData`).
+####[/background]
