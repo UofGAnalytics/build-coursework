@@ -10827,8 +10827,7 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
   assertNoKbl(file);
-  const md = file.contents; // console.log(md);
-
+  const md = file.contents;
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
   const tex = new TeX({
@@ -10847,17 +10846,14 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
     math
   }) {
     const items = Array.from(math);
-    let i = 0;
 
     for (const item of items) {
-      i++; // debug
+      // debug
       // console.log(item.math);
-
       let newMarkdown = ''; // convert to MML
 
       const mml = visitor.visitTree(item.root);
-      assertNoMmlError(mml, file);
-      console.log(i, item.math); // escaped dollar sign...
+      assertNoMmlError(mml, file); // escaped dollar sign...
 
       if (item.math === '$') {
         newMarkdown = '$';
@@ -12477,7 +12473,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.10";
+  const currentVersion = "1.1.11";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
