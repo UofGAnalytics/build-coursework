@@ -9,6 +9,7 @@ import { htmlPhase } from './html';
 import { knitr } from './knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
 import { createReport, reportErrors } from './linter';
+import { assertNoKbl } from './linter/assert-no-kbl';
 // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
@@ -80,6 +81,9 @@ export async function buildUnit(unit: Unit, ctx: Context) {
 }
 
 async function inSituTransforms(file: VFileType, ctx: Context) {
+  // simple regex tests
+  assertNoKbl(file);
+
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);

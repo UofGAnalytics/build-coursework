@@ -29,7 +29,6 @@ import { failMessage } from '../utils/message';
 export function texToAliasDirective(file: VFile, ctx: Context) {
   // simple regex tests
   assertNoTexTabular(file);
-  assertNoKbl(file);
 
   const md = file.contents as string;
   const adaptor = liteAdaptor();
