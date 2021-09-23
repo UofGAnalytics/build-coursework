@@ -11,7 +11,6 @@ import { mathjax } from 'mathjax-full/js/mathjax.js';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { assertNoKbl } from '../linter/assert-no-kbl';
 import { assertNoTexTabular } from '../linter/assert-no-tex-tabular';
 import { failMessage } from '../utils/message';
 
