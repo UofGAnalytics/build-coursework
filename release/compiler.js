@@ -10763,8 +10763,50 @@ const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
 const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
 const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
+;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
+
+function assert_no_kbl_assertNoKbl(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('kbl()')) {
+      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
+ // TODO: could possibly try converting to array here
+// https://stackoverflow.com/questions/51803244
+
+function assert_no_tex_tabular_assertNoTexTabular(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('\\begin{tabular}')) {
+      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
+}
 ;// CONCATENATED MODULE: ./src/latex/tex-to-directive.ts
 // import parser from 'fast-xml-parser';
+
+
 
 
 
@@ -10782,7 +10824,11 @@ const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
 // If I convert to MathML it gets munged
 
 function tex_to_directive_texToAliasDirective(file, ctx) {
-  const md = file.contents;
+  // simple regex tests
+  assertNoTexTabular(file);
+  assertNoKbl(file);
+  const md = file.contents; // console.log(md);
+
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
   const tex = new TeX({
@@ -10801,17 +10847,22 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
     math
   }) {
     const items = Array.from(math);
+    let i = 0;
 
     for (const item of items) {
-      // debug
+      i++; // debug
       // console.log(item.math);
+
       let newMarkdown = ''; // convert to MML
 
       const mml = visitor.visitTree(item.root);
-      assertNoMmlError(mml, file); // escaped dollar sign...
+      assertNoMmlError(mml, file);
+      console.log(i, item.math); // escaped dollar sign...
 
       if (item.math === '$') {
         newMarkdown = '$';
+      } else if (item.math === '\\') {
+        newMarkdown = '\\\\';
       } else if (isReferenceLink(item.math)) {
         // convert tex to text link
         const refNum = extractRefNumFromMml(mml, item.math, file);
@@ -11240,46 +11291,6 @@ async function linter_createReport(file, mdast, ctx) {
   }
 
   await processor.run(mdast, file);
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
-
-function assert_no_kbl_assertNoKbl(file) {
-  const md = file.contents;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('kbl()')) {
-      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
-;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
- // TODO: could possibly try converting to array here
-// https://stackoverflow.com/questions/51803244
-
-function assert_no_tex_tabular_assertNoTexTabular(file) {
-  const md = file.contents;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('\\begin{tabular}')) {
-      failMessage(file, 'LaTeX tables are not allowed, please use Markdown syntax', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
 }
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
@@ -12284,8 +12295,6 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
-
-
  // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
@@ -12328,10 +12337,6 @@ async function build_unit_buildUnit(unit, ctx) {
 }
 
 async function inSituTransforms(file, ctx) {
-  // simple regex tests
-  assertNoTexTabular(file);
-  assertNoKbl(file); // warnOnIncludeGraphics(file);
-
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);

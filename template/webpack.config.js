@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const WatchExternalFilesPlugin = require('webpack-watch-files-plugin').default;
+// const WatchExternalFilesPlugin = require('webpack-watch-files-plugin').default;
 const {
   MiniHtmlWebpackPlugin,
   generateCSSReferences,
@@ -30,7 +30,7 @@ if (isProd) {
 
 if (!isProd) {
   plugins.push(
-    new WatchExternalFilesPlugin({ files: [htmlFilePath] }),
+    // new WatchExternalFilesPlugin({ files: [htmlFilePath] }),
     new MiniHtmlWebpackPlugin({ template })
   )
 }

@@ -11,6 +11,8 @@ import { mathjax } from 'mathjax-full/js/mathjax.js';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
+import { assertNoKbl } from '../linter/assert-no-kbl';
+import { assertNoTexTabular } from '../linter/assert-no-tex-tabular';
 import { failMessage } from '../utils/message';
 
 // Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
@@ -25,6 +27,10 @@ import { failMessage } from '../utils/message';
 // If I convert to MathML it gets munged
 
 export function texToAliasDirective(file: VFile, ctx: Context) {
+  // simple regex tests
+  assertNoTexTabular(file);
+  assertNoKbl(file);
+
   const md = file.contents as string;
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
@@ -64,6 +70,8 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
       // escaped dollar sign...
       if (item.math === '$') {
         newMarkdown = '$';
+      } else if (item.math === '\\') {
+        newMarkdown = '\\\\';
       } else if (isReferenceLink(item.math)) {
         // convert tex to text link
         const refNum = extractRefNumFromMml(mml, item.math, file);
