@@ -10763,25 +10763,6 @@ const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
 const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
 const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
-;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
-
-function assert_no_kbl_assertNoKbl(file) {
-  const md = file.contents;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('kbl()')) {
-      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
 ;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
  // TODO: could possibly try converting to array here
 // https://stackoverflow.com/questions/51803244
@@ -10813,7 +10794,6 @@ function assert_no_tex_tabular_assertNoTexTabular(file) {
 
 
 
-
  // Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
 // https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
 // Convert Tex to directive alias ie. :blockMath[13] or :inlineMath[42] and build ctx.mmlStore array
@@ -10826,7 +10806,6 @@ function assert_no_tex_tabular_assertNoTexTabular(file) {
 function tex_to_directive_texToAliasDirective(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
-  assertNoKbl(file);
   const md = file.contents;
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
@@ -11287,6 +11266,25 @@ async function linter_createReport(file, mdast, ctx) {
   }
 
   await processor.run(mdast, file);
+}
+;// CONCATENATED MODULE: ./src/linter/assert-no-kbl.ts
+
+function assert_no_kbl_assertNoKbl(file) {
+  const md = file.contents;
+  md.split('\n').forEach((line, idx) => {
+    if (line.includes('kbl()')) {
+      warnMessage(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
+        start: {
+          line: idx + 1,
+          column: 0
+        },
+        end: {
+          line: idx + 1,
+          column: line.length
+        }
+      });
+    }
+  });
 }
 ;// CONCATENATED MODULE: external "remark-autolink-headings"
 const external_remark_autolink_headings_namespaceObject = require("remark-autolink-headings");
@@ -12291,6 +12289,7 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
+
  // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
@@ -12333,6 +12332,8 @@ async function build_unit_buildUnit(unit, ctx) {
 }
 
 async function inSituTransforms(file, ctx) {
+  // simple regex tests
+  assertNoKbl(file);
   await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
