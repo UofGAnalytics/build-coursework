@@ -83,10 +83,26 @@ function removeEmptyLog(md: string) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
 }
 
+// function addErrorCodeBlock(md: string) {
+//   return md
+//     .replace(/\r/g, '')
+//     .replace(/\`\`\`\n## Error/gm, '```{.error}\nError');
+// }
+
 function addErrorCodeBlock(md: string) {
   return md
-    .replace(/\r/g, '')
-    .replace(/\`\`\`\n## Error/gm, '```{.error}\nError');
+    .split('\n')
+    .reduce((acc: string[], line) => {
+      const prev = acc[acc.length - 1];
+      if (line.startsWith('## Error') && prev.startsWith('```')) {
+        acc[acc.length - 1] = '```{.error}';
+        acc.push(line.replace('## ', ''));
+      } else {
+        acc.push(line);
+      }
+      return acc;
+    }, [])
+    .join('\n');
 }
 
 function addNewLineAfterKable(md: string) {
