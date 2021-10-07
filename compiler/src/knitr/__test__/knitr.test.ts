@@ -239,8 +239,8 @@ describe('knitr', () => {
       \`\`\`
     `);
 
-    expect(md).toContain(
-      unindentStringAndTrim(`
+    expect(ignoreWhitespace(md)).toContain(
+      ignoreWhitespace(`
         \`\`\`{.error}
         Error in "120" + "5": non-numeric argument to binary operator
         \`\`\`

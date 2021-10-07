@@ -85,7 +85,7 @@ function removeEmptyLog(md: string) {
 
 function addErrorCodeBlock(md: string) {
   return md
-    .split(/\r?\n/)
+    .split('\n')
     .reduce((acc: string[], line) => {
       const prev = acc[acc.length - 1];
       if (line.startsWith('## Error') && prev.startsWith('```')) {
