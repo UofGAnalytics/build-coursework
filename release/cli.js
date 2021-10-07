@@ -1350,7 +1350,18 @@ function removeEmptyLog(md) {
 }
 
 function addErrorCodeBlock(md) {
-  return md.replace(/\`\`\`\n## Error/gm, '```{.error}\nError');
+  return md.split('\n').reduce((acc, line) => {
+    const prev = acc[acc.length - 1];
+
+    if (line.startsWith('## Error') && prev.startsWith('```')) {
+      acc[acc.length - 1] = '```{.error}';
+      acc.push(line.replace('## ', ''));
+    } else {
+      acc.push(line);
+    }
+
+    return acc;
+  }, []).join('\n');
 }
 
 function addNewLineAfterKable(md) {
@@ -3139,7 +3150,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.11";
+  const currentVersion = "1.1.12";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
