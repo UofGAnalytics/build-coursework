@@ -1321,6 +1321,7 @@ function getUniqueTempFileName(md) {
 async function formatResponse(response) {
   let result = response;
   result = removeEmptyLog(result);
+  result = addErrorCodeBlock(result);
   result = addNewLineAfterKable(result);
   return result;
 }
@@ -1330,7 +1331,7 @@ function reportErrors(response, file) {
     const trimmed = line.trim();
 
     if (trimmed.startsWith('## Error')) {
-      failMessage(file, trimmed.replace('##', ''), {
+      warnMessage(file, trimmed.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0
@@ -1346,6 +1347,10 @@ function reportErrors(response, file) {
 
 function removeEmptyLog(md) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
+}
+
+function addErrorCodeBlock(md) {
+  return md.replace(/\`\`\`\n## Error/gm, '```{.error}\nError');
 }
 
 function addNewLineAfterKable(md) {

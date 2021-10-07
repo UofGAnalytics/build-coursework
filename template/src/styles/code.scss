@@ -30,11 +30,11 @@ code {
     padding: 0;
     margin: 0;
     background: transparent;
+  }
 
-    &.error {
-      background: var(--errorColor);
-      color: white;
-    }
+  &.error {
+    background: var(--errorColor);
+    color: white;
   }
 }
 

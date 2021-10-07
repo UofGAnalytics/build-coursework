@@ -4,6 +4,7 @@ import {
   ignoreWhitespace,
   testProcessor,
   unindentString,
+  unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
 describe('knitr', () => {
@@ -229,5 +230,27 @@ describe('knitr', () => {
     expect(md).toContain(
       'beetles$propkilled <- beetles$killed / beetles$number'
     );
+  });
+
+  it('should output R errors correctly', async () => {
+    const { md, hasWarningMessage } = await testProcessor(`
+      \`\`\`{r}
+      "120" + "5"
+      \`\`\`
+    `);
+
+    expect(md).toContain(
+      unindentStringAndTrim(`
+        \`\`\`{.error}
+        Error in "120" + "5": non-numeric argument to binary operator
+        \`\`\`
+      `)
+    );
+
+    expect(
+      hasWarningMessage(
+        'Error in "120" + "5": non-numeric argument to binary operator'
+      )
+    ).toBe(true);
   });
 });
