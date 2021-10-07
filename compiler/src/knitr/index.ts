@@ -89,7 +89,7 @@ function addErrorCodeBlock(md: string) {
     .reduce((acc: string[], line) => {
       const prev = acc[acc.length - 1];
       if (line.startsWith('## Error') && prev.startsWith('```')) {
-        acc[acc.length - 1] += '{.error}';
+        acc[acc.length - 1] = '```{.error}';
         acc.push(line.replace('## ', ''));
       } else {
         acc.push(line);
