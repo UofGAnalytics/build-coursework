@@ -164,6 +164,10 @@ LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bo
 
 LaTeX tabular is not currently supported, as recreating all its features in HTML would be a complex project on its own. Instead, please use [Markdown table syntax](https://github.github.com/gfm/#table).
 
+### You can't use 'macro parameter character #' in math mode
+
+This is due to `$` symbols being used to delimit LaTeX. If you would like to use a `$` symbol for another purpose please escape it like this: `\$`.
+
 ## Bug reporting
 
 If you find an issue with the output of this tool, please send an email to david.mcarthur.2@glasgow.ac.uk with the misbehaving Markdown and a description of what you expected to see.
