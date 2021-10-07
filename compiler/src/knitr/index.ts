@@ -7,7 +7,7 @@ import hashSum from 'hash-sum';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { failMessage } from '../utils/message';
+import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 export async function knitr(file: VFile, ctx: Context) {
@@ -56,6 +56,7 @@ function getUniqueTempFileName(md: string) {
 async function formatResponse(response: string) {
   let result = response;
   result = removeEmptyLog(result);
+  result = addErrorCodeBlock(result);
   result = addNewLineAfterKable(result);
   return result;
 }
@@ -64,7 +65,7 @@ function reportErrors(response: string, file: VFile) {
   response.split('\n').forEach((line, idx) => {
     const trimmed = line.trim();
     if (trimmed.startsWith('## Error')) {
-      failMessage(file, trimmed.replace('##', ''), {
+      warnMessage(file, trimmed.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0,
@@ -80,6 +81,22 @@ function reportErrors(response: string, file: VFile) {
 
 function removeEmptyLog(md: string) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
+}
+
+function addErrorCodeBlock(md: string) {
+  return md
+    .split('\n')
+    .reduce((acc: string[], line) => {
+      const prev = acc[acc.length - 1];
+      if (line.startsWith('## Error') && prev.startsWith('```')) {
+        acc[acc.length - 1] = '```{.error}';
+        acc.push(line.replace('## ', ''));
+      } else {
+        acc.push(line);
+      }
+      return acc;
+    }, [])
+    .join('\n');
 }
 
 function addNewLineAfterKable(md: string) {
