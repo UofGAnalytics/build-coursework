@@ -84,7 +84,9 @@ function removeEmptyLog(md: string) {
 }
 
 function addErrorCodeBlock(md: string) {
-  return md.replace(/\`\`\`\n## Error/gm, '```{.error}\nError');
+  return md
+    .replace(/\r/g, '')
+    .replace(/\`\`\`\n## Error/gm, '```{.error}\nError');
 }
 
 function addNewLineAfterKable(md: string) {
