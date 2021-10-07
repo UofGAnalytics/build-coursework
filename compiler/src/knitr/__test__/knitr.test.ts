@@ -4,7 +4,6 @@ import {
   ignoreWhitespace,
   testProcessor,
   unindentString,
-  unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
 describe('knitr', () => {
