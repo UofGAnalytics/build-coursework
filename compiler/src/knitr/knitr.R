@@ -7,7 +7,7 @@ knitr::opts_knit$set(root.dir=baseDir)
 
 knitr::opts_chunk$set(
   dev='svglite',
-  class.output='r-output',
+  class.output='knitr-output',
   fig.path=cacheDir
 )
 

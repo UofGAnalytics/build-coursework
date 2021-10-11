@@ -54,6 +54,7 @@ function getUniqueId(md: string) {
 
 async function formatResponse(response: string) {
   let md = response;
+  md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
   md = addNewLineAfterKable(md);
@@ -78,6 +79,21 @@ function reportErrors(response: string, file: VFile) {
   });
 }
 
+function addCodeBlockClasses(md: string) {
+  return md
+    .split('\n')
+    .reduce((acc: string[], line) => {
+      if (line === '```{.knitr-output}') {
+        const lang = findLanguageForOutput(acc);
+        acc.push(`\`\`\`{.${lang}-output}`);
+      } else {
+        acc.push(line);
+      }
+      return acc;
+    }, [])
+    .join('\n');
+}
+
 function removeEmptyLog(md: string) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
 }
@@ -85,14 +101,12 @@ function removeEmptyLog(md: string) {
 function addErrorCodeBlock(md: string) {
   return md
     .split('\n')
-    .reduce((acc: string[], line) => {
-      const prev = acc[acc.length - 1];
-      if (line.startsWith('## Error') && prev.startsWith('```')) {
-        acc[acc.length - 1] = '```{.error}';
-        acc.push(line.replace('## ', ''));
-      } else {
-        acc.push(line);
+    .reduce((acc: string[], line, idx) => {
+      if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
+        const lang = findLanguageForOutput(acc.slice(0, -1));
+        acc[acc.length - 1] = `\`\`\`{.${lang}-error}`;
       }
+      acc.push(line);
       return acc;
     }, [])
     .join('\n');
@@ -110,6 +124,17 @@ function addNewLineAfterKable(md: string) {
       return acc;
     }, [])
     .join('\n');
+}
+
+function findLanguageForOutput(prev: string[]) {
+  const pattern = /```(\w*)/;
+  const reversed = prev.slice().reverse();
+  const prevClosingIdx = reversed.indexOf('```');
+  const prevOpening = reversed
+    .slice(prevClosingIdx + 1)
+    .find((s) => pattern.test(s)) as string;
+  const match = prevOpening.match(pattern) as RegExpMatchArray;
+  return match[1];
 }
 
 // attempt at changing knitr output. doesn't completely work

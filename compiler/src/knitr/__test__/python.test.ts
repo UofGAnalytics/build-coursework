@@ -4,8 +4,7 @@ describe('python', () => {
   it('python should work correctly', async () => {
     const { md } = await testProcessor(`
       \`\`\`{r setup, echo=FALSE}
-      library(knitr)
-      reticulate::use_python("/usr/bin/python3")
+      Sys.setenv(RETICULATE_PYTHON = "/usr/bin/python3")
       \`\`\`
 
       \`\`\`{python}

@@ -141,6 +141,7 @@ function postParse(html: string) {
   let result = html;
   result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
+  result = removeUnnecessaryHtmlClosingTags(result);
   return result;
 }
 
@@ -154,4 +155,12 @@ function unprotectHtml(html: string) {
 
 function removeUnresolvedLabels(html: string) {
   return html.replace(/\\label{def:.*?}/gm, '');
+}
+
+// MathJax appears to try to close what it thinks are HTML tags but are normal Python output
+function removeUnnecessaryHtmlClosingTags(html: string) {
+  const lastLineIdx = html.lastIndexOf('\n');
+  const lastLine = html.slice(lastLineIdx);
+  const newLastLine = lastLine.replace(/<\/\w+?>/gm, '');
+  return html.slice(0, lastLineIdx) + newLastLine;
 }
