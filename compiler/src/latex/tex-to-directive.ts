@@ -34,7 +34,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   RegisterHTMLHandler(adaptor);
 
   const tex = new TeX({
-    packages: AllPackages.filter((name) => name !== 'bussproofs'), // Busproofs requires an output jax
+    packages: AllPackages.filter((name) => name !== 'bussproofs'), // Bussproofs requires an output jax
     tags: 'ams',
     inlineMath: [
       ['$', '$'],

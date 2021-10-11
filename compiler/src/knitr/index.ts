@@ -3,7 +3,6 @@ import path from 'path';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
-// import hashSum from 'hash-sum';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -16,21 +15,21 @@ export async function knitr(file: VFile, ctx: Context) {
   return file;
 }
 
-// TODO: see what can be done with output when "quiet" turned off
+// TODO: see what can be done with output when "quiet" in knitr.R is turned off
 async function execKnitr(file: VFile, ctx: Context) {
   const filePath = file.path || '';
   const baseDir = file.dirname || '';
 
   const md = file.contents as string;
-  const fileName = getUniqueTempFileName(md);
-  const cachedFilePath = path.join(ctx.cacheDir, fileName);
-
-  await mkdir(ctx.cacheDir);
+  const uniqueId = getUniqueId(md);
+  const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
+  const cacheDir = path.join(ctx.cacheDir, uniqueId);
+  await mkdir(cacheDir);
   await writeFile(cachedFilePath, md);
 
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${ctx.cacheDir}/"`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
@@ -47,18 +46,18 @@ async function execKnitr(file: VFile, ctx: Context) {
   });
 }
 
-function getUniqueTempFileName(md: string) {
+function getUniqueId(md: string) {
   const hash = hashSum(md);
   const ts = new Date().getTime().toString();
-  return `knitr-${hash}-${ts}.Rmd`;
+  return `knitr-${hash}-${ts}`;
 }
 
 async function formatResponse(response: string) {
-  let result = response;
-  result = removeEmptyLog(result);
-  result = addErrorCodeBlock(result);
-  result = addNewLineAfterKable(result);
-  return result;
+  let md = response;
+  md = removeEmptyLog(md);
+  md = addErrorCodeBlock(md);
+  md = addNewLineAfterKable(md);
+  return md;
 }
 
 function reportErrors(response: string, file: VFile) {
