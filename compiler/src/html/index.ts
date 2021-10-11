@@ -24,25 +24,23 @@ export async function htmlPhase(
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const processor = unified()
-    .use(format)
-    .use(stringify, { allowDangerousHtml: true });
+  const processor = unified().use(stringify, { allowDangerousHtml: true });
+
+  if (ctx.options.format) {
+    // hangs in some scenarios so off by default, useful in tests
+    processor.use(format);
+  }
 
   if (!ctx.options.noDoc) {
-    const templateCss = await readFile(
-      path.join(getLibraryDir(), 'template.css')
-    );
+    const cssPath = path.join(getLibraryDir(), 'template.css');
     const docOptions: Options = {
       title: unit.titles.docTitle,
-      style: `\n${templateCss}\n`,
+      style: `\n${await readFile(cssPath)}\n`,
     };
 
     if (!targetPdf) {
-      const templateJs = await readFile(
-        path.join(getLibraryDir(), 'template.js2')
-      );
-      docOptions.script = `\n${templateJs}\n`;
-
+      const jsPath = path.join(getLibraryDir(), 'template.js2');
+      docOptions.script = `\n${await readFile(jsPath)}\n`;
       processor.use(htmlWrapper, unit, mdast);
     } else {
       processor.use(pdfWrapper, unit);

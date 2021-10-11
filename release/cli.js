@@ -1232,20 +1232,25 @@ function htmlWrapper(unit, mdast) {
 
 
 async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
-  const processor = unified_default()().use((external_rehype_format_default())).use((external_rehype_stringify_default()), {
+  const processor = unified_default()().use((external_rehype_stringify_default()), {
     allowDangerousHtml: true
   });
 
+  if (ctx.options.format) {
+    // hangs in some scenarios so off by default, useful in tests
+    processor.use((external_rehype_format_default()));
+  }
+
   if (!ctx.options.noDoc) {
-    const templateCss = await readFile(external_path_default().join(getLibraryDir(), 'template.css'));
+    const cssPath = external_path_default().join(getLibraryDir(), 'template.css');
     const docOptions = {
       title: unit.titles.docTitle,
-      style: `\n${templateCss}\n`
+      style: `\n${await readFile(cssPath)}\n`
     };
 
     if (!targetPdf) {
-      const templateJs = await readFile(external_path_default().join(getLibraryDir(), 'template.js2'));
-      docOptions.script = `\n${templateJs}\n`;
+      const jsPath = external_path_default().join(getLibraryDir(), 'template.js2');
+      docOptions.script = `\n${await readFile(jsPath)}\n`;
       processor.use(htmlWrapper, unit, mdast);
     } else {
       processor.use(pdfWrapper, unit);
@@ -1273,7 +1278,6 @@ const external_child_process_namespaceObject = require("child_process");
 
 
 
- // import hashSum from 'hash-sum';
 
 
 
@@ -1281,19 +1285,20 @@ async function knitr(file, ctx) {
   const result = await execKnitr(file, ctx);
   file.contents = result;
   return file;
-} // TODO: see what can be done with output when "quiet" turned off
+} // TODO: see what can be done with output when "quiet" in knitr.R is turned off
 
 async function execKnitr(file, ctx) {
   const filePath = file.path || '';
   const baseDir = file.dirname || '';
   const md = file.contents;
-  const fileName = getUniqueTempFileName(md);
-  const cachedFilePath = external_path_default().join(ctx.cacheDir, fileName);
-  await mkdir(ctx.cacheDir);
+  const uniqueId = getUniqueId(md);
+  const cachedFilePath = external_path_default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
+  const cacheDir = external_path_default().join(ctx.cacheDir, uniqueId);
+  await mkdir(cacheDir);
   await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
     const rFile = external_path_default().join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${ctx.cacheDir}/"`;
+    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
     (0,external_child_process_namespaceObject.exec)(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(external_chalk_default().grey(`[knitr] ${stdErr.trim()}`));
@@ -1312,18 +1317,18 @@ async function execKnitr(file, ctx) {
   });
 }
 
-function getUniqueTempFileName(md) {
+function getUniqueId(md) {
   const hash = external_hash_sum_default()(md);
   const ts = new Date().getTime().toString();
-  return `knitr-${hash}-${ts}.Rmd`;
+  return `knitr-${hash}-${ts}`;
 }
 
 async function formatResponse(response) {
-  let result = response;
-  result = removeEmptyLog(result);
-  result = addErrorCodeBlock(result);
-  result = addNewLineAfterKable(result);
-  return result;
+  let md = response;
+  md = removeEmptyLog(md);
+  md = addErrorCodeBlock(md);
+  md = addNewLineAfterKable(md);
+  return md;
 }
 
 function reportErrors(response, file) {
@@ -1459,7 +1464,7 @@ function texToAliasDirective(file, ctx) {
   (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
   const tex = new tex_js_namespaceObject.TeX({
     packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
-    // Busproofs requires an output jax
+    // Bussproofs requires an output jax
     tags: 'ams',
     inlineMath: [['$', '$'], ['\\(', '\\)']],
     displayMath: [['$$', '$$'], [`\\[`, `\\]`]],
@@ -3150,7 +3155,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.12";
+  const currentVersion = "1.1.13";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));

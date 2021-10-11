@@ -88,6 +88,7 @@ async function createTestContext(md: string, options: Options = {}) {
       noReport: true,
       noEmbedAssets: true,
       force: true,
+      format: true,
       ...options,
     },
     refStore: {},
