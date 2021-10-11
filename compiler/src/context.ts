@@ -18,6 +18,7 @@ export type Options = {
   spelling?: boolean;
   force?: boolean;
   noWrite?: boolean;
+  format?: boolean;
 };
 
 export type Context = {

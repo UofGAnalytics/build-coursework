@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 5646:
+/***/ 3231:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -850,6 +850,9 @@ async function hastPhase(mdast, ctx, file, targetPdf) {
 ;// CONCATENATED MODULE: external "rehype-document"
 const external_rehype_document_namespaceObject = require("rehype-document");
 var external_rehype_document_default = /*#__PURE__*/__webpack_require__.n(external_rehype_document_namespaceObject);
+;// CONCATENATED MODULE: external "rehype-format"
+const external_rehype_format_namespaceObject = require("rehype-format");
+var external_rehype_format_default = /*#__PURE__*/__webpack_require__.n(external_rehype_format_namespaceObject);
 ;// CONCATENATED MODULE: ./src/utils/icons.ts
 /* babel-plugin-inline-import '../../assets/hamburger-icon.svg' */
 const hamburgerSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"448\" height=\"392\" viewBox=\"0 0 448 392\">\n  <defs>\n    <style>\n      .cls-1 {\n        fill-rule: evenodd;\n      }\n    </style>\n  </defs>\n  <path id=\"Color_Fill_1\" data-name=\"Color Fill 1\" class=\"cls-1\" d=\"M16,62H432a15.8,15.8,0,0,0,16-16V16A15.8,15.8,0,0,0,432,0H16A15.8,15.8,0,0,0,0,16V46A15.8,15.8,0,0,0,16,62Zm0,165H432a15.8,15.8,0,0,0,16-16V181a15.8,15.8,0,0,0-16-16H16A15.8,15.8,0,0,0,0,181v30A15.8,15.8,0,0,0,16,227Zm0,165H432a15.8,15.8,0,0,0,16-16V346a15.8,15.8,0,0,0-16-16H16A15.8,15.8,0,0,0,0,346v30A15.8,15.8,0,0,0,16,392Z\"/>\n</svg>\n";
@@ -1220,6 +1223,8 @@ function htmlWrapper(unit, mdast) {
 ;// CONCATENATED MODULE: ./src/html/index.ts
 
 
+ // @ts-expect-error
+
 
 
 
@@ -1227,10 +1232,14 @@ function htmlWrapper(unit, mdast) {
 
 
 async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
-  const processor = unified_default()() // .use(format) // hangs in some scenarios?
-  .use((external_rehype_stringify_default()), {
+  const processor = unified_default()().use((external_rehype_stringify_default()), {
     allowDangerousHtml: true
   });
+
+  if (ctx.options.format) {
+    // hangs in some scenarios so off by default, useful in tests
+    processor.use((external_rehype_format_default()));
+  }
 
   if (!ctx.options.noDoc) {
     const cssPath = external_path_default().join(getLibraryDir(), 'template.css');
@@ -12840,8 +12849,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 95 modules
-var src = __webpack_require__(5646);
+// EXTERNAL MODULE: ./src/index.ts + 96 modules
+var src = __webpack_require__(3231);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

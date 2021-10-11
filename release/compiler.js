@@ -10223,6 +10223,8 @@ async function hast_hastPhase(mdast, ctx, file, targetPdf) {
 }
 ;// CONCATENATED MODULE: external "rehype-document"
 const external_rehype_document_namespaceObject = require("rehype-document");
+;// CONCATENATED MODULE: external "rehype-format"
+const external_rehype_format_namespaceObject = require("rehype-format");
 ;// CONCATENATED MODULE: ./src/utils/icons.ts
 /* babel-plugin-inline-import '../../assets/hamburger-icon.svg' */
 const hamburgerSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"448\" height=\"392\" viewBox=\"0 0 448 392\">\n  <defs>\n    <style>\n      .cls-1 {\n        fill-rule: evenodd;\n      }\n    </style>\n  </defs>\n  <path id=\"Color_Fill_1\" data-name=\"Color Fill 1\" class=\"cls-1\" d=\"M16,62H432a15.8,15.8,0,0,0,16-16V16A15.8,15.8,0,0,0,432,0H16A15.8,15.8,0,0,0,0,16V46A15.8,15.8,0,0,0,16,62Zm0,165H432a15.8,15.8,0,0,0,16-16V181a15.8,15.8,0,0,0-16-16H16A15.8,15.8,0,0,0,0,181v30A15.8,15.8,0,0,0,16,227Zm0,165H432a15.8,15.8,0,0,0,16-16V346a15.8,15.8,0,0,0-16-16H16A15.8,15.8,0,0,0,0,346v30A15.8,15.8,0,0,0,16,392Z\"/>\n</svg>\n";
@@ -10589,6 +10591,8 @@ function wrapper_htmlWrapper(unit, mdast) {
 ;// CONCATENATED MODULE: ./src/html/index.ts
 
 
+ // @ts-expect-error
+
 
 
 
@@ -10596,10 +10600,14 @@ function wrapper_htmlWrapper(unit, mdast) {
 
 
 async function html_htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
-  const processor = unified() // .use(format) // hangs in some scenarios?
-  .use(stringify, {
+  const processor = unified().use(stringify, {
     allowDangerousHtml: true
   });
+
+  if (ctx.options.format) {
+    // hangs in some scenarios so off by default, useful in tests
+    processor.use(format);
+  }
 
   if (!ctx.options.noDoc) {
     const cssPath = path.join(getLibraryDir(), 'template.css');

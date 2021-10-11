@@ -4,6 +4,8 @@ import { Parent as HastParent } from 'hast';
 import { startCase } from 'lodash';
 import { Parent as MdastParent } from 'mdast';
 import doc, { Options } from 'rehype-document';
+// @ts-expect-error
+import format from 'rehype-format';
 import stringify from 'rehype-stringify';
 import unified from 'unified';
 import { VFile } from 'vfile';
@@ -22,9 +24,12 @@ export async function htmlPhase(
   ctx: Context,
   targetPdf?: boolean
 ) {
-  const processor = unified()
-    // .use(format) // hangs in some scenarios?
-    .use(stringify, { allowDangerousHtml: true });
+  const processor = unified().use(stringify, { allowDangerousHtml: true });
+
+  if (ctx.options.format) {
+    // hangs in some scenarios so off by default, useful in tests
+    processor.use(format);
+  }
 
   if (!ctx.options.noDoc) {
     const cssPath = path.join(getLibraryDir(), 'template.css');
