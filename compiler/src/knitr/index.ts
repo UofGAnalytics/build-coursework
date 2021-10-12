@@ -129,12 +129,11 @@ function addNewLineAfterKable(md: string) {
 function findLanguageForOutput(prev: string[]) {
   const pattern = /```(\w*)/;
   const reversed = prev.slice().reverse();
-  const prevClosingIdx = reversed.indexOf('```');
+  const prevClosingIdx = reversed.findIndex((s) => s.startsWith('```'));
   const prevOpening = reversed
     .slice(prevClosingIdx + 1)
     .find((s) => pattern.test(s)) as string;
   const match = prevOpening.match(pattern) as RegExpMatchArray;
-  console.log({ prevClosingIdx, prevOpening, match });
   return match[1];
 }
 
