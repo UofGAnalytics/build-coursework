@@ -1353,7 +1353,7 @@ function reportErrors(response, file) {
 
 function addCodeBlockClasses(md) {
   return md.split('\n').reduce((acc, line) => {
-    if (line === '```{.knitr-output}') {
+    if (line.startsWith('```{.knitr-output}')) {
       const lang = findLanguageForOutput(acc);
       acc.push(`\`\`\`{.${lang}-output}`);
     } else {
@@ -1397,7 +1397,7 @@ function addNewLineAfterKable(md) {
 function findLanguageForOutput(prev) {
   const pattern = /```(\w*)/;
   const reversed = prev.slice().reverse();
-  const prevClosingIdx = reversed.indexOf('```');
+  const prevClosingIdx = reversed.findIndex(s => s.startsWith('```'));
   const prevOpening = reversed.slice(prevClosingIdx + 1).find(s => pattern.test(s));
   const match = prevOpening.match(pattern);
   return match[1];
@@ -3065,8 +3065,7 @@ async function buildUnit(unit, ctx) {
 async function inSituTransforms(file, ctx) {
   // simple regex tests
   assertNoKbl(file);
-  await knitr(file, ctx); // console.log(file.contents);
-
+  await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
   return mdastPhase(file, ctx);
@@ -3207,7 +3206,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.13";
+  const currentVersion = "1.1.14";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
