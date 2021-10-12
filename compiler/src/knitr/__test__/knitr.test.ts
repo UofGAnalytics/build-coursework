@@ -256,7 +256,7 @@ describe('knitr', () => {
   it('should add the correct language output class', async () => {
     const { html } = await testProcessor(`
       \`\`\`{r setup, echo=FALSE}
-      Sys.setenv(RETICULATE_PYTHON = "/usr/bin/python3")
+      reticulate::use_python("/usr/bin/python3")
       \`\`\`
 
       \`\`\`{python}
