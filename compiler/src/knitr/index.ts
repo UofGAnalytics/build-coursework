@@ -134,6 +134,7 @@ function findLanguageForOutput(prev: string[]) {
     .slice(prevClosingIdx + 1)
     .find((s) => pattern.test(s)) as string;
   const match = prevOpening.match(pattern) as RegExpMatchArray;
+  console.log({ prevClosingIdx, prevOpening, match });
   return match[1];
 }
 
