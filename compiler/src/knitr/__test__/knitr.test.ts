@@ -133,7 +133,7 @@ describe('knitr', () => {
       a</code></pre>
       </div>
       <div class="code-wrapper r-output">
-        <h6 class="r-console">R Console</h6>
+        <h6 class="console-heading">R Console</h6>
         <pre><code>## [1] 1 4 2</code></pre>
       </div>
       <div class="code-wrapper">
@@ -240,8 +240,8 @@ describe('knitr', () => {
 
     expect(ignoreWhitespace(md)).toContain(
       ignoreWhitespace(`
-        \`\`\`{.error}
-        Error in "120" + "5": non-numeric argument to binary operator
+        \`\`\`{.r-error}
+        ## Error in "120" + "5": non-numeric argument to binary operator
         \`\`\`
       `)
     );
@@ -251,5 +251,67 @@ describe('knitr', () => {
         'Error in "120" + "5": non-numeric argument to binary operator'
       )
     ).toBe(true);
+  });
+
+  it('should add the correct language output class', async () => {
+    const { html } = await testProcessor(`
+      \`\`\`{r setup, echo=FALSE}
+      reticulate::use_python("/usr/bin/python3")
+      \`\`\`
+
+      \`\`\`{python}
+      print(2)
+      \`\`\`
+
+      \`\`\`{python}
+      print(a)
+      \`\`\`
+
+      \`\`\`{r}
+      a <- c(1, 4, 2)
+      a
+      \`\`\`
+
+      \`\`\`{r}
+      b
+      \`\`\`
+    `);
+
+    const result = ignoreWhitespace(`
+      <div class="code-wrapper">
+        <pre><code>print(2)</code></pre>
+      </div>
+      <div class="code-wrapper python-output">
+        <h6 class="console-heading">Python Console</h6>
+        <pre><code>## 2</code></pre>
+      </div>
+      <div class="code-wrapper">
+        <pre><code>print(a)</code></pre>
+      </div>
+      <div class="code-wrapper python-error">
+        <h6 class="console-heading">Python Console</h6>
+        <pre><code>## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
+        ##
+        ## Detailed traceback:
+        ##   File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
+      </div>
+      <div class="code-wrapper">
+        <pre><code>a &#x3C;- c(1, 4, 2)
+      a</code></pre>
+      </div>
+      <div class="code-wrapper r-output">
+        <h6 class="console-heading">R Console</h6>
+        <pre><code>## [1] 1 4 2</code></pre>
+      </div>
+      <div class="code-wrapper">
+        <pre><code>b</code></pre>
+      </div>
+      <div class="code-wrapper r-error">
+        <h6 class="console-heading">R Console</h6>
+        <pre><code>## Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
+      </div>
+    `);
+
+    expect(ignoreWhitespace(html)).toBe(result);
   });
 });

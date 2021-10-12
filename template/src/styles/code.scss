@@ -14,7 +14,7 @@ code {
   color: #ccc;
   overflow: auto;
 
-  & > h6.r-console {
+  & > h6.console-heading {
     margin: 0 0 0.5rem;
     color: $rose;
   }
@@ -32,9 +32,12 @@ code {
     background: transparent;
   }
 
-  &.error {
+  &[class$="error"] {
     background: var(--errorColor);
     color: white;
+    & > h6.console-heading {
+      color: white;
+    }
   }
 }
 

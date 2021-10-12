@@ -51,21 +51,7 @@ function customCode(node: Code, ctx: Context, file: VFile) {
         className: ['code-wrapper', klass],
       },
       hChildren: [
-        klass !== 'r-output'
-          ? null
-          : {
-              type: 'element',
-              tagName: 'h6',
-              properties: {
-                className: 'r-console',
-              },
-              children: [
-                {
-                  type: 'text',
-                  value: 'R Console',
-                },
-              ],
-            },
+        addConsoleHeading(klass),
         {
           type: 'element',
           tagName: 'pre',
@@ -81,6 +67,40 @@ function customCode(node: Code, ctx: Context, file: VFile) {
       ],
     },
   });
+}
+
+function addConsoleHeading(klass: string) {
+  if (klass === 'r-output' || klass === 'r-error') {
+    return {
+      type: 'element',
+      tagName: 'h6',
+      properties: {
+        className: 'console-heading',
+      },
+      children: [
+        {
+          type: 'text',
+          value: 'R Console',
+        },
+      ],
+    };
+  }
+  if (klass === 'python-output' || klass === 'python-error') {
+    return {
+      type: 'element',
+      tagName: 'h6',
+      properties: {
+        className: 'console-heading',
+      },
+      children: [
+        {
+          type: 'text',
+          value: 'Python Console',
+        },
+      ],
+    };
+  }
+  return null;
 }
 
 function parseLanguage(node: Code) {

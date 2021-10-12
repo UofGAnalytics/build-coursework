@@ -1325,6 +1325,7 @@ function getUniqueId(md) {
 
 async function formatResponse(response) {
   let md = response;
+  md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
   md = addNewLineAfterKable(md);
@@ -1350,21 +1351,31 @@ function reportErrors(response, file) {
   });
 }
 
+function addCodeBlockClasses(md) {
+  return md.split('\n').reduce((acc, line) => {
+    if (line === '```{.knitr-output}') {
+      const lang = findLanguageForOutput(acc);
+      acc.push(`\`\`\`{.${lang}-output}`);
+    } else {
+      acc.push(line);
+    }
+
+    return acc;
+  }, []).join('\n');
+}
+
 function removeEmptyLog(md) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
 }
 
 function addErrorCodeBlock(md) {
-  return md.split('\n').reduce((acc, line) => {
-    const prev = acc[acc.length - 1];
-
-    if (line.startsWith('## Error') && prev.startsWith('```')) {
-      acc[acc.length - 1] = '```{.error}';
-      acc.push(line.replace('## ', ''));
-    } else {
-      acc.push(line);
+  return md.split('\n').reduce((acc, line, idx) => {
+    if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
+      const lang = findLanguageForOutput(acc.slice(0, -1));
+      acc[acc.length - 1] = `\`\`\`{.${lang}-error}`;
     }
 
+    acc.push(line);
     return acc;
   }, []).join('\n');
 }
@@ -1381,6 +1392,15 @@ function addNewLineAfterKable(md) {
 
     return acc;
   }, []).join('\n');
+}
+
+function findLanguageForOutput(prev) {
+  const pattern = /```(\w*)/;
+  const reversed = prev.slice().reverse();
+  const prevClosingIdx = reversed.indexOf('```');
+  const prevOpening = reversed.slice(prevClosingIdx + 1).find(s => pattern.test(s));
+  const match = prevOpening.match(pattern);
+  return match[1];
 } // attempt at changing knitr output. doesn't completely work
 // const hooks = `
 //   knit_hooks$set(
@@ -1564,6 +1584,7 @@ function postParse(html) {
   let result = html;
   result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
+  result = removeUnnecessaryHtmlClosingTags(result);
   return result;
 } // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
 
@@ -1574,6 +1595,14 @@ function unprotectHtml(html) {
 
 function removeUnresolvedLabels(html) {
   return html.replace(/\\label{def:.*?}/gm, '');
+} // MathJax appears to try to close what it thinks are HTML tags but are normal Python output
+
+
+function removeUnnecessaryHtmlClosingTags(html) {
+  const lastLineIdx = html.lastIndexOf('\n');
+  const lastLine = html.slice(lastLineIdx);
+  const newLastLine = lastLine.replace(/<\/\w+?>/gm, '');
+  return html.slice(0, lastLineIdx) + newLastLine;
 }
 ;// CONCATENATED MODULE: external "@double-great/remark-lint-alt-text"
 const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");
@@ -2168,17 +2197,7 @@ function customCode(node, ctx, file) {
       hProperties: {
         className: ['code-wrapper', klass]
       },
-      hChildren: [klass !== 'r-output' ? null : {
-        type: 'element',
-        tagName: 'h6',
-        properties: {
-          className: 'r-console'
-        },
-        children: [{
-          type: 'text',
-          value: 'R Console'
-        }]
-      }, {
+      hChildren: [addConsoleHeading(klass), {
         type: 'element',
         tagName: 'pre',
         children: [{
@@ -2190,6 +2209,38 @@ function customCode(node, ctx, file) {
       }]
     }
   });
+}
+
+function addConsoleHeading(klass) {
+  if (klass === 'r-output' || klass === 'r-error') {
+    return {
+      type: 'element',
+      tagName: 'h6',
+      properties: {
+        className: 'console-heading'
+      },
+      children: [{
+        type: 'text',
+        value: 'R Console'
+      }]
+    };
+  }
+
+  if (klass === 'python-output' || klass === 'python-error') {
+    return {
+      type: 'element',
+      tagName: 'h6',
+      properties: {
+        className: 'console-heading'
+      },
+      children: [{
+        type: 'text',
+        value: 'Python Console'
+      }]
+    };
+  }
+
+  return null;
 }
 
 function parseLanguage(node) {
@@ -3014,7 +3065,8 @@ async function buildUnit(unit, ctx) {
 async function inSituTransforms(file, ctx) {
   // simple regex tests
   assertNoKbl(file);
-  await knitr(file, ctx);
+  await knitr(file, ctx); // console.log(file.contents);
+
   preParsePhase(file);
   texToAliasDirective(file, ctx);
   return mdastPhase(file, ctx);
