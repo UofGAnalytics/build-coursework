@@ -83,7 +83,7 @@ function addCodeBlockClasses(md: string) {
   return md
     .split('\n')
     .reduce((acc: string[], line) => {
-      if (line === '```{.knitr-output}') {
+      if (line.startsWith('```{.knitr-output}')) {
         const lang = findLanguageForOutput(acc);
         acc.push(`\`\`\`{.${lang}-output}`);
       } else {
