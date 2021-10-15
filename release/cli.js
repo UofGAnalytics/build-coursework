@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 7445:
+/***/ 3231:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1434,8 +1434,6 @@ const html_js_namespaceObject = require("mathjax-full/js/handlers/html.js");
 const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/AllPackages.js"
 const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
-;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/FindTeX.js"
-const FindTeX_js_namespaceObject = require("mathjax-full/js/input/tex/FindTeX.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
 const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
 ;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
@@ -1466,7 +1464,6 @@ function tex_to_directive_objectSpread(target) { for (var i = 1; i < arguments.l
 
 function tex_to_directive_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import parser from 'fast-xml-parser';
 
 
 
@@ -1475,11 +1472,19 @@ function tex_to_directive_defineProperty(obj, key, value) { if (key in obj) { Ob
 
 
 
-
- // Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
-// https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
-// Convert Tex to directive alias ie. :blockMath[13] or :inlineMath[42] and build ctx.mmlStore array
-// (Alias is replaced with SVG in ./directive-to-svg.ts in mdast phase)
+ // This custom MathJax implementation has had to diverge from the provided demos found
+// here: https://github.com/mathjax/MathJax-demos-node, because they are all concerned
+// with MathJax embedded in HTML whereas at this stage in the processor we're dealing
+// with Markdown.  Due to TeX/LaTeX making heavy use of the backslash (\) character,
+// we need to deal with it early as it conflicts with other libraries used later.
+// I Extract all LaTeX using MathJax "page" process as it doesn't need delimiters and
+// stores context required for numbered references. (Based on direct/tex2mml-page).
+// However this has a naive HTML handler which will munge HTML (and Python) in some
+// cases so I am careful to only mutate TeX within delimiters and leave the rest of
+// the Markdown alone.
+// I replace the TeX with a placeholder such as :inlineMath[21] or :blockMath[42].
+// I convert the TeX to MathML which is more robust and store it memory for use
+// later (in directive-to-svg.ts).
 // Avoids typesetting issues:
 // If I leave the LaTeX in it gets munged
 // If I convert to SVG it gets munged
@@ -1489,86 +1494,76 @@ function texToAliasDirective(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
   const md = file.contents;
-  const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
-  const store = [];
-  const findTex = new FindTeX_js_namespaceObject.FindTeX({
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    processRefs: true
-  });
-  const arr = findTex.findMath([md]); // console.log(arr);
-
-  const test = arr.map((o, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, o), {}, {
-    idx
-  })).reverse().reduce((acc, o) => {
-    const prev = acc.slice(0, o.start.n);
-    const next = acc.slice(o.end.n);
-    const placeholder = `cock${o.idx}`;
-    return prev + placeholder + next;
-  }, md);
-  console.log(test);
-  const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
-  (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
   const tex = new tex_js_namespaceObject.TeX({
-    packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
     // Bussproofs requires an output jax
+    packages: AllPackages_js_namespaceObject.AllPackages.filter(name => name !== 'bussproofs'),
     tags: 'ams',
     inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], [`\\[`, `\\]`]],
-    processEscapes: true // ignoreClass: 'r-output',
-
+    displayMath: [['$$', '$$'], [`\\[`, `\\]`]]
   });
+  const store = buildMmlStore(md, tex);
+  const result = tex.findMath([md]).map((item, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, item), {}, {
+    idx
+  })).reverse().reduce((acc, item) => {
+    const mml = store[item.idx];
+    assertNoMmlError(mml, file); // debug
+    // console.log(item.math, mml);
 
-  function storeTexAndDisplayAlias({
-    math
-  }) {
-    const items = Array.from(math);
+    let newMarkdown = '';
 
-    for (const item of items) {
-      // debug
-      // console.log(item.math);
-      let newMarkdown = ''; // convert to MML
-
-      console.log(item.root);
-      const mml = visitor.visitTree(item.root);
-      assertNoMmlError(mml, file); // escaped dollar sign...
-
-      if (item.math === '$') {
-        newMarkdown = '$';
-      } else if (item.math === '\\') {
-        newMarkdown = '\\\\';
-      } else if (isReferenceLink(item.math)) {
-        // convert tex to text link
-        const refNum = extractRefNumFromMml(mml, item.math, file);
-        const anchor = extractAnchorLinkFromMml(mml, item.math);
-        newMarkdown = `[${refNum}](${anchor})`;
-      } else {
-        // insert alias as a custom directive and build store of mml
-        store.push(mml);
-        const type = item.display ? 'blockMath' : 'inlineMath';
-        const idx = store.length - 1;
-        newMarkdown = `:${type}[${idx}]`;
-      }
-
-      const tree = adaptor.parse(newMarkdown, 'text/html');
-      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    if (item.math === '$') {
+      // escaped dollar sign...
+      newMarkdown = '$';
+    } else if (item.math === '\\') {
+      // double backslash...
+      newMarkdown = '\\\\';
+    } else if (isReferenceLink(item.math)) {
+      // reference link...
+      const refNum = extractRefNumFromMml(mml, item.math, file);
+      const anchor = extractAnchorLinkFromMml(mml, item.math);
+      newMarkdown = `[${refNum}](${anchor})`;
+    } else {
+      // equation...
+      const type = item.display ? 'blockMath' : 'inlineMath';
+      newMarkdown = `:${type}[${item.idx}]`;
     }
-  } // add store to ctx
 
+    const prev = acc.slice(0, item.start.n);
+    const next = acc.slice(item.end.n);
+    return prev + newMarkdown + next;
+  }, md); // add store to ctx
 
   ctx.mmlStore = store;
+  file.contents = postParse(result);
+  return file;
+}
+
+function buildMmlStore(md, tex) {
+  const store = [];
+  const adaptor = (0,liteAdaptor_js_namespaceObject.liteAdaptor)();
+  (0,html_js_namespaceObject.RegisterHTMLHandler)(adaptor);
+  const visitor = new SerializedMmlVisitor_js_namespaceObject.SerializedMmlVisitor();
+
+  function storeMml({
+    math
+  }) {
+    for (const item of Array.from(math)) {
+      // convert to MML
+      const mml = visitor.visitTree(item.root);
+      store.push(mml);
+      const tree = adaptor.parse('**unused**', 'text/html');
+      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    }
+  }
+
   const doc = mathjax_js_namespaceObject.mathjax.document(md, {
     InputJax: tex,
     renderActions: {
-      typeset: [MathItem_namespaceObject.STATE.TYPESET, storeTexAndDisplayAlias]
+      typeset: [MathItem_namespaceObject.STATE.TYPESET, storeMml]
     }
   });
   doc.render();
-  const result = adaptor.innerHTML(adaptor.body(doc.document));
-  file.contents = postParse(result);
-  return file;
+  return store;
 }
 
 function assertNoMmlError(mml, file) {
@@ -1609,28 +1604,15 @@ function extractAnchorLinkFromMml(mml, tex) {
 }
 
 function postParse(html) {
-  let result = html;
-  result = unprotectHtml(result);
-  result = removeUnresolvedLabels(result);
-  result = removeUnnecessaryHtmlClosingTags(result);
+  let result = html; // result = unprotectHtml(result);
+
+  result = removeUnresolvedLabels(result); // result = removeUnnecessaryHtmlClosingTags(result);
+
   return result;
-} // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
-
-
-function unprotectHtml(html) {
-  return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
 function removeUnresolvedLabels(html) {
   return html.replace(/\\label{def:.*?}/gm, '');
-} // MathJax appears to try to close what it thinks are HTML tags but are normal Python output
-
-
-function removeUnnecessaryHtmlClosingTags(html) {
-  const lastLineIdx = html.lastIndexOf('\n');
-  const lastLine = html.slice(lastLineIdx);
-  const newLastLine = lastLine.replace(/<\/\w+?>/gm, '');
-  return html.slice(0, lastLineIdx) + newLastLine;
 }
 ;// CONCATENATED MODULE: external "@double-great/remark-lint-alt-text"
 const remark_lint_alt_text_namespaceObject = require("@double-great/remark-lint-alt-text");
@@ -3234,7 +3216,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.14";
+  const currentVersion = "1.1.15";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
@@ -12928,8 +12910,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 97 modules
-var src = __webpack_require__(7445);
+// EXTERNAL MODULE: ./src/index.ts + 96 modules
+var src = __webpack_require__(3231);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

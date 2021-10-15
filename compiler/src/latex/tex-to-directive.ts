@@ -3,7 +3,6 @@ import { MathDocument } from 'mathjax-full/js/core/MathDocument';
 import * as MathItem from 'mathjax-full/js/core/MathItem';
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
-// import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js';
 import { TeX } from 'mathjax-full/js/input/tex.js';
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
 import { mathjax } from 'mathjax-full/js/mathjax.js';
@@ -13,11 +12,21 @@ import { Context } from '../context';
 import { assertNoTexTabular } from '../linter/assert-no-tex-tabular';
 import { failMessage } from '../utils/message';
 
-// Extract all LaTeX using MathJax "page" process (doesn't need delimiters).
-// https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
+// This custom MathJax implementation has had to diverge from the provided demos found
+// here: https://github.com/mathjax/MathJax-demos-node, because they are all concerned
+// with MathJax embedded in HTML whereas at this stage in the processor we're dealing
+// with Markdown.  Due to TeX/LaTeX making heavy use of the backslash (\) character,
+// we need to deal with it early as it conflicts with other libraries used later.
 
-// Convert Tex to directive alias ie. :blockMath[13] or :inlineMath[42] and build ctx.mmlStore array
-// (Alias is replaced with SVG in ./directive-to-svg.ts in mdast phase)
+// I Extract all LaTeX using MathJax "page" process as it doesn't need delimiters and
+// stores context required for numbered references. (Based on direct/tex2mml-page).
+// However this has a naive HTML handler which will munge HTML (and Python) in some
+// cases so I am careful to only mutate TeX within delimiters and leave the rest of
+// the Markdown alone.
+
+// I replace the TeX with a placeholder such as :inlineMath[21] or :blockMath[42].
+// I convert the TeX to MathML which is more robust and store it memory for use
+// later (in directive-to-svg.ts).
 
 // Avoids typesetting issues:
 // If I leave the LaTeX in it gets munged
@@ -29,8 +38,6 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   assertNoTexTabular(file);
 
   const md = file.contents as string;
-  const store = buildMmlStore(md, file);
-
   const tex = new TeX({
     // Bussproofs requires an output jax
     packages: AllPackages.filter((name) => name !== 'bussproofs'),
@@ -44,6 +51,8 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
       [`\\[`, `\\]`],
     ],
   });
+
+  const store = buildMmlStore(md, tex);
 
   const result = tex
     .findMath([md])
@@ -87,21 +96,8 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   return file;
 }
 
-function buildMmlStore(md: string, file: VFile) {
+function buildMmlStore(md: string, tex: TeX<unknown, unknown, unknown>) {
   const store: string[] = [];
-
-  const tex = new TeX({
-    packages: AllPackages.filter((name) => name !== 'bussproofs'), // Bussproofs requires an output jax
-    tags: 'ams',
-    inlineMath: [
-      ['$', '$'],
-      ['\\(', '\\)'],
-    ],
-    displayMath: [
-      ['$$', '$$'],
-      [`\\[`, `\\]`],
-    ],
-  });
 
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
@@ -172,22 +168,6 @@ function postParse(html: string) {
   return result;
 }
 
-// https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
-// function unprotectHtml(html: string) {
-//   return html
-//     .replace(/&amp;/g, '&')
-//     .replace(/&lt;/g, '<')
-//     .replace(/&gt;/g, '>');
-// }
-
 function removeUnresolvedLabels(html: string) {
   return html.replace(/\\label{def:.*?}/gm, '');
 }
-
-// MathJax appears to try to close what it thinks are HTML tags but are normal Python output
-// function removeUnnecessaryHtmlClosingTags(html: string) {
-//   const lastLineIdx = html.lastIndexOf('\n');
-//   const lastLine = html.slice(lastLineIdx);
-//   const newLastLine = lastLine.replace(/<\/\w+?>/gm, '');
-//   return html.slice(0, lastLineIdx) + newLastLine;
-// }
