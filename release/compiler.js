@@ -10802,6 +10802,8 @@ const html_js_namespaceObject = require("mathjax-full/js/handlers/html.js");
 const tex_js_namespaceObject = require("mathjax-full/js/input/tex.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/AllPackages.js"
 const AllPackages_js_namespaceObject = require("mathjax-full/js/input/tex/AllPackages.js");
+;// CONCATENATED MODULE: external "mathjax-full/js/input/tex/FindTeX.js"
+const FindTeX_js_namespaceObject = require("mathjax-full/js/input/tex/FindTeX.js");
 ;// CONCATENATED MODULE: external "mathjax-full/js/mathjax.js"
 const mathjax_js_namespaceObject = require("mathjax-full/js/mathjax.js");
 ;// CONCATENATED MODULE: ./src/linter/assert-no-tex-tabular.ts
@@ -10826,7 +10828,14 @@ function assert_no_tex_tabular_assertNoTexTabular(file) {
   });
 }
 ;// CONCATENATED MODULE: ./src/latex/tex-to-directive.ts
+function tex_to_directive_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function tex_to_directive_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { tex_to_directive_ownKeys(Object(source), true).forEach(function (key) { tex_to_directive_defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { tex_to_directive_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function tex_to_directive_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 // import parser from 'fast-xml-parser';
+
 
 
 
@@ -10848,6 +10857,26 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
   // simple regex tests
   assertNoTexTabular(file);
   const md = file.contents;
+  const visitor = new SerializedMmlVisitor();
+  const store = [];
+  const findTex = new FindTeX({
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    processRefs: true
+  });
+  const arr = findTex.findMath([md]); // console.log(arr);
+
+  const test = arr.map((o, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, o), {}, {
+    idx
+  })).reverse().reduce((acc, o) => {
+    const prev = acc.slice(0, o.start.n);
+    const next = acc.slice(o.end.n);
+    const placeholder = `cock${o.idx}`;
+    return prev + placeholder + next;
+  }, md);
+  console.log(test);
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
   const tex = new TeX({
@@ -10859,8 +10888,6 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
     processEscapes: true // ignoreClass: 'r-output',
 
   });
-  const visitor = new SerializedMmlVisitor();
-  const store = [];
 
   function storeTexAndDisplayAlias({
     math
@@ -10872,6 +10899,7 @@ function tex_to_directive_texToAliasDirective(file, ctx) {
       // console.log(item.math);
       let newMarkdown = ''; // convert to MML
 
+      console.log(item.root);
       const mml = visitor.visitTree(item.root);
       assertNoMmlError(mml, file); // escaped dollar sign...
 

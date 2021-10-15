@@ -25,7 +25,7 @@ describe('latex', () => {
   });
 
   it('should error on referencing non-numbered section', async () => {
-    const { md } = await testProcessor(String.raw`
+    const { md, hasFailingMessage } = await testProcessor(String.raw`
       \label{def:scoreuniv}$U=\dfrac{dl(\theta;y)}{d\theta}$
 
       (multivariate version of the score from Definition \ref{def:scoreuniv})
@@ -38,6 +38,12 @@ describe('latex', () => {
     `);
 
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expectedMd));
+
+    expect(
+      hasFailingMessage(
+        `Invalid reference: \\ref{def:scoreuniv}. You may only reference numbered sections.`
+      )
+    ).toBe(true);
   });
 
   it('should add error on tabular', async () => {
