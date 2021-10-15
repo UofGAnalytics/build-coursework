@@ -1,3 +1,12 @@
-####[background] Path names on Windows
-Path names in Windows typically contain backslashes (`\`). In R you need to either use a forward slash instead (for example `c:/Users/Craig/data.RData`) or escape the backslash, i.e. use a double `\\` (for example `c:\\Users\\Craig\\data.RData`).
-####[/background]
+Now let us turn our attention to models with a binary response $Y_i \sim \text{Bin}(1,p_i)$. We will go over the main ideas through examples, starting with a light-hearted one.
+
+###[definition] Deviance residuals
+The deviance residual is \begin{align*} d_k &=\text{sign}(y_k-n_k \hat{p}_k) \\
+& \times
+\left \lbrace 2 \left[ y_k \log \left( \frac{y_k}{n_k \hat{p}_k}\right)+(n_k-y_k) \log \left( \frac{n_k-y_k}{n_k-n_k\hat{p}_k}\right) \right]\right \rbrace^{1/2}.\end{align*}
+
+The standardised deviance residual is
+\[r_{Dk}=\frac{d_k}{\sqrt{1-h_k}}.\]
+###[/definition]
+
+We have already used this in models of the form $g(\mu)=\beta_0+\beta1 x$ to test $H_0: \beta_1=0$.

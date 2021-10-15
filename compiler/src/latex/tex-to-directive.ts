@@ -5,8 +5,10 @@ import { MathDocument } from 'mathjax-full/js/core/MathDocument';
 import * as MathItem from 'mathjax-full/js/core/MathItem';
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
+import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js';
 import { TeX } from 'mathjax-full/js/input/tex.js';
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
+import { FindTeX } from 'mathjax-full/js/input/tex/FindTeX.js';
 import { mathjax } from 'mathjax-full/js/mathjax.js';
 import { VFile } from 'vfile';
 
@@ -30,6 +32,8 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   assertNoTexTabular(file);
 
   const md = file.contents as string;
+  const visitor = new SerializedMmlVisitor();
+
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
 
@@ -45,60 +49,57 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
       [`\\[`, `\\]`],
     ],
     processEscapes: true,
-    // ignoreClass: 'r-output',
   });
 
-  const visitor = new SerializedMmlVisitor();
+  const html = new HTMLDocument('', adaptor, { InputJax: tex });
 
   const store: string[] = [];
 
-  function storeTexAndDisplayAlias({ math }: MathDocument<any, any, any>) {
-    const items = Array.from(math);
+  function createTexPlaceholder(item: {
+    idx: number;
+    math: string;
+    start: MathItem.Location<unknown, unknown>;
+    end: MathItem.Location<unknown, unknown>;
+    display: boolean;
+  }) {
+    if (item.math === '$') {
+      return '$';
+    }
+    if (item.math === '\\') {
+      return '\\\\';
+    }
 
-    for (const item of items) {
-      // debug
-      // console.log(item.math);
+    const node = html.convert(item.math, { end: MathItem.STATE.CONVERT });
+    const mml = visitor.visitTree(node);
+    assertNoMmlError(mml, file);
 
-      let newMarkdown = '';
-
-      // convert to MML
-      const mml = visitor.visitTree(item.root);
-      assertNoMmlError(mml, file);
-
-      // escaped dollar sign...
-      if (item.math === '$') {
-        newMarkdown = '$';
-      } else if (item.math === '\\') {
-        newMarkdown = '\\\\';
-      } else if (isReferenceLink(item.math)) {
-        // convert tex to text link
-        const refNum = extractRefNumFromMml(mml, item.math, file);
-        const anchor = extractAnchorLinkFromMml(mml, item.math);
-        newMarkdown = `[${refNum}](${anchor})`;
-      } else {
-        // insert alias as a custom directive and build store of mml
-        store.push(mml);
-        const type = item.display ? 'blockMath' : 'inlineMath';
-        const idx = store.length - 1;
-        newMarkdown = `:${type}[${idx}]`;
-      }
-
-      const tree = adaptor.parse(newMarkdown, 'text/html');
-      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    if (isReferenceLink(item.math)) {
+      // convert tex to text link
+      const refNum = extractRefNumFromMml(mml, item.math, file);
+      const anchor = extractAnchorLinkFromMml(mml, item.math);
+      return `[${refNum}](${anchor})`;
+    } else {
+      // insert alias as a custom directive and build store of mml
+      store.push(mml);
+      const type = item.display ? 'blockMath' : 'inlineMath';
+      return `:${type}[${item.idx}]`;
     }
   }
+
+  const result = tex
+    .findMath([md])
+    .map((item, idx) => ({ ...item, idx }))
+    .reverse()
+    .reduce((acc, item) => {
+      const prev = acc.slice(0, item.start.n);
+      const next = acc.slice(item.end.n);
+      const placeholder = createTexPlaceholder(item);
+      return prev + placeholder + next;
+    }, md);
 
   // add store to ctx
   ctx.mmlStore = store;
 
-  const doc = mathjax.document(md, {
-    InputJax: tex,
-    renderActions: {
-      typeset: [MathItem.STATE.TYPESET, storeTexAndDisplayAlias],
-    },
-  });
-  doc.render();
-  const result = adaptor.innerHTML(adaptor.body(doc.document));
   file.contents = postParse(result);
   return file;
 }
@@ -115,18 +116,15 @@ function isReferenceLink(tex: string) {
 }
 
 function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
-  const match = mml.match(/<mtext>(.+)<\/mtext>/);
-  if (match === null) {
-    failMessage(file, `Invalid reference: ${tex}`);
-    return;
-  }
-  if (match[1] === '???') {
+  const match = mml.match(/<mtext>\((.+)\)<\/mtext>/);
+  const refNum = match === null ? '???' : match[1];
+  if (refNum === '???') {
     failMessage(
       file,
       `Invalid reference: ${tex}. You may only reference numbered sections.`
     );
   }
-  return match[1] as string;
+  return refNum;
 }
 
 function extractAnchorLinkFromMml(mml: string, tex: string) {
@@ -139,28 +137,28 @@ function extractAnchorLinkFromMml(mml: string, tex: string) {
 
 function postParse(html: string) {
   let result = html;
-  result = unprotectHtml(result);
+  // result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
-  result = removeUnnecessaryHtmlClosingTags(result);
+  // result = removeUnnecessaryHtmlClosingTags(result);
   return result;
 }
 
 // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
-function unprotectHtml(html: string) {
-  return html
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
-}
+// function unprotectHtml(html: string) {
+//   return html
+//     .replace(/&amp;/g, '&')
+//     .replace(/&lt;/g, '<')
+//     .replace(/&gt;/g, '>');
+// }
 
 function removeUnresolvedLabels(html: string) {
   return html.replace(/\\label{def:.*?}/gm, '');
 }
 
 // MathJax appears to try to close what it thinks are HTML tags but are normal Python output
-function removeUnnecessaryHtmlClosingTags(html: string) {
-  const lastLineIdx = html.lastIndexOf('\n');
-  const lastLine = html.slice(lastLineIdx);
-  const newLastLine = lastLine.replace(/<\/\w+?>/gm, '');
-  return html.slice(0, lastLineIdx) + newLastLine;
-}
+// function removeUnnecessaryHtmlClosingTags(html: string) {
+//   const lastLineIdx = html.lastIndexOf('\n');
+//   const lastLine = html.slice(lastLineIdx);
+//   const newLastLine = lastLine.replace(/<\/\w+?>/gm, '');
+//   return html.slice(0, lastLineIdx) + newLastLine;
+// }
