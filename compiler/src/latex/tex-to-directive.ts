@@ -1,14 +1,11 @@
-// import parser from 'fast-xml-parser';
-
 import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js';
 import { MathDocument } from 'mathjax-full/js/core/MathDocument';
 import * as MathItem from 'mathjax-full/js/core/MathItem';
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
-import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js';
+// import { HTMLDocument } from 'mathjax-full/js/handlers/html/HTMLDocument.js';
 import { TeX } from 'mathjax-full/js/input/tex.js';
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
-import { FindTeX } from 'mathjax-full/js/input/tex/FindTeX.js';
 import { mathjax } from 'mathjax-full/js/mathjax.js';
 import { VFile } from 'vfile';
 
@@ -32,10 +29,66 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   assertNoTexTabular(file);
 
   const md = file.contents as string;
-  const visitor = new SerializedMmlVisitor();
+  const store = buildMmlStore(md, file);
 
-  const adaptor = liteAdaptor();
-  RegisterHTMLHandler(adaptor);
+  const tex = new TeX({
+    // Bussproofs requires an output jax
+    packages: AllPackages.filter((name) => name !== 'bussproofs'),
+    tags: 'ams',
+    inlineMath: [
+      ['$', '$'],
+      ['\\(', '\\)'],
+    ],
+    displayMath: [
+      ['$$', '$$'],
+      [`\\[`, `\\]`],
+    ],
+  });
+
+  const result = tex
+    .findMath([md])
+    .map((item, idx) => ({ ...item, idx }))
+    .reverse()
+    .reduce((acc, item) => {
+      const mml = store[item.idx];
+      assertNoMmlError(mml, file);
+
+      // debug
+      // console.log(item.math, mml);
+
+      let newMarkdown = '';
+
+      if (item.math === '$') {
+        // escaped dollar sign...
+        newMarkdown = '$';
+      } else if (item.math === '\\') {
+        // double backslash...
+        newMarkdown = '\\\\';
+      } else if (isReferenceLink(item.math)) {
+        // reference link...
+        const refNum = extractRefNumFromMml(mml, item.math, file);
+        const anchor = extractAnchorLinkFromMml(mml, item.math);
+        newMarkdown = `[${refNum}](${anchor})`;
+      } else {
+        // equation...
+        const type = item.display ? 'blockMath' : 'inlineMath';
+        newMarkdown = `:${type}[${item.idx}]`;
+      }
+
+      const prev = acc.slice(0, item.start.n);
+      const next = acc.slice(item.end.n);
+      return prev + newMarkdown + next;
+    }, md);
+
+  // add store to ctx
+  ctx.mmlStore = store;
+
+  file.contents = postParse(result);
+  return file;
+}
+
+function buildMmlStore(md: string, file: VFile) {
+  const store: string[] = [];
 
   const tex = new TeX({
     packages: AllPackages.filter((name) => name !== 'bussproofs'), // Bussproofs requires an output jax
@@ -48,60 +101,33 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
       ['$$', '$$'],
       [`\\[`, `\\]`],
     ],
-    processEscapes: true,
   });
 
-  const html = new HTMLDocument('', adaptor, { InputJax: tex });
+  const adaptor = liteAdaptor();
+  RegisterHTMLHandler(adaptor);
+  const visitor = new SerializedMmlVisitor();
 
-  const store: string[] = [];
-
-  function createTexPlaceholder(item: {
-    idx: number;
-    math: string;
-    start: MathItem.Location<unknown, unknown>;
-    end: MathItem.Location<unknown, unknown>;
-    display: boolean;
-  }) {
-    if (item.math === '$') {
-      return '$';
-    }
-    if (item.math === '\\') {
-      return '\\\\';
-    }
-
-    const node = html.convert(item.math, { end: MathItem.STATE.CONVERT });
-    const mml = visitor.visitTree(node);
-    assertNoMmlError(mml, file);
-
-    if (isReferenceLink(item.math)) {
-      // convert tex to text link
-      const refNum = extractRefNumFromMml(mml, item.math, file);
-      const anchor = extractAnchorLinkFromMml(mml, item.math);
-      return `[${refNum}](${anchor})`;
-    } else {
-      // insert alias as a custom directive and build store of mml
+  function storeMml({ math }: MathDocument<any, any, any>) {
+    for (const item of Array.from(math)) {
+      // convert to MML
+      const mml = visitor.visitTree(item.root);
       store.push(mml);
-      const type = item.display ? 'blockMath' : 'inlineMath';
-      return `:${type}[${item.idx}]`;
+
+      const tree = adaptor.parse('**unused**', 'text/html');
+      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
     }
   }
 
-  const result = tex
-    .findMath([md])
-    .map((item, idx) => ({ ...item, idx }))
-    .reverse()
-    .reduce((acc, item) => {
-      const prev = acc.slice(0, item.start.n);
-      const next = acc.slice(item.end.n);
-      const placeholder = createTexPlaceholder(item);
-      return prev + placeholder + next;
-    }, md);
+  const doc = mathjax.document(md, {
+    InputJax: tex,
+    renderActions: {
+      typeset: [MathItem.STATE.TYPESET, storeMml],
+    },
+  });
 
-  // add store to ctx
-  ctx.mmlStore = store;
+  doc.render();
 
-  file.contents = postParse(result);
-  return file;
+  return store;
 }
 
 function assertNoMmlError(mml: string, file: VFile) {
@@ -116,15 +142,18 @@ function isReferenceLink(tex: string) {
 }
 
 function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
-  const match = mml.match(/<mtext>\((.+)\)<\/mtext>/);
-  const refNum = match === null ? '???' : match[1];
-  if (refNum === '???') {
+  const match = mml.match(/<mtext>(.+)<\/mtext>/);
+  if (match === null) {
+    failMessage(file, `Invalid reference: ${tex}`);
+    return;
+  }
+  if (match[1] === '???') {
     failMessage(
       file,
       `Invalid reference: ${tex}. You may only reference numbered sections.`
     );
   }
-  return refNum;
+  return match[1] as string;
 }
 
 function extractAnchorLinkFromMml(mml: string, tex: string) {
