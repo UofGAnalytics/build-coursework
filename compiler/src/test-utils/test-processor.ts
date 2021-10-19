@@ -8,7 +8,7 @@ import toVFile from 'to-vfile';
 import { VFile } from 'vfile';
 
 import { buildUnit } from '../build-unit';
-import { Options } from '../context';
+import { Context, Options } from '../context';
 import { getUnitTitles } from '../course';
 import { writeFile } from '../utils/utils';
 import {
@@ -72,7 +72,7 @@ async function createTestContext(md: string, options: Options = {}) {
     unitTitle: unit.title,
   });
 
-  const ctx = {
+  const ctx: Context = {
     dirPath: '',
     cacheDir,
     buildDir: '',
@@ -83,7 +83,7 @@ async function createTestContext(md: string, options: Options = {}) {
     options: {
       noDoc: true,
       noPdf: true,
-      noWrapper: true,
+      // noWrapper: true,
       noSyntaxHighlight: true,
       noReport: true,
       noEmbedAssets: true,
@@ -92,6 +92,7 @@ async function createTestContext(md: string, options: Options = {}) {
       ...options,
     },
     refStore: {},
+    figureCounter: 0,
   };
 
   return { ctx, file };

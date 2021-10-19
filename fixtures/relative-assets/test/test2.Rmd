@@ -1,0 +1,3 @@
+```{r, echo=FALSE, out.width = '42%'}
+knitr::include_graphics("yl2.png")
+```

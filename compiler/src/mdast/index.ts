@@ -44,7 +44,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
     .use(codeBlocks, ctx)
-    .use(images)
+    .use(images, ctx)
     .use(pagebreaks);
 
   const parsed = processor.parse(file) as Parent;

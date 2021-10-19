@@ -59,7 +59,7 @@ Rscript --version
 
 If not, please follow these instructions for [Windows](https://info201.github.io/r-intro.html#windows-command-line) or these for [Mac and Linux](https://stackoverflow.com/questions/38456144/rscript-command-not-found#67086041)
 
-### Install the tool from Github with npm
+### Install this project from Github with NPM
 
 ```bash
 npm install -g UofGAnalytics/build-coursework
@@ -79,8 +79,10 @@ npm list –g --depth=0
 In your terminal, navigate to a coursework folder with a `course.yaml` file, for example:
 
 ```bash
-cd /Users/staff/my-course
+cd /Users/staff/my-course/coursematerial
 ```
+
+> If you would like to create a new coursework project from scratch, please look at the minimal [fixtures/basic](https://github.com/UofGAnalytics/build-coursework/tree/master/fixtures/basic) project structure.
 
 Run the program:
 
@@ -103,7 +105,7 @@ Once complete, you will find a `build` folder in beside the `course.yaml` file, 
 
 ### Update
 
-One day you may run the command and see a message like this:
+One day you may run the `rmarkdown` command and see a message like this:
 
 ```
 > You are running version 1.0.0 and the latest version is 1.5.0.
@@ -111,7 +113,7 @@ One day you may run the command and see a message like this:
 > npm install -g UofGAnalytics/build-coursework@v1.5.0
 ```
 
-To update just run the command that is suggested.
+If you would like to update to the latest version, just run the command that is suggested.
 
 ### Options
 
@@ -144,7 +146,7 @@ There is a Table of Contents in the HTML files with links to all the `<h2>`'s an
 
 ### Whitespace
 
-While checking the output of this too you may notice whole paragraphs have gone missing. This is due to a difference in the parsing of Markdown whitespace in [Pandoc](https://github.com/jgm/pandoc) (used in BOLDtools) and [Remark](https://github.com/remarkjs/remark) (used here). Generally each bit of content written in Markdown should be separated with an empty line, and Remark is a little more strict about this. The fix should be to add an empty line between sections.
+While checking the output of this tool you may notice whole paragraphs have gone missing. This is due to a difference in the parsing of Markdown whitespace in [Pandoc](https://github.com/jgm/pandoc) (used in BOLDtools) and [Remark](https://github.com/remarkjs/remark) (used here). Generally each bit of content written in Markdown should be separated with an empty line, and Remark is unfortunately more strict about this than Pandoc. The fix should just be to add an empty line between sections.
 
 You may also spot an error in the parsing of inline LaTeX due to whitespace - adding a space before and/or after the delimiters should fix it.
 
@@ -154,19 +156,19 @@ Due to having different background colour options for accessibility, a transpare
 
 ### Inline LaTeX references
 
-Due to differences in how Pandoc and [MathJax](https://www.mathjax.org) extract LaTeX, you can only reference numbered sections using, for example `\begin{align}`.
+Due to limitations of [MathJax](https://www.mathjax.org), the LaTeX rendering tool with accessibility features that is used in this project, you can only reference numbered sections using, for example `\begin{align}`.
 
 ### LaTeX \textbf
 
-LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bold text\*\*). If you have used `\textbf` to highlight some characters in an equation please use `\boldsymbol` instead.
+LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bold text\*\*). If you have used `\textbf` to highlight some characters in an equation please use an alternative such as `\boldsymbol`.
 
 ### LaTeX \tabular
 
-LaTeX tabular is not currently supported, as recreating all its features in HTML would be a complex project on its own. Instead, please use [Markdown table syntax](https://github.github.com/gfm/#table).
+LaTeX tabular is not currently supported by MathJax, and recreating all its features in HTML would be a complex project on its own. Instead, I recommend you use [Markdown table syntax](https://github.github.com/gfm/#table) to be most accessible. If you have a use case for a heavily formatted LaTeX table, you can always render it as a PDF and include the PDF as an image, however please be aware that the data in this table not be readable by assistive tools.
 
 ### You can't use 'macro parameter character #' in math mode
 
-This is due to `$` symbols being used to delimit LaTeX. If you would like to use a `$` symbol for another purpose please escape it like this: `\$`.
+This is due to `$` symbols being used to delimit LaTeX. If you would like to use a `$` symbol for another purpose please escape it with a preceeding backslash: `\$`.
 
 ## Bug reporting
 
