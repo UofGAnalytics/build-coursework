@@ -29,6 +29,7 @@ export type Context = {
   options: Options;
   mmlStore?: string[];
   refStore: Record<string, string>;
+  figureCounter: number;
 };
 
 export async function createContext(
@@ -42,5 +43,6 @@ export async function createContext(
     cacheDir: getCacheDir(dirPath),
     options,
     refStore: {},
+    figureCounter: 0,
   };
 }

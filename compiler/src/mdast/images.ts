@@ -3,11 +3,12 @@ import { Image, Text } from 'mdast';
 import { Node } from 'unist';
 import visit from 'unist-util-visit';
 
-export function images() {
-  let count = 0;
+import { Context } from '../context';
+
+export function images(ctx: Context) {
   return (tree: Node) => {
     visit<Image>(tree, 'image', (node) => {
-      template(node, ++count);
+      template(node, ++ctx.figureCounter);
     });
   };
 }
