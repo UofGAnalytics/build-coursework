@@ -10839,72 +10839,46 @@ function tex_to_directive_defineProperty(obj, key, value) { if (key in obj) { Ob
 
 
 
+ // import { assertNoTexTabular } from '../linter/assert-no-tex-tabular';
 
  // This custom MathJax implementation has had to diverge from the provided demos found
-// here: https://github.com/mathjax/MathJax-demos-node, because they are all concerned
-// with MathJax embedded in HTML whereas at this stage in the processor we're dealing
-// with Markdown.  Due to TeX/LaTeX making heavy use of the backslash (\) character,
-// we need to deal with it early as it conflicts with other libraries used later.
-// I Extract all LaTeX using MathJax "page" process as it doesn't need delimiters and
-// stores context required for numbered references. (Based on direct/tex2mml-page).
+// here: https://github.com/mathjax/MathJax-demos-node, because they are all focused on
+// either converting LaTeX on its own or (referencing "page" demos) LaTeX embedded in
+// HTML, whereas at this stage in the processor we're dealing with LaTeX embedded in
+// Markdown. Due to TeX/LaTeX making heavy use of the backslash (\) character, we need
+// to deal with it early as it conflicts with other libraries used later.
+// I use the MathJax "page" process as it will pick up LaTeX even without delimiters
+// and stores context required for numbered references (based on direct/tex2mml-page).
 // However this has a naive HTML handler which will munge HTML (and Python) in some
-// cases so I am careful to only mutate TeX within delimiters and leave the rest of
-// the Markdown alone.
-// I replace the TeX with a placeholder such as :inlineMath[21] or :blockMath[42].
-// I convert the TeX to MathML which is more robust and store it memory for use
-// later (in directive-to-svg.ts).
-// Avoids typesetting issues:
-// If I leave the LaTeX in it gets munged
-// If I convert to SVG it gets munged
-// If I convert to MathML it gets munged
+// cases so I am careful to only mutate TeX and leave the rest of the Markdown alone.
+// I replace the TeX with a placeholder formatted as a Markdown directive, for example
+// :inlineMath[21] or :blockMath[42].
+// I convert the TeX to MathML and store it memory for use later (in directive-to-svg.ts).
 
 function tex_to_directive_texToAliasDirective(file, ctx) {
   // simple regex tests
+  // why?
   assertNoTexTabular(file);
   const md = file.contents;
   const tex = new TeX({
     // Bussproofs requires an output jax
     packages: AllPackages.filter(name => name !== 'bussproofs'),
+    // Allow numbered references
     tags: 'ams',
+    // Allow single $ delimiters
     inlineMath: [['$', '$'], ['\\(', '\\)']],
     displayMath: [['$$', '$$'], [`\\[`, `\\]`]]
   });
-  const store = buildMmlStore(md, tex);
-  const result = tex.findMath([md]).map((item, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, item), {}, {
-    idx
-  })).reverse().reduce((acc, item) => {
-    const mml = store[item.idx];
-    assertNoMmlError(mml, file); // debug
-    // console.log(item.math, mml);
+  const store = buildMmlStore(md, tex); // console.log(store);
 
-    let newMarkdown = '';
+  const result = replaceTexWithPlaceholder(md, tex, store, file); // add store to ctx
 
-    if (item.math === '$') {
-      // escaped dollar sign...
-      newMarkdown = '$';
-    } else if (item.math === '\\') {
-      // double backslash...
-      newMarkdown = '\\\\';
-    } else if (isReferenceLink(item.math)) {
-      // reference link...
-      const refNum = extractRefNumFromMml(mml, item.math, file);
-      const anchor = extractAnchorLinkFromMml(mml, item.math);
-      newMarkdown = `[${refNum}](${anchor})`;
-    } else {
-      // equation...
-      const type = item.display ? 'blockMath' : 'inlineMath';
-      newMarkdown = `:${type}[${item.idx}]`;
-    }
+  ctx.mmlStore = store; // replace md in VFile
 
-    const prev = acc.slice(0, item.start.n);
-    const next = acc.slice(item.end.n);
-    return prev + newMarkdown + next;
-  }, md); // add store to ctx
-
-  ctx.mmlStore = store;
   file.contents = postParse(result);
   return file;
-}
+} // This is based on https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
+// except I don't return the HTML, instead I compile a list of the extracted LaTeX converted to MathML
 
 function buildMmlStore(md, tex) {
   const store = [];
@@ -10934,6 +10908,51 @@ function buildMmlStore(md, tex) {
   return store;
 }
 
+function replaceTexWithPlaceholder(md, tex, store, file) {
+  // Extract the LaTeX from the document again
+  const extractedLatex = tex.findMath([md]); // Replace it with a placeholder for use later
+
+  return extractedLatex.map((item, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, item), {}, {
+    idx
+  })).reverse().reduce((acc, item) => {
+    const placeholder = createPlaceholder(item, store, file);
+    const prev = acc.slice(0, item.start.n);
+    const next = acc.slice(item.end.n);
+    return prev + placeholder + next;
+  }, md);
+}
+
+function createPlaceholder(item, store, file) {
+  // escaped dollar sign...
+  if (item.math === '$') {
+    return '$';
+  } // double backslash...
+
+
+  if (item.math === '\\') {
+    return '\\\\';
+  }
+
+  const mml = store[item.idx]; // why?
+  // if (!mml) {
+  //   return '';
+  // }
+
+  assertNoMmlError(mml, file); // debug
+  // console.log(item.math, mml);
+  // reference link...
+
+  if (isReferenceLink(item.math)) {
+    const refNum = extractRefNumFromMml(mml, item.math, file);
+    const anchor = extractAnchorLinkFromMml(mml, item.math, file);
+    return `[${refNum}](${anchor})`;
+  } // normal use case (equation)...
+
+
+  const type = item.display ? 'blockMath' : 'inlineMath';
+  return `:${type}[${item.idx}]`;
+}
+
 function assertNoMmlError(mml, file) {
   const match = mml.match(/<merror.*?title="(.+?)"/);
 
@@ -10961,21 +10980,20 @@ function extractRefNumFromMml(mml, tex, file) {
   return match[1];
 }
 
-function extractAnchorLinkFromMml(mml, tex) {
+function extractAnchorLinkFromMml(mml, tex, file) {
   const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
 
   if (match === null) {
-    throw new Error(`Reference has no anchor link: ${tex}`);
+    failMessage(file, `Reference has no anchor link: ${tex}`);
+    return;
   }
 
   return decodeURIComponent(match[1] || '');
 }
 
 function postParse(html) {
-  let result = html; // result = unprotectHtml(result);
-
-  result = removeUnresolvedLabels(result); // result = removeUnnecessaryHtmlClosingTags(result);
-
+  let result = html;
+  result = removeUnresolvedLabels(result);
   return result;
 }
 
@@ -11704,11 +11722,10 @@ function images_objectSpread(target) { for (var i = 1; i < arguments.length; i++
 function images_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
-function images_images() {
-  let count = 0;
+function images_images(ctx) {
   return tree => {
     visit(tree, 'image', node => {
-      template(node, ++count);
+      template(node, ++ctx.figureCounter);
     });
   };
 }
@@ -11934,7 +11951,7 @@ async function mdast_mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(images).use(pagebreaks);
+  .use(embedAssetUrl).use(youtubeVideos).use(aliasDirectiveToSvg, ctx).use(codeBlocks, ctx).use(images, ctx).use(pagebreaks);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -12191,6 +12208,7 @@ async function pdf_convertToPdf(html) {
     '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process']
   });
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   await page.setContent(html);
   await page.evaluateHandle('document.fonts.ready');
   const pdf = await page.pdf({
@@ -12543,7 +12561,8 @@ async function context_createContext(dirPath, options = {}) {
     buildDir: getBuildDir(dirPath),
     cacheDir: getCacheDir(dirPath),
     options,
-    refStore: {}
+    refStore: {},
+    figureCounter: 0
   };
 }
 ;// CONCATENATED MODULE: ./src/utils/check-for-latest-version.ts
@@ -12556,7 +12575,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.15";
+  const currentVersion = "1.1.16";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
