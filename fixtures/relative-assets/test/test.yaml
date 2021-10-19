@@ -2,4 +2,8 @@ name: 'Test'
 title: 'Relative assets'
 content:
   - type: text
-    src: test.Rmd
+    src: test1.Rmd
+  - type: text
+    src: test2.Rmd
+  - type: text
+    src: test3.Rmd

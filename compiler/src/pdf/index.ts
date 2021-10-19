@@ -21,6 +21,7 @@ export async function convertToPdf(html: string) {
     ],
   });
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(0);
   await page.setContent(html);
   await page.evaluateHandle('document.fonts.ready');
   const pdf = await page.pdf({
