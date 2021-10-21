@@ -10122,13 +10122,32 @@ async function embedSvg(imgNode, ctx) {
   const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
 
   const svgNode = getAssetHast(svg);
+  const className = 'knitr-svg';
 
-  const properties = embed_assets_objectSpread(embed_assets_objectSpread({}, imgNode.properties), svgNode.properties);
+  const properties = embed_assets_objectSpread(embed_assets_objectSpread(embed_assets_objectSpread({}, imgNode.properties), svgNode.properties), {}, {
+    className: [className, ...getNodeClassNames(imgNode, className), ...getNodeClassNames(svgNode, className)]
+  });
 
   delete properties.src;
   Object.assign(imgNode, svgNode, {
     properties
   });
+}
+
+function getNodeClassNames(node, removeClass) {
+  var _node$properties;
+
+  const classes = (_node$properties = node.properties) === null || _node$properties === void 0 ? void 0 : _node$properties.className;
+
+  if (typeof classes === 'string' && classes !== removeClass) {
+    return [classes];
+  }
+
+  if (Array.isArray(classes)) {
+    return classes.map(x => String(x)).filter(s => s !== removeClass);
+  }
+
+  return [];
 }
 
 function getImageSrc(node) {
@@ -10691,15 +10710,6 @@ function getUniqueId(md) {
   return `knitr-${hash}-${ts}`;
 }
 
-async function formatResponse(response) {
-  let md = response;
-  md = addCodeBlockClasses(md);
-  md = removeEmptyLog(md);
-  md = addErrorCodeBlock(md);
-  md = addNewLineAfterKable(md);
-  return md;
-}
-
 function knitr_reportErrors(response, file) {
   response.split('\n').forEach((line, idx) => {
     const trimmed = line.trim();
@@ -10717,6 +10727,20 @@ function knitr_reportErrors(response, file) {
       });
     }
   });
+}
+
+async function formatResponse(response) {
+  let md = response;
+  md = removeHashSigns(md);
+  md = addCodeBlockClasses(md);
+  md = removeEmptyLog(md);
+  md = addErrorCodeBlock(md);
+  md = addNewLineAfterKable(md);
+  return md;
+}
+
+function removeHashSigns(md) {
+  return md.replace(/^##\s+/gm, '');
 }
 
 function addCodeBlockClasses(md) {
@@ -10738,7 +10762,7 @@ function removeEmptyLog(md) {
 
 function addErrorCodeBlock(md) {
   return md.split('\n').reduce((acc, line, idx) => {
-    if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
+    if (line.startsWith('Error') && acc[idx - 1].startsWith('```')) {
       const lang = findLanguageForOutput(acc.slice(0, -1));
       acc[acc.length - 1] = `\`\`\`{.${lang}-error}`;
     }
@@ -10934,9 +10958,10 @@ function createPlaceholder(item, store, file) {
   }
 
   const mml = store[item.idx]; // why?
-  // if (!mml) {
-  //   return '';
-  // }
+
+  if (!mml) {
+    return '';
+  }
 
   assertNoMmlError(mml, file); // debug
   // console.log(item.math, mml);
@@ -11781,8 +11806,9 @@ function createCaption(node, count) {
   const altText = node.alt || '';
 
   if (altText !== '' && !altText.includes('unnamed-chunk')) {
-    const currentCaption = result.children[result.children.length - 1];
-    currentCaption.value += ':';
+    const currentCaption = result.children[0];
+    const currentValue = currentCaption.children[0];
+    currentValue.value += ': ';
     result.children.push({
       type: 'text',
       value: `${node.alt}`
@@ -12575,7 +12601,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.16";
+  const currentVersion = "1.1.17";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
