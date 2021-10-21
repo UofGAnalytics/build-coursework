@@ -69,10 +69,10 @@ function createCaption(node: Image, count: number) {
   const altText = node.alt || '';
 
   if (altText !== '' && !altText.includes('unnamed-chunk')) {
-    const currentCaption = result.children[
-      result.children.length - 1
-    ] as Text;
-    currentCaption.value += ':';
+    const currentCaption = result.children[0] as Element;
+    const currentValue = currentCaption.children[0] as Text;
+    currentValue.value += ': ';
+
     result.children.push({
       type: 'text',
       value: `${node.alt}`,

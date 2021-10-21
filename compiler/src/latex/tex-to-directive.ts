@@ -139,9 +139,9 @@ function createPlaceholder(
   const mml = store[item.idx];
 
   // why?
-  // if (!mml) {
-  //   return '';
-  // }
+  if (!mml) {
+    return '';
+  }
   assertNoMmlError(mml, file);
 
   // debug
