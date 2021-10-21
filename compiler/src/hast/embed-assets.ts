@@ -69,14 +69,31 @@ async function embedSvg(imgNode: Element, ctx: Context) {
   // const optimised = optimize(svg, { multipass: true }).data;
   const svgNode = getAssetHast(svg) as Element;
 
+  const className = 'knitr-svg';
   const properties = {
     ...imgNode.properties,
     ...svgNode.properties,
+    className: [
+      className,
+      ...getNodeClassNames(imgNode, className),
+      ...getNodeClassNames(svgNode, className),
+    ],
   } as Properties;
 
   delete properties.src;
 
   Object.assign(imgNode, svgNode, { properties });
+}
+
+function getNodeClassNames(node: Element, removeClass: string) {
+  const classes = node.properties?.className;
+  if (typeof classes === 'string' && classes !== removeClass) {
+    return [classes];
+  }
+  if (Array.isArray(classes)) {
+    return classes.map((x) => String(x)).filter((s) => s !== removeClass);
+  }
+  return [];
 }
 
 function getImageSrc(node: Element) {

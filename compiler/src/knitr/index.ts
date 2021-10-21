@@ -52,15 +52,6 @@ function getUniqueId(md: string) {
   return `knitr-${hash}-${ts}`;
 }
 
-async function formatResponse(response: string) {
-  let md = response;
-  md = addCodeBlockClasses(md);
-  md = removeEmptyLog(md);
-  md = addErrorCodeBlock(md);
-  md = addNewLineAfterKable(md);
-  return md;
-}
-
 function reportErrors(response: string, file: VFile) {
   response.split('\n').forEach((line, idx) => {
     const trimmed = line.trim();
@@ -77,6 +68,20 @@ function reportErrors(response: string, file: VFile) {
       });
     }
   });
+}
+
+async function formatResponse(response: string) {
+  let md = response;
+  md = removeHashSigns(md);
+  md = addCodeBlockClasses(md);
+  md = removeEmptyLog(md);
+  md = addErrorCodeBlock(md);
+  md = addNewLineAfterKable(md);
+  return md;
+}
+
+function removeHashSigns(md: string) {
+  return md.replace(/^##\s+/gm, '');
 }
 
 function addCodeBlockClasses(md: string) {
@@ -102,7 +107,7 @@ function addErrorCodeBlock(md: string) {
   return md
     .split('\n')
     .reduce((acc: string[], line, idx) => {
-      if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
+      if (line.startsWith('Error') && acc[idx - 1].startsWith('```')) {
         const lang = findLanguageForOutput(acc.slice(0, -1));
         acc[acc.length - 1] = `\`\`\`{.${lang}-error}`;
       }

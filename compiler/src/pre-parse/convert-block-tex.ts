@@ -3,6 +3,6 @@ const blockList = ['\\newpage', '\\pagebreak', '\\mbox'];
 export function convertNewPageToDirective(contents: string) {
   return contents
     .split('\n')
-    .map((s) => (blockList.includes(s.trim()) ? '::pagebreak' : s))
+    .map((a) => (blockList.some((b) => a.includes(b)) ? '::pagebreak' : a))
     .join('\n');
 }

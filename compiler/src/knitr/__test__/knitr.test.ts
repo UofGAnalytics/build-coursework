@@ -51,18 +51,18 @@ describe('knitr', () => {
 
     const expected = unindentString(`
       0 a <- c(1, 4, 2)
-      1 ## [1] 1 4
+      1 [1] 1 4
       2 names(a) <- c("first", "second", "third")
-      3 ##  first second  third
+      3 first second  third
       4 a <- c(first=1, second=4, third=2
       5 a[3
-      6 ## third
+      6 third
       7 a[3] <- 10
-      8 ##  first second  third
+      8 first second  third
       9 a[7] <- 99
-      10 ##  first second  third
+      10 first second  third
       11 a["third"
-      12 ## third
+      12 third
     `);
 
     expect(withOutput.join('\n')).toBe(expected.trim());
@@ -134,7 +134,7 @@ describe('knitr', () => {
       </div>
       <div class="code-wrapper r-output">
         <h6 class="console-heading">R Console</h6>
-        <pre><code>## [1] 1 4 2</code></pre>
+        <pre><code>[1] 1 4 2</code></pre>
       </div>
       <div class="code-wrapper">
         <pre><code>b &#x3C;- c(4, 2, 0)</code></pre>
@@ -241,7 +241,7 @@ describe('knitr', () => {
     expect(ignoreWhitespace(md)).toContain(
       ignoreWhitespace(`
         \`\`\`{.r-error}
-        ## Error in "120" + "5": non-numeric argument to binary operator
+        Error in "120" + "5": non-numeric argument to binary operator
         \`\`\`
       `)
     );
@@ -283,17 +283,16 @@ describe('knitr', () => {
       </div>
       <div class="code-wrapper python-output">
         <h6 class="console-heading">Python Console</h6>
-        <pre><code>## 2</code></pre>
+        <pre><code>2</code></pre>
       </div>
       <div class="code-wrapper">
         <pre><code>print(a)</code></pre>
       </div>
       <div class="code-wrapper python-error">
         <h6 class="console-heading">Python Console</h6>
-        <pre><code>## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
-        ##
-        ## Detailed traceback:
-        ##   File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
+        <pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
+        Detailed traceback:
+          File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
       </div>
       <div class="code-wrapper">
         <pre><code>a &#x3C;- c(1, 4, 2)
@@ -301,14 +300,14 @@ describe('knitr', () => {
       </div>
       <div class="code-wrapper r-output">
         <h6 class="console-heading">R Console</h6>
-        <pre><code>## [1] 1 4 2</code></pre>
+        <pre><code>[1] 1 4 2</code></pre>
       </div>
       <div class="code-wrapper">
         <pre><code>b</code></pre>
       </div>
       <div class="code-wrapper r-error">
         <h6 class="console-heading">R Console</h6>
-        <pre><code>## Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
+        <pre><code>Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
       </div>
     `);
 
