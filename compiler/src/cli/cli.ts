@@ -50,6 +50,10 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: 'Check spelling',
   })
+  .option('pythonBin', {
+    type: 'string',
+    description: 'Custom path to python binary',
+  })
   .option('force', {
     type: 'boolean',
     description: 'Compile even with fatal errors',
@@ -69,6 +73,7 @@ const options: Options = {
   noCache: argv.noCache,
   noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
+  pythonBin: argv.pythonBin,
   force: argv.force,
 };
 

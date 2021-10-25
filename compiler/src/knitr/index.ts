@@ -29,8 +29,9 @@ async function execKnitr(file: VFile, ctx: Context) {
 
   return new Promise<string>((resolve, reject) => {
     const rFile = path.join(__dirname, 'knitr.R');
+    const envVars = createEnvVars(ctx);
     const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
-    exec(cmd, async (err, response, stdErr) => {
+    exec(envVars + cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
       }
@@ -50,6 +51,13 @@ function getUniqueId(md: string) {
   const hash = hashSum(md);
   const ts = new Date().getTime().toString();
   return `knitr-${hash}-${ts}`;
+}
+
+function createEnvVars(ctx: Context) {
+  if (ctx.options.pythonBin) {
+    return `RETICULATE_PYTHON="${ctx.options.pythonBin}" `;
+  }
+  return '';
 }
 
 function reportErrors(response: string, file: VFile) {
