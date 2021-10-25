@@ -9,13 +9,13 @@ describe('example', () => {
   it('should render an example boxout', async () => {
     const { html } = await testProcessor(`
       :::example
-      An example of *this*!
+      An \`example\\n\` of *this*!
       :::
     `);
 
     const expected = unindentString(`
       <div class="boxout example" id="example-1"><span class="type">Example 1</span>
-        <p>An example of <em>this</em>!</p>
+        <p>An <code>example\\n</code> of <em>this</em>!</p>
       </div>
     `);
 

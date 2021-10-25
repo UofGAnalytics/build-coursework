@@ -10,14 +10,17 @@ import { Context } from '../context';
 
 export function codeBlocks(ctx: Context) {
   return async (tree: Node, file: VFile) => {
-    const codeBlocks: Code[] = [];
-    visit<Code>(tree, 'code', (node) => {
-      codeBlocks.push(node);
-    });
+    // replace \\n with \n in code samples
+    // visit<InlineCode>(tree, 'inlineCode', (node) => {
+    //   const old = node.value;
+    //   const transformed = old.replace(/\\\\n/g, '\\n');
+    //   // console.log({ old, transformed, same: old === transformed });
+    //   node.value = transformed;
+    // });
 
-    for (const codeBlock of codeBlocks) {
-      customCode(codeBlock, ctx, file);
-    }
+    visit<Code>(tree, 'code', (node) => {
+      customCode(node, ctx, file);
+    });
   };
 }
 
