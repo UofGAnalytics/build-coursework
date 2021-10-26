@@ -26,6 +26,7 @@ describe('python', () => {
       print(platform.python_version())
       \`\`\`
     `);
+    console.log(md);
     const defaultVersion = getPythonVersion(md);
 
     const { md: md2 } = await testProcessor(
@@ -39,6 +40,7 @@ describe('python', () => {
         pythonBin: '/opt/homebrew/bin/python3',
       }
     );
+    console.log(md2);
 
     const customVersion = getPythonVersion(md2);
 

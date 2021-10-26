@@ -83,7 +83,6 @@ async function createTestContext(md: string, options: Options = {}) {
     options: {
       noDoc: true,
       noPdf: true,
-      // noWrapper: true,
       noSyntaxHighlight: true,
       noReport: true,
       noEmbedAssets: true,
