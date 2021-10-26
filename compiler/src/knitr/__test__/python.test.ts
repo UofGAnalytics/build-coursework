@@ -18,42 +18,4 @@ describe('python', () => {
       '1606938044258990275541962092341162602522202993782792835301376'
     );
   });
-
-  it('should use the correct python version', async () => {
-    const { md } = await testProcessor(`
-      \`\`\`{python}
-      import platform
-      print(platform.python_version())
-      \`\`\`
-    `);
-    console.log(md);
-    const defaultVersion = getPythonVersion(md);
-
-    const { md: md2 } = await testProcessor(
-      `
-      \`\`\`{python}
-      import platform
-      print(platform.python_version())
-      \`\`\`
-    `,
-      {
-        pythonBin: '/opt/homebrew/bin/python3',
-      }
-    );
-    console.log(md2);
-
-    const customVersion = getPythonVersion(md2);
-
-    console.log({ defaultVersion, customVersion });
-
-    expect(defaultVersion).toBe(customVersion);
-  });
 });
-
-function getPythonVersion(md: string) {
-  const match = md.match(/.python-output\}\s+([0-9.]+)/);
-  if (!match) {
-    throw new Error('No Python version found');
-  }
-  return match[1];
-}

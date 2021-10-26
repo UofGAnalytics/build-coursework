@@ -6,7 +6,7 @@ cacheDir <- args[3]
 knitr::opts_knit$set(root.dir=baseDir)
 
 knitr::opts_chunk$set(
-  dev='svg',
+  dev='svglite',
   class.output='knitr-output',
   fig.path=cacheDir
 )
