@@ -22,18 +22,17 @@ describe('python', () => {
   it('should use the correct python version', async () => {
     const { md } = await testProcessor(`
       \`\`\`{python}
-      import sys
-      print(sys.version)
+      import platform
+      print(platform.python_version())
       \`\`\`
     `);
-
-    expect(getPythonVersion(md)).toBe('3.8.9');
+    const defaultVersion = getPythonVersion(md);
 
     const { md: md2 } = await testProcessor(
       `
       \`\`\`{python}
-      import sys
-      print(sys.version)
+      import platform
+      print(platform.python_version())
       \`\`\`
     `,
       {
@@ -41,7 +40,11 @@ describe('python', () => {
       }
     );
 
-    expect(getPythonVersion(md2)).toBe('3.9.7');
+    const customVersion = getPythonVersion(md2);
+
+    console.log({ defaultVersion, customVersion });
+
+    expect(defaultVersion).toBe(customVersion);
   });
 });
 
