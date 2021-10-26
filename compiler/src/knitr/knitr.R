@@ -4,13 +4,10 @@ baseDir <- args[2]
 cacheDir <- args[3]
 pythonBin <- args[4]
 
-print(paste('pythonBin:', pythonBin))
-
 knitr::opts_knit$set(root.dir=baseDir)
 
 enginePaths <- list()
 if (!is.na(pythonBin)) {
-  print('python not NA')
   c(enginePaths, python=pythonBin)
 }
 
