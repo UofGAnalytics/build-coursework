@@ -7,10 +7,6 @@ import { testProcessor } from '../../test-utils/test-processor';
 describe('python', () => {
   it('should run embedded python', async () => {
     const { md } = await testProcessor(`
-      \`\`\`{r setup, echo=FALSE}
-      Sys.setenv(RETICULATE_PYTHON = "/usr/bin/python3")
-      \`\`\`
-
       \`\`\`{python}
       print(2**200)
       \`\`\`
