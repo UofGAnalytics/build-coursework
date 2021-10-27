@@ -1,10 +1,10 @@
 {
   "R": {
-    "Version": "4.0.5",
+    "Version": "4.1.1",
     "Repositories": [
       {
         "Name": "CRAN",
-        "URL": "https://cloud.r-project.org"
+        "URL": "https://cran.r-project.org"
       }
     ]
   },

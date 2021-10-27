@@ -53,7 +53,13 @@ export async function htmlPhase(
 
   const result = processor.stringify(transformed, file);
 
-  return referenceTransform(result, ctx.refStore);
+  return postTransforms(result, ctx);
+}
+
+function postTransforms(html: string, ctx: Context) {
+  let result = '';
+  result = referenceTransform(html, ctx.refStore);
+  return result;
 }
 
 function referenceTransform(html: string, refStore: Context['refStore']) {

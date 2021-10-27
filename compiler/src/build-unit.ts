@@ -10,7 +10,6 @@ import { knitr } from './knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
 import { createReport, reportErrors } from './linter';
 import { assertNoKbl } from './linter/assert-no-kbl';
-// import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';

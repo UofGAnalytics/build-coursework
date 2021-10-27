@@ -95,6 +95,9 @@ rmarkdown --week=1
 
 # compile just HTML version for week 1
 rmarkdown --noPdf --week=1
+
+# compile the course using a custom Python version
+rmarkdown --pythonBin="/opt/homebrew/bin/python3"
 ```
 
 Once complete, you will find a `build` folder in beside the `course.yaml` file, with the .html and/or .pdf files inside. You can open the .html files with a browser such as Chrome or Firefox.
@@ -117,13 +120,14 @@ If you would like to update to the latest version, just run the command that is 
 
 ### Options
 
-| Argument | Type      | Description                                                                   |
-| :------- | :-------- | :---------------------------------------------------------------------------- |
-| week     | _number_  | Build specific week (1-based index)                                           |
-| noHtml   | _boolean_ | Don't compile to HTML                                                         |
-| noPdf    | _boolean_ | Don't compile to PDF                                                          |
-| spelling | _boolean_ | Run spell checker (opt-in as so many false negatives but can still be useful) |
-| force    | _boolean_ | Compile even with fatal errors (can be useful for debugging)                  |
+| Argument  | Type      | Description                                                                   |
+| :-------- | :-------- | :---------------------------------------------------------------------------- |
+| week      | _number_  | Build specific week (1-based index)                                           |
+| noHtml    | _boolean_ | Don't compile to HTML                                                         |
+| noPdf     | _boolean_ | Don't compile to PDF                                                          |
+| spelling  | _boolean_ | Run spell checker (opt-in as so many false negatives but can still be useful) |
+| pythonBin | _string_  | Override the absolute path to the Python binary                               |
+| force     | _boolean_ | Compile even with fatal errors (can be useful for debugging)                  |
 
 ### Reporting
 

@@ -17,9 +17,6 @@ export async function knitr(file: VFile, ctx: Context) {
 
 // TODO: see what can be done with output when "quiet" in knitr.R is turned off
 async function execKnitr(file: VFile, ctx: Context) {
-  const filePath = file.path || '';
-  const baseDir = file.dirname || '';
-
   const md = file.contents as string;
   const uniqueId = getUniqueId(md);
   const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
@@ -28,8 +25,8 @@ async function execKnitr(file: VFile, ctx: Context) {
   await writeFile(cachedFilePath, md);
 
   return new Promise<string>((resolve, reject) => {
-    const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+    const cmd = createKnitrCommand(file, ctx, uniqueId);
+
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
@@ -50,6 +47,20 @@ function getUniqueId(md: string) {
   const hash = hashSum(md);
   const ts = new Date().getTime().toString();
   return `knitr-${hash}-${ts}`;
+}
+
+function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
+  const filePath = file.path || '';
+  const baseDir = file.dirname || '';
+  const rFile = path.join(__dirname, 'knitr.R');
+  const cacheDir = path.join(ctx.cacheDir, uniqueId);
+  let cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+
+  if (ctx.options.pythonBin) {
+    cmd += ` "${ctx.options.pythonBin}"`;
+  }
+
+  return cmd;
 }
 
 function reportErrors(response: string, file: VFile) {
