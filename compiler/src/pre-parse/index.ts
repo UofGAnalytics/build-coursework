@@ -27,7 +27,7 @@ export function preParsePhase(file: VFile) {
 }
 
 function removeCommentedSections(md: string) {
-  return md.replace(/<\!--.*?-->/g, '');
+  return md.replace(/<!--[\s\S]*?-->/g, '');
 }
 
 function escapeDollarsInCodeBlocks(md: string) {
