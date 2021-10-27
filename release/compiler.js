@@ -10803,6 +10803,11 @@ function findLanguageForOutput(prev) {
   const reversed = prev.slice().reverse();
   const prevClosingIdx = reversed.findIndex(s => s.startsWith('```'));
   const prevOpening = reversed.slice(prevClosingIdx + 1).find(s => pattern.test(s));
+
+  if (!prevOpening) {
+    return 'r';
+  }
+
   const match = prevOpening.match(pattern);
   return match[1];
 } // attempt at changing knitr output. doesn't completely work
@@ -12409,7 +12414,7 @@ function pre_parse_preParsePhase(file) {
 }
 
 function removeCommentedSections(md) {
-  return md.replace(/<\!--.*?-->/g, '');
+  return md.replace(/<!--[\s\S]*?-->/g, '');
 }
 
 function escapeDollarsInCodeBlocks(md) {
@@ -12614,7 +12619,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.18";
+  const currentVersion = "1.1.19";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
