@@ -149,6 +149,11 @@ function findLanguageForOutput(prev: string[]) {
   const prevOpening = reversed
     .slice(prevClosingIdx + 1)
     .find((s) => pattern.test(s)) as string;
+
+  if (!prevOpening) {
+    return 'r';
+  }
+
   const match = prevOpening.match(pattern) as RegExpMatchArray;
   return match[1];
 }
