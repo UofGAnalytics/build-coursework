@@ -848,17 +848,12 @@ function responsiveTables() {
 
 
 
-// import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 
 
 async function hastPhase(mdast, ctx, file, targetPdf) {
   const processor = unified_default()().use((external_remark_rehype_default()), {
     allowDangerousHtml: true
-  }).use((external_rehype_raw_default())).use(responsiveTables); // if (targetPdf) {
-  //   // although an mdast transform, has been put here as
-  //   // it needs the full document to work correctly
-  //   processor.use(moveAnswersToEnd);
-  // }
+  }).use((external_rehype_raw_default())).use(responsiveTables);
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -1280,7 +1275,13 @@ async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
 
   const transformed = await processor.run(hast, file);
   const result = processor.stringify(transformed, file);
-  return referenceTransform(result, ctx.refStore);
+  return postTransforms(result, ctx);
+}
+
+function postTransforms(html, ctx) {
+  let result = '';
+  result = referenceTransform(html, ctx.refStore);
+  return result;
 }
 
 function referenceTransform(html, refStore) {
@@ -1307,8 +1308,6 @@ async function knitr(file, ctx) {
 } // TODO: see what can be done with output when "quiet" in knitr.R is turned off
 
 async function execKnitr(file, ctx) {
-  const filePath = file.path || '';
-  const baseDir = file.dirname || '';
   const md = file.contents;
   const uniqueId = getUniqueId(md);
   const cachedFilePath = external_path_default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
@@ -1316,8 +1315,7 @@ async function execKnitr(file, ctx) {
   await mkdir(cacheDir);
   await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
-    const rFile = external_path_default().join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+    const cmd = createKnitrCommand(file, ctx, uniqueId);
     (0,external_child_process_namespaceObject.exec)(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(external_chalk_default().grey(`[knitr] ${stdErr.trim()}`));
@@ -1340,6 +1338,20 @@ function getUniqueId(md) {
   const hash = external_hash_sum_default()(md);
   const ts = new Date().getTime().toString();
   return `knitr-${hash}-${ts}`;
+}
+
+function createKnitrCommand(file, ctx, uniqueId) {
+  const filePath = file.path || '';
+  const baseDir = file.dirname || '';
+  const rFile = external_path_default().join(__dirname, 'knitr.R');
+  const cacheDir = external_path_default().join(ctx.cacheDir, uniqueId);
+  let cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+
+  if (ctx.options.pythonBin) {
+    cmd += ` "${ctx.options.pythonBin}"`;
+  }
+
+  return cmd;
 }
 
 function reportErrors(response, file) {
@@ -2209,14 +2221,16 @@ var external_refractor_default = /*#__PURE__*/__webpack_require__.n(external_ref
 
 function codeBlocks(ctx) {
   return async (tree, file) => {
-    const codeBlocks = [];
+    // replace \\n with \n in code samples
+    // visit<InlineCode>(tree, 'inlineCode', (node) => {
+    //   const old = node.value;
+    //   const transformed = old.replace(/\\\\n/g, '\\n');
+    //   // console.log({ old, transformed, same: old === transformed });
+    //   node.value = transformed;
+    // });
     external_unist_util_visit_default()(tree, 'code', node => {
-      codeBlocks.push(node);
+      customCode(node, ctx, file);
     });
-
-    for (const codeBlock of codeBlocks) {
-      customCode(codeBlock, ctx, file);
-    }
   };
 }
 
@@ -3075,7 +3089,6 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
- // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
 
@@ -3261,7 +3274,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.17";
+  const currentVersion = "1.1.18";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
@@ -12995,6 +13008,9 @@ const {
 }).option('spelling', {
   type: 'boolean',
   description: 'Check spelling'
+}).option('pythonBin', {
+  type: 'string',
+  description: 'Custom path to python binary'
 }).option('force', {
   type: 'boolean',
   description: 'Compile even with fatal errors'
@@ -13012,6 +13028,7 @@ const options = {
   noCache: argv.noCache,
   noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
+  pythonBin: argv.pythonBin,
   force: argv.force
 }; // async function rMarkdown(dirPath: string, options: Options = {}) {
 //   try {

@@ -52,7 +52,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ShebangPlugin(),
-    new InlineEnvironmentVariablesPlugin({ VERSION: '1.1.17' }),
+    new InlineEnvironmentVariablesPlugin({ VERSION: '1.1.18' }),
     new CopyPlugin({
       patterns: [
         { from: './src/knitr/knitr.R', to: './' },

@@ -10222,17 +10222,12 @@ function responsive_tables_responsiveTables() {
 
 
 
-// import { moveAnswersToEnd } from '../mdast/move-answers-to-end';
 
 
 async function hast_hastPhase(mdast, ctx, file, targetPdf) {
   const processor = unified().use(remark2rehype, {
     allowDangerousHtml: true
-  }).use(rehypeRaw).use(responsiveTables); // if (targetPdf) {
-  //   // although an mdast transform, has been put here as
-  //   // it needs the full document to work correctly
-  //   processor.use(moveAnswersToEnd);
-  // }
+  }).use(rehypeRaw).use(responsiveTables);
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(embedAssets, ctx);
@@ -10648,7 +10643,13 @@ async function html_htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
 
   const transformed = await processor.run(hast, file);
   const result = processor.stringify(transformed, file);
-  return referenceTransform(result, ctx.refStore);
+  return postTransforms(result, ctx);
+}
+
+function postTransforms(html, ctx) {
+  let result = '';
+  result = referenceTransform(html, ctx.refStore);
+  return result;
 }
 
 function referenceTransform(html, refStore) {
@@ -10675,8 +10676,6 @@ async function knitr_knitr(file, ctx) {
 } // TODO: see what can be done with output when "quiet" in knitr.R is turned off
 
 async function execKnitr(file, ctx) {
-  const filePath = file.path || '';
-  const baseDir = file.dirname || '';
   const md = file.contents;
   const uniqueId = getUniqueId(md);
   const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
@@ -10684,8 +10683,7 @@ async function execKnitr(file, ctx) {
   await mkdir(cacheDir);
   await writeFile(cachedFilePath, md);
   return new Promise((resolve, reject) => {
-    const rFile = path.join(__dirname, 'knitr.R');
-    const cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+    const cmd = createKnitrCommand(file, ctx, uniqueId);
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
@@ -10708,6 +10706,20 @@ function getUniqueId(md) {
   const hash = hashSum(md);
   const ts = new Date().getTime().toString();
   return `knitr-${hash}-${ts}`;
+}
+
+function createKnitrCommand(file, ctx, uniqueId) {
+  const filePath = file.path || '';
+  const baseDir = file.dirname || '';
+  const rFile = path.join(__dirname, 'knitr.R');
+  const cacheDir = path.join(ctx.cacheDir, uniqueId);
+  let cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+
+  if (ctx.options.pythonBin) {
+    cmd += ` "${ctx.options.pythonBin}"`;
+  }
+
+  return cmd;
 }
 
 function knitr_reportErrors(response, file) {
@@ -11562,14 +11574,16 @@ const external_refractor_namespaceObject = require("refractor");
 
 function code_blocks_codeBlocks(ctx) {
   return async (tree, file) => {
-    const codeBlocks = [];
+    // replace \\n with \n in code samples
+    // visit<InlineCode>(tree, 'inlineCode', (node) => {
+    //   const old = node.value;
+    //   const transformed = old.replace(/\\\\n/g, '\\n');
+    //   // console.log({ old, transformed, same: old === transformed });
+    //   node.value = transformed;
+    // });
     visit(tree, 'code', node => {
-      codeBlocks.push(node);
+      customCode(node, ctx, file);
     });
-
-    for (const codeBlock of codeBlocks) {
-      customCode(codeBlock, ctx, file);
-    }
   };
 }
 
@@ -12416,7 +12430,6 @@ function build_unit_defineProperty(obj, key, value) { if (key in obj) { Object.d
 
 
 
- // import { warnOnIncludeGraphics } from './linter/warn-on-include-graphics';
 
 
 
@@ -12601,7 +12614,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.17";
+  const currentVersion = "1.1.18";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
