@@ -10752,7 +10752,20 @@ async function formatResponse(response) {
 }
 
 function removeHashSigns(md) {
-  return md.replace(/^##\s+/gm, '');
+  let insideCodeBlock = false;
+  return md.split('\n').reduce((acc, line) => {
+    if (line.startsWith('```')) {
+      insideCodeBlock = !insideCodeBlock;
+    }
+
+    if (insideCodeBlock) {
+      acc.push(line.replace(/^##\s+/, ''));
+    } else {
+      acc.push(line);
+    }
+
+    return acc;
+  }, []).join('\n');
 }
 
 function addCodeBlockClasses(md) {
@@ -12619,7 +12632,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.19";
+  const currentVersion = "1.1.20";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
