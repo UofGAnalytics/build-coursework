@@ -246,4 +246,50 @@ describe('weblink', () => {
     const { html } = await fixtureTestProcessor('multifile-counter');
     expect(html.includes('id="task-2"')).toBe(true);
   });
+
+  it('should display a £ sign', async () => {
+    const { html } = await testProcessor(`
+      \`\`\`{r, echo=FALSE}
+      test <- 10
+      \`\`\`
+
+      A sentence with £\`r test\` in it.
+    `);
+
+    expect(html.trim()).toBe('<p>A sentence with £10 in it.</p>');
+  });
+
+  it('should display titles', async () => {
+    const { md } = await testProcessor(`
+      \`\`\`{r}
+      a <- c(1, 4, 2)
+      a
+      \`\`\`
+
+      ## A title
+      A paragraph
+
+      ### A subtitle
+      A paragraph
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(
+      ignoreWhitespace(`
+        \`\`\`r
+        a <- c(1, 4, 2)
+        a
+        \`\`\`
+
+        \`\`\`{.r-output}
+        [1] 1 4 2
+        \`\`\`
+
+        ## A title
+        A paragraph
+
+        ### A subtitle
+        A paragraph
+      `)
+    );
+  });
 });
