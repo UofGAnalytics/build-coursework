@@ -92,7 +92,21 @@ async function formatResponse(response: string) {
 }
 
 function removeHashSigns(md: string) {
-  return md.replace(/^##\s+/gm, '');
+  let insideCodeBlock = false;
+  return md
+    .split('\n')
+    .reduce((acc: string[], line) => {
+      if (line.startsWith('```')) {
+        insideCodeBlock = !insideCodeBlock;
+      }
+      if (insideCodeBlock) {
+        acc.push(line.replace(/^##\s+/, ''));
+      } else {
+        acc.push(line);
+      }
+      return acc;
+    }, [])
+    .join('\n');
 }
 
 function addCodeBlockClasses(md: string) {
