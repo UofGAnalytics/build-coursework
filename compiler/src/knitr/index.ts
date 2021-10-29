@@ -4,7 +4,7 @@ import path from 'path';
 import chalk from 'chalk';
 import chardet from 'chardet';
 import hashSum from 'hash-sum';
-import iconv from 'iconv-lite';
+// import iconv from 'iconv-lite';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
