@@ -20,7 +20,7 @@ export function readFile(
 }
 
 export function writeFile(filePath: string, contents: string | Buffer) {
-  return fs.promises.writeFile(filePath, contents);
+  return fs.promises.writeFile(filePath, contents, 'utf-8');
 }
 
 export async function checkLocalFileExists(filePath: string) {

@@ -1,3 +1,6 @@
+// import chardet from 'chardet';
+// import iconv from 'iconv-lite';
+
 import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
   ignoreWhitespace,
@@ -247,8 +250,12 @@ describe('weblink', () => {
     expect(html.includes('id="task-2"')).toBe(true);
   });
 
-  it.only('should display a £ sign', async () => {
+  it('should display a £ sign', async () => {
     const { md } = await testProcessor(`£`);
+    // const encoding = chardet.detect(Buffer.from(md));
+    // const decoded = iconv.decode(Buffer.from(md), 'ISO-8859-1');
+    // const encoded = iconv.encode(md, 'utf-8').toString();
+    // console.log({ encoding, encoded });
     expect(md).toBe('£');
   });
 
