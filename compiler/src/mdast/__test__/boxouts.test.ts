@@ -247,7 +247,7 @@ describe('weblink', () => {
     expect(html.includes('id="task-2"')).toBe(true);
   });
 
-  it('should display a £ sign', async () => {
+  it.only('should display a £ sign', async () => {
     const { md } = await testProcessor(`£`);
     expect(md).toBe('£');
   });

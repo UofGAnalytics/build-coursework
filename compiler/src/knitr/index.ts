@@ -4,7 +4,7 @@ import path from 'path';
 import chalk from 'chalk';
 import chardet from 'chardet';
 import hashSum from 'hash-sum';
-// import iconv from 'iconv-lite';
+import iconv from 'iconv-lite';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -88,9 +88,11 @@ function reportErrors(response: string, file: VFile) {
 }
 
 async function formatResponse(response: string) {
-  let md = response;
-  console.log('encoding:', chardet.detect(Buffer.from(response)));
-  // md = iconv.decode(Buffer.from(response), 'win1251');
+  const decoded = iconv.decode(Buffer.from(response), 'ISO-8859-1');
+  const encoded = iconv.encode(decoded, 'utf-8');
+  console.log({ decoded, encoded, string: encoded.toString() });
+  let md = encoded.toString();
+  // console.log('encoding:', chardet.detect(Buffer.from(response)));
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
