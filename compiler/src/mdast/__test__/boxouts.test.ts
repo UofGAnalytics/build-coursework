@@ -1,5 +1,4 @@
 // import chardet from 'chardet';
-// import iconv from 'iconv-lite';
 
 import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
@@ -7,6 +6,8 @@ import {
   testProcessor,
   unindentString,
 } from '../../test-utils/test-processor';
+
+// import iconv from 'iconv-lite';
 
 describe('example', () => {
   it('should render an example boxout', async () => {
@@ -255,7 +256,7 @@ describe('weblink', () => {
     // const encoding = chardet.detect(Buffer.from(md));
     // const decoded = iconv.decode(Buffer.from(md), 'ISO-8859-1');
     // const encoded = iconv.encode(md, 'utf-8').toString();
-    // console.log({ encoding, encoded });
+    // console.log({ encoding });
     expect(md).toBe('£');
   });
 

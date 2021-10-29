@@ -58,7 +58,7 @@ function createKnitrCommand(
   const baseDir = file.dirname || '';
   const rFile = path.join(__dirname, 'knitr.R');
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript ${rFile} ${cachedFilePath} ${baseDir}/ "${cacheDir}/"`;
+  let cmd = `Rscript --encoding="ISO-8859-1" ${rFile} ${cachedFilePath} ${baseDir}/ "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;
