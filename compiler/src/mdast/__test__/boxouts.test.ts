@@ -1,3 +1,5 @@
+import chardet from 'chardet';
+
 import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
   ignoreWhitespace,
@@ -247,14 +249,18 @@ describe('weblink', () => {
     expect(html.includes('id="task-2"')).toBe(true);
   });
 
-  it('should display a £ sign', async () => {
-    const { html } = await testProcessor(`
+  it.only('should display a £ sign', async () => {
+    const { html, file } = await testProcessor(`
       \`\`\`{r, echo=FALSE}
       test <- 10
       \`\`\`
 
       A sentence with £\`r test\` in it.
     `);
+
+    const encoding = await chardet.detectFile(file.path as string);
+
+    console.log({ encoding });
 
     expect(html.trim()).toBe('<p>A sentence with £10 in it.</p>');
   });
