@@ -32,7 +32,7 @@ export function embedAssets(ctx: Context) {
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       failMessage(file, err?.message || '', node.position);
     }
   }

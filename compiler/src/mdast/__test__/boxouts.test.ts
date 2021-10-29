@@ -249,7 +249,7 @@ describe('weblink', () => {
     expect(html.includes('id="task-2"')).toBe(true);
   });
 
-  it.only('should display a £ sign', async () => {
+  it('should display a £ sign', async () => {
     const { html, file } = await testProcessor(`
       \`\`\`{r, echo=FALSE}
       test <- 10
