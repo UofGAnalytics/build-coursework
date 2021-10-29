@@ -3,7 +3,7 @@ import path from 'path';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
-// import iconv from 'iconv-lite';
+import iconv from 'iconv-lite';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -23,7 +23,10 @@ async function execKnitr(file: VFile, ctx: Context) {
   const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   await mkdir(cacheDir);
-  await writeFile(cachedFilePath, md);
+
+  const encoded = iconv.encode(md, 'windows-1252');
+  const decoded = iconv.decode(encoded, 'utf-8');
+  await writeFile(cachedFilePath, decoded.toString());
 
   return new Promise<string>((resolve, reject) => {
     const cmd = createKnitrCommand(file, ctx, uniqueId, cachedFilePath);
