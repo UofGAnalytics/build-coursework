@@ -24,8 +24,8 @@ async function execKnitr(file: VFile, ctx: Context) {
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   await mkdir(cacheDir);
 
-  const encoded = iconv.encode(md, 'windows-1252');
-  const decoded = iconv.decode(encoded, 'utf-8');
+  // const encoded = iconv.encode(md, 'windows-1252');
+  const decoded = iconv.decode(Buffer.from(md), 'utf-8');
   await writeFile(cachedFilePath, decoded.toString());
 
   return new Promise<string>((resolve, reject) => {
