@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import path from 'path';
 
 import chalk from 'chalk';
-import chardet from 'chardet';
+// import chardet from 'chardet';
 import hashSum from 'hash-sum';
 import iconv from 'iconv-lite';
 import { VFile } from 'vfile';
