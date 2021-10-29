@@ -1,5 +1,3 @@
-import { encode } from 'html-entities';
-
 import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
   ignoreWhitespace,
