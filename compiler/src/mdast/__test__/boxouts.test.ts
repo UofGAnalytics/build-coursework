@@ -252,7 +252,7 @@ describe('weblink', () => {
   });
 
   it('should display a £ sign', async () => {
-    const { md } = await testProcessor(`£`);
+    const { md } = await testProcessor(`\u00A3`);
     // const encoding = chardet.detect(Buffer.from(md));
     // const decoded = iconv.decode(Buffer.from(md), 'ISO-8859-1');
     // const encoded = iconv.encode(md, 'utf-8').toString();
