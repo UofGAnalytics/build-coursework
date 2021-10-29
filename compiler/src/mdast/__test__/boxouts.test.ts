@@ -248,19 +248,8 @@ describe('weblink', () => {
   });
 
   it('should display a £ sign', async () => {
-    const { md, html } = await testProcessor(`
-      \`\`\`{r, echo=FALSE}
-      test <- 10
-      \`\`\`
-
-      A sentence with £\`r test\` and apostrophe’s.
-    `);
-
-    expect(md.trim()).toBe('A sentence with £10 and apostrophe’s.');
-
-    expect(html.trim()).toBe(
-      '<p>A sentence with £10 and apostrophe’s.</p>'
-    );
+    const { md } = await testProcessor(`£`);
+    expect(md).toBe('£');
   });
 
   it('should display titles', async () => {

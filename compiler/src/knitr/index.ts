@@ -3,6 +3,7 @@ import path from 'path';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
+import iconv from 'iconv-lite';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -22,10 +23,14 @@ async function execKnitr(file: VFile, ctx: Context) {
   const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   await mkdir(cacheDir);
-  await writeFile(cachedFilePath, md);
+
+  console.log('original:', md);
+  const converted = iconv.encode(md, 'ISO-8859-1');
+  console.log('converted:', converted);
+  await writeFile(cachedFilePath, converted);
 
   return new Promise<string>((resolve, reject) => {
-    const cmd = createKnitrCommand(file, ctx, uniqueId);
+    const cmd = createKnitrCommand(file, ctx, uniqueId, cachedFilePath);
 
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
@@ -49,12 +54,16 @@ function getUniqueId(md: string) {
   return `knitr-${hash}-${ts}`;
 }
 
-function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
-  const filePath = file.path || '';
+function createKnitrCommand(
+  file: VFile,
+  ctx: Context,
+  uniqueId: string,
+  cachedFilePath: string
+) {
   const baseDir = file.dirname || '';
   const rFile = path.join(__dirname, 'knitr.R');
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+  let cmd = `Rscript ${rFile} ${cachedFilePath} ${baseDir}/ "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;

@@ -25,6 +25,7 @@
     "hash-sum": "^2.0.0",
     "highlight.js": "^10.5.0",
     "html-entities": "^2.3.2",
+    "iconv-lite": "^0.6.3",
     "js-yaml": "^4.0.0",
     "latex": "^0.0.1",
     "lodash": "^4.17.20",
