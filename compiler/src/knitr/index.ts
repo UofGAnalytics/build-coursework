@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import path from 'path';
 
 import chalk from 'chalk';
+import chardet from 'chardet';
 import hashSum from 'hash-sum';
 import iconv from 'iconv-lite';
 import { VFile } from 'vfile';
@@ -88,7 +89,8 @@ function reportErrors(response: string, file: VFile) {
 
 async function formatResponse(response: string) {
   let md = response;
-  md = iconv.decode(Buffer.from(response), 'win1251');
+  console.log('encoding:', chardet.detect(Buffer.from(response)));
+  // md = iconv.decode(Buffer.from(response), 'win1251');
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);

@@ -19,6 +19,7 @@
     "@double-great/remark-lint-alt-text": "^0.7.0",
     "@mapbox/remark-lint-link-text": "^0.6.0",
     "chalk": "^4.1.0",
+    "chardet": "^1.4.0",
     "dictionary-en-gb": "^2.3.0",
     "escape-latex": "^1.2.0",
     "figures": "^3.2.0",
