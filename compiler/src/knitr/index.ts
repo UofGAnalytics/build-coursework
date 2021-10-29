@@ -88,7 +88,7 @@ function reportErrors(response: string, file: VFile) {
 
 async function formatResponse(response: string) {
   let md = response;
-  md = iconv.decode(Buffer.from(response), 'ISO-8859-1');
+  md = iconv.decode(Buffer.from(response), 'win1251');
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
