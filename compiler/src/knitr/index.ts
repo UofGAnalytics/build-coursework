@@ -23,11 +23,7 @@ async function execKnitr(file: VFile, ctx: Context) {
   const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   await mkdir(cacheDir);
-
-  console.log('original:', md);
-  const converted = iconv.encode(md, 'ISO-8859-1');
-  console.log('converted:', converted);
-  await writeFile(cachedFilePath, converted);
+  await writeFile(cachedFilePath, md);
 
   return new Promise<string>((resolve, reject) => {
     const cmd = createKnitrCommand(file, ctx, uniqueId, cachedFilePath);
@@ -92,6 +88,7 @@ function reportErrors(response: string, file: VFile) {
 
 async function formatResponse(response: string) {
   let md = response;
+  md = iconv.decode(Buffer.from(response), 'utf-8');
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
