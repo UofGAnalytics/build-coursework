@@ -3,7 +3,7 @@ import path from 'path';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
-import iconv from 'iconv-lite';
+import { Iconv } from 'iconv';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -25,8 +25,8 @@ async function execKnitr(file: VFile, ctx: Context) {
   await mkdir(cacheDir);
 
   // const encoded = iconv.encode(md, 'windows-1252');
-  const decoded = iconv.decode(Buffer.from(md), 'utf-8');
-  await writeFile(cachedFilePath, decoded.toString());
+  // const decoded = iconv.decode(Buffer.from(md), 'utf-8');
+  await writeFile(cachedFilePath, md);
 
   return new Promise<string>((resolve, reject) => {
     const cmd = createKnitrCommand(file, ctx, uniqueId, cachedFilePath);
@@ -91,6 +91,10 @@ function reportErrors(response: string, file: VFile) {
 
 async function formatResponse(response: string) {
   let md = response;
+
+  const iconv = new Iconv('ISO-8859-1', 'UTF-8');
+  md = iconv.convert(Buffer.from(md)).toString();
+
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
