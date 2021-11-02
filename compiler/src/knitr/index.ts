@@ -83,12 +83,17 @@ function reportErrors(response: string, file: VFile) {
 
 async function formatResponse(response: string) {
   let md = response;
+  md = removeCustomPythonBinNotice(md);
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
   md = addNewLineAfterKable(md);
   return md;
+}
+
+function removeCustomPythonBinNotice(md: string) {
+  return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
 }
 
 function removeHashSigns(md: string) {
