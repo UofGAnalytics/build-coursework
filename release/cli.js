@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 3231:
+/***/ 1531:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -370,7 +370,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(5622);
+var external_path_ = __webpack_require__(1017);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
@@ -394,7 +394,7 @@ var lite_default = /*#__PURE__*/__webpack_require__.n(lite_namespaceObject);
 const external_node_fetch_namespaceObject = require("node-fetch");
 var external_node_fetch_default = /*#__PURE__*/__webpack_require__.n(external_node_fetch_namespaceObject);
 // EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
+var external_unist_util_visit_ = __webpack_require__(4704);
 var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
@@ -1375,12 +1375,17 @@ function reportErrors(response, file) {
 
 async function formatResponse(response) {
   let md = response;
+  md = removeCustomPythonBinNotice(md);
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
   md = addNewLineAfterKable(md);
   return md;
+}
+
+function removeCustomPythonBinNotice(md) {
+  return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
 }
 
 function removeHashSigns(md) {
@@ -3292,7 +3297,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.20";
+  const currentVersion = "1.1.21";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
@@ -3728,7 +3733,7 @@ module.exports = value => {
 "use strict";
 
 
-var visit = __webpack_require__(2148)
+var visit = __webpack_require__(4704)
 
 module.exports = getDefinitionFactory
 
@@ -5459,7 +5464,7 @@ function thematicBreak(h, node) {
 module.exports = toHast
 
 var u = __webpack_require__(2872)
-var visit = __webpack_require__(2148)
+var visit = __webpack_require__(4704)
 var position = __webpack_require__(9725)
 var generated = __webpack_require__(8666)
 var definitions = __webpack_require__(469)
@@ -12881,7 +12886,7 @@ function info() {
 "use strict";
 
 
-module.exports = __webpack_require__(5622)
+module.exports = __webpack_require__(1017)
 
 
 /***/ }),
@@ -12897,19 +12902,19 @@ module.exports = process
 
 /***/ }),
 
-/***/ 5622:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("path");
-
-/***/ }),
-
-/***/ 2148:
+/***/ 4704:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("unist-util-visit");
+
+/***/ }),
+
+/***/ 1017:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
 
 /***/ }),
 
@@ -12987,7 +12992,7 @@ var __webpack_exports__ = {};
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
 // EXTERNAL MODULE: ./src/index.ts + 96 modules
-var src = __webpack_require__(3231);
+var src = __webpack_require__(1531);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 

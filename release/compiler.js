@@ -496,7 +496,7 @@ module.exports = value => {
 "use strict";
 
 
-var visit = __webpack_require__(2148)
+var visit = __webpack_require__(4704)
 
 module.exports = getDefinitionFactory
 
@@ -2227,7 +2227,7 @@ function thematicBreak(h, node) {
 module.exports = toHast
 
 var u = __webpack_require__(2872)
-var visit = __webpack_require__(2148)
+var visit = __webpack_require__(4704)
 var position = __webpack_require__(9725)
 var generated = __webpack_require__(8666)
 var definitions = __webpack_require__(469)
@@ -9649,7 +9649,7 @@ function info() {
 "use strict";
 
 
-module.exports = __webpack_require__(5622)
+module.exports = __webpack_require__(1017)
 
 
 /***/ }),
@@ -9665,19 +9665,19 @@ module.exports = process
 
 /***/ }),
 
-/***/ 5622:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("path");
-
-/***/ }),
-
-/***/ 2148:
+/***/ 4704:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("unist-util-visit");
+
+/***/ }),
+
+/***/ 1017:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
 
 /***/ }),
 
@@ -9754,7 +9754,7 @@ var __webpack_exports__ = {};
 // UNUSED EXPORTS: rMarkdown
 
 // EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(5622);
+var external_path_ = __webpack_require__(1017);
 ;// CONCATENATED MODULE: external "chalk"
 const external_chalk_namespaceObject = require("chalk");
 // EXTERNAL MODULE: ../node_modules/vfile/index.js
@@ -9771,7 +9771,7 @@ const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
 // EXTERNAL MODULE: external "unist-util-visit"
-var external_unist_util_visit_ = __webpack_require__(2148);
+var external_unist_util_visit_ = __webpack_require__(4704);
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
@@ -10743,12 +10743,17 @@ function knitr_reportErrors(response, file) {
 
 async function formatResponse(response) {
   let md = response;
+  md = removeCustomPythonBinNotice(md);
   md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
   md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
   md = addNewLineAfterKable(md);
   return md;
+}
+
+function removeCustomPythonBinNotice(md) {
+  return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
 }
 
 function removeHashSigns(md) {
@@ -12632,7 +12637,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.20";
+  const currentVersion = "1.1.21";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
