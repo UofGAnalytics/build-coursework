@@ -1,0 +1,5 @@
+name: 'Test'
+title: 'Interactive elements'
+content:
+  - type: text
+    src: test.Rmd

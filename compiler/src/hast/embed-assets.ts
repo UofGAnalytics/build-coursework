@@ -3,8 +3,10 @@ import path from 'path';
 import { Element, Properties } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
+// @ts-expect-error
+import toVFile from 'to-vfile';
 // import { optimize } from 'svgo';
-import { Node } from 'unist';
+import { Node, Parent } from 'unist';
 import visit from 'unist-util-visit';
 import { VFile } from 'vfile';
 
@@ -13,7 +15,7 @@ import { pdfToSvg } from '../pdf/pdf-to-svg';
 import { cacheToFile } from '../utils/cache-to-file';
 import { getAssetHast } from '../utils/get-asset-hast';
 import { failMessage } from '../utils/message';
-import { readFile } from '../utils/utils';
+import { readFile, rehypeParser } from '../utils/utils';
 
 export function embedAssets(ctx: Context) {
   async function embed(node: Element, file: VFile) {
@@ -29,10 +31,13 @@ export function embedAssets(ctx: Context) {
           return embedSvg(node, ctx);
         case '.pdf':
           return embedPdfSvg(node);
+        case '.html':
+          return embedHtml(node);
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
-    } catch (err) {
+    } catch (_err) {
+      const err = _err as Error;
       failMessage(file, err?.message || '', node.position);
     }
   }
@@ -134,4 +139,19 @@ async function embedPdfSvg(imgNode: Element) {
   delete properties.src;
 
   Object.assign(imgNode, svgNode, { properties });
+}
+
+async function embedHtml(imgNode: Element) {
+  const src = getImageSrc(imgNode);
+  const contents = await readFile(src);
+  const vfile = toVFile({ contents }) as VFile;
+  const parsed = rehypeParser().parse(vfile) as Parent;
+
+  Object.assign(imgNode, {
+    tagName: 'div',
+    properties: {
+      className: 'interactive-element',
+    },
+    children: parsed.children,
+  });
 }

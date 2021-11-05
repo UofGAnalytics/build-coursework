@@ -1,0 +1,3 @@
+An embedded interactive element
+
+![My interactive element](multivariate-normal.html)
