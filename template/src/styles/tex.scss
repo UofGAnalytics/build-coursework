@@ -17,6 +17,21 @@ svg.knitr-svg {
   // }
 }
 
+.interactive-element {
+  width: 75%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 3rem;
+  margin-right: auto;
+  margin-bottom: 1rem;
+  margin-left: auto;
+
+  svg {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
 .math svg {
   max-width: 100%;
 }
