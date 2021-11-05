@@ -9770,6 +9770,9 @@ var unified_default = /*#__PURE__*/__webpack_require__.n(node_modules_unified);
 const lite_namespaceObject = require("mime/lite");
 ;// CONCATENATED MODULE: external "node-fetch"
 const external_node_fetch_namespaceObject = require("node-fetch");
+;// CONCATENATED MODULE: external "to-vfile"
+const external_to_vfile_namespaceObject = require("to-vfile");
+var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_vfile_namespaceObject);
 // EXTERNAL MODULE: external "unist-util-visit"
 var external_unist_util_visit_ = __webpack_require__(4704);
 ;// CONCATENATED MODULE: external "rehype-parse"
@@ -9999,9 +10002,6 @@ async function execAndCache({
   await writeFile(cachedFilePath, str);
   return out;
 }
-;// CONCATENATED MODULE: external "to-vfile"
-const external_to_vfile_namespaceObject = require("to-vfile");
-var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_vfile_namespaceObject);
 ;// CONCATENATED MODULE: ./src/utils/get-asset-hast.ts
 // @ts-expect-error
 
@@ -10056,6 +10056,8 @@ function embed_assets_defineProperty(obj, key, value) { if (key in obj) { Object
 
 
 
+ // @ts-expect-error
+
  // import { optimize } from 'svgo';
 
 
@@ -10082,10 +10084,14 @@ function embed_assets_embedAssets(ctx) {
         case '.pdf':
           return embedPdfSvg(node);
 
+        case '.html':
+          return embedHtml(node);
+
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
-    } catch (err) {
+    } catch (_err) {
+      const err = _err;
       failMessage(file, (err === null || err === void 0 ? void 0 : err.message) || '', node.position);
     }
   }
@@ -10188,6 +10194,22 @@ async function embedPdfSvg(imgNode) {
   delete properties.src;
   Object.assign(imgNode, svgNode, {
     properties
+  });
+}
+
+async function embedHtml(imgNode) {
+  const src = getImageSrc(imgNode);
+  const contents = await readFile(src);
+  const vfile = toVFile({
+    contents
+  });
+  const parsed = rehypeParser().parse(vfile);
+  Object.assign(imgNode, {
+    tagName: 'div',
+    properties: {
+      className: 'interactive-element'
+    },
+    children: parsed.children
   });
 }
 ;// CONCATENATED MODULE: external "lodash"
@@ -12637,7 +12659,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.21";
+  const currentVersion = "1.1.22";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
