@@ -8,9 +8,7 @@ The easiest way to install Node.js is to first install a command line tool calle
 
 #### On Windows
 
-Follow installation instructions on the [coreybutler/nvm-windows](https://github.com/coreybutler/nvm-windows#install-nvm-windows) project.
-
-> If your User folder name includes a space, for example "Joe Bloggs", then please follow this [extra step](https://github.com/coreybutler/nvm-windows/issues/405#issuecomment-626359211).
+Follow installation instructions on the [coreybutler/nvm-windows](https://github.com/coreybutler/nvm-windows) project.
 
 #### On Mac or Linux
 
@@ -20,25 +18,25 @@ Next, you need to run a few terminal commands. If you are unfamiliar with this, 
 
 ### Install Node.js
 
-Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org), currently 14.17.5:
+Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.13.0):
 
 ```bash
-nvm install 14
-nvm use 14
+nvm install 16.13.0
+nvm use 16.13.0
 ```
 
 To check everything installed correctly, run the following:
 
 ```bash
 node –v
-# v14.17.5 or similar
+# v16.13.0 or similar
 ```
 
 Node Package Manager should automatically be installed:
 
 ```bash
 npm –v
-# 7.18.1 or similar
+# 8.1.0 or similar
 ```
 
 ### Ensure Git is installed
