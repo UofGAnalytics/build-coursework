@@ -9,4 +9,9 @@ describe('loadCourse', () => {
       fixtureTestProcessor('basic', { week: 2 })
     ).rejects.toThrow(`Week 2 not found in ${courseYaml}`);
   });
+
+  it('should not error when generating a pdf', async () => {
+    await fixtureTestProcessor('basic', { noPdf: false });
+    expect(true).toBe(true);
+  }, 60000);
 });
