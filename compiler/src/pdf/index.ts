@@ -17,7 +17,6 @@ export async function convertToPdf(html: string) {
       '--no-first-run',
       '--no-sandbox',
       '--no-zygote',
-      '--single-process',
     ],
   });
   const page = await browser.newPage();
