@@ -21,7 +21,7 @@
     "template": "yarn workspace template dev",
     "test": "jest --verbose",
     "check-types": "tsc",
-    "build-release": "tsc && yarn workspace template build && yarn workspace compiler build && ./release.sh",
+    "build-release": "tsc && yarn workspace template build && yarn workspace compiler build && yarn merge-release",
     "merge-release": "mkdirp release && rimraf release/* && cpy compiler/build/* release/ && cpy template/build/* release/",
     "release": "release-it"
   },
