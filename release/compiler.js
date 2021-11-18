@@ -472,24 +472,6 @@ module.exports = function isBuffer (obj) {
 
 /***/ }),
 
-/***/ 7760:
-/***/ ((module) => {
-
-"use strict";
-
-
-module.exports = value => {
-	if (Object.prototype.toString.call(value) !== '[object Object]') {
-		return false;
-	}
-
-	const prototype = Object.getPrototypeOf(value);
-	return prototype === null || prototype === Object.prototype;
-};
-
-
-/***/ }),
-
 /***/ 469:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -8684,7 +8666,7 @@ function wrap(fn, callback) {
 var bail = __webpack_require__(1527)
 var buffer = __webpack_require__(8809)
 var extend = __webpack_require__(229)
-var plain = __webpack_require__(7760)
+var plain = __webpack_require__(5530)
 var trough = __webpack_require__(613)
 var vfile = __webpack_require__(9566)
 
@@ -9139,6 +9121,24 @@ function assertDone(name, asyncName, complete) {
     )
   }
 }
+
+
+/***/ }),
+
+/***/ 5530:
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = value => {
+	if (Object.prototype.toString.call(value) !== '[object Object]') {
+		return false;
+	}
+
+	const prototype = Object.getPrototypeOf(value);
+	return prototype === null || prototype === Object.prototype;
+};
 
 
 /***/ }),
@@ -12290,7 +12290,7 @@ async function pdf_convertToPdf(html) {
   const browser = await puppeteer.launch({
     headless: true,
     args: [// attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
-    '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote', '--single-process']
+    '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote']
   });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);
@@ -12659,7 +12659,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.22";
+  const currentVersion = "1.1.23";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
