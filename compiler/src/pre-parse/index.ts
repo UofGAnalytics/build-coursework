@@ -1,7 +1,10 @@
 import { VFile } from 'vfile';
 
 import { allowNoWhitespaceBeforeHeading } from './allow-no-whitespace-before-heading';
-import { convertNewPageToDirective } from './convert-block-tex';
+import {
+  convertEmptyMBoxToDirective,
+  convertNewPageToDirective,
+} from './convert-block-tex';
 import { convertTextBfToMd, convertUrlToMd } from './convert-inline-tex';
 import { convertMacroToDirective } from './convert-macro-to-directive';
 import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
@@ -21,6 +24,7 @@ export function preParsePhase(file: VFile) {
   result = convertTextBfToMd(result);
   result = convertUrlToMd(result);
   result = convertNewPageToDirective(result);
+  result = convertEmptyMBoxToDirective(result);
   result = reformatPandocSimpleTables(result);
   file.contents = result;
   return file;

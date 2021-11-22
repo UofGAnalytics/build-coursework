@@ -41,6 +41,33 @@ describe('convertNewPageToDirective', () => {
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
+  it('should reformat a \\mbox{ } to pagebreak directive', async () => {
+    const { md } = await testProcessor(`
+      \\mbox{ }
+    `);
+
+    const expected = unindentStringAndTrim(`
+      ::pagebreak
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+  });
+
+  it('should NOT reformat a \\mbox{x} to pagebreak directive', async () => {
+    const { md } = await testProcessor(String.raw`
+      \begin{equation}
+      \mathrm{sign}(x)=
+      \begin{cases}
+      1  & \mbox{if } $x>0$\\
+      0  & \mbox{if } $x=0$\\
+      -1 & \mbox{if } $x<0$\\
+      \end{cases}
+      \end{equation}
+    `);
+
+    expect(md.includes('::pagebreak')).toBe(false);
+  });
+
   it('should be idempotent', async () => {
     const { md } = await testProcessor(`
       \\newpage
