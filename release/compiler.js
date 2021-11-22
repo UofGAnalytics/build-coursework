@@ -10735,7 +10735,7 @@ function createKnitrCommand(file, ctx, uniqueId) {
   const baseDir = file.dirname || '';
   const rFile = path.join(__dirname, 'knitr.R');
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+  let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;
@@ -12660,7 +12660,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.25";
+  const currentVersion = "1.1.26";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));
