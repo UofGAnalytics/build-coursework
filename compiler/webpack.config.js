@@ -4,9 +4,9 @@ const nodeExternals = require('webpack-node-externals');
 const CopyPlugin = require('copy-webpack-plugin');
 const ShebangPlugin = require('webpack-shebang-plugin');
 const InlineEnvironmentVariablesPlugin = require('inline-environment-variables-webpack-plugin');
-const GeneratePackageJsonPlugin = require('generate-package-json-webpack-plugin');
+// const GeneratePackageJsonPlugin = require('generate-package-json-webpack-plugin');
 
-const pkg = require('./package.json');
+// const pkg = require('./package.json');
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -51,18 +51,18 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ShebangPlugin(),
-    new GeneratePackageJsonPlugin(
-      {
-        "name": 'build-coursework',
-        "version": pkg.version,
-        "license": "MIT",
-        "bin": {
-          "rmarkdown": "./cli.js"
-        },
-      },
-      path.join(__dirname, 'package.json')
-    ),
-    new InlineEnvironmentVariablesPlugin({ VERSION: pkg.version }),
+    // new GeneratePackageJsonPlugin(
+    //   {
+    //     "name": 'build-coursework',
+    //     "version": pkg.version,
+    //     "license": "MIT",
+    //     "bin": {
+    //       "rmarkdown": "./cli.js"
+    //     },
+    //   },
+    //   path.join(__dirname, 'package.json')
+    // ),
+    new InlineEnvironmentVariablesPlugin({ VERSION: '1.1.25' }),
     new CopyPlugin({
       patterns: [
         { from: './src/knitr/knitr.R', to: './' },
