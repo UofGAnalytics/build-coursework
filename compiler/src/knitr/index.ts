@@ -54,7 +54,7 @@ function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
   const baseDir = file.dirname || '';
   const rFile = path.join(__dirname, 'knitr.R');
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript ${rFile} ${filePath} ${baseDir}/ "${cacheDir}/"`;
+  let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;
