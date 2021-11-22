@@ -1,6 +1,6 @@
 {
   "name": "compiler",
-  "version": "0.0.1",
+  "version": "1.1.23",
   "main": "build/index.js",
   "repository": "https://github.com/UofGAnalytics/build-coursework.git",
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
@@ -89,6 +89,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.2.6",
+    "generate-package-json-webpack-plugin": "^2.5.0",
     "inline-environment-variables-webpack-plugin": "^1.2.1",
     "raw-loader": "^4.0.2",
     "style-loader": "^2.0.0",

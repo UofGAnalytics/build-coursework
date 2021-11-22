@@ -3107,6 +3107,7 @@ function preParsePhase(file) {
   result = (0,convert_inline_tex/* convertTextBfToMd */._)(result);
   result = (0,convert_inline_tex/* convertUrlToMd */.c)(result);
   result = (0,convert_block_tex/* convertNewPageToDirective */.u)(result);
+  result = (0,convert_block_tex/* convertEmptyMBoxToDirective */.c)(result);
   result = reformatPandocSimpleTables(result);
   file.contents = result;
   return file;
@@ -3422,11 +3423,21 @@ function allowNoWhitespaceBeforeHeading(contents) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "u": () => (/* binding */ convertNewPageToDirective)
+/* harmony export */   "u": () => (/* binding */ convertNewPageToDirective),
+/* harmony export */   "c": () => (/* binding */ convertEmptyMBoxToDirective)
 /* harmony export */ });
-const blockList = ['\\newpage', '\\pagebreak', '\\mbox'];
+const blockList = ['\\newpage', '\\pagebreak'];
 function convertNewPageToDirective(contents) {
   return contents.split('\n').map(a => blockList.some(b => a.includes(b)) ? '::pagebreak' : a).join('\n');
+}
+function convertEmptyMBoxToDirective(contents) {
+  return contents.split('\n').map(line => {
+    if (line.includes('\\mbox') && line.replace('{', '').replace('}', '').trim() === '\\mbox') {
+      return '::pagebreak';
+    }
+
+    return line;
+  }).join('\n');
 }
 
 /***/ }),

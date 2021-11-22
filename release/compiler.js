@@ -12448,6 +12448,7 @@ function pre_parse_preParsePhase(file) {
   result = convertTextBfToMd(result);
   result = convertUrlToMd(result);
   result = convertNewPageToDirective(result);
+  result = convertEmptyMBoxToDirective(result);
   result = reformatPandocSimpleTables(result);
   file.contents = result;
   return file;
