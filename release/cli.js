@@ -3320,7 +3320,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.23";
+  const currentVersion = "1.1.24";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));

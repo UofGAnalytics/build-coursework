@@ -1,6 +1,6 @@
 {
   "name": "compiler",
-  "version": "1.1.23",
+  "version": "1.1.24",
   "main": "build/index.js",
   "repository": "https://github.com/UofGAnalytics/build-coursework.git",
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
