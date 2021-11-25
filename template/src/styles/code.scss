@@ -32,7 +32,7 @@ code {
     background: transparent;
   }
 
-  &[class$="error"] {
+  &[class$="error-output"] {
     background: var(--errorColor);
     color: white;
     & > h6.console-heading {

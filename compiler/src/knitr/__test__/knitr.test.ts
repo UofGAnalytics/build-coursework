@@ -240,7 +240,7 @@ describe('knitr', () => {
 
     expect(ignoreWhitespace(md)).toContain(
       ignoreWhitespace(`
-        \`\`\`{.r-error}
+        \`\`\`{.r-error-output}
         Error in "120" + "5": non-numeric argument to binary operator
         \`\`\`
       `)
@@ -284,7 +284,7 @@ describe('knitr', () => {
       <div class="code-wrapper">
         <pre><code>print(a)</code></pre>
       </div>
-      <div class="code-wrapper python-error">
+      <div class="code-wrapper python-error-output">
         <h6 class="console-heading">Python Console</h6>
         <pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
         Detailed traceback:
@@ -301,7 +301,7 @@ describe('knitr', () => {
       <div class="code-wrapper">
         <pre><code>b</code></pre>
       </div>
-      <div class="code-wrapper r-error">
+      <div class="code-wrapper r-error-output">
         <h6 class="console-heading">R Console</h6>
         <pre><code>Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
       </div>

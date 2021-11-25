@@ -84,34 +84,16 @@ function reportErrors(response: string, file: VFile) {
 async function formatResponse(response: string) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
-  md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
-  md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
+  md = removeHashSigns(md);
+  md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
   return md;
 }
 
 function removeCustomPythonBinNotice(md: string) {
   return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
-}
-
-function removeHashSigns(md: string) {
-  let insideCodeBlock = false;
-  return md
-    .split('\n')
-    .reduce((acc: string[], line) => {
-      if (line.startsWith('```')) {
-        insideCodeBlock = !insideCodeBlock;
-      }
-      if (insideCodeBlock) {
-        acc.push(line.replace(/^##\s+/, ''));
-      } else {
-        acc.push(line);
-      }
-      return acc;
-    }, [])
-    .join('\n');
 }
 
 function addCodeBlockClasses(md: string) {
@@ -129,6 +111,26 @@ function addCodeBlockClasses(md: string) {
     .join('\n');
 }
 
+function removeHashSigns(md: string) {
+  let insideCodeResponse = false;
+  let openingLine = '';
+  return md
+    .split('\n')
+    .reduce((acc: string[], line) => {
+      if (line.startsWith('```')) {
+        insideCodeResponse = !insideCodeResponse;
+        openingLine = insideCodeResponse ? line : '';
+      }
+      if (insideCodeResponse && openingLine.endsWith('-output}')) {
+        acc.push(line.replace(/^##\s+/, ''));
+      } else {
+        acc.push(line);
+      }
+      return acc;
+    }, [])
+    .join('\n');
+}
+
 function removeEmptyLog(md: string) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
 }
@@ -137,9 +139,9 @@ function addErrorCodeBlock(md: string) {
   return md
     .split('\n')
     .reduce((acc: string[], line, idx) => {
-      if (line.startsWith('Error') && acc[idx - 1].startsWith('```')) {
+      if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
         const lang = findLanguageForOutput(acc.slice(0, -1));
-        acc[acc.length - 1] = `\`\`\`{.${lang}-error}`;
+        acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
       }
       acc.push(line);
       return acc;
