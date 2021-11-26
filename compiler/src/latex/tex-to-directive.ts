@@ -1,4 +1,7 @@
-import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js';
+import {
+  LiteAdaptor,
+  liteAdaptor,
+} from 'mathjax-full/js/adaptors/liteAdaptor.js';
 import { MathDocument } from 'mathjax-full/js/core/MathDocument';
 import * as MathItem from 'mathjax-full/js/core/MathItem';
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
@@ -30,65 +33,62 @@ import { failMessage } from '../utils/message';
 
 // I convert the TeX to MathML and store it memory for use later (in directive-to-svg.ts).
 
+type ExtractedMath = {
+  start: number;
+  end: number;
+  mml: string;
+  tex: string;
+  display: boolean;
+};
+
 export function texToAliasDirective(file: VFile, ctx: Context) {
   // simple regex tests
-  // why?
   assertNoTexTabular(file);
 
   const md = file.contents as string;
-  const tex = new TeX({
-    // Bussproofs requires an output jax
-    packages: AllPackages.filter((name) => name !== 'bussproofs'),
-    // Allow numbered references
-    tags: 'ams',
-    // Allow single $ delimiters
-    inlineMath: [
-      ['$', '$'],
-      ['\\(', '\\)'],
-    ],
-    displayMath: [
-      ['$$', '$$'],
-      [`\\[`, `\\]`],
-    ],
-  });
 
-  const store = buildMmlStore(md, tex);
-  // console.log(store);
-  const result = replaceTexWithPlaceholder(md, tex, store, file);
+  const store = buildMmlStore(md);
+  const result = replaceTexWithPlaceholder(md, store, file);
 
   // add store to ctx
-  ctx.mmlStore = store;
+  ctx.mmlStore = store.map((o) => o.mml);
 
   // replace md in VFile
   file.contents = postParse(result);
+
   return file;
 }
 
 // This is based on https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
 // except I don't return the HTML, instead I compile a list of the extracted LaTeX converted to MathML
-function buildMmlStore(md: string, tex: TeX<unknown, unknown, unknown>) {
-  const store: string[] = [];
+function buildMmlStore(md: string) {
+  const store: ExtractedMath[] = [];
 
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
   const visitor = new SerializedMmlVisitor();
 
-  function storeMml({ math }: MathDocument<any, any, any>) {
-    for (const item of Array.from(math)) {
-      // convert to MML
-      const mml = visitor.visitTree(item.root);
-      store.push(mml);
-
-      const tree = adaptor.parse('**unused**', 'text/html');
-      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
-    }
-  }
-
   const doc = mathjax.document(md, {
-    InputJax: tex,
+    InputJax: new TeX({
+      // Bussproofs requires an output jax
+      packages: AllPackages.filter((name) => name !== 'bussproofs'),
+      // Allow numbered references
+      tags: 'ams',
+      // Allow single $ delimiters
+      inlineMath: [
+        ['$', '$'],
+        ['\\(', '\\)'],
+      ],
+      displayMath: [
+        ['$$', '$$'],
+        [`\\[`, `\\]`],
+      ],
+    }),
     renderActions: {
-      typeset: [MathItem.STATE.TYPESET, storeMml],
+      typeset: [MathItem.STATE.TYPESET, storeMml(adaptor, visitor, store)],
     },
+    // wrap verbatim latex with <div class="mathjax-ignore"></div>
+    ignoreHtmlClass: 'mathjax-ignore',
   });
 
   doc.render();
@@ -96,61 +96,78 @@ function buildMmlStore(md: string, tex: TeX<unknown, unknown, unknown>) {
   return store;
 }
 
+function storeMml(
+  adaptor: LiteAdaptor,
+  visitor: SerializedMmlVisitor,
+  store: ExtractedMath[]
+) {
+  return ({ math }: MathDocument<any, any, any>) => {
+    for (const item of Array.from(math)) {
+      if (item.start.n === undefined) {
+        throw new Error('start is undefined');
+      }
+      if (item.end.n === undefined) {
+        throw new Error('end is undefined');
+      }
+
+      store.push({
+        start: item.start.n,
+        end: item.end.n,
+        tex: item.math,
+        display: item.display,
+        // convert to MML
+        mml: visitor.visitTree(item.root),
+      });
+
+      // this is only necessary for the MathJax "typeset"
+      // renderAction to complete without error
+      const tree = adaptor.parse('**unused**', 'text/html');
+      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    }
+  };
+}
+
 function replaceTexWithPlaceholder(
   md: string,
-  tex: TeX<unknown, unknown, unknown>,
-  store: string[],
+  store: ExtractedMath[],
   file: VFile
 ) {
-  // Extract the LaTeX from the document again
-  const extractedLatex = tex.findMath([md]);
-
   // Replace it with a placeholder for use later
-  return extractedLatex
+  return store
     .map((item, idx) => ({ ...item, idx }))
     .reverse()
     .reduce((acc, item) => {
-      const placeholder = createPlaceholder(item, store, file);
-      const prev = acc.slice(0, item.start.n);
-      const next = acc.slice(item.end.n);
+      const placeholder = createPlaceholder(item, file);
+      const prev = acc.slice(0, item.start);
+      const next = acc.slice(item.end);
       return prev + placeholder + next;
     }, md);
 }
 
-function createPlaceholder(
-  item: {
-    idx: number;
-    math: string;
-    display: boolean;
-  },
-  store: string[],
-  file: VFile
-) {
+type ExtractedMathWithIdx = ExtractedMath & {
+  idx: number;
+};
+
+function createPlaceholder(item: ExtractedMathWithIdx, file: VFile) {
   // escaped dollar sign...
-  if (item.math === '$') {
+  if (item.tex === '$') {
     return '$';
   }
 
   // double backslash...
-  if (item.math === '\\') {
+  if (item.tex === '\\') {
     return '\\\\';
   }
 
-  const mml = store[item.idx];
-
-  // why?
-  if (!mml) {
-    return '';
-  }
-  assertNoMmlError(mml, file);
+  assertNoMmlError(item.mml, file);
 
   // debug
-  // console.log(item.math, mml);
+  // console.log(item);
 
   // reference link...
-  if (isReferenceLink(item.math)) {
-    const refNum = extractRefNumFromMml(mml, item.math, file);
-    const anchor = extractAnchorLinkFromMml(mml, item.math, file);
+  if (isReferenceLink(item.tex)) {
+    const refNum = extractRefNumFromMml(item, file);
+    const anchor = extractAnchorLinkFromMml(item, file);
     return `[${refNum}](${anchor})`;
   }
 
@@ -170,7 +187,7 @@ function isReferenceLink(tex: string) {
   return /^\\ref\{(.+)\}$/.test(tex);
 }
 
-function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
+function extractRefNumFromMml({ mml, tex }: ExtractedMath, file: VFile) {
   const match = mml.match(/<mtext>(.+)<\/mtext>/);
   if (match === null) {
     failMessage(file, `Invalid reference: ${tex}`);
@@ -185,7 +202,10 @@ function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
   return match[1] as string;
 }
 
-function extractAnchorLinkFromMml(mml: string, tex: string, file: VFile) {
+function extractAnchorLinkFromMml(
+  { mml, tex }: ExtractedMath,
+  file: VFile
+) {
   const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
   if (match === null) {
     failMessage(file, `Reference has no anchor link: ${tex}`);

@@ -23,7 +23,6 @@ export function aliasDirectiveToSvg(ctx: Context) {
         case 'blockMath': {
           const idx = getTexIdx(node);
           const mml = ctx.mmlStore[idx];
-          // console.log(mml);
           const svg = renderSvg(mml);
           const properties = {
             ...svg.properties,

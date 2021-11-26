@@ -73,7 +73,7 @@ function customCode(node: Code, ctx: Context, file: VFile) {
 }
 
 function addConsoleHeading(klass: string) {
-  if (klass === 'r-output' || klass === 'r-error') {
+  if (klass === 'r-output' || klass === 'r-error-output') {
     return {
       type: 'element',
       tagName: 'h6',
@@ -88,7 +88,7 @@ function addConsoleHeading(klass: string) {
       ],
     };
   }
-  if (klass === 'python-output' || klass === 'python-error') {
+  if (klass === 'python-output' || klass === 'python-error-output') {
     return {
       type: 'element',
       tagName: 'h6',
