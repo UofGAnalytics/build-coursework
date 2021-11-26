@@ -10766,33 +10766,16 @@ function knitr_reportErrors(response, file) {
 async function formatResponse(response) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
-  md = removeHashSigns(md);
   md = addCodeBlockClasses(md);
-  md = removeEmptyLog(md);
   md = addErrorCodeBlock(md);
+  md = removeHashSigns(md);
+  md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
   return md;
 }
 
 function removeCustomPythonBinNotice(md) {
   return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
-}
-
-function removeHashSigns(md) {
-  let insideCodeBlock = false;
-  return md.split('\n').reduce((acc, line) => {
-    if (line.startsWith('```')) {
-      insideCodeBlock = !insideCodeBlock;
-    }
-
-    if (insideCodeBlock) {
-      acc.push(line.replace(/^##\s+/, ''));
-    } else {
-      acc.push(line);
-    }
-
-    return acc;
-  }, []).join('\n');
 }
 
 function addCodeBlockClasses(md) {
@@ -10808,15 +10791,34 @@ function addCodeBlockClasses(md) {
   }, []).join('\n');
 }
 
+function removeHashSigns(md) {
+  let insideCodeResponse = false;
+  let openingLine = '';
+  return md.split('\n').reduce((acc, line) => {
+    if (line.startsWith('```')) {
+      insideCodeResponse = !insideCodeResponse;
+      openingLine = insideCodeResponse ? line : '';
+    }
+
+    if (insideCodeResponse && openingLine.endsWith('-output}')) {
+      acc.push(line.replace(/^##\s+/, ''));
+    } else {
+      acc.push(line);
+    }
+
+    return acc;
+  }, []).join('\n');
+}
+
 function removeEmptyLog(md) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
 }
 
 function addErrorCodeBlock(md) {
   return md.split('\n').reduce((acc, line, idx) => {
-    if (line.startsWith('Error') && acc[idx - 1].startsWith('```')) {
+    if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
       const lang = findLanguageForOutput(acc.slice(0, -1));
-      acc[acc.length - 1] = `\`\`\`{.${lang}-error}`;
+      acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
     }
 
     acc.push(line);
@@ -10938,95 +10940,102 @@ function tex_to_directive_defineProperty(obj, key, value) { if (key in obj) { Ob
 
 function tex_to_directive_texToAliasDirective(file, ctx) {
   // simple regex tests
-  // why?
   assertNoTexTabular(file);
   const md = file.contents;
-  const tex = new TeX({
-    // Bussproofs requires an output jax
-    packages: AllPackages.filter(name => name !== 'bussproofs'),
-    // Allow numbered references
-    tags: 'ams',
-    // Allow single $ delimiters
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], [`\\[`, `\\]`]]
-  });
-  const store = buildMmlStore(md, tex); // console.log(store);
+  const store = buildMmlStore(md);
+  const result = replaceTexWithPlaceholder(md, store, file); // add store to ctx
 
-  const result = replaceTexWithPlaceholder(md, tex, store, file); // add store to ctx
-
-  ctx.mmlStore = store; // replace md in VFile
+  ctx.mmlStore = store.map(o => o.mml); // replace md in VFile
 
   file.contents = postParse(result);
   return file;
 } // This is based on https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
 // except I don't return the HTML, instead I compile a list of the extracted LaTeX converted to MathML
 
-function buildMmlStore(md, tex) {
+function buildMmlStore(md) {
   const store = [];
   const adaptor = liteAdaptor();
   RegisterHTMLHandler(adaptor);
   const visitor = new SerializedMmlVisitor();
-
-  function storeMml({
-    math
-  }) {
-    for (const item of Array.from(math)) {
-      // convert to MML
-      const mml = visitor.visitTree(item.root);
-      store.push(mml);
-      const tree = adaptor.parse('**unused**', 'text/html');
-      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
-    }
-  }
-
   const doc = mathjax.document(md, {
-    InputJax: tex,
+    InputJax: new TeX({
+      // Bussproofs requires an output jax
+      packages: AllPackages.filter(name => name !== 'bussproofs'),
+      // Allow numbered references
+      tags: 'ams',
+      // Allow single $ delimiters
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], [`\\[`, `\\]`]]
+    }),
     renderActions: {
-      typeset: [MathItem.STATE.TYPESET, storeMml]
-    }
+      typeset: [MathItem.STATE.TYPESET, storeMml(adaptor, visitor, store)]
+    },
+    // wrap verbatim latex with <div class="mathjax-ignore"></div>
+    ignoreHtmlClass: 'mathjax-ignore'
   });
   doc.render();
   return store;
 }
 
-function replaceTexWithPlaceholder(md, tex, store, file) {
-  // Extract the LaTeX from the document again
-  const extractedLatex = tex.findMath([md]); // Replace it with a placeholder for use later
+function storeMml(adaptor, visitor, store) {
+  return ({
+    math
+  }) => {
+    for (const item of Array.from(math)) {
+      if (item.start.n === undefined) {
+        throw new Error('start is undefined');
+      }
 
-  return extractedLatex.map((item, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, item), {}, {
+      if (item.end.n === undefined) {
+        throw new Error('end is undefined');
+      }
+
+      store.push({
+        start: item.start.n,
+        end: item.end.n,
+        tex: item.math,
+        display: item.display,
+        // convert to MML
+        mml: visitor.visitTree(item.root)
+      }); // this is only necessary for the MathJax "typeset"
+      // renderAction to complete without error
+
+      const tree = adaptor.parse('**unused**', 'text/html');
+      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+    }
+  };
+}
+
+function replaceTexWithPlaceholder(md, store, file) {
+  // Replace it with a placeholder for use later
+  return store.map((item, idx) => tex_to_directive_objectSpread(tex_to_directive_objectSpread({}, item), {}, {
     idx
   })).reverse().reduce((acc, item) => {
-    const placeholder = createPlaceholder(item, store, file);
-    const prev = acc.slice(0, item.start.n);
-    const next = acc.slice(item.end.n);
+    const placeholder = createPlaceholder(item, file);
+    const prev = acc.slice(0, item.start);
+    const next = acc.slice(item.end);
     return prev + placeholder + next;
   }, md);
 }
 
-function createPlaceholder(item, store, file) {
+function createPlaceholder(item, file) {
   // escaped dollar sign...
-  if (item.math === '$') {
+  if (item.tex === '$') {
     return '$';
   } // double backslash...
 
 
-  if (item.math === '\\') {
+  if (item.tex === '\\') {
     return '\\\\';
   }
 
-  const mml = store[item.idx]; // why?
-
-  if (!mml) {
-    return '';
-  }
-
-  assertNoMmlError(mml, file); // debug
-  // console.log(item.math, mml);
+  assertNoMmlError(item.mml, file); // debug
+  // console.log(item);
   // reference link...
 
-  if (isReferenceLink(item.math)) {
-    const refNum = extractRefNumFromMml(mml, item.math, file);
-    const anchor = extractAnchorLinkFromMml(mml, item.math, file);
+  if (isReferenceLink(item.tex)) {
+    const refNum = extractRefNumFromMml(item, file);
+    const anchor = extractAnchorLinkFromMml(item, file);
     return `[${refNum}](${anchor})`;
   } // normal use case (equation)...
 
@@ -11047,7 +11056,10 @@ function isReferenceLink(tex) {
   return /^\\ref\{(.+)\}$/.test(tex);
 }
 
-function extractRefNumFromMml(mml, tex, file) {
+function extractRefNumFromMml({
+  mml,
+  tex
+}, file) {
   const match = mml.match(/<mtext>(.+)<\/mtext>/);
 
   if (match === null) {
@@ -11062,7 +11074,10 @@ function extractRefNumFromMml(mml, tex, file) {
   return match[1];
 }
 
-function extractAnchorLinkFromMml(mml, tex, file) {
+function extractAnchorLinkFromMml({
+  mml,
+  tex
+}, file) {
   const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
 
   if (match === null) {
@@ -11540,8 +11555,7 @@ function directive_to_svg_aliasDirectiveToSvg(ctx) {
         case 'blockMath':
           {
             const idx = getTexIdx(node);
-            const mml = ctx.mmlStore[idx]; // console.log(mml);
-
+            const mml = ctx.mmlStore[idx];
             const svg = renderSvg(mml);
 
             const properties = directive_to_svg_objectSpread(directive_to_svg_objectSpread({}, svg.properties), {}, {
@@ -11677,7 +11691,7 @@ function customCode(node, ctx, file) {
 }
 
 function addConsoleHeading(klass) {
-  if (klass === 'r-output' || klass === 'r-error') {
+  if (klass === 'r-output' || klass === 'r-error-output') {
     return {
       type: 'element',
       tagName: 'h6',
@@ -11691,7 +11705,7 @@ function addConsoleHeading(klass) {
     };
   }
 
-  if (klass === 'python-output' || klass === 'python-error') {
+  if (klass === 'python-output' || klass === 'python-error-output') {
     return {
       type: 'element',
       tagName: 'h6',
@@ -12455,7 +12469,7 @@ function pre_parse_preParsePhase(file) {
 }
 
 function removeCommentedSections(md) {
-  return md.replace(/<!--[\s\S]*?-->/g, '');
+  return md.replace(/<!--[^-][\s\S]*?-->/g, '').replace(/<!---/g, '<!--');
 }
 
 function escapeDollarsInCodeBlocks(md) {
@@ -12660,7 +12674,7 @@ async function check_for_latest_version_checkForLatestVersion() {
   const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.26";
+  const currentVersion = "1.1.27";
 
   if (latestTag !== currentVersion) {
     console.log(chalk.yellow.bold('New version available'));

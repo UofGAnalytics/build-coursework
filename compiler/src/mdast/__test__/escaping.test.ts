@@ -23,6 +23,7 @@ describe('escaping', () => {
 
   it('should display sample rmarkdown syntax', async () => {
     // https://bookdown.org/yihui/rmarkdown-cookbook/verbatim-code-chunks.html
+    // https://markdownmonster.west-wind.com/docs/_5eg1brc0z.htm
     const { html } = await testProcessor(`
       ~~~
       \`\`\`{r #chunk options go here}\`r ''\`
@@ -61,28 +62,7 @@ describe('escaping', () => {
     expect(ignoreWhitespace(html)).toBe(expected);
   });
 
-  it('should display sample html comments', async () => {
-    // https://www.jamestharpe.com/markdown-comments
-    const { html } = await testProcessor(`
-      \`\`\`
-      <!---begin.rcode #chunk-options
-      # R code goes here
-      end.rcode-->
-      \`\`\`
-    `);
-
-    const expected = ignoreWhitespace(`
-      <div class="code-wrapper">
-      <pre><code>&#x3C;!--begin.rcode #chunk-options
-      # R code goes here
-      end.rcode--></code></pre>
-      </div>
-    `);
-    expect(ignoreWhitespace(html)).toBe(expected);
-  });
-
   it('should escape sample latex', async () => {
-    // https://www.jamestharpe.com/markdown-comments
     const { html } = await testProcessor(`
       <div class="mathjax-ignore">
       \`\`\`latex
