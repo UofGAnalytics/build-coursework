@@ -1620,17 +1620,21 @@ function storeMml(adaptor, visitor, store) {
 
       if (item.end.n === undefined) {
         throw new Error('end is undefined');
-      }
+      } // MathJax appears to pick this up in error...
 
-      store.push({
-        start: item.start.n,
-        end: item.end.n,
-        tex: item.math,
-        display: item.display,
-        // convert to MML
-        mml: visitor.visitTree(item.root)
-      }); // this is only necessary for the MathJax "typeset"
+
+      if (item.math !== '$') {
+        store.push({
+          start: item.start.n,
+          end: item.end.n,
+          tex: item.math,
+          display: item.display,
+          // convert to MML
+          mml: visitor.visitTree(item.root)
+        });
+      } // this is only necessary for the MathJax "typeset"
       // renderAction to complete without error
+
 
       const tree = adaptor.parse('**unused**', 'text/html');
       item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
@@ -3334,7 +3338,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.27";
+  const currentVersion = "1.1.28";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
