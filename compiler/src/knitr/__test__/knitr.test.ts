@@ -220,14 +220,38 @@ describe('knitr', () => {
     expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
   });
 
-  it('should display knitr output correctly', async () => {
-    const { md } = await testProcessor(`
-      \`\`\`{r}
+  it('should display r code correctly', async () => {
+    const { md, html } = await testProcessor(
+      `
+      \`\`\`r
       beetles$propkilled <- beetles$killed / beetles$number
       \`\`\`
-    `);
+    `,
+      { noSyntaxHighlight: false }
+    );
     expect(md).toContain(
-      'beetles$propkilled <- beetles$killed / beetles$number'
+      'beetles\\$propkilled <- beetles\\$killed / beetles\\$number'
+    );
+    expect(ignoreWhitespace(html)).toContain(
+      ignoreWhitespace(`
+      <div class="code-wrapper">
+        <pre>
+          <code>
+            beetles
+            \\<span class="token operator">$</span>
+            propkilled
+            <span class="token operator">&#x3C;-</span>
+            beetles
+            \\<span class="token operator">$</span>
+            killed
+            <span class="token operator">/</span>
+            beetles
+            \\<span class="token operator">$</span>
+            number
+          </code>
+        </pre>
+      </div>
+    `)
     );
   });
 
@@ -286,7 +310,7 @@ describe('knitr', () => {
       </div>
       <div class="code-wrapper python-error-output">
         <h6 class="console-heading">Python Console</h6>
-        <pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
+        <pre><code>Error in py_call_impl(callable, dots\\$args, dots\\$keywords): NameError: name 'a' is not defined
         Detailed traceback:
           File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
       </div>

@@ -110,14 +110,17 @@ function storeMml(
         throw new Error('end is undefined');
       }
 
-      store.push({
-        start: item.start.n,
-        end: item.end.n,
-        tex: item.math,
-        display: item.display,
-        // convert to MML
-        mml: visitor.visitTree(item.root),
-      });
+      // MathJax appears to pick this up in error...
+      if (item.math !== '$') {
+        store.push({
+          start: item.start.n,
+          end: item.end.n,
+          tex: item.math,
+          display: item.display,
+          // convert to MML
+          mml: visitor.visitTree(item.root),
+        });
+      }
 
       // this is only necessary for the MathJax "typeset"
       // renderAction to complete without error
