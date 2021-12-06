@@ -1,3 +1,5 @@
+import { Blob } from 'buffer';
+
 import { Element as HastElement, Properties } from 'hast';
 import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
@@ -12,7 +14,7 @@ import { Element, Image, document } from './domstubs';
 
 // inject globals into pdf.js in a non-leaky way
 const pdfjsLib = SandboxedModule.require('pdfjs-dist/legacy/build/pdf', {
-  globals: { document, Image, Element, console, process, URL },
+  globals: { document, Image, Element, Blob, console, process, URL },
 });
 
 export async function pdfToSvg(filePath: string) {
