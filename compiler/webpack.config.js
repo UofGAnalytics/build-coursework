@@ -62,7 +62,7 @@ module.exports = {
     //   },
     //   path.join(__dirname, 'package.json')
     // ),
-    new InlineEnvironmentVariablesPlugin({ VERSION: '1.1.28' }),
+    new InlineEnvironmentVariablesPlugin({ VERSION: '1.1.29' }),
     new CopyPlugin({
       patterns: [
         { from: './src/knitr/knitr.R', to: './' },

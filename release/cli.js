@@ -359,7 +359,7 @@ function createH1(titles) {
 
 /***/ }),
 
-/***/ 1531:
+/***/ 7849:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -399,6 +399,8 @@ var external_to_vfile_default = /*#__PURE__*/__webpack_require__.n(external_to_v
 // EXTERNAL MODULE: external "unist-util-visit"
 var external_unist_util_visit_ = __webpack_require__(4704);
 var external_unist_util_visit_default = /*#__PURE__*/__webpack_require__.n(external_unist_util_visit_);
+;// CONCATENATED MODULE: external "buffer"
+const external_buffer_namespaceObject = require("buffer");
 ;// CONCATENATED MODULE: external "rehype-parse"
 const external_rehype_parse_namespaceObject = require("rehype-parse");
 var external_rehype_parse_default = /*#__PURE__*/__webpack_require__.n(external_rehype_parse_namespaceObject);
@@ -418,6 +420,7 @@ var domstubs = __webpack_require__(2937);
 
 
 
+
  // @ts-expect-error
 
  // inject globals into pdf.js in a non-leaky way
@@ -427,6 +430,7 @@ const pdfjsLib = external_sandboxed_module_default().require('pdfjs-dist/legacy/
     document: domstubs.document,
     Image: domstubs.Image,
     Element: domstubs.Element,
+    Blob: external_buffer_namespaceObject.Blob,
     console,
     process,
     URL
@@ -702,23 +706,23 @@ function embedAssets(ctx) {
         case '.png':
         case '.jpg':
         case '.gif':
-          return embedImage(node, ctx, file);
+          return await embedImage(node, ctx, file);
 
         case '.svg':
-          return embedSvg(node, ctx);
+          return await embedSvg(node, ctx);
 
         case '.pdf':
-          return embedPdfSvg(node);
+          return await embedPdfSvg(node);
 
         case '.html':
-          return embedHtml(node);
+          return await embedHtml(node);
 
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (_err) {
       const err = _err;
-      failMessage(file, (err === null || err === void 0 ? void 0 : err.message) || '', node.position);
+      failMessage(file, err?.message || '', node.position);
     }
   }
 
@@ -767,9 +771,7 @@ async function embedSvg(imgNode, ctx) {
 }
 
 function getNodeClassNames(node, removeClass) {
-  var _node$properties;
-
-  const classes = (_node$properties = node.properties) === null || _node$properties === void 0 ? void 0 : _node$properties.className;
+  const classes = node.properties?.className;
 
   if (typeof classes === 'string' && classes !== removeClass) {
     return [classes];
@@ -851,7 +853,7 @@ function responsiveTables() {
       }
 
       const parent = _parent;
-      const properties = (parent === null || parent === void 0 ? void 0 : parent.properties) || {};
+      const properties = parent?.properties || {};
       const className = properties.className || [];
 
       if (!className.includes('table-wrapper')) {
@@ -1460,9 +1462,7 @@ function addErrorCodeBlock(md) {
 
 function addNewLineAfterKable(md) {
   return md.split('\n').reduce((acc, line, idx) => {
-    var _acc;
-
-    if ((_acc = acc[idx - 1]) !== null && _acc !== void 0 && _acc.startsWith('|') && !line.startsWith('|')) {
+    if (acc[idx - 1]?.startsWith('|') && !line.startsWith('|')) {
       acc.push('', line);
     } else {
       acc.push(line);
@@ -1852,7 +1852,7 @@ function assertVideoAttributes() {
 function getTitle(node) {
   const children = node.children;
   const firstChild = children[0];
-  return (firstChild === null || firstChild === void 0 ? void 0 : firstChild.value) || '';
+  return firstChild?.value || '';
 }
 ;// CONCATENATED MODULE: ./src/linter/assert-weblink-target.ts
 
@@ -2480,8 +2480,6 @@ function images_images(ctx) {
 }
 
 function template(node, count) {
-  var _node$data;
-
   const image = {
     type: 'element',
     tagName: 'img',
@@ -2492,7 +2490,7 @@ function template(node, count) {
     children: []
   };
 
-  if ((_node$data = node.data) !== null && _node$data !== void 0 && _node$data.width) {
+  if (node.data?.width) {
     image.properties = images_objectSpread(images_objectSpread({}, image.properties), {}, {
       style: `width: ${node.data.width};`
     });
@@ -2643,7 +2641,7 @@ function youtubeVideos() {
 function youtube_videos_getTitle(node, file) {
   const children = node.children;
   const firstChild = children[0];
-  const title = (firstChild === null || firstChild === void 0 ? void 0 : firstChild.value) || '';
+  const title = firstChild?.value || '';
 
   if (title.trim() === '') {
     failMessage(file, 'Video has no title', node.position);
@@ -2771,11 +2769,7 @@ function createBoxout(node, count) {
   }
 
   const children = node.children;
-  const content = children.filter(o => {
-    var _o$data;
-
-    return !((_o$data = o.data) !== null && _o$data !== void 0 && _o$data.directiveLabel);
-  }).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => mdast_util_to_hast_default()(o, {
+  const content = children.filter(o => !o.data?.directiveLabel).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => mdast_util_to_hast_default()(o, {
     allowDangerousHtml: true
   })).filter(Boolean);
 
@@ -2883,12 +2877,10 @@ function createTitleValue(node) {
 }
 
 function getTitleValue(node) {
-  var _parent$data;
-
   const children = node.children || [];
   const parent = children[0] || {};
 
-  if (!((_parent$data = parent.data) !== null && _parent$data !== void 0 && _parent$data.directiveLabel)) {
+  if (!parent.data?.directiveLabel) {
     if (node.name === 'weblink') {
       const attributes = node.attributes;
       return [{
@@ -2920,7 +2912,7 @@ function moveAnswersToEnd() {
         } // remove answer block from task node
 
 
-        const parentChildren = (parent === null || parent === void 0 ? void 0 : parent.children) || [];
+        const parentChildren = parent?.children || [];
         parentChildren.splice(index, 1); // add to root node
 
         const treeParent = tree;
@@ -3338,7 +3330,7 @@ async function checkForLatestVersion() {
   const response = await external_node_fetch_default()(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.28";
+  const currentVersion = "1.1.29";
 
   if (latestTag !== currentVersion) {
     console.log(external_chalk_default().yellow.bold('New version available'));
@@ -13042,8 +13034,8 @@ var __webpack_exports__ = {};
 ;// CONCATENATED MODULE: external "yargs"
 const external_yargs_namespaceObject = require("yargs");
 var external_yargs_default = /*#__PURE__*/__webpack_require__.n(external_yargs_namespaceObject);
-// EXTERNAL MODULE: ./src/index.ts + 96 modules
-var src = __webpack_require__(1531);
+// EXTERNAL MODULE: ./src/index.ts + 97 modules
+var src = __webpack_require__(7849);
 ;// CONCATENATED MODULE: ./src/cli/cli.ts
 
 
