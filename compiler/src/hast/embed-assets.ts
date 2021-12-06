@@ -26,13 +26,13 @@ export function embedAssets(ctx: Context) {
         case '.png':
         case '.jpg':
         case '.gif':
-          return embedImage(node, ctx, file);
+          return await embedImage(node, ctx, file);
         case '.svg':
-          return embedSvg(node, ctx);
+          return await embedSvg(node, ctx);
         case '.pdf':
-          return embedPdfSvg(node);
+          return await embedPdfSvg(node);
         case '.html':
-          return embedHtml(node);
+          return await embedHtml(node);
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
