@@ -1,7 +1,7 @@
 import { Element } from 'hast';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { Node } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 type ParentProps = {

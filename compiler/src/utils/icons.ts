@@ -58,7 +58,7 @@ export function createDefs() {
 function createStoredSvg(id: string, svg: string) {
   const hast = getAssetHast(svg) as Element;
   const children = hast.children;
-  const properties = hast.properties as Record<string, string>;
+  const properties = (hast.properties || {}) as Record<string, string>;
   const viewBox = properties.viewBox as string;
   return { id, viewBox, children };
 }

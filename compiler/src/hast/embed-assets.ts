@@ -3,11 +3,10 @@ import path from 'path';
 import { Element, Properties } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
-// @ts-expect-error
-import toVFile from 'to-vfile';
+import { toVFile } from 'to-vfile';
 // import { optimize } from 'svgo';
 import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -143,8 +142,8 @@ async function embedPdfSvg(imgNode: Element) {
 
 async function embedHtml(imgNode: Element) {
   const src = getImageSrc(imgNode);
-  const contents = await readFile(src);
-  const vfile = toVFile({ contents }) as VFile;
+  const value = await readFile(src);
+  const vfile = toVFile({ value });
   const parsed = rehypeParser().parse(vfile) as Parent;
 
   Object.assign(imgNode, {

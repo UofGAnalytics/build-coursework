@@ -1,6 +1,6 @@
 import { Image } from 'mdast';
 import { Node } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';

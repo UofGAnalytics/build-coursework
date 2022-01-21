@@ -1,5 +1,5 @@
-import toHast from 'mdast-util-to-hast';
-import getToc from 'mdast-util-toc';
+import { toHast } from 'mdast-util-to-hast';
+import { toc as getToc } from 'mdast-util-toc';
 import { Node } from 'unist';
 
 import crestSvg from '../../../assets/crest.svg';

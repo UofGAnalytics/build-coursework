@@ -16,7 +16,7 @@ import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
 // custom markdown directive: https://github.com/remarkjs/remark-directive
 
 export function preParsePhase(file: VFile) {
-  let result = file.contents as string;
+  let result = file.value as string;
   result = removeCommentedSections(result);
   result = escapeDollarsInCodeBlocks(result);
   result = allowNoWhitespaceBeforeHeading(result);
@@ -26,7 +26,7 @@ export function preParsePhase(file: VFile) {
   result = convertNewPageToDirective(result);
   result = convertEmptyMBoxToDirective(result);
   result = reformatPandocSimpleTables(result);
-  file.contents = result;
+  file.value = result;
   return file;
 }
 

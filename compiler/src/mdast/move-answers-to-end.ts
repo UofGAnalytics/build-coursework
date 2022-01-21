@@ -1,5 +1,5 @@
 import { Node, Parent } from 'hast';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 interface ContainerDirective extends Parent {
   name: string;

@@ -1,5 +1,5 @@
 import { Parent } from 'mdast';
-import unified from 'unified';
+import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';

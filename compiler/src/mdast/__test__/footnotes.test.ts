@@ -11,13 +11,15 @@ describe('footnotes', () => {
     `);
 
     const expected = unindentString(`
-      <p>Bla bla <sup id="fnref-1"><a href="#fn-1" class="footnote-ref">1</a></sup>.</p>
-      <div class="footnotes">
-        <hr>
+      <p>Bla bla <sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="" aria-describedby="footnote-label">1</a></sup>.</p>
+      <section data-footnotes="" class="footnotes">
+        <h2 id="footnote-label" class="sr-only">Footnotes</h2>
         <ol>
-          <li id="fn-1">Bla<a href="#fnref-1" class="footnote-backref">↩</a></li>
+          <li id="user-content-fn-1">
+            <p>Bla <a href="#user-content-fnref-1" data-footnote-backref="" class="data-footnote-backref" aria-label="Back to content">↩</a></p>
+          </li>
         </ol>
-      </div>
+      </section>
     `);
 
     expect(html).toBe(expected);
@@ -29,13 +31,15 @@ describe('footnotes', () => {
     `);
 
     const expected = unindentString(`
-      <p>Bla bla <sup id="fnref-1"><a href="#fn-1" class="footnote-ref">1</a></sup>.</p>
-      <div class="footnotes">
-        <hr>
+      <p>Bla bla <sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="" aria-describedby="footnote-label">1</a></sup>.</p>
+      <section data-footnotes="" class="footnotes">
+        <h2 id="footnote-label" class="sr-only">Footnotes</h2>
         <ol>
-          <li id="fn-1">Bla<a href="#fnref-1" class="footnote-backref">↩</a></li>
+          <li id="user-content-fn-1">
+            <p>Bla <a href="#user-content-fnref-1" data-footnote-backref="" class="data-footnote-backref" aria-label="Back to content">↩</a></p>
+          </li>
         </ol>
-      </div>
+      </section>
     `);
 
     expect(html).toBe(expected);

@@ -5,9 +5,9 @@ import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
 import SandboxedModule from 'sandboxed-module';
 import { optimize } from 'svgo';
-import unified from 'unified';
+import { unified } from 'unified';
 import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 // @ts-expect-error
 import { Element, Image, document } from './domstubs';

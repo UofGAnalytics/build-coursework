@@ -1,5 +1,5 @@
 import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 interface LeafDirective extends Parent {
   name: string;

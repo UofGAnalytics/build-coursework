@@ -4,14 +4,11 @@ import lintAltText from '@double-great/remark-lint-alt-text';
 import lintLinkText from '@mapbox/remark-lint-link-text';
 // @ts-expect-error
 import dictionary from 'dictionary-en-gb';
-import { Parent as MdastParent } from 'mdast';
-// @ts-expect-error
 import remark2retext from 'remark-retext';
-// @ts-expect-error
 import english from 'retext-english';
-// @ts-expect-error
 import spell from 'retext-spell';
-import unified from 'unified';
+import { unified } from 'unified';
+import { Node } from 'unist';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -48,7 +45,7 @@ export function reportErrors(files: VFile[], ctx: Context) {
 
 export async function createReport(
   file: VFile,
-  mdast: MdastParent,
+  mdast: Node,
   ctx: Context
 ) {
   const processor = unified()

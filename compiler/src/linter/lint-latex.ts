@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 
 import { Literal } from 'mdast';
 import { Node, Position } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 export function lintLatex() {

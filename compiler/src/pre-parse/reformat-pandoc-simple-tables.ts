@@ -1,7 +1,6 @@
 import { EOL } from 'os';
 
-// @ts-expect-error
-import markdownTable from 'markdown-table';
+import { markdownTable } from 'markdown-table';
 
 export function reformatPandocSimpleTables(contents: string) {
   const lines = contents.split(EOL);

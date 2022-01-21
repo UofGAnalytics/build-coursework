@@ -3,10 +3,10 @@ import path from 'path';
 
 import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
-import unified from 'unified';
+import { unified } from 'unified';
 import { Node, Parent } from 'unist';
 
-// import visit from 'unist-util-visit';
+// import { visit } from 'unist-util-visit';
 
 export const rehypeParser = unified()
   .use(rehype, { fragment: true })
@@ -19,8 +19,8 @@ export function readFile(
   return fs.promises.readFile(filePath, encoding);
 }
 
-export function writeFile(filePath: string, contents: string | Buffer) {
-  return fs.promises.writeFile(filePath, contents);
+export function writeFile(filePath: string, value: string | Buffer) {
+  return fs.promises.writeFile(filePath, value);
 }
 
 export async function checkLocalFileExists(filePath: string) {

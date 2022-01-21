@@ -1,7 +1,7 @@
 import { Element } from 'hast';
 import { Image, Text } from 'mdast';
 import { Node } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 

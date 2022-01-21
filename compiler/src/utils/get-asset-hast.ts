@@ -1,7 +1,4 @@
-// @ts-expect-error
-import toVFile from 'to-vfile';
-import { Parent } from 'unist';
-import { VFile } from 'vfile';
+import { toVFile } from 'to-vfile';
 
 import { rehypeParser } from '../utils/utils';
 
@@ -12,8 +9,8 @@ import { rehypeParser } from '../utils/utils';
 //   return parsed.children[0];
 // }
 
-export function getAssetHast(contents: string) {
-  const vfile = toVFile({ contents }) as VFile;
-  const parsed = rehypeParser().parse(vfile) as Parent;
+export function getAssetHast(value: string) {
+  const vfile = toVFile({ value });
+  const parsed = rehypeParser().parse(vfile);
   return parsed.children[0];
 }

@@ -45,7 +45,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   // simple regex tests
   assertNoTexTabular(file);
 
-  const md = file.contents as string;
+  const md = file.value as string;
 
   const store = buildMmlStore(md);
   const result = replaceTexWithPlaceholder(md, store, file);
@@ -54,7 +54,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
   ctx.mmlStore = store.map((o) => o.mml);
 
   // replace md in VFile
-  file.contents = postParse(result);
+  file.value = postParse(result);
 
   return file;
 }

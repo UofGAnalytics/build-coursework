@@ -1,6 +1,6 @@
 import { Element, Literal } from 'hast';
 import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 import { rehypeParser } from '../utils/utils';

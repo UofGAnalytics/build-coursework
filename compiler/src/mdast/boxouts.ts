@@ -1,8 +1,8 @@
 import { Element, Text } from 'hast';
-import { startCase } from 'lodash';
-import toHast from 'mdast-util-to-hast';
+import startCase from 'lodash/startCase';
+import { toHast } from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 import { createCounter } from '../utils/counter';

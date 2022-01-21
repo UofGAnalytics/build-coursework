@@ -1,6 +1,6 @@
 import { Parent as HastParent } from 'hast';
 import { Parent as MdastParent } from 'mdast';
-import VFile, { VFile as VFileType } from 'vfile';
+import { VFile } from 'vfile';
 
 import { Context } from './context';
 import { Unit } from './course/types';
@@ -18,7 +18,7 @@ import { preParsePhase } from './pre-parse';
 export type BuiltUnit = {
   unit: Unit;
   md: string;
-  files: VFileType[];
+  files: VFile[];
   html?: {
     mdast: MdastParent;
     hast: HastParent;
@@ -40,7 +40,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
     mdasts.push(mdast);
   }
 
-  const unifiedFile = VFile();
+  const unifiedFile = new VFile();
 
   const result: BuiltUnit = {
     unit,
@@ -79,7 +79,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
   return result;
 }
 
-async function inSituTransforms(file: VFileType, ctx: Context) {
+async function inSituTransforms(file: VFile, ctx: Context) {
   // simple regex tests
   assertNoKbl(file);
 
@@ -90,7 +90,7 @@ async function inSituTransforms(file: VFileType, ctx: Context) {
 }
 
 function combineMdFiles(unit: Unit) {
-  return unit.files.map((o) => o.contents).join('\n\n');
+  return unit.files.map((o) => o.value).join('\n\n');
 }
 
 function combineMdastTrees(mdasts: MdastParent[]) {
@@ -102,7 +102,7 @@ function combineMdastTrees(mdasts: MdastParent[]) {
 
 async function syntaxTreeTransforms(
   _mdast: MdastParent,
-  file: VFileType,
+  file: VFile,
   unit: Unit,
   ctx: Context,
   targetPdf?: boolean
