@@ -1,5 +1,5 @@
 import { Parent as HastParent } from 'hast';
-import { Parent as MdastParent } from 'mdast';
+import { Parent as MdastParent, Root } from 'mdast';
 import { VFile } from 'vfile';
 
 import { Context } from './context';
@@ -35,7 +35,7 @@ export type BuiltUnit = {
 export async function buildUnit(unit: Unit, ctx: Context) {
   const mdasts: MdastParent[] = [];
   for (const file of unit.files) {
-    const mdast = await inSituTransforms(file, ctx);
+    const mdast = (await inSituTransforms(file, ctx)) as MdastParent;
     await createReport(file, mdast, ctx);
     mdasts.push(mdast);
   }
@@ -93,7 +93,7 @@ function combineMdFiles(unit: Unit) {
   return unit.files.map((o) => o.value).join('\n\n');
 }
 
-function combineMdastTrees(mdasts: MdastParent[]) {
+function combineMdastTrees(mdasts: MdastParent[]): Root {
   return {
     type: 'root',
     children: mdasts.flatMap((o) => o.children),
@@ -101,14 +101,19 @@ function combineMdastTrees(mdasts: MdastParent[]) {
 }
 
 async function syntaxTreeTransforms(
-  _mdast: MdastParent,
+  _mdast: Root,
   file: VFile,
   unit: Unit,
   ctx: Context,
   targetPdf?: boolean
 ) {
   const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
-  const hast = await hastPhase(mdast, ctx, file, targetPdf);
+  const hast = (await hastPhase(
+    mdast,
+    ctx,
+    file,
+    targetPdf
+  )) as HastParent;
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return { mdast, hast, html };
 }

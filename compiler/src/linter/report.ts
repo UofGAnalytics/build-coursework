@@ -11,15 +11,16 @@ export type Report = {
   files: ReportFile[];
 };
 
-type ReportFile = {
-  path: string;
+export type ReportFile = Omit<VFile, 'messages'> & {
   messages: ReportMessage[];
 };
 
-type ReportMessage = {
+export type ReportMessage = {
   status: MessageStatus;
   position: string;
   reason: string;
+  line: number;
+  column: number;
 };
 
 export function printReport(files: VFile[], ctx: Context) {
@@ -39,32 +40,42 @@ export function printReport(files: VFile[], ctx: Context) {
       // if (file.path !== undefined) {
       //   console.log(`\n${getFilePath(file.path)}`);
       // }
-      messages.map(printMessage);
+      messages.forEach((message) => {
+        printMessage(message);
+      });
     }
   }
 }
 
 export function reportHasFatalErrors(files: VFile[], ctx: Context) {
-  return files.some((file) =>
-    file.messages.some((message) => message.status === MessageStatus.fail)
-  );
+  return files.some((file) => {
+    const messages = file.messages as unknown as ReportMessage[];
+    return messages.some(
+      (message) => message.status === MessageStatus.fail
+    );
+  });
 }
 
 export function reportHasWarnings(files: VFile[], ctx: Context) {
-  return files.some((file) =>
-    file.messages.some(
+  return files.some((file) => {
+    const messages = file.messages as unknown as ReportMessage[];
+    return messages.some(
       (message) => message.status === MessageStatus.warning
-    )
-  );
+    );
+  });
 }
 
-function failingMessages(messages: VFileMessage[]) {
-  return messages.filter((o) => o.status === MessageStatus.fail);
+function failingMessages(_messages: VFileMessage[]) {
+  const messages = _messages as unknown as ReportMessage[];
+  return messages.filter(
+    (o) => o.status === MessageStatus.fail
+  ) as unknown as VFileMessage[];
 }
 
-function printMessage(message: VFileMessage) {
+function printMessage(_message: VFileMessage) {
+  const message = _message as unknown as ReportMessage;
   // console.log(message);
-  const status = message.status as MessageStatus;
+  const status = message.status;
   const position = chalk.grey(`${message.line}:${message.column}`);
   const reason = formatReason(message.reason, status);
   console.log(`${formatStatus(status)}  ${position}  ${reason}`);

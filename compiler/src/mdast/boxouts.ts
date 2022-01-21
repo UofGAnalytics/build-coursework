@@ -1,5 +1,7 @@
-import { Element, Text } from 'hast';
+import { Element, Parent as HastParent, Text } from 'hast';
 import startCase from 'lodash/startCase';
+import { Root } from 'mdast';
+import { ContainerDirective } from 'mdast-util-directive';
 import { toHast } from 'mdast-util-to-hast';
 import { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
@@ -7,15 +9,10 @@ import { visit } from 'unist-util-visit';
 import { Context } from '../context';
 import { createCounter } from '../utils/counter';
 
-interface ContainerDirective extends Parent {
-  name: string;
-  attributes: Record<string, string>;
-}
-
 export function boxouts(refStore: Context['refStore']) {
   const counter = createCounter();
   return async (tree: Node) => {
-    visit<ContainerDirective>(tree, 'containerDirective', (node) => {
+    visit(tree, 'containerDirective', (node: ContainerDirective) => {
       switch (node.name) {
         case 'example':
         case 'error':
@@ -53,7 +50,7 @@ function createAttributes(
     className.push(`${attributes.icon}-icon`);
   }
 
-  if (node.attributes.label !== undefined) {
+  if (node.attributes?.label !== undefined) {
     refStore[node.attributes.label] = id;
   }
 
@@ -79,14 +76,15 @@ export function createBoxout(
     .filter((o) => !o.data?.directiveLabel)
     .filter((o) => o.type !== 'containerDirective' && o.name !== 'answer')
     .map((o) => toHast(o, { allowDangerousHtml: true }))
-    .filter(Boolean);
+    .filter(Boolean) as HastParent[];
 
   if (node.name === 'task') {
     const answer = children.find(
       (o) => o.type === 'containerDirective' && o.name === 'answer'
     );
     if (answer) {
-      content.push(createAnswer(answer, count));
+      const answerHast = createAnswer(answer, count);
+      content.push(answerHast as HastParent);
     }
   }
 
@@ -94,7 +92,7 @@ export function createBoxout(
 }
 
 function createAnswer(node: ContainerDirective, count: number) {
-  const { children } = toHast(node) as Parent;
+  const { children } = toHast(node) as HastParent;
   return {
     type: 'element',
     tagName: 'div',
@@ -137,7 +135,7 @@ function createBoxoutType(
   const label = startCase(name);
   let value = `${label} ${count}`;
 
-  if (node.attributes.optional !== undefined) {
+  if (node.attributes?.optional !== undefined) {
     value += ` (Optional)`;
   }
 
@@ -170,7 +168,7 @@ function createTitleValue(node: ContainerDirective) {
     type: 'root',
     children: getTitleValue(node),
   };
-  const { children = [] } = toHast(newRoot) as Parent;
+  const { children = [] } = toHast(newRoot as Root) as Parent;
   if (name !== 'weblink') {
     return children;
   }

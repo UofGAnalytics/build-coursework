@@ -1,13 +1,12 @@
-import { Node } from 'hast';
-import { Heading } from 'mdast';
+import { Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';
 
 export function assertNoH1() {
-  return (tree: Node, file: VFile) => {
-    visit<Heading>(tree, 'heading', (node) => {
+  return (tree: Root, file: VFile) => {
+    visit(tree, 'heading', (node) => {
       if (node.depth === 1) {
         failMessage(
           file,

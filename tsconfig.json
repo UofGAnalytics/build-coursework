@@ -17,6 +17,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "types": [
       "node",
       "jest"

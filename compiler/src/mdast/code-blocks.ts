@@ -18,7 +18,7 @@ export function codeBlocks(ctx: Context) {
     //   node.value = transformed;
     // });
 
-    visit<Code>(tree, 'code', (node) => {
+    visit(tree, 'code', (node: Code) => {
       customCode(node, ctx, file);
     });
   };

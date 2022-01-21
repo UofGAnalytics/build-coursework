@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { Image, Text } from 'mdast';
+import { HTML, Image } from 'mdast';
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
@@ -15,12 +15,12 @@ export function embedAssetUrl() {
     //   return;
     // }
 
-    visit<Image>(tree, 'image', (node) => {
+    visit(tree, 'image', (node: Image) => {
       node.url = getPath(node.url, dirname);
     });
 
     // also fix for raw html nodes sometimes output by knitr
-    visit<Text>(tree, ['html'], (node) => {
+    visit(tree, 'html', (node: HTML) => {
       const props = getProps(node.value);
       if (props !== null && props.src) {
         const { src, ...otherProps } = props;

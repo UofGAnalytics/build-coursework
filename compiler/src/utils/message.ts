@@ -50,7 +50,7 @@ function messageWithStatus(
   status: MessageStatus
 ) {
   // console.log(message);
-  const msg = file.message(message, position);
+  const msg = file.message(message, position) as MessageWithStatus;
   msg.status = status;
   return msg;
 }

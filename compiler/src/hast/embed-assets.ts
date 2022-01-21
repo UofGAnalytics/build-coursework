@@ -5,7 +5,7 @@ import mimes from 'mime/lite';
 import fetch from 'node-fetch';
 import { toVFile } from 'to-vfile';
 // import { optimize } from 'svgo';
-import { Node, Parent } from 'unist';
+import { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
@@ -40,9 +40,9 @@ export function embedAssets(ctx: Context) {
       failMessage(file, err?.message || '', node.position);
     }
   }
-  return async (tree: Node, file: VFile) => {
+  return async (tree: Element, file: VFile) => {
     const transformations: Promise<void>[] = [];
-    visit<Element>(tree, 'element', (node) => {
+    visit(tree, 'element', (node) => {
       if (node.tagName === 'img') {
         transformations.push(embed(node, file));
       }

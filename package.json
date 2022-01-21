@@ -77,7 +77,7 @@
     "svgo": "^2.4.0",
     "temp-dir": "^2.0.0",
     "to-vfile": "^7.2.3",
-    "unist-util-visit": "^4.1.0",
+    "unist-util-visit": "4.0.0",
     "vfile-reporter": "^7.0.3",
     "vfile-reporter-pretty": "^6.1.0",
     "yargs": "^17.3.1",

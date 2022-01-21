@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { Parent as HastParent } from 'hast';
+import { Parent as HastParent, Root } from 'hast';
 import startCase from 'lodash/startCase';
 import { Parent as MdastParent } from 'mdast';
 import doc, { Options } from 'rehype-document';
@@ -48,7 +48,7 @@ export async function htmlPhase(
     processor.use(doc, docOptions);
   }
 
-  const transformed = await processor.run(hast, file);
+  const transformed = await processor.run(hast as Root, file);
 
   const result = processor.stringify(transformed, file);
 

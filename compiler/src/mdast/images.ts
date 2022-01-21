@@ -7,7 +7,7 @@ import { Context } from '../context';
 
 export function images(ctx: Context) {
   return (tree: Node) => {
-    visit<Image>(tree, 'image', (node) => {
+    visit(tree, 'image', (node) => {
       template(node, ++ctx.figureCounter);
     });
   };

@@ -22,7 +22,7 @@ export function assertAssetExists() {
 
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
-    visit<Image>(tree, 'image', (node) => {
+    visit(tree, 'image', (node) => {
       transformations.push(getAssetUrl(node, file));
     });
     await Promise.all(transformations);
