@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
@@ -9,15 +10,17 @@ import { Context } from '../context';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export async function knitr(file: VFile, ctx: Context) {
   const result = await execKnitr(file, ctx);
-  file.contents = result;
+  file.value = result;
   return file;
 }
 
 // TODO: see what can be done with output when "quiet" in knitr.R is turned off
 async function execKnitr(file: VFile, ctx: Context) {
-  const md = file.contents as string;
+  const md = file.value as string;
   const uniqueId = getUniqueId(md);
   const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);

@@ -1,5 +1,6 @@
-import toHast from 'mdast-util-to-hast';
-import getToc from 'mdast-util-toc';
+import { Root } from 'mdast';
+import { toHast } from 'mdast-util-to-hast';
+import { toc as getToc } from 'mdast-util-toc';
 import { Node } from 'unist';
 
 import crestSvg from '../../../assets/crest.svg';
@@ -13,7 +14,7 @@ import {
 
 export async function createSidebar(mdast: Node) {
   const logo = await createLogo();
-  const toc = getToc(mdast, { maxDepth: 3 }).map as Node;
+  const toc = getToc(mdast as Root, { maxDepth: 3 }).map;
   const tocChildren = toc === null ? [] : [toHast(toc)];
 
   return {

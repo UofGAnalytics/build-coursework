@@ -3,6 +3,10 @@ import fetch from 'node-fetch';
 
 const repo = 'UofGAnalytics/build-coursework';
 
+type ReleaseInfo = {
+  tag_name: string;
+};
+
 export async function checkForLatestVersion() {
   if (process.env.NODE_ENV === 'test') {
     return;
@@ -10,7 +14,7 @@ export async function checkForLatestVersion() {
   const response = await fetch(
     `https://api.github.com/repos/${repo}/releases/latest`
   );
-  const json = await response.json();
+  const json = (await response.json()) as ReleaseInfo;
   const latestTag = json.tag_name.replace('v', '');
   const currentVersion = process.env.VERSION;
 

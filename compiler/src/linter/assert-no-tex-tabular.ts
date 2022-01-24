@@ -6,7 +6,7 @@ import { failMessage } from '../utils/message';
 // https://stackoverflow.com/questions/51803244
 
 export function assertNoTexTabular(file: VFile) {
-  const md = file.contents as string;
+  const md = file.value as string;
   md.split('\n').forEach((line, idx) => {
     if (line.includes('\\begin{tabular}')) {
       failMessage(

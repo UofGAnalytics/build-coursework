@@ -1,5 +1,5 @@
-import { Parent } from 'mdast';
-import unified from 'unified';
+import { Root } from 'mdast';
+import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -7,7 +7,7 @@ import { boxouts } from './boxouts';
 import { moveAnswersToEnd } from './move-answers-to-end';
 
 export async function combinedMdastPhase(
-  mdast: Parent,
+  mdast: Root,
   ctx: Context,
   file: VFile,
   targetPdf?: boolean
@@ -18,5 +18,5 @@ export async function combinedMdastPhase(
     processor.use(moveAnswersToEnd);
   }
 
-  return processor.run(mdast, file) as Promise<Parent>;
+  return processor.run(mdast, file) as Promise<Root>;
 }

@@ -1,13 +1,13 @@
 import { Element } from 'hast';
 import { Image, Text } from 'mdast';
 import { Node } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 
 export function images(ctx: Context) {
   return (tree: Node) => {
-    visit<Image>(tree, 'image', (node) => {
+    visit(tree, 'image', (node) => {
       template(node, ++ctx.figureCounter);
     });
   };

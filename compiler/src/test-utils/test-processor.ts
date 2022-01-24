@@ -3,8 +3,7 @@ import path from 'path';
 
 import { Parent as HastParent } from 'hast';
 import { Parent as MDastParent } from 'mdast';
-// @ts-expect-error
-import toVFile from 'to-vfile';
+import { toVFile } from 'to-vfile';
 import { VFile } from 'vfile';
 
 import { buildUnit } from '../build-unit';

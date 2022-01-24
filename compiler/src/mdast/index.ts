@@ -1,6 +1,3 @@
-import { Parent } from 'mdast';
-// @ts-expect-error
-import normalizeHeadings from 'mdast-normalize-headings';
 import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
 import footnotes from 'remark-footnotes';
@@ -8,9 +5,7 @@ import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
 import slug from 'remark-slug';
-// @ts-expect-error
-import toVFile from 'to-vfile';
-import unified from 'unified';
+import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -47,6 +42,6 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(images, ctx)
     .use(pagebreaks);
 
-  const parsed = processor.parse(file) as Parent;
-  return processor.run(parsed, file) as Promise<Parent>;
+  const parsed = processor.parse(file);
+  return processor.run(parsed, file);
 }

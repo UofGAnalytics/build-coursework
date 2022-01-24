@@ -1,8 +1,7 @@
 import path from 'path';
 
-import { kebabCase } from 'lodash';
-// @ts-expect-error
-import toVFile from 'to-vfile';
+import kebabCase from 'lodash/kebabCase';
+import { toVFile } from 'to-vfile';
 
 import { loadCourseYaml } from './load-course';
 import { loadUnitYaml } from './load-unit';

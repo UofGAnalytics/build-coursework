@@ -73,7 +73,7 @@ function xmlEncode(s) {
   return buf;
 }
 
-function DOMElement(name) {
+export function Element(name) {
   this.nodeName = name;
   this.childNodes = [];
   this.attributes = {};
@@ -89,7 +89,7 @@ function DOMElement(name) {
   }
 }
 
-DOMElement.prototype = {
+Element.prototype = {
   getAttribute: function DOMElement_getAttribute(name) {
     if (name in this.attributes) {
       return this.attributes[name];
@@ -133,7 +133,7 @@ DOMElement.prototype = {
     return this.childNodes.length !== 0;
   },
   cloneNode: function DOMElement_cloneNode() {
-    var newNode = new DOMElement(this.nodeName);
+    var newNode = new Element(this.nodeName);
     newNode.childNodes = this.childNodes;
     newNode.attributes = this.attributes;
     newNode.textContent = this.textContent;
@@ -235,7 +235,7 @@ DOMElementSerializer.prototype = {
     }
   }
 };
-const document = {
+export const document = {
   childNodes: [],
 
   get currentScript() {
@@ -249,7 +249,7 @@ const document = {
   },
 
   createElementNS: function (NS, element) {
-    var elObject = new DOMElement(element);
+    var elObject = new Element(element);
     return elObject;
   },
   createElement: function (element) {
@@ -257,14 +257,14 @@ const document = {
   },
   getElementsByTagName: function (element) {
     if (element === "head") {
-      return [this.head || (this.head = new DOMElement("head"))];
+      return [this.head || (this.head = new Element("head"))];
     }
 
     return [];
   }
 };
 
-function Image() {
+export function Image() {
   this._src = null;
   this.onload = null;
 }
@@ -283,21 +283,21 @@ Image.prototype = {
   }
 
 };
-exports.document = document;
-exports.Image = Image;
-exports.Element = DOMElement;
-var exported_symbols = Object.keys(exports);
+// exports.document = document;
+// exports.Image = Image;
+// exports.Element = DOMElement;
+// var exported_symbols = Object.keys(exports);
 
-exports.setStubs = function (namespace) {
-  exported_symbols.forEach(function (key) {
-    console.assert(!(key in namespace), "property should not be set: " + key);
-    namespace[key] = exports[key];
-  });
-};
+// exports.setStubs = function (namespace) {
+//   exported_symbols.forEach(function (key) {
+//     console.assert(!(key in namespace), "property should not be set: " + key);
+//     namespace[key] = exports[key];
+//   });
+// };
 
-exports.unsetStubs = function (namespace) {
-  exported_symbols.forEach(function (key) {
-    console.assert(key in namespace, "property should be set: " + key);
-    delete namespace[key];
-  });
-};
+// exports.unsetStubs = function (namespace) {
+//   exported_symbols.forEach(function (key) {
+//     console.assert(key in namespace, "property should be set: " + key);
+//     delete namespace[key];
+//   });
+// };

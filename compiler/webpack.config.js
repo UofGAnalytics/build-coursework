@@ -1,28 +1,36 @@
-const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
-const CopyPlugin = require('copy-webpack-plugin');
-const ShebangPlugin = require('webpack-shebang-plugin');
-const InlineEnvironmentVariablesPlugin = require('inline-environment-variables-webpack-plugin');
+import path from "path";
+// import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import nodeExternals from "webpack-node-externals";
+import CopyPlugin from "copy-webpack-plugin";
+import ShebangPlugin from "webpack-shebang-plugin";
+import InlineEnvironmentVariablesPlugin from "inline-environment-variables-webpack-plugin";
 // const GeneratePackageJsonPlugin = require('generate-package-json-webpack-plugin');
 
 // const pkg = require('./package.json');
 
 const isProd = process.env.NODE_ENV === 'production'
+const __dirname = new URL('.', import.meta.url).pathname;
 
-module.exports = {
-  entry: {
-    compiler: path.join(__dirname, 'src/index.ts'),
-    cli: path.join(__dirname, 'src/cli/cli.ts')
-  },
+export default {
+  target: ['node', 'es2020'],
   mode: isProd ? 'production' : 'development',
-  target: 'node',
-  output: {
-    path: path.join(__dirname, 'build'),
-    filename: '[name].js',
-  },
+  devtool: 'cheap-module-source-map',
+  entry: './src/cli/cli.ts',
+  // stats: 'errors-only',
   resolve: {
     extensions: ['.ts', '.js', '.css']
+  },
+  output: {
+    clean: true,
+    path: path.join(__dirname, 'build'),
+    filename: 'index.js',
+  },
+  externals: nodeExternals({
+    importType: 'module',
+    modulesFromFile: true,
+  }),
+  optimization: {
+    minimize: false,
   },
   module: {
     rules: [
@@ -37,19 +45,18 @@ module.exports = {
           },
         ]
       },
-      // {
-      //   test: /\/assets\//,
-      //   use: 'raw-loader',
-      // },
+      {
+        test: /\/assets\//,
+        use: 'raw-loader',
+      },
       // {
       //   test: /\/template\/build\//,
       //   use: 'raw-loader',
       // },
     ]
   },
-  externals: [nodeExternals({ modulesFromFile: true })],
   plugins: [
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
     new ShebangPlugin(),
     // new GeneratePackageJsonPlugin(
     //   {
@@ -69,7 +76,4 @@ module.exports = {
       ],
     }),
   ],
-  optimization: {
-    minimize: false,
-  },
 };

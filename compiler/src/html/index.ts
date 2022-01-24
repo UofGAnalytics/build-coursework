@@ -1,13 +1,12 @@
 import path from 'path';
 
-import { Parent as HastParent } from 'hast';
-import { startCase } from 'lodash';
+import { Parent as HastParent, Root } from 'hast';
+import startCase from 'lodash/startCase';
 import { Parent as MdastParent } from 'mdast';
 import doc, { Options } from 'rehype-document';
-// @ts-expect-error
 import format from 'rehype-format';
 import stringify from 'rehype-stringify';
-import unified from 'unified';
+import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -49,7 +48,7 @@ export async function htmlPhase(
     processor.use(doc, docOptions);
   }
 
-  const transformed = await processor.run(hast, file);
+  const transformed = await processor.run(hast as Root, file);
 
   const result = processor.stringify(transformed, file);
 

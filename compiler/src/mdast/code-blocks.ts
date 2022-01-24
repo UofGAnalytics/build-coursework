@@ -1,9 +1,9 @@
 import { Properties, Text } from 'hast';
 import { Code } from 'mdast';
-// @ts-expect-error
-import refractor from 'refractor';
+import { refractor } from 'refractor';
+import { RefractorElement } from 'refractor/lib/core';
 import { Node } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -18,7 +18,7 @@ export function codeBlocks(ctx: Context) {
     //   node.value = transformed;
     // });
 
-    visit<Code>(tree, 'code', (node) => {
+    visit(tree, 'code', (node: Code) => {
       customCode(node, ctx, file);
     });
   };
@@ -35,7 +35,7 @@ function customCode(node: Code, ctx: Context, file: VFile) {
     codeProps.className = meta;
   }
 
-  const children: Text[] = [];
+  const children: (RefractorElement | Text)[] = [];
   const trimmed = node.value.trim();
   if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
@@ -43,7 +43,8 @@ function customCode(node: Code, ctx: Context, file: VFile) {
       value: trimmed,
     });
   } else {
-    children.push(...refractor.highlight(trimmed, language));
+    const highlighted = refractor.highlight(trimmed, language);
+    children.push(...highlighted.children);
   }
 
   Object.assign(node, {

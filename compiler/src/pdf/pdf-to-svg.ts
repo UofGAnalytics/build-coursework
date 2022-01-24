@@ -1,13 +1,13 @@
 import { Blob } from 'buffer';
 
-import { Element as HastElement, Properties } from 'hast';
+import { Properties, Root } from 'hast';
 import rehype from 'rehype-parse';
 import stringify from 'rehype-stringify';
 import SandboxedModule from 'sandboxed-module';
 import { optimize } from 'svgo';
-import unified from 'unified';
-import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { unified } from 'unified';
+import { Parent } from 'unist';
+import { visit } from 'unist-util-visit';
 
 // @ts-expect-error
 import { Element, Image, document } from './domstubs';
@@ -48,19 +48,22 @@ export async function pdfToSvg(filePath: string) {
 
 async function formatSvg(_str: string) {
   const str = _str.replace(/svg:/g, '');
-  const optimised = optimize(str, { multipass: true }).data;
+  const optimised = optimize(str, { multipass: true });
+  if (optimised.modernError) {
+    throw optimised.modernError;
+  }
   const processor = unified()
     .use(rehype, { fragment: true })
     .use(addWrapper)
     .use(stringify);
-  const parsed = processor.parse(optimised);
+  const parsed = processor.parse(optimised.data);
   const transformed = (await processor.run(parsed)) as Parent;
   return transformed.children[0];
 }
 
 function addWrapper() {
-  return (tree: Node) => {
-    visit<HastElement>(tree, 'element', (node) => {
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
       if (node.tagName === 'svg') {
         const properties = node.properties || {};
         node.properties = {

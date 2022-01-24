@@ -2,7 +2,11 @@ import { VFile } from 'vfile';
 import { VFileMessage } from 'vfile-message';
 
 import { Context } from '../context';
-import { reportHasFatalErrors, reportHasWarnings } from '../linter/report';
+import {
+  ReportMessage,
+  reportHasFatalErrors,
+  reportHasWarnings,
+} from '../linter/report';
 import { MessageStatus } from '../utils/message';
 
 export function createHasFailingMessage(ctx: Context, files: VFile[]) {
@@ -11,7 +15,9 @@ export function createHasFailingMessage(ctx: Context, files: VFile[]) {
       (acc: VFileMessage[], o) => [...acc, ...o.messages],
       []
     );
-    const errors = fileMessages.filter((o) => o.reason === reason);
+    const errors = fileMessages.filter(
+      (o) => o.reason === reason
+    ) as unknown as ReportMessage[];
     if (errors.length === 0) {
       console.log('Message not found in these messages:');
       console.log(fileMessages);
@@ -32,7 +38,9 @@ export function createHasWarningMessage(ctx: Context, files: VFile[]) {
       (acc: VFileMessage[], o) => [...acc, ...o.messages],
       []
     );
-    const errors = fileMessages.filter((o) => o.reason === reason);
+    const errors = fileMessages.filter(
+      (o) => o.reason === reason
+    ) as unknown as ReportMessage[];
     if (errors.length === 0) {
       console.log('Message not found in these messages:');
       console.log(fileMessages);

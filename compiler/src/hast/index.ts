@@ -1,8 +1,7 @@
-import { Parent as HastParent } from 'hast';
-import { Parent as MDastParent } from 'mdast';
+import { Root } from 'mdast';
 import rehypeRaw from 'rehype-raw';
 import remark2rehype from 'remark-rehype';
-import unified from 'unified';
+import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -10,7 +9,7 @@ import { embedAssets } from './embed-assets';
 import { responsiveTables } from './responsive-tables';
 
 export async function hastPhase(
-  mdast: MDastParent,
+  mdast: Root,
   ctx: Context,
   file: VFile,
   targetPdf?: boolean
@@ -24,5 +23,5 @@ export async function hastPhase(
     processor.use(embedAssets, ctx);
   }
 
-  return processor.run(mdast, file) as Promise<HastParent>;
+  return processor.run(mdast, file);
 }

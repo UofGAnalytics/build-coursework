@@ -1,27 +1,23 @@
 import { Literal } from 'mdast';
-import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { LeafDirective } from 'mdast-util-directive';
+import { Node } from 'unist';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';
 
-interface LeafDirective extends Parent {
-  name: string;
-  attributes: Record<string, string>;
-}
-
 export function youtubeVideos() {
   return async (tree: Node, file: VFile) => {
-    visit<LeafDirective>(tree, 'leafDirective', (node) => {
+    visit(tree, 'leafDirective', (node: LeafDirective) => {
       if (node.name === 'video') {
-        const attributes = node.attributes as Record<string, string>;
+        const attributes = node.attributes;
         const title = getTitle(node, file);
         node.data = {
           hName: 'a',
           hProperties: {
             className: ['boxout', 'video'],
-            href: getYoutubeUrl(attributes.id),
-            title: attributes.title || null,
+            href: getYoutubeUrl(attributes?.id || ''),
+            title: attributes?.title || null,
             target: '_blank',
           },
           hChildren: [
@@ -77,7 +73,7 @@ export function youtubeVideos() {
                     },
                     {
                       type: 'text',
-                      value: formatDuration(attributes.duration),
+                      value: formatDuration(attributes?.duration || ''),
                     },
                   ],
                 },
@@ -94,7 +90,7 @@ export function youtubeVideos() {
                   type: 'element',
                   tagName: 'img',
                   properties: {
-                    src: getYoutubeThumbnailUrl(attributes.id),
+                    src: getYoutubeThumbnailUrl(attributes?.id || ''),
                     alt: '',
                   },
                   children: [],

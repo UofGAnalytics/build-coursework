@@ -3,11 +3,10 @@ import path from 'path';
 import { Element, Properties } from 'hast';
 import mimes from 'mime/lite';
 import fetch from 'node-fetch';
-// @ts-expect-error
-import toVFile from 'to-vfile';
+import { toVFile } from 'to-vfile';
 // import { optimize } from 'svgo';
-import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { Parent } from 'unist';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
@@ -41,9 +40,9 @@ export function embedAssets(ctx: Context) {
       failMessage(file, err?.message || '', node.position);
     }
   }
-  return async (tree: Node, file: VFile) => {
+  return async (tree: Element, file: VFile) => {
     const transformations: Promise<void>[] = [];
-    visit<Element>(tree, 'element', (node) => {
+    visit(tree, 'element', (node) => {
       if (node.tagName === 'img') {
         transformations.push(embed(node, file));
       }
@@ -143,8 +142,8 @@ async function embedPdfSvg(imgNode: Element) {
 
 async function embedHtml(imgNode: Element) {
   const src = getImageSrc(imgNode);
-  const contents = await readFile(src);
-  const vfile = toVFile({ contents }) as VFile;
+  const value = await readFile(src);
+  const vfile = toVFile({ value });
   const parsed = rehypeParser().parse(vfile) as Parent;
 
   Object.assign(imgNode, {

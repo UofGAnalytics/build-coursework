@@ -1,17 +1,13 @@
 import { Node, Parent } from 'hast';
-import visit from 'unist-util-visit';
-
-interface ContainerDirective extends Parent {
-  name: string;
-  movedToEnd?: boolean;
-}
+import { ContainerDirective } from 'mdast-util-directive';
+import { visit } from 'unist-util-visit';
 
 export function moveAnswersToEnd() {
   return (tree: Node) => {
-    visit<ContainerDirective>(
+    visit(
       tree,
       'containerDirective',
-      (node, index, parent) => {
+      (node: ContainerDirective, index, parent) => {
         // remove answer from task rehype
         if (node.name === 'task' && node.data) {
           const children = (node.data.hChildren ||
@@ -23,18 +19,23 @@ export function moveAnswersToEnd() {
 
         if (node.name === 'answer') {
           // these nodes have already been moved to the end
-          if (node.movedToEnd) {
+          if (node.attributes?.movedToEnd === 'yes') {
             return;
           }
 
           // remove answer block from task node
           const parentChildren = parent?.children || [];
-          parentChildren.splice(index, 1);
+          parentChildren.splice(index || 0, 1);
 
           // add to root node
           const treeParent = tree as Parent;
           const treeChildren = (treeParent.children || []) as Node[];
-          node.movedToEnd = true;
+
+          node.attributes = {
+            ...(node.attributes || {}),
+            movedToEnd: 'yes',
+          };
+
           treeChildren.push(node);
         }
       }

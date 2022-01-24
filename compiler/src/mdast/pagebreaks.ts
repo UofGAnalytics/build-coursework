@@ -1,14 +1,10 @@
-import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
-
-interface LeafDirective extends Parent {
-  name: string;
-  attributes: Record<string, string>;
-}
+import { LeafDirective } from 'mdast-util-directive';
+import { Node } from 'unist';
+import { visit } from 'unist-util-visit';
 
 export function pagebreaks() {
   return async (tree: Node) => {
-    visit<LeafDirective>(tree, 'leafDirective', (node) => {
+    visit(tree, 'leafDirective', (node: LeafDirective) => {
       if (node.name === 'pagebreak') {
         node.data = {
           hName: 'hr',

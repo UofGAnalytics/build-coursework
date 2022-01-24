@@ -1,27 +1,22 @@
 import { Element, Literal } from 'hast';
-import { Node, Parent } from 'unist';
-import visit from 'unist-util-visit';
+import { Parent, Root } from 'mdast';
+import { TextDirective } from 'mdast-util-directive';
+import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 import { rehypeParser } from '../utils/utils';
 import { mmlToSpeech, mmlToSvg } from './mathjax-tex';
 
-interface TextDirective extends Parent {
-  name: string;
-  attributes: Record<string, string>;
-  children: Literal[];
-}
-
 export function aliasDirectiveToSvg(ctx: Context) {
-  return (tree: Node) => {
-    visit<TextDirective>(tree, 'textDirective', (node) => {
+  return (tree: Root) => {
+    visit(tree, 'textDirective', (node) => {
       if (!ctx.mmlStore || ctx.options.noTexSvg) {
         return;
       }
       switch (node.name) {
         case 'inlineMath':
         case 'blockMath': {
-          const idx = getTexIdx(node);
+          const idx = getTexIdx(node as TextDirective);
           const mml = ctx.mmlStore[idx];
           const svg = renderSvg(mml);
           const properties = {
@@ -41,8 +36,9 @@ export function aliasDirectiveToSvg(ctx: Context) {
   };
 }
 
-function getTexIdx(node: TextDirective) {
-  return Number(node.children[0].value);
+function getTexIdx(node: Parent) {
+  const firstChild = node.children[0] as Literal;
+  return Number(firstChild.value || 0);
 }
 
 function getRefId(mml: string) {
@@ -60,7 +56,7 @@ function renderSvg(mml: string) {
 }
 
 function createAccessibleSvg(mathjaxSvg: string, label: string = '') {
-  const tree = rehypeParser.parse(mathjaxSvg) as Element;
+  const tree = rehypeParser.parse(mathjaxSvg);
   const parent = tree.children[0] as Element;
   const svg = parent.children[0] as Element;
   const properties = svg.properties as Record<string, string>;

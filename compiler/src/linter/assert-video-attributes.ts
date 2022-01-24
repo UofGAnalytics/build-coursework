@@ -1,23 +1,20 @@
 import { Literal, Parent } from 'mdast';
+import { Root } from 'mdast';
+import { LeafDirective } from 'mdast-util-directive';
 import { Node } from 'unist';
-import visit from 'unist-util-visit';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { failMessage } from '../utils/message';
 
-interface LeafDirective extends Parent {
-  name: string;
-  attributes: Record<string, string>;
-}
-
 export function assertVideoAttributes() {
-  return async (tree: Node, file: VFile) => {
-    visit<LeafDirective>(tree, 'leafDirective', (node) => {
+  return async (tree: Root, file: VFile) => {
+    visit(tree, 'leafDirective', (node: LeafDirective) => {
       if (node.name === 'video') {
-        if (!node.attributes.id) {
+        if (!node.attributes?.id) {
           failMessage(file, 'id attribute is required', node.position);
         }
-        if (!node.attributes.duration) {
+        if (!node.attributes?.duration) {
           failMessage(
             file,
             'duration attribute is required',

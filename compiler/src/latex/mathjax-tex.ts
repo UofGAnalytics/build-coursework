@@ -9,7 +9,7 @@ import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js';
 import { mathjax } from 'mathjax-full/js/mathjax.js';
 import { SVG } from 'mathjax-full/js/output/svg.js';
 // @ts-expect-error
-import { toSpeech } from 'speech-rule-engine';
+import SRE from 'speech-rule-engine';
 
 export function texToMml(tex: string = '') {
   const adaptor = liteAdaptor();
@@ -33,5 +33,5 @@ export function mmlToSvg(mml: string) {
 }
 
 export function mmlToSpeech(mml: string) {
-  return toSpeech(mml);
+  return SRE.toSpeech(mml);
 }

@@ -1,15 +1,15 @@
 import { exec } from 'child_process';
 
-import { Literal } from 'mdast';
-import { Node, Position } from 'unist';
-import visit from 'unist-util-visit';
+import { Literal, Root } from 'mdast';
+import { Position } from 'unist';
+import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 export function lintLatex() {
-  return async (tree: Node, file: VFile) => {
+  return async (tree: Root, file: VFile) => {
     const transformations: Promise<void>[] = [];
 
-    visit<Literal>(tree, 'math', (node) => {
+    visit(tree, 'math', (node: Literal) => {
       transformations.push(chktex(node, file));
     });
 
