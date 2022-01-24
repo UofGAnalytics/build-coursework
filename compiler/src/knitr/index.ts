@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import chalk from 'chalk';
 import hashSum from 'hash-sum';
@@ -9,7 +10,7 @@ import { Context } from '../context';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export async function knitr(file: VFile, ctx: Context) {
   const result = await execKnitr(file, ctx);
