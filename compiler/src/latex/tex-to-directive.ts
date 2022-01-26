@@ -2,8 +2,8 @@ import {
   LiteAdaptor,
   liteAdaptor,
 } from 'mathjax-full/js/adaptors/liteAdaptor.js';
-import { MathDocument } from 'mathjax-full/js/core/MathDocument';
-import * as MathItem from 'mathjax-full/js/core/MathItem';
+import { MathDocument } from 'mathjax-full/js/core/MathDocument.js';
+import * as MathItem from 'mathjax-full/js/core/MathItem.js';
 import { SerializedMmlVisitor } from 'mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js';
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js';
 import { TeX } from 'mathjax-full/js/input/tex.js';
