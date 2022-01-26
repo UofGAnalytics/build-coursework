@@ -13,13 +13,13 @@ describe('latex', () => {
       Here is an example of $Y$ inline tex
     `);
 
-    const expectedMd = unindentStringAndTrim(`
+    const expectedMd = ignoreWhitespace(`
       :blockMath[0]
 
       Here is an example of :inlineMath[1] inline tex
     `);
 
-    expect(md).toBe(expectedMd);
+    expect(ignoreWhitespace(md)).toBe(expectedMd);
   });
 
   it('should add references correctly', async () => {
