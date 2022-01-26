@@ -10,6 +10,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
+// import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 import { createSvg } from '../utils/icons';
 import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
@@ -38,6 +39,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(embedAssetUrl)
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
+    // .use(aliasDirectiveToTex, ctx)
     .use(codeBlocks, ctx)
     .use(images, ctx)
     .use(pagebreaks);

@@ -6,6 +6,22 @@ import {
 } from '../../test-utils/test-processor';
 
 describe('latex', () => {
+  it('should render inline latex', async () => {
+    const { md, html } = await testProcessor(String.raw`
+      \begin{align} a=b \label{eqn:chainrule} \end{align}
+
+      Here is an example of $Y$ inline tex
+    `);
+
+    const expectedMd = unindentStringAndTrim(`
+      :blockMath[0]
+
+      Here is an example of :inlineMath[1] inline tex
+    `);
+
+    expect(md).toBe(expectedMd);
+  });
+
   it('should add references correctly', async () => {
     const id = 'eqn:chainrule';
 
