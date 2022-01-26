@@ -7,7 +7,7 @@ import {
 
 describe('latex', () => {
   it('should render inline latex', async () => {
-    const { md, html } = await testProcessor(String.raw`
+    const { md } = await testProcessor(String.raw`
       \begin{align} a=b \label{eqn:chainrule} \end{align}
 
       Here is an example of $Y$ inline tex
