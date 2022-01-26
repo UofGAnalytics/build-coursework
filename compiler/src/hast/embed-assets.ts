@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { Element, Properties } from 'hast';
-import mimes from 'mime/lite';
+import mimes from 'mime/lite.js';
 import fetch from 'node-fetch';
 import { toVFile } from 'to-vfile';
 // import { optimize } from 'svgo';

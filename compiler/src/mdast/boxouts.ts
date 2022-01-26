@@ -1,5 +1,5 @@
 import { Element, Parent as HastParent, Text } from 'hast';
-import startCase from 'lodash/startCase';
+import startCase from 'lodash/startCase.js';
 import { Root } from 'mdast';
 import { ContainerDirective } from 'mdast-util-directive';
 import { toHast } from 'mdast-util-to-hast';
