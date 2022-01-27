@@ -23,17 +23,19 @@
     "check-types": "tsc",
     "build-release": "tsc && yarn workspace template build && yarn workspace compiler build && yarn merge-release",
     "merge-release": "mkdirp release && rimraf release/* && cpy .release-it.json release/ && cpy compiler/build/* release/ && cpy template/build/* release/",
-    "release": "cd release && release-it"
+    "release": "release-it"
   },
   "dependencies": {
     "@double-great/remark-lint-alt-text": "^0.7.0",
     "@mapbox/remark-lint-link-text": "^0.6.0",
+    "base64-arraybuffer": "^1.0.2",
     "chalk": "^5.0.0",
     "dictionary-en-gb": "^2.3.0",
     "escape-latex": "^1.2.0",
     "figures": "^4.0.0",
     "hash-sum": "^2.0.0",
     "highlight.js": "^11.4.0",
+    "image-size": "^1.0.1",
     "js-yaml": "^4.0.0",
     "latex": "^0.0.1",
     "lodash": "^4.17.20",
@@ -64,6 +66,7 @@
     "remark-highlight.js": "^7.0.1",
     "remark-lint": "^9.1.1",
     "remark-math": "^5.1.1",
+    "remark-parse": "^10.0.1",
     "remark-preset-lint-markdown-style-guide": "^5.1.2",
     "remark-rehype": "^10.1.0",
     "remark-retext": "^5.0.1",
