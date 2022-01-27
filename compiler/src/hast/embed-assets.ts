@@ -1,6 +1,8 @@
 import path from 'path';
 
+import { encode as base46Encode } from 'base64-arraybuffer';
 import { Element, Properties } from 'hast';
+import sizeOf from 'image-size';
 import mimes from 'mime/lite.js';
 import fetch from 'node-fetch';
 import { toVFile } from 'to-vfile';
@@ -56,11 +58,14 @@ async function embedImage(node: Element, ctx: Context, file: VFile) {
   const mime = mimes.getType(path.extname(src));
   try {
     const image = await getImage(src, ctx);
+    const { width } = sizeOf(Buffer.from(image, 'base64'));
     node.properties = {
       ...node.properties,
       src: `data:${mime};base64,${image}`,
+      style: [`max-width: ${width}px`],
     };
   } catch (err) {
+    console.log(err);
     failMessage(file, `Image not found: ${src}`);
   }
 }
@@ -122,8 +127,8 @@ async function getImage(src: string, ctx: Context) {
 
 async function getImageDataFromWeb(src: string) {
   const response = await fetch(src);
-  const buffer = await response.buffer();
-  return buffer.toString('base64');
+  const buffer = await response.arrayBuffer();
+  return base46Encode(buffer);
 }
 
 async function embedPdfSvg(imgNode: Element) {

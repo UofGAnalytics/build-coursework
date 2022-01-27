@@ -9,11 +9,11 @@ type Options = {
   ctx: Context;
   prefix: string;
   key: string;
-  execFn: (code: string) => Promise<string | Object>;
+  execFn: (code: string) => Promise<string>;
   json?: boolean;
 };
 
-export async function cacheToFile(options: Options) {
+export async function cacheToFile(options: Options): Promise<string> {
   const { ctx, prefix, key, execFn, json } = options;
 
   if (ctx.options.noCache === true) {
