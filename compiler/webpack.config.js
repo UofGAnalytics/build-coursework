@@ -8,8 +8,10 @@ import GeneratePackageJsonPlugin from "generate-package-json-webpack-plugin";
 
 const isProd = process.env.NODE_ENV === 'production'
 const __dirname = new URL('.', import.meta.url).pathname;
+const buildPath = path.join(__dirname, 'build')
+const pkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'package.json'), 'utf-8'));
 
-const VERSION = '1.1.31'
+const VERSION = '1.1.32'
 
 export default {
   target: ['node', 'es2020'],
@@ -22,7 +24,7 @@ export default {
   },
   output: {
     clean: true,
-    path: path.join(__dirname, 'build'),
+    path: buildPath,
     filename: 'cli.js',
   },
   externals: nodeExternals({
@@ -61,7 +63,7 @@ export default {
     new GeneratePackageJsonPlugin(
       {
         "name": 'build-coursework',
-        "version": VERSION,
+        "version": pkg.version,
         "repository": "https://github.com/UofGAnalytics/build-coursework.git",
         "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
         "license": "MIT",
