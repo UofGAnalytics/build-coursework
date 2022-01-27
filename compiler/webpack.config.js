@@ -8,9 +8,8 @@ import GeneratePackageJsonPlugin from "generate-package-json-webpack-plugin";
 
 const isProd = process.env.NODE_ENV === 'production'
 const __dirname = new URL('.', import.meta.url).pathname;
-const packagePath = path.join(__dirname, 'package.json')
-console.log(packagePath)
-const pkg = JSON.parse(await fs.promises.readFile(packagePath, 'utf-8'));
+
+const VERSION = '1.1.31'
 
 export default {
   target: ['node', 'es2020'],
@@ -62,7 +61,7 @@ export default {
     new GeneratePackageJsonPlugin(
       {
         "name": 'build-coursework',
-        "version": pkg.version,
+        "version": VERSION,
         "repository": "https://github.com/UofGAnalytics/build-coursework.git",
         "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
         "license": "MIT",
@@ -72,7 +71,7 @@ export default {
       },
       path.join(__dirname, 'package.json')
     ),
-    new InlineEnvironmentVariablesPlugin({ VERSION: '1.1.31' }),
+    new InlineEnvironmentVariablesPlugin({ VERSION }),
     new CopyPlugin({
       patterns: [
         { from: './src/knitr/knitr.R', to: './' },
