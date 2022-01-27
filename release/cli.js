@@ -363,17 +363,21 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony export */ });
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var mime_lite_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(799);
-/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6544);
-/* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1252);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6016);
-/* harmony import */ var _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(511);
-/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2303);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2430);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(153);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_utils__WEBPACK_IMPORTED_MODULE_9__, to_vfile__WEBPACK_IMPORTED_MODULE_3__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_5__, node_fetch__WEBPACK_IMPORTED_MODULE_2__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_6__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_7__, mime_lite_js__WEBPACK_IMPORTED_MODULE_1__, unist_util_visit__WEBPACK_IMPORTED_MODULE_4__]);
-([_utils_utils__WEBPACK_IMPORTED_MODULE_9__, to_vfile__WEBPACK_IMPORTED_MODULE_3__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_5__, node_fetch__WEBPACK_IMPORTED_MODULE_2__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_6__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_7__, mime_lite_js__WEBPACK_IMPORTED_MODULE_1__, unist_util_visit__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+/* harmony import */ var base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2845);
+/* harmony import */ var image_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7632);
+/* harmony import */ var mime_lite_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(799);
+/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6544);
+/* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1252);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6016);
+/* harmony import */ var _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(511);
+/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2303);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(2430);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(153);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(8061);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_utils__WEBPACK_IMPORTED_MODULE_11__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__]);
+([_utils_utils__WEBPACK_IMPORTED_MODULE_11__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+
+
 
 
 
@@ -411,13 +415,13 @@ function embedAssets(ctx) {
       }
     } catch (_err) {
       const err = _err;
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_8__/* .failMessage */ .Ob)(file, err?.message || '', node.position);
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_10__/* .failMessage */ .Ob)(file, err?.message || '', node.position);
     }
   }
 
   return async (tree, file) => {
     const transformations = [];
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_4__.visit)(tree, 'element', node => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_6__.visit)(tree, 'element', node => {
       if (node.tagName === 'img') {
         transformations.push(embed(node, file));
       }
@@ -428,25 +432,30 @@ function embedAssets(ctx) {
 
 async function embedImage(node, ctx, file) {
   const src = getImageSrc(node);
-  const mime = mime_lite_js__WEBPACK_IMPORTED_MODULE_1__["default"].getType(path__WEBPACK_IMPORTED_MODULE_0___default().extname(src));
+  const mime = mime_lite_js__WEBPACK_IMPORTED_MODULE_3__["default"].getType(path__WEBPACK_IMPORTED_MODULE_0___default().extname(src));
 
   try {
     const image = await getImage(src, ctx);
+    const {
+      width
+    } = (0,image_size__WEBPACK_IMPORTED_MODULE_2__["default"])(Buffer.from(image, 'base64'));
     node.properties = { ...node.properties,
-      src: `data:${mime};base64,${image}`
+      src: `data:${mime};base64,${image}`,
+      style: [`max-width: ${width}px`]
     };
   } catch (err) {
-    (0,_utils_message__WEBPACK_IMPORTED_MODULE_8__/* .failMessage */ .Ob)(file, `Image not found: ${src}`);
+    console.log(err);
+    (0,_utils_message__WEBPACK_IMPORTED_MODULE_10__/* .failMessage */ .Ob)(file, `Image not found: ${src}`);
   }
 }
 
 async function embedSvg(imgNode, ctx) {
   const src = getImageSrc(imgNode);
-  const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_9__/* .readFile */ .pJ)(src);
+  const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .readFile */ .pJ)(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
 
-  const svgNode = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_7__/* .getAssetHast */ .j)(svg);
+  const svgNode = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__/* .getAssetHast */ .j)(svg);
   const className = 'knitr-svg';
   const properties = { ...imgNode.properties,
     ...svgNode.properties,
@@ -484,7 +493,7 @@ function getImageSrc(node) {
 
 async function getImage(src, ctx) {
   if (src.startsWith('http')) {
-    return (0,_utils_cache_to_file__WEBPACK_IMPORTED_MODULE_6__/* .cacheToFile */ .G)({
+    return (0,_utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__/* .cacheToFile */ .G)({
       ctx,
       prefix: 'youtube',
       key: src,
@@ -492,18 +501,18 @@ async function getImage(src, ctx) {
     });
   }
 
-  return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_9__/* .readFile */ .pJ)(src, 'base64');
+  return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .readFile */ .pJ)(src, 'base64');
 }
 
 async function getImageDataFromWeb(src) {
-  const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_2__["default"])(src);
-  const buffer = await response.buffer();
-  return buffer.toString('base64');
+  const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_4__["default"])(src);
+  const buffer = await response.arrayBuffer();
+  return (0,base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__.encode)(buffer);
 }
 
 async function embedPdfSvg(imgNode) {
   const src = getImageSrc(imgNode);
-  const svgNode = await (0,_pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_5__/* .pdfToSvg */ .k)(src);
+  const svgNode = await (0,_pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .pdfToSvg */ .k)(src);
   const properties = { ...imgNode.properties,
     ...svgNode.properties
   };
@@ -515,11 +524,11 @@ async function embedPdfSvg(imgNode) {
 
 async function embedHtml(imgNode) {
   const src = getImageSrc(imgNode);
-  const value = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_9__/* .readFile */ .pJ)(src);
-  const vfile = (0,to_vfile__WEBPACK_IMPORTED_MODULE_3__.toVFile)({
+  const value = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .readFile */ .pJ)(src);
+  const vfile = (0,to_vfile__WEBPACK_IMPORTED_MODULE_5__.toVFile)({
     value
   });
-  const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_9__/* .rehypeParser */ .G5)().parse(vfile);
+  const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .rehypeParser */ .G5)().parse(vfile);
   Object.assign(imgNode, {
     tagName: 'div',
     properties: {
@@ -1561,8 +1570,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2338);
 /* harmony import */ var _linter_assert_no_tex_tabular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5187);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(153);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__]);
-([mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__]);
+([mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
 
 
 
@@ -1570,7 +1579,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([math
 
 
 
- // import { assertNoTexTabular } from '../linter/assert-no-tex-tabular';
 
  // This custom MathJax implementation has had to diverge from the provided demos found
 // here: https://github.com/mathjax/MathJax-demos-node, because they are all focused on
@@ -1588,101 +1596,64 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([math
 
 function texToAliasDirective(file, ctx) {
   // simple regex tests
-  // why?
   (0,_linter_assert_no_tex_tabular__WEBPACK_IMPORTED_MODULE_7__/* .assertNoTexTabular */ .d)(file);
   const md = file.value;
-  const tex = new mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__.TeX({
-    // Bussproofs requires an output jax
-    packages: mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__.AllPackages.filter(name => name !== 'bussproofs'),
-    // Allow numbered references
-    tags: 'ams',
-    // Allow single $ delimiters
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], [`\\[`, `\\]`]]
-  });
-  const store = buildMmlStore(md, tex); // console.log(store);
-
-  const result = replaceTexWithPlaceholder(md, tex, store, file); // add store to ctx
-
-  ctx.mmlStore = store; // replace md in VFile
-
-  file.value = postParse(result);
-  return file;
-} // This is based on https://github.com/mathjax/MathJax-demos-node/blob/f70342b69533dbc24b460f6d6ef341dfa7856414/direct/tex2mml-page
-// except I don't return the HTML, instead I compile a list of the extracted LaTeX converted to MathML
-
-function buildMmlStore(md, tex) {
   const store = [];
   const adaptor = (0,mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__.liteAdaptor)();
-  (0,mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__.RegisterHTMLHandler)(adaptor);
   const visitor = new mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__.SerializedMmlVisitor();
-
-  function storeMml({
-    math
-  }) {
-    for (const item of Array.from(math)) {
-      // convert to MML
-      const mml = visitor.visitTree(item.root);
-      store.push(mml);
-      const tree = adaptor.parse('**unused**', 'text/html');
-      item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
-    }
-  }
-
+  (0,mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__.RegisterHTMLHandler)(adaptor);
   const doc = mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__.mathjax.document(md, {
-    InputJax: tex,
+    InputJax: new mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__.TeX({
+      // Bussproofs requires an output jax
+      packages: mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__.AllPackages.filter(name => name !== 'bussproofs'),
+      // Allow numbered references
+      tags: 'ams',
+      // Allow single $ delimiters
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], [`\\[`, `\\]`]]
+    }),
+    // wrap verbatim latex with <div class="mathjax-ignore"></div>
+    ignoreHtmlClass: 'mathjax-ignore',
     renderActions: {
-      typeset: [mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__.STATE.TYPESET, storeMml]
+      typeset: [mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__.STATE.TYPESET, ({
+        math
+      }) => {
+        for (const item of Array.from(math)) {
+          let newMarkdown = ''; // convert to MathML
+
+          const mml = visitor.visitTree(item.root);
+          assertNoMmlError(mml, file); // escaped dollar sign...
+
+          if (item.math === '$') {
+            newMarkdown = '$';
+          } // double backslash...
+          else if (item.math === '\\') {
+            newMarkdown = '\\\\';
+          } // reference link...
+          else if (isReferenceLink(item.math)) {
+            const refNum = extractRefNumFromMml(mml, item.math, file);
+            const anchor = extractAnchorLinkFromMml(mml, item.math, file);
+            newMarkdown = `[${refNum}](${anchor})`;
+          } // normal use case (equation)...
+          else {
+            store.push(mml);
+            const type = item.display ? 'blockMath' : 'inlineMath';
+            newMarkdown = `:${type}[${store.length - 1}]`;
+          }
+
+          const tree = adaptor.parse(newMarkdown, 'text/html');
+          item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
+        }
+      }]
     }
-  });
-  doc.render();
-  return store;
-}
+  }); // add store to ctx
 
-function replaceTexWithPlaceholder(md, tex, store, file) {
-  // Extract the LaTeX from the document again
-  const extractedLatex = tex.findMath([md]); // Replace it with a placeholder for use later
+  ctx.mmlStore = store;
+  doc.render(); // replace md in VFile
 
-  return extractedLatex.map((item, idx) => ({ ...item,
-    idx
-  })).reverse().reduce((acc, item) => {
-    const placeholder = createPlaceholder(item, store, file);
-    const prev = acc.slice(0, item.start.n);
-    const next = acc.slice(item.end.n);
-    return prev + placeholder + next;
-  }, md);
-}
-
-function createPlaceholder(item, store, file) {
-  // escaped dollar sign...
-  if (item.math === '$') {
-    return '$';
-  } // double backslash...
-
-
-  if (item.math === '\\') {
-    return '\\\\';
-  }
-
-  const mml = store[item.idx]; // why?
-
-  if (!mml) {
-    return '';
-  }
-
-  assertNoMmlError(mml, file); // debug
-  // console.log(item.math, mml);
-  // reference link...
-
-  if (isReferenceLink(item.math)) {
-    const refNum = extractRefNumFromMml(mml, item.math, file);
-    const anchor = extractAnchorLinkFromMml(mml, item.math, file);
-    return `[${refNum}](${anchor})`;
-  } // normal use case (equation)...
-
-
-  const type = item.display ? 'blockMath' : 'inlineMath';
-  return `:${type}[${item.idx}]`;
+  const result = adaptor.innerHTML(adaptor.body(doc.document));
+  file.value = postParse(result);
+  return file;
 }
 
 function assertNoMmlError(mml, file) {
@@ -1725,9 +1696,14 @@ function extractAnchorLinkFromMml(mml, tex, file) {
 
 function postParse(html) {
   let result = html;
+  result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
-  console.log(result);
   return result;
+} // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
+
+
+function unprotectHtml(html) {
+  return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
 function removeUnresolvedLabels(html) {
@@ -2830,7 +2806,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 
 
 
- // import { aliasDirectiveToText } from '../latex/directive-to-text';
+ // import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 
 
 
@@ -2852,7 +2828,7 @@ async function mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_10__/* .embedAssetUrl */ .Z).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_13__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx) // .use(aliasDirectiveToText, ctx)
+  .use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_10__/* .embedAssetUrl */ .Z).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_13__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx) // .use(aliasDirectiveToTex, ctx)
   .use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_images__WEBPACK_IMPORTED_MODULE_11__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_12__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
@@ -3440,9 +3416,7 @@ function reformatPandocSimpleTables(contents) {
   // preserving index in loop
 
   for (var idx = lines.length - 1; idx >= 0; idx--) {
-    const line = lines[idx];
-
-    if (isValidPandocSimpleTableSeparator(line, idx)) {
+    if (isValidPandocSimpleTableSeparator(lines, idx)) {
       const {
         startIdx,
         count
@@ -3456,21 +3430,26 @@ function reformatPandocSimpleTables(contents) {
   return lines.join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
 
-function isValidPandocSimpleTableSeparator(line, idx) {
+function isValidPandocSimpleTableSeparator(lines, idx, isEnd) {
+  const line = lines[idx] || '';
+
   if (idx === 0 || !/-{2,}/g.test(line) || !/^[\s|-]+$/.test(line)) {
     return false;
   }
 
-  return getColumnIndexes(line).length > 1;
-}
+  if (getColumnIndexes(line).length <= 1) {
+    return false;
+  }
 
-function convertLines(lines) {
-  const table = parseTable(lines);
-  const align = getColumnAlignment(table[0]);
-  const result = (0,markdown_table__WEBPACK_IMPORTED_MODULE_1__.markdownTable)(table, {
-    align
-  });
-  return [...result.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL), ''];
+  if (!isEnd) {
+    const nextLine = lines[idx + 1] || '';
+
+    if (nextLine.trim() === '') {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function getTableBounds(arr, idx) {
@@ -3483,12 +3462,28 @@ function getTableBounds(arr, idx) {
   };
 }
 
-function parseTable(tableLines) {
-  const [titles, separator, ...body] = tableLines;
+function convertLines(lines) {
+  const table = parseTable(lines);
+  const align = getColumnAlignment(table[0]);
+  const result = (0,markdown_table__WEBPACK_IMPORTED_MODULE_1__.markdownTable)(table, {
+    align
+  });
+  return [...result.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL), ''];
+}
+
+function parseTable(lines) {
+  const [titles, separator, ...body] = lines;
   const columnIndexes = getColumnIndexes(separator);
   const titleCells = parseTitleRow(titles, columnIndexes);
-  const bodyCells = body.map(line => parseBodyRow(line, columnIndexes)).reduce(multilineReducer, []);
-  return [titleCells, ...bodyCells];
+  const rows = body.map(line => parseBodyRow(line, columnIndexes));
+  const hasEndSeparator = isValidPandocSimpleTableSeparator(body, body.length - 1, true);
+
+  if (hasEndSeparator) {
+    return [titleCells, ...rows.slice(0, -1)];
+  }
+
+  const multilineRows = rows.reduce(multilineReducer, []);
+  return [titleCells, ...multilineRows];
 }
 
 function getColumnIndexes(line) {
@@ -3539,7 +3534,7 @@ function multilineReducer(acc, row) {
       }
     });
   } else {
-    acc.push(row);
+    acc.push(row.slice());
   }
 
   return acc;
@@ -3642,7 +3637,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.29";
+  const currentVersion = "1.1.30";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
@@ -4265,6 +4260,14 @@ module.exports = import("@mapbox/remark-lint-link-text");;
 
 /***/ }),
 
+/***/ 2845:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("base64-arraybuffer");;
+
+/***/ }),
+
 /***/ 7564:
 /***/ ((module) => {
 
@@ -4294,6 +4297,14 @@ module.exports = import("figures");;
 
 "use strict";
 module.exports = import("hash-sum");;
+
+/***/ }),
+
+/***/ 7632:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("image-size");;
 
 /***/ }),
 
