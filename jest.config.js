@@ -1,7 +1,7 @@
 // const esModules = ['chalk', 'to-vfile'].join('|');
 
 module.exports = {
-  verbose: true,
+  // verbose: true,
   extensionsToTreatAsEsm: ['.ts'],
   // transformIgnorePatterns: [`/node_modules/(?!${esModules})`],
   testTimeout: 30000,

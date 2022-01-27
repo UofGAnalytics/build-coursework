@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { Parent as HastParent, Root } from 'hast';
-import startCase from 'lodash/startCase';
+import startCase from 'lodash/startCase.js';
 import { Parent as MdastParent } from 'mdast';
 import doc, { Options } from 'rehype-document';
 import format from 'rehype-format';

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import kebabCase from 'lodash/kebabCase';
+import kebabCase from 'lodash/kebabCase.js';
 import { toVFile } from 'to-vfile';
 
 import { loadCourseYaml } from './load-course';

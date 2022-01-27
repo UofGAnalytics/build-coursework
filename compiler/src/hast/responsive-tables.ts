@@ -1,5 +1,5 @@
 import { Element } from 'hast';
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from 'lodash/cloneDeep.js';
 import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 

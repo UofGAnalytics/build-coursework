@@ -19,7 +19,7 @@
     "dev": "concurrently yarn:compiler yarn:template -c green,cyan",
     "compiler": "babel-node --extensions .ts dev.ts",
     "template": "yarn workspace template dev",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
     "check-types": "tsc",
     "build-release": "tsc && yarn workspace template build && yarn workspace compiler build && yarn merge-release",
     "merge-release": "mkdirp release && rimraf release/* && cpy compiler/build/* release/ && cpy template/build/* release/",

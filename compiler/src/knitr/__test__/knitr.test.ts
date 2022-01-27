@@ -230,7 +230,7 @@ describe('knitr', () => {
       { noSyntaxHighlight: false }
     );
     expect(md).toContain(
-      'beetles\\$propkilled <- beetles\\$killed / beetles\\$number'
+      'beetles$propkilled <- beetles$killed / beetles$number'
     );
     expect(ignoreWhitespace(html)).toContain(
       ignoreWhitespace(`
@@ -238,15 +238,15 @@ describe('knitr', () => {
         <pre>
           <code>
             beetles
-            \\<span class="token operator">$</span>
+            <span class="token operator">$</span>
             propkilled
             <span class="token operator">&#x3C;-</span>
             beetles
-            \\<span class="token operator">$</span>
+            <span class="token operator">$</span>
             killed
             <span class="token operator">/</span>
             beetles
-            \\<span class="token operator">$</span>
+            <span class="token operator">$</span>
             number
           </code>
         </pre>
@@ -310,7 +310,7 @@ describe('knitr', () => {
       </div>
       <div class="code-wrapper python-error-output">
         <h6 class="console-heading">Python Console</h6>
-        <pre><code>Error in py_call_impl(callable, dots\\$args, dots\\$keywords): NameError: name 'a' is not defined
+        <pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
         Detailed traceback:
           File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
       </div>
@@ -329,6 +329,7 @@ describe('knitr', () => {
         <h6 class="console-heading">R Console</h6>
         <pre><code>Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
       </div>
+      <p></p>
     `);
 
     expect(ignoreWhitespace(html)).toBe(result);
