@@ -22,8 +22,8 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
     "check-types": "tsc",
     "build-release": "tsc && yarn workspace template build && yarn workspace compiler build && yarn merge-release",
-    "merge-release": "mkdirp release && rimraf release/* && cpy compiler/build/* release/ && cpy template/build/* release/",
-    "release": "release-it"
+    "merge-release": "mkdirp release && rimraf release/* && cpy .release-it.json release/ && cpy compiler/build/* release/ && cpy template/build/* release/",
+    "release": "cd release && release-it"
   },
   "dependencies": {
     "@double-great/remark-lint-alt-text": "^0.7.0",
