@@ -1191,9 +1191,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash
 
 
 
-
-const __dirname = path__WEBPACK_IMPORTED_MODULE_1___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_2__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/index.ts"));
-
 async function knitr(file, ctx) {
   const result = await execKnitr(file, ctx);
   file.value = result;
@@ -1234,9 +1231,10 @@ function getUniqueId(md) {
 }
 
 function createKnitrCommand(file, ctx, uniqueId) {
+  const rFileDir = getKnitrFileDir();
+  const rFile = path__WEBPACK_IMPORTED_MODULE_1___default().join(rFileDir, 'knitr.R');
   const filePath = file.path || '';
   const baseDir = file.dirname || '';
-  const rFile = path__WEBPACK_IMPORTED_MODULE_1___default().join(__dirname, 'knitr.R');
   const cacheDir = path__WEBPACK_IMPORTED_MODULE_1___default().join(ctx.cacheDir, uniqueId);
   let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
 
@@ -1245,6 +1243,16 @@ function createKnitrCommand(file, ctx, uniqueId) {
   }
 
   return cmd;
+}
+
+function getKnitrFileDir() {
+  // temporary hack until this PR is merged
+  // https://github.com/webpack/webpack/pull/15246
+  if (true) {
+    return __dirname;
+  }
+
+  return path__WEBPACK_IMPORTED_MODULE_1___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_2__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/index.ts"));
 }
 
 function reportErrors(response, file) {
@@ -3637,7 +3645,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.34";
+  const currentVersion = "1.1.35";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));

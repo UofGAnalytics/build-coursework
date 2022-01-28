@@ -10,8 +10,6 @@ import { Context } from '../context';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 export async function knitr(file: VFile, ctx: Context) {
   const result = await execKnitr(file, ctx);
   file.value = result;
@@ -53,9 +51,10 @@ function getUniqueId(md: string) {
 }
 
 function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
+  const rFileDir = getKnitrFileDir();
+  const rFile = path.join(rFileDir, 'knitr.R');
   const filePath = file.path || '';
   const baseDir = file.dirname || '';
-  const rFile = path.join(__dirname, 'knitr.R');
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
 
@@ -64,6 +63,15 @@ function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
   }
 
   return cmd;
+}
+
+function getKnitrFileDir() {
+  // temporary hack until this PR is merged
+  // https://github.com/webpack/webpack/pull/15246
+  if (process.env.NODE_ENV === 'production') {
+    return __dirname;
+  }
+  return path.dirname(fileURLToPath(import.meta.url));
 }
 
 function reportErrors(response: string, file: VFile) {
