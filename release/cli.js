@@ -3484,9 +3484,10 @@ function parseTable(lines) {
   const columnIndexes = getColumnIndexes(separator);
   const titleCells = parseTitleRow(titles, columnIndexes);
   const rows = body.map(line => parseBodyRow(line, columnIndexes));
+  const endSeparatorIdx = getEndSeparatorIdx(body);
 
-  if (hasEndSeparator(body)) {
-    return [titleCells, ...rows.slice(0, -1)];
+  if (endSeparatorIdx !== -1) {
+    return [titleCells, ...rows.slice(0, endSeparatorIdx)];
   }
 
   const multilineRows = rows.reduce(multilineReducer, []);
@@ -3530,16 +3531,20 @@ function parseBodyRow(line, columnIndexes) {
   });
 }
 
-function hasEndSeparator(lines) {
+function getEndSeparatorIdx(lines) {
   for (let idx = lines.length - 1; idx > 0; idx--) {
     const line = lines[idx];
 
     if (line.trim() !== '') {
-      return isValidPandocSimpleTableSeparator(lines, idx, true);
+      if (isValidPandocSimpleTableSeparator(lines, idx, true)) {
+        return idx;
+      } else {
+        return -1;
+      }
     }
   }
 
-  return false;
+  return -1;
 }
 
 function multilineReducer(acc, row) {
@@ -3656,7 +3661,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.36";
+  const currentVersion = "1.1.37";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));

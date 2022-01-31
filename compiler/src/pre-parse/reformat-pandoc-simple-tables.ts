@@ -61,9 +61,10 @@ function parseTable(lines: string[]) {
   const columnIndexes = getColumnIndexes(separator);
   const titleCells = parseTitleRow(titles, columnIndexes);
   const rows = body.map((line) => parseBodyRow(line, columnIndexes));
+  const endSeparatorIdx = getEndSeparatorIdx(body);
 
-  if (hasEndSeparator(body)) {
-    return [titleCells, ...rows.slice(0, -1)];
+  if (endSeparatorIdx !== -1) {
+    return [titleCells, ...rows.slice(0, endSeparatorIdx)];
   }
   const multilineRows = rows.reduce(multilineReducer, []);
   return [titleCells, ...multilineRows];
@@ -107,14 +108,18 @@ function parseBodyRow(line: string, columnIndexes: number[][]) {
   });
 }
 
-function hasEndSeparator(lines: string[]) {
+function getEndSeparatorIdx(lines: string[]) {
   for (let idx = lines.length - 1; idx > 0; idx--) {
     const line = lines[idx];
     if (line.trim() !== '') {
-      return isValidPandocSimpleTableSeparator(lines, idx, true);
+      if (isValidPandocSimpleTableSeparator(lines, idx, true)) {
+        return idx;
+      } else {
+        return -1;
+      }
     }
   }
-  return false;
+  return -1;
 }
 
 function multilineReducer(acc: string[][], row: string[]) {

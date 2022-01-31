@@ -160,7 +160,6 @@ describe('reformatPandocSimpleTables', () => {
       | Model       | :inlineMath[0]                    | :inlineMath[1]                 | :inlineMath[2]   | :inlineMath[3] |
       | Residual    | :inlineMath[4]                    | :inlineMath[5]                 | :inlineMath[6]   |                                               |
       | Total       | :inlineMath[7]                    | :inlineMath[8]                 |                     |                                               |
-      | ----------- | ------------------------ | --------------------- | ------------------- | -----------------------------------------     |
 
       where :inlineMath[9] is the total number of estimated regression coefficients.
     `);
