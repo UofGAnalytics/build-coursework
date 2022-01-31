@@ -3431,7 +3431,7 @@ function reformatPandocSimpleTables(contents) {
       } = getTableBounds(lines, idx);
       const currentLines = lines.slice(startIdx, startIdx + count + 1);
       const newLines = convertLines(currentLines);
-      lines.splice(startIdx, count + 1, ...newLines);
+      lines.splice(startIdx, count + 1, ...newLines, '');
     }
   }
 
@@ -3476,7 +3476,7 @@ function convertLines(lines) {
   const result = (0,markdown_table__WEBPACK_IMPORTED_MODULE_1__.markdownTable)(table, {
     align
   });
-  return [...result.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL), ''];
+  return result.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
 
 function parseTable(lines) {
@@ -3484,9 +3484,8 @@ function parseTable(lines) {
   const columnIndexes = getColumnIndexes(separator);
   const titleCells = parseTitleRow(titles, columnIndexes);
   const rows = body.map(line => parseBodyRow(line, columnIndexes));
-  const hasEndSeparator = isValidPandocSimpleTableSeparator(body, body.length - 1, true);
 
-  if (hasEndSeparator) {
+  if (hasEndSeparator(body)) {
     return [titleCells, ...rows.slice(0, -1)];
   }
 
@@ -3529,6 +3528,18 @@ function parseBodyRow(line, columnIndexes) {
     const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
     return line.slice(tuple[0], end).trim();
   });
+}
+
+function hasEndSeparator(lines) {
+  for (let idx = lines.length - 1; idx > 0; idx--) {
+    const line = lines[idx];
+
+    if (line.trim() !== '') {
+      return isValidPandocSimpleTableSeparator(lines, idx, true);
+    }
+  }
+
+  return false;
 }
 
 function multilineReducer(acc, row) {
@@ -3645,7 +3656,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.35";
+  const currentVersion = "1.1.36";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
