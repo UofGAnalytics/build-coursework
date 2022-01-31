@@ -142,6 +142,32 @@ describe('reformatPandocSimpleTables', () => {
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
   });
 
+  it('should reformat pandoc simple table with end separator and empty cells and line underneath', async () => {
+    const { md } = await testProcessor(String.raw`
+      Component   Degrees of freedom (df)  Sum of squares (SS)   Mean squares (MS)   F value
+      ----------- ------------------------ --------------------- ------------------- -----------------------------------------
+      Model       $p-1$                    $MSS$                 $\frac{MSS}{p-1}$   $\frac{~~\frac{MSS}{p-1}~~}{\frac{RSS}{n-p}}$
+      Residual    $n-p$                    $RSS$                 $\frac{RSS}{n-p}$
+      Total       $n-1$                    $TSS$
+      ----------- ------------------------ --------------------- ------------------- -----------------------------------------
+
+      where $p$ is the total number of estimated regression coefficients.
+    `);
+
+    const expected = unindentString(String.raw`
+      | Component   | Degrees of freedom (df)  | Sum of squares (SS)   | Mean squares (MS)   | F value                                       |
+      | :---------- | :----------------------- | :-------------------- | :------------------ | :-------------------------------------------- |
+      | Model       | :inlineMath[0]                    | :inlineMath[1]                 | :inlineMath[2]   | :inlineMath[3] |
+      | Residual    | :inlineMath[4]                    | :inlineMath[5]                 | :inlineMath[6]   |                                               |
+      | Total       | :inlineMath[7]                    | :inlineMath[8]                 |                     |                                               |
+      | ----------- | ------------------------ | --------------------- | ------------------- | -----------------------------------------     |
+
+      where :inlineMath[9] is the total number of estimated regression coefficients.
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+  });
+
   it('should be idempotent', async () => {
     const { md } = await testProcessor(`
       Movie                            Gross       Budget

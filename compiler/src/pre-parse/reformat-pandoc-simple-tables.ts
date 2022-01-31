@@ -12,7 +12,7 @@ export function reformatPandocSimpleTables(contents: string) {
       const { startIdx, count } = getTableBounds(lines, idx);
       const currentLines = lines.slice(startIdx, startIdx + count + 1);
       const newLines = convertLines(currentLines);
-      lines.splice(startIdx, count + 1, ...newLines);
+      lines.splice(startIdx, count + 1, ...newLines, '');
     }
   }
 
@@ -53,7 +53,7 @@ function convertLines(lines: string[]) {
   const table = parseTable(lines);
   const align = getColumnAlignment(table[0]);
   const result = markdownTable(table, { align });
-  return [...result.split(EOL), ''];
+  return result.split(EOL);
 }
 
 function parseTable(lines: string[]) {
@@ -61,12 +61,8 @@ function parseTable(lines: string[]) {
   const columnIndexes = getColumnIndexes(separator);
   const titleCells = parseTitleRow(titles, columnIndexes);
   const rows = body.map((line) => parseBodyRow(line, columnIndexes));
-  const hasEndSeparator = isValidPandocSimpleTableSeparator(
-    body,
-    body.length - 1,
-    true
-  );
-  if (hasEndSeparator) {
+
+  if (hasEndSeparator(body)) {
     return [titleCells, ...rows.slice(0, -1)];
   }
   const multilineRows = rows.reduce(multilineReducer, []);
@@ -109,6 +105,16 @@ function parseBodyRow(line: string, columnIndexes: number[][]) {
     const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
     return line.slice(tuple[0], end).trim();
   });
+}
+
+function hasEndSeparator(lines: string[]) {
+  for (let idx = lines.length - 1; idx > 0; idx--) {
+    const line = lines[idx];
+    if (line.trim() !== '') {
+      return isValidPandocSimpleTableSeparator(lines, idx, true);
+    }
+  }
+  return false;
 }
 
 function multilineReducer(acc: string[][], row: string[]) {
