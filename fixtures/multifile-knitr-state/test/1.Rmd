@@ -1,0 +1,6 @@
+Define a variable:
+
+```{r}
+a <- 1
+b <- 2
+```

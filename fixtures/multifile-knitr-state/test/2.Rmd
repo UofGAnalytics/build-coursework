@@ -1,0 +1,5 @@
+Use it in another file:
+
+```{r}
+a + b
+```
