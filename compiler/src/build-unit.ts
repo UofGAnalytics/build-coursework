@@ -1,3 +1,5 @@
+import { EOL } from 'os';
+
 import { Parent as HastParent } from 'hast';
 import { Parent as MdastParent, Root } from 'mdast';
 import { VFile } from 'vfile';
@@ -87,9 +89,9 @@ function combineMdFiles(file: VFile) {
 
 function removeDirectoryLines(md: string) {
   return md
-    .split('\n')
+    .split(EOL)
     .filter((line) => !/^:directory\[.+\]$/.test(line))
-    .join('\n');
+    .join(EOL);
 }
 
 async function syntaxTreeTransforms(
