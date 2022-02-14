@@ -1,0 +1,9 @@
+Use it in another file:
+
+```{r}
+a + b
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("Media_811846_smxx.jpeg")
+```

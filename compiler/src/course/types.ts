@@ -14,6 +14,7 @@ export type UnitYaml = {
 export type Unit = {
   name: string;
   title: string;
+  unitPath: string;
   parts: FileRef[];
   files: VFile[];
   titles: UnitTitles;
@@ -21,6 +22,7 @@ export type Unit = {
 
 export type Course = {
   title: string;
+  coursePath: string;
   units: Unit[];
 };
 

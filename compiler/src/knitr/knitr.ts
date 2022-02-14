@@ -12,6 +12,7 @@ import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 export async function knitr(file: VFile, ctx: Context) {
   const result = await execKnitr(file, ctx);
+  // console.log(result);
   file.value = result;
   return file;
 }
@@ -20,10 +21,10 @@ export async function knitr(file: VFile, ctx: Context) {
 async function execKnitr(file: VFile, ctx: Context) {
   const md = file.value as string;
   const uniqueId = getUniqueId(md);
-  const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
+  const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   await mkdir(cacheDir);
-  await writeFile(cachedFilePath, md);
+  await writeFile(cachedFile, md);
 
   return new Promise<string>((resolve, reject) => {
     const cmd = createKnitrCommand(file, ctx, uniqueId);
@@ -39,7 +40,7 @@ async function execKnitr(file: VFile, ctx: Context) {
         reportErrors(response, file);
         resolve(formatResponse(response));
       }
-      await rmFile(cachedFilePath);
+      await rmFile(cachedFile);
     });
   });
 }
@@ -53,10 +54,10 @@ function getUniqueId(md: string) {
 function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
   const rFileDir = getKnitrFileDir();
   const rFile = path.join(rFileDir, 'knitr.R');
-  const filePath = file.path || '';
-  const baseDir = file.dirname || '';
+  const baseDir = path.parse(ctx.course.units[0].unitPath).dir; // TODO
+  const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
+  let cmd = `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;

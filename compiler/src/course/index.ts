@@ -16,10 +16,11 @@ import { FileRef } from './types';
 
 export async function collectCoursework(dirPath: string): Promise<Course> {
   const course = await loadCourseYaml(dirPath);
+  const coursePath = path.join(process.cwd(), dirPath);
   const units = await Promise.all(
     course.units.map((unit) => collectUnit(unit, course, dirPath))
   );
-  return { ...course, units };
+  return { ...course, coursePath, units };
 }
 
 async function collectUnit(
@@ -28,6 +29,7 @@ async function collectUnit(
   dirPath: string
 ): Promise<Unit> {
   const yaml = await loadUnitYaml(dirPath, unit.src);
+  const unitPath = path.join(process.cwd(), dirPath, unit.src);
   const parts = yaml.content;
   const files = await Promise.all(
     yaml.content.map((c) => {
@@ -40,7 +42,7 @@ async function collectUnit(
     unitName: yaml.name,
     unitTitle: yaml.title,
   });
-  return { ...yaml, parts, files, titles };
+  return { ...yaml, unitPath, parts, files, titles };
 }
 
 export function getUnitTitles({

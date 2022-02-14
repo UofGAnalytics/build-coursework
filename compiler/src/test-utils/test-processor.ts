@@ -28,7 +28,7 @@ export async function testProcessor(md: string, options: Options = {}) {
   };
   try {
     const result = await buildUnit(unitFile, ctx);
-    unit.md = result.md;
+    unit.md = result.md || '';
     unit.files = result.files;
     if (result.html) {
       unit.mdast = result.html.mdast;
@@ -55,12 +55,14 @@ async function createTestContext(md: string, options: Options = {}) {
 
   const course = {
     title: 'Test Course',
+    coursePath: cacheDir,
     units: [{ src: 'test' }],
   };
 
   const unit = {
     name: 'Week Test',
     title: 'Test Unit',
+    unitPath: cacheDir,
     parts: [{ src: '' }],
     files: [file],
   };

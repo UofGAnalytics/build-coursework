@@ -4,3 +4,5 @@ Define a variable:
 a <- 1
 b <- 2
 ```
+
+![UofG logo](university-of-glasgow.png)

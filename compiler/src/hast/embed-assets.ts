@@ -26,6 +26,7 @@ export function embedAssets(ctx: Context) {
       switch (parsed.ext) {
         case '.png':
         case '.jpg':
+        case '.jpeg':
         case '.gif':
           return await embedImage(node, ctx, file);
         case '.svg':
