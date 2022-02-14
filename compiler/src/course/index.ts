@@ -28,11 +28,10 @@ async function collectUnit(
   course: CourseYaml,
   dirPath: string
 ): Promise<Unit> {
-  const yaml = await loadUnitYaml(dirPath, unit.src);
+  const { content, ...yaml } = await loadUnitYaml(dirPath, unit.src);
   const unitPath = path.join(process.cwd(), dirPath, unit.src);
-  const parts = yaml.content;
   const files = await Promise.all(
-    yaml.content.map((c) => {
+    content.map((c) => {
       const filePath = path.join(dirPath, unit.src, '..', c.src);
       return toVFile.read(filePath, 'utf-8');
     })
@@ -42,7 +41,7 @@ async function collectUnit(
     unitName: yaml.name,
     unitTitle: yaml.title,
   });
-  return { ...yaml, unitPath, parts, files, titles };
+  return { ...yaml, unitPath, parts: content, files, titles };
 }
 
 export function getUnitTitles({

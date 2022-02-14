@@ -7,13 +7,43 @@ import hashSum from 'hash-sum';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
+import { Unit } from '../course/types';
+import { assertNoKbl } from '../linter/assert-no-kbl';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
-export async function knitr(file: VFile, ctx: Context) {
-  const result = await execKnitr(file, ctx);
+export async function knitr(unit: Unit, ctx: Context) {
+  const parentFile = await createParentFile(unit, ctx);
+
+  const result = await execKnitr(parentFile, ctx);
   // console.log(result);
-  file.value = result;
+  parentFile.value = result;
+  return parentFile;
+}
+
+// creating a temporary file which includes all child files allows
+// R/Python state to be shared across multiple .Rmd files
+// https://yihui.org/knitr/options/#child-documents
+async function createParentFile(unit: Unit, ctx: Context) {
+  const file = new VFile();
+
+  file.value = unit.files.reduce((acc, o) => {
+    const [filePath] = o.history;
+
+    // directory directive is used to ensure external assets
+    // can have relative paths to the .Rmd document.
+    // used in embed-asset-url mdast transform
+    const fileDir = path.parse(filePath).dir;
+    const directive = `:directory[${fileDir}]`;
+
+    // child document
+    const relativePath = path.relative(ctx.cacheDir, filePath);
+    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}\n\`\`\``;
+    return acc + directive + '\n\n' + childCodeBlock + '\n\n';
+  }, '');
+
+  // console.log(file.value);
+
   return file;
 }
 

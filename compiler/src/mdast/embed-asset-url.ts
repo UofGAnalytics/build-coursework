@@ -1,26 +1,16 @@
 import path from 'path';
 
-import { HTML, Image, Literal, Root } from 'mdast';
-// import { Node } from 'unist';
+import { Literal, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 
-// import { VFile } from 'vfile';
-
-// import { failMessage } from '../utils/message';
-
 export function embedAssetUrl() {
-  let activeDir = '';
-
   return async (tree: Root) => {
-    // const dirname = file.dirname || '';
-    // if (dirname === undefined) {
-    //   failMessage(file, `File dirname is undefined`);
-    //   return;
-    // }
+    let activeDir = '';
 
     // nodes need to be visited in the correct order
     // to derive the document directory
     visit(tree, (node, index, parent) => {
+      // to ensure relative paths to assets across multiple .Rmd files
       if (node.type === 'textDirective' && node.name === 'directory') {
         const firstChild = node.children[0] as Literal;
         activeDir = firstChild.value || '';
@@ -46,32 +36,6 @@ export function embedAssetUrl() {
         }
       }
     });
-
-    // visit(tree, 'textDirective', (node) => {
-    //   if (node.name === 'directory') {
-    //     const firstChild = node.children[0] as Literal;
-    //     activeDir = firstChild.value || '';
-    //   }
-    // });
-
-    // visit(tree, 'image', (node: Image) => {
-    //   // console.log(activeDir);
-    //   node.url = getPath(node.url, activeDir);
-    // });
-
-    // also fix for raw html nodes sometimes output by knitr
-    // visit(tree, 'html', (node: HTML) => {
-    //   const props = getProps(node.value);
-    //   if (props !== null && props.src) {
-    //     const { src, ...otherProps } = props;
-    //     Object.assign(node, {
-    //       type: 'image',
-    //       url: getPath(src, activeDir),
-    //       value: '',
-    //       data: otherProps,
-    //     });
-    //   }
-    // });
   };
 }
 

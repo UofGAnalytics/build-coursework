@@ -1,9 +1,9 @@
 name: 'Test'
 title: 'Multifile counter'
 content:
-  # - type: text
-  #   src: one/1.Rmd
-  # - type: text
-  #   src: two/2.Rmd
   - type: text
-    src: three/3.Rmd
+    src: 1/1.Rmd
+  - type: text
+    src: 2/2.Rmd
+  # - type: text
+  #   src: three/3.Rmd

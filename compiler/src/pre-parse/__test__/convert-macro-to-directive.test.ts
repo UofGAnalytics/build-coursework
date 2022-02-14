@@ -82,7 +82,7 @@ describe('convertMacroToDirective', () => {
       ::video[Introduction to GLMs]{id="5u1w6eROypI" duration="9m57s"}
     `);
 
-    expect(md).toBe(expected);
+    expect(md.trim()).toBe(expected);
   });
 
   it('should convert video macros with no title', async () => {
@@ -94,7 +94,7 @@ describe('convertMacroToDirective', () => {
       ::video{id="5u1w6eROypI" duration="9m57s"}
     `);
 
-    expect(md).toBe(expected);
+    expect(md.trim()).toBe(expected);
     expect(hasFailingMessage('Video has no title')).toBe(true);
   });
 });

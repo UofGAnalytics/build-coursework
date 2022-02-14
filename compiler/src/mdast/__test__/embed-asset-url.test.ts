@@ -5,6 +5,7 @@ describe('embedAssetUrl', () => {
     const { html } = await fixtureTestProcessor('relative-assets', {
       noEmbedAssets: false,
     });
+    // console.log(html);
     const imgCount = (html.match(/img-wrapper/g) || []).length;
     expect(imgCount).toBe(3);
 

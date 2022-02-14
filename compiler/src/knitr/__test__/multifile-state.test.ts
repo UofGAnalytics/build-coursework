@@ -1,10 +1,10 @@
 import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
-import { ignoreWhitespace } from '../../test-utils/test-processor';
 
 describe('multifile knitr state', () => {
   it('should allow knitr state to pass between files', async () => {
-    const { md } = await fixtureTestProcessor('multifile-knitr-state');
-    console.log(md);
-    expect(ignoreWhitespace(md)).toContain('```{.r-output}[1]3```');
+    const { html } = await fixtureTestProcessor('multifile-knitr-state');
+    expect(html).toContain('<code>[1] 3</code>');
+    expect(html).toContain('test/1/university-of-glasgow.png');
+    expect(html).toContain('test/2/Media_811846_smxx.jpeg');
   });
 });
