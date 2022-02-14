@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import { EOL } from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -37,8 +38,8 @@ async function createParentFile(unit: Unit, ctx: Context) {
 
     // child document
     const relativePath = path.relative(ctx.cacheDir, filePath);
-    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}\n\`\`\``;
-    return acc + directive + '\n\n' + childCodeBlock + '\n\n';
+    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}${EOL}\`\`\``;
+    return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
 
   // console.log(file.value);
