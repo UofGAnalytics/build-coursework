@@ -8,7 +8,6 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { assertNoKbl } from '../linter/assert-no-kbl';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
