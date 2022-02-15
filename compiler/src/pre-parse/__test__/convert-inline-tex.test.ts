@@ -34,7 +34,7 @@ describe('convertTextBfToMd', () => {
 });
 
 describe('convertUrlToMd', () => {
-  it('should reformat a \\textbf{} to markdown bold syntax', async () => {
+  it('should reformat a \\url{} to markdown url', async () => {
     const { md, html } = await testProcessor(`
       Lorem \\url{https://www.google.com} ipsum \\url{https://www.gla.ac.uk} dolor
     `);

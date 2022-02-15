@@ -1,35 +1,39 @@
 import path from 'path';
 
-import { HTML, Image } from 'mdast';
-import { Node } from 'unist';
+import { Literal, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
-import { VFile } from 'vfile';
-
-// import { failMessage } from '../utils/message';
 
 export function embedAssetUrl() {
-  return async (tree: Node, file: VFile) => {
-    const dirname = file.dirname || '';
-    // if (dirname === undefined) {
-    //   failMessage(file, `File dirname is undefined`);
-    //   return;
-    // }
+  return async (tree: Root) => {
+    let activeDir = '';
 
-    visit(tree, 'image', (node: Image) => {
-      node.url = getPath(node.url, dirname);
-    });
+    // nodes need to be visited in the correct order
+    // to derive the document directory
+    visit(tree, (node, index, parent) => {
+      // to ensure relative paths to assets across multiple .Rmd files
+      if (node.type === 'textDirective' && node.name === 'directory') {
+        const firstChild = node.children[0] as Literal;
+        activeDir = firstChild.value || '';
+        const parentChildren = parent?.children || [];
+        parentChildren.splice(index || 0, 1);
+      }
 
-    // also fix for raw html nodes sometimes output by knitr
-    visit(tree, 'html', (node: HTML) => {
-      const props = getProps(node.value);
-      if (props !== null && props.src) {
-        const { src, ...otherProps } = props;
-        Object.assign(node, {
-          type: 'image',
-          url: getPath(src, dirname),
-          value: '',
-          data: otherProps,
-        });
+      if (node.type === 'image') {
+        node.url = getPath(node.url, activeDir);
+      }
+
+      // also fix for raw html nodes sometimes output by knitr
+      if (node.type === 'html') {
+        const props = getProps(node.value);
+        if (props !== null && props.src) {
+          const { src, ...otherProps } = props;
+          Object.assign(node, {
+            type: 'image',
+            url: getPath(src, activeDir),
+            value: '',
+            data: otherProps,
+          });
+        }
       }
     });
   };
@@ -38,7 +42,7 @@ export function embedAssetUrl() {
 function getPath(url: string, dirname: string) {
   return path.isAbsolute(url) || url.startsWith('http')
     ? url
-    : path.join(process.cwd(), dirname, url);
+    : path.join(dirname, url);
 }
 
 function getProps(value: string) {

@@ -1,0 +1,9 @@
+:directory[/Users/staff/Work/build-coursework/fixtures/multifile-knitr-state/test/1]
+
+```{r, child='../test/1/1.Rmd'}
+```
+
+:directory[/Users/staff/Work/build-coursework/fixtures/multifile-knitr-state/test/2]
+
+```{r, child='../test/2/2.Rmd'}
+```

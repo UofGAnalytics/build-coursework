@@ -1,3 +1,5 @@
+import { EOL } from 'os';
+
 import { Parent as HastParent } from 'hast';
 import { Parent as MdastParent, Root } from 'mdast';
 import { VFile } from 'vfile';
@@ -6,10 +8,9 @@ import { Context } from './context';
 import { Unit } from './course/types';
 import { hastPhase } from './hast';
 import { htmlPhase } from './html';
-import { knitr } from './knitr';
+import { knitr } from './knitr/knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
 import { createReport, reportErrors } from './linter';
-import { assertNoKbl } from './linter/assert-no-kbl';
 import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';
@@ -33,22 +34,19 @@ export type BuiltUnit = {
 };
 
 export async function buildUnit(unit: Unit, ctx: Context) {
-  const mdasts: MdastParent[] = [];
-  for (const file of unit.files) {
-    const mdast = (await inSituTransforms(file, ctx)) as MdastParent;
-    await createReport(file, mdast, ctx);
-    mdasts.push(mdast);
-  }
+  const unifiedFile = await knitr(unit, ctx);
 
-  const unifiedFile = new VFile();
+  const mdast = (await inSituTransforms(unifiedFile, ctx)) as Root;
+  // console.log(mdast);
+
+  await createReport(unifiedFile, mdast, ctx);
 
   const result: BuiltUnit = {
     unit,
-    md: combineMdFiles(unit),
-    files: [...unit.files, unifiedFile],
+    md: combineMdFiles(unifiedFile),
+    files: [unifiedFile],
   };
 
-  const mdast = combineMdastTrees(mdasts);
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(
       mdast,
@@ -80,24 +78,20 @@ export async function buildUnit(unit: Unit, ctx: Context) {
 }
 
 async function inSituTransforms(file: VFile, ctx: Context) {
-  // simple regex tests
-  assertNoKbl(file);
-
-  await knitr(file, ctx);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
   return mdastPhase(file, ctx);
 }
 
-function combineMdFiles(unit: Unit) {
-  return unit.files.map((o) => o.value).join('\n\n');
+function combineMdFiles(file: VFile) {
+  return removeDirectoryLines(file.value as string);
 }
 
-function combineMdastTrees(mdasts: MdastParent[]): Root {
-  return {
-    type: 'root',
-    children: mdasts.flatMap((o) => o.children),
-  };
+function removeDirectoryLines(md: string) {
+  return md
+    .split(EOL)
+    .filter((line) => !/^:directory\[.+\]$/.test(line))
+    .join(EOL);
 }
 
 async function syntaxTreeTransforms(

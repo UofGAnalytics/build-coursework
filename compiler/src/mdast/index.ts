@@ -16,6 +16,7 @@ import { codeBlocks } from './code-blocks';
 import { embedAssetUrl } from './embed-asset-url';
 import { images } from './images';
 import { pagebreaks } from './pagebreaks';
+import { removeEmptyParagraphs } from './remove-empty-paragraphs';
 import { youtubeVideos } from './youtube-videos';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
@@ -39,6 +40,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(embedAssetUrl)
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
+    .use(removeEmptyParagraphs)
     // .use(aliasDirectiveToTex, ctx)
     .use(codeBlocks, ctx)
     .use(images, ctx)

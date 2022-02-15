@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+import { EOL } from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -7,12 +8,46 @@ import hashSum from 'hash-sum';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
+import { Unit } from '../course/types';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
-export async function knitr(file: VFile, ctx: Context) {
-  const result = await execKnitr(file, ctx);
-  file.value = result;
+export async function knitr(unit: Unit, ctx: Context) {
+  const parentFile = await createParentFile(unit, ctx);
+
+  const result = await execKnitr(parentFile, ctx);
+  // console.log(result);
+  parentFile.value = result;
+  return parentFile;
+}
+
+// creating a temporary file which includes all child files allows
+// R/Python state to be shared across multiple .Rmd files
+// https://yihui.org/knitr/options/#child-documents
+async function createParentFile(unit: Unit, ctx: Context) {
+  const file = new VFile();
+
+  file.value = unit.files.reduce((acc, o) => {
+    const [filePath] = o.history;
+
+    // directory directive is used to ensure external assets
+    // can have relative paths to the .Rmd document.
+    // used in embed-asset-url mdast transform
+    const fileDir = path.parse(filePath).dir;
+    const directive = `:directory[${fileDir}]`;
+
+    // child document
+    const relativePath = path
+      .relative(ctx.cacheDir, filePath)
+      // escape backslash path on windows
+      .replace(/\\/g, '\\\\');
+
+    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}${EOL}\`\`\``;
+    return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
+  }, '');
+
+  // console.log(file.value);
+
   return file;
 }
 
@@ -20,10 +55,10 @@ export async function knitr(file: VFile, ctx: Context) {
 async function execKnitr(file: VFile, ctx: Context) {
   const md = file.value as string;
   const uniqueId = getUniqueId(md);
-  const cachedFilePath = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
+  const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
   await mkdir(cacheDir);
-  await writeFile(cachedFilePath, md);
+  await writeFile(cachedFile, md);
 
   return new Promise<string>((resolve, reject) => {
     const cmd = createKnitrCommand(file, ctx, uniqueId);
@@ -39,7 +74,7 @@ async function execKnitr(file: VFile, ctx: Context) {
         reportErrors(response, file);
         resolve(formatResponse(response));
       }
-      await rmFile(cachedFilePath);
+      await rmFile(cachedFile);
     });
   });
 }
@@ -53,10 +88,10 @@ function getUniqueId(md: string) {
 function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
   const rFileDir = getKnitrFileDir();
   const rFile = path.join(rFileDir, 'knitr.R');
-  const filePath = file.path || '';
-  const baseDir = file.dirname || '';
+  const baseDir = path.parse(ctx.course.units[0].unitPath).dir; // TODO
+  const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
+  let cmd = `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;

@@ -80,7 +80,7 @@ describe('knitr', () => {
     );
 
     const match =
-      html.match(/<svg alt="plot of chunk unnamed-chunk-1"/) || [];
+      html.match(/<svg alt="plot of chunk unnamed-chunk-2"/) || [];
 
     expect(match.length).toBe(1);
   });
