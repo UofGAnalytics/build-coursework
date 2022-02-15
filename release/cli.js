@@ -11,20 +11,19 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "_": () => (/* binding */ buildUnit)
 /* harmony export */ });
-/* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(6811);
-/* harmony import */ var _hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3675);
-/* harmony import */ var _html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2199);
-/* harmony import */ var _knitr__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1297);
-/* harmony import */ var _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9156);
-/* harmony import */ var _linter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8633);
-/* harmony import */ var _linter_assert_no_kbl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5820);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2037);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3675);
+/* harmony import */ var _html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2199);
+/* harmony import */ var _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1650);
+/* harmony import */ var _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9156);
+/* harmony import */ var _linter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8633);
 /* harmony import */ var _mdast__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8287);
 /* harmony import */ var _mdast_combined__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8176);
 /* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(9005);
 /* harmony import */ var _pre_parse__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(6590);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_html__WEBPACK_IMPORTED_MODULE_1__, _hast__WEBPACK_IMPORTED_MODULE_0__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_3__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__, _knitr__WEBPACK_IMPORTED_MODULE_2__, _linter__WEBPACK_IMPORTED_MODULE_4__, _pdf__WEBPACK_IMPORTED_MODULE_8__]);
-([_html__WEBPACK_IMPORTED_MODULE_1__, _hast__WEBPACK_IMPORTED_MODULE_0__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_3__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__, _knitr__WEBPACK_IMPORTED_MODULE_2__, _linter__WEBPACK_IMPORTED_MODULE_4__, _pdf__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
-
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_html__WEBPACK_IMPORTED_MODULE_2__, _hast__WEBPACK_IMPORTED_MODULE_1__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__, _linter__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_8__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__]);
+([_html__WEBPACK_IMPORTED_MODULE_2__, _hast__WEBPACK_IMPORTED_MODULE_1__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__, _linter__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_8__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
 
 
 
@@ -36,21 +35,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_htm
 
 
 async function buildUnit(unit, ctx) {
-  const mdasts = [];
+  const unifiedFile = await (0,_knitr_knitr__WEBPACK_IMPORTED_MODULE_3__/* .knitr */ .M)(unit, ctx);
+  const mdast = await inSituTransforms(unifiedFile, ctx); // console.log(mdast);
 
-  for (const file of unit.files) {
-    const mdast = await inSituTransforms(file, ctx);
-    await (0,_linter__WEBPACK_IMPORTED_MODULE_4__/* .createReport */ .Z)(file, mdast, ctx);
-    mdasts.push(mdast);
-  }
-
-  const unifiedFile = new vfile__WEBPACK_IMPORTED_MODULE_10__/* .VFile */ .k();
+  await (0,_linter__WEBPACK_IMPORTED_MODULE_5__/* .createReport */ .Z)(unifiedFile, mdast, ctx);
   const result = {
     unit,
-    md: combineMdFiles(unit),
-    files: [...unit.files, unifiedFile]
+    md: combineMdFiles(unifiedFile),
+    files: [unifiedFile]
   };
-  const mdast = combineMdastTrees(mdasts);
 
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx);
@@ -64,36 +57,30 @@ async function buildUnit(unit, ctx) {
   }
 
   if (!ctx.options.noReport) {
-    (0,_linter__WEBPACK_IMPORTED_MODULE_4__/* .reportErrors */ .E)(result.files, ctx);
+    (0,_linter__WEBPACK_IMPORTED_MODULE_5__/* .reportErrors */ .E)(result.files, ctx);
   }
 
   return result;
 }
 
 async function inSituTransforms(file, ctx) {
-  // simple regex tests
-  (0,_linter_assert_no_kbl__WEBPACK_IMPORTED_MODULE_5__/* .assertNoKbl */ .N)(file);
-  await (0,_knitr__WEBPACK_IMPORTED_MODULE_2__/* .knitr */ .M)(file, ctx);
   (0,_pre_parse__WEBPACK_IMPORTED_MODULE_9__/* .preParsePhase */ .Z)(file);
-  (0,_latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_3__/* .texToAliasDirective */ .T)(file, ctx);
+  (0,_latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__/* .texToAliasDirective */ .T)(file, ctx);
   return (0,_mdast__WEBPACK_IMPORTED_MODULE_6__/* .mdastPhase */ .c)(file, ctx);
 }
 
-function combineMdFiles(unit) {
-  return unit.files.map(o => o.value).join('\n\n');
+function combineMdFiles(file) {
+  return removeDirectoryLines(file.value);
 }
 
-function combineMdastTrees(mdasts) {
-  return {
-    type: 'root',
-    children: mdasts.flatMap(o => o.children)
-  };
+function removeDirectoryLines(md) {
+  return md.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL).filter(line => !/^:directory\[.+\]$/.test(line)).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
 
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
   const mdast = await (0,_mdast_combined__WEBPACK_IMPORTED_MODULE_7__/* .combinedMdastPhase */ .P)(_mdast, ctx, file, targetPdf);
-  const hast = await (0,_hast__WEBPACK_IMPORTED_MODULE_0__/* .hastPhase */ .s)(mdast, ctx, file, targetPdf);
-  const html = await (0,_html__WEBPACK_IMPORTED_MODULE_1__/* .htmlPhase */ .D)(hast, mdast, file, unit, ctx, targetPdf);
+  const hast = await (0,_hast__WEBPACK_IMPORTED_MODULE_1__/* .hastPhase */ .s)(mdast, ctx, file, targetPdf);
+  const html = await (0,_html__WEBPACK_IMPORTED_MODULE_2__/* .htmlPhase */ .D)(hast, mdast, file, unit, ctx, targetPdf);
   return {
     mdast,
     hast,
@@ -242,16 +229,21 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([loda
 
 async function collectCoursework(dirPath) {
   const course = await (0,_load_course__WEBPACK_IMPORTED_MODULE_3__/* .loadCourseYaml */ .n)(dirPath);
+  const coursePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), dirPath);
   const units = await Promise.all(course.units.map(unit => collectUnit(unit, course, dirPath)));
   return { ...course,
+    coursePath,
     units
   };
 }
 
 async function collectUnit(unit, course, dirPath) {
-  const yaml = await (0,_load_unit__WEBPACK_IMPORTED_MODULE_4__/* .loadUnitYaml */ .o)(dirPath, unit.src);
-  const parts = yaml.content;
-  const files = await Promise.all(yaml.content.map(c => {
+  const {
+    content,
+    ...yaml
+  } = await (0,_load_unit__WEBPACK_IMPORTED_MODULE_4__/* .loadUnitYaml */ .o)(dirPath, unit.src);
+  const unitPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), dirPath, unit.src);
+  const files = await Promise.all(content.map(c => {
     const filePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(dirPath, unit.src, '..', c.src);
     return to_vfile__WEBPACK_IMPORTED_MODULE_2__.toVFile.read(filePath, 'utf-8');
   }));
@@ -261,7 +253,8 @@ async function collectUnit(unit, course, dirPath) {
     unitTitle: yaml.title
   });
   return { ...yaml,
-    parts,
+    unitPath,
+    parts: content,
     files,
     titles
   };
@@ -398,6 +391,7 @@ function embedAssets(ctx) {
       switch (parsed.ext) {
         case '.png':
         case '.jpg':
+        case '.jpeg':
         case '.gif':
           return await embedImage(node, ctx, file);
 
@@ -1164,7 +1158,7 @@ async function writeUnit(built, ctx, timer) {
 
 /***/ }),
 
-/***/ 1297:
+/***/ 1650:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1174,16 +1168,19 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony export */ });
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2081);
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(child_process__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1017);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7310);
-/* harmony import */ var url__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(url__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7564);
-/* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2386);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(153);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_6__, chalk__WEBPACK_IMPORTED_MODULE_3__]);
-([hash_sum__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_6__, chalk__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2037);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var url__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7310);
+/* harmony import */ var url__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(url__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7564);
+/* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2386);
+/* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(6811);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(153);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8061);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__, chalk__WEBPACK_IMPORTED_MODULE_4__]);
+([hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__, chalk__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
 
 
 
@@ -1191,24 +1188,50 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash
 
 
 
-async function knitr(file, ctx) {
-  const result = await execKnitr(file, ctx);
-  file.value = result;
+
+
+async function knitr(unit, ctx) {
+  const parentFile = await createParentFile(unit, ctx);
+  const result = await execKnitr(parentFile, ctx); // console.log(result);
+
+  parentFile.value = result;
+  return parentFile;
+} // creating a temporary file which includes all child files allows
+// R/Python state to be shared across multiple .Rmd files
+// https://yihui.org/knitr/options/#child-documents
+
+async function createParentFile(unit, ctx) {
+  const file = new vfile__WEBPACK_IMPORTED_MODULE_8__/* .VFile */ .k();
+  file.value = unit.files.reduce((acc, o) => {
+    const [filePath] = o.history; // directory directive is used to ensure external assets
+    // can have relative paths to the .Rmd document.
+    // used in embed-asset-url mdast transform
+
+    const fileDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(filePath).dir;
+    const directive = `:directory[${fileDir}]`; // child document
+
+    const relativePath = path__WEBPACK_IMPORTED_MODULE_2___default().relative(ctx.cacheDir, filePath) // escape backslash path on windows
+    .replace(/\\/g, '\\\\');
+    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\``;
+    return acc + directive + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL + childCodeBlock + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL;
+  }, ''); // console.log(file.value);
+
   return file;
 } // TODO: see what can be done with output when "quiet" in knitr.R is turned off
+
 
 async function execKnitr(file, ctx) {
   const md = file.value;
   const uniqueId = getUniqueId(md);
-  const cachedFilePath = path__WEBPACK_IMPORTED_MODULE_1___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
-  const cacheDir = path__WEBPACK_IMPORTED_MODULE_1___default().join(ctx.cacheDir, uniqueId);
-  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .mkdir */ .i$)(cacheDir);
-  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .writeFile */ .NC)(cachedFilePath, md);
+  const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
+  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
+  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .mkdir */ .i$)(cacheDir);
+  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .writeFile */ .NC)(cachedFile, md);
   return new Promise((resolve, reject) => {
     const cmd = createKnitrCommand(file, ctx, uniqueId);
     (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
       if (stdErr) {
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_3__["default"].grey(`[knitr] ${stdErr.trim()}`));
+        console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
       }
 
       if (err) {
@@ -1219,24 +1242,25 @@ async function execKnitr(file, ctx) {
         resolve(formatResponse(response));
       }
 
-      await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .rmFile */ .gr)(cachedFilePath);
+      await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .rmFile */ .gr)(cachedFile);
     });
   });
 }
 
 function getUniqueId(md) {
-  const hash = (0,hash_sum__WEBPACK_IMPORTED_MODULE_4__["default"])(md);
+  const hash = (0,hash_sum__WEBPACK_IMPORTED_MODULE_5__["default"])(md);
   const ts = new Date().getTime().toString();
   return `knitr-${hash}-${ts}`;
 }
 
 function createKnitrCommand(file, ctx, uniqueId) {
   const rFileDir = getKnitrFileDir();
-  const rFile = path__WEBPACK_IMPORTED_MODULE_1___default().join(rFileDir, 'knitr.R');
-  const filePath = file.path || '';
-  const baseDir = file.dirname || '';
-  const cacheDir = path__WEBPACK_IMPORTED_MODULE_1___default().join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript "${rFile}" "${filePath}" "${baseDir}/" "${cacheDir}/"`;
+  const rFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(rFileDir, 'knitr.R');
+  const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(ctx.course.units[0].unitPath).dir; // TODO
+
+  const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
+  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
+  let cmd = `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
 
   if (ctx.options.pythonBin) {
     cmd += ` "${ctx.options.pythonBin}"`;
@@ -1252,7 +1276,7 @@ function getKnitrFileDir() {
     return __dirname;
   }
 
-  return path__WEBPACK_IMPORTED_MODULE_1___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_2__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/index.ts"));
+  return path__WEBPACK_IMPORTED_MODULE_2___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_3__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/knitr.ts"));
 }
 
 function reportErrors(response, file) {
@@ -1260,7 +1284,7 @@ function reportErrors(response, file) {
     const trimmed = line.trim();
 
     if (trimmed.startsWith('## Error')) {
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_5__/* .warnMessage */ .KU)(file, trimmed.replace('## ', ''), {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, trimmed.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0
@@ -1791,35 +1815,6 @@ function assertNoH1() {
   };
 }
 });
-
-/***/ }),
-
-/***/ 5820:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "N": () => (/* binding */ assertNoKbl)
-/* harmony export */ });
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(153);
-
-function assertNoKbl(file) {
-  const md = file.value;
-  md.split('\n').forEach((line, idx) => {
-    if (line.includes('kbl()')) {
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_0__/* .warnMessage */ .KU)(file, 'kbl() was found. Please note: table styles may not look the same in HTML output', {
-        start: {
-          line: idx + 1,
-          column: 0
-        },
-        end: {
-          line: idx + 1,
-          column: line.length
-        }
-      });
-    }
-  });
-}
 
 /***/ }),
 
@@ -2632,39 +2627,47 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
 
 
-// import { failMessage } from '../utils/message';
 function embedAssetUrl() {
-  return async (tree, file) => {
-    const dirname = file.dirname || ''; // if (dirname === undefined) {
-    //   failMessage(file, `File dirname is undefined`);
-    //   return;
-    // }
+  return async tree => {
+    let activeDir = ''; // nodes need to be visited in the correct order
+    // to derive the document directory
 
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'image', node => {
-      node.url = getPath(node.url, dirname);
-    }); // also fix for raw html nodes sometimes output by knitr
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, (node, index, parent) => {
+      // to ensure relative paths to assets across multiple .Rmd files
+      if (node.type === 'textDirective' && node.name === 'directory') {
+        const firstChild = node.children[0];
+        activeDir = firstChild.value || '';
+        const parentChildren = parent?.children || [];
+        parentChildren.splice(index || 0, 1);
+      }
 
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'html', node => {
-      const props = getProps(node.value);
+      if (node.type === 'image') {
+        node.url = getPath(node.url, activeDir);
+      } // also fix for raw html nodes sometimes output by knitr
 
-      if (props !== null && props.src) {
-        const {
-          src,
-          ...otherProps
-        } = props;
-        Object.assign(node, {
-          type: 'image',
-          url: getPath(src, dirname),
-          value: '',
-          data: otherProps
-        });
+
+      if (node.type === 'html') {
+        const props = getProps(node.value);
+
+        if (props !== null && props.src) {
+          const {
+            src,
+            ...otherProps
+          } = props;
+          Object.assign(node, {
+            type: 'image',
+            url: getPath(src, activeDir),
+            value: '',
+            data: otherProps
+          });
+        }
       }
     });
   };
 }
 
 function getPath(url, dirname) {
-  return path__WEBPACK_IMPORTED_MODULE_0___default().isAbsolute(url) || url.startsWith('http') ? url : path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), dirname, url);
+  return path__WEBPACK_IMPORTED_MODULE_0___default().isAbsolute(url) || url.startsWith('http') ? url : path__WEBPACK_IMPORTED_MODULE_0___default().join(dirname, url);
 }
 
 function getProps(value) {
@@ -2796,16 +2799,17 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6809);
 /* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6688);
 /* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(1807);
 /* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(529);
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3889);
 /* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1982);
 /* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(5783);
 /* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(4457);
 /* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(6264);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(5871);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_11__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _youtube_videos__WEBPACK_IMPORTED_MODULE_13__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_parse__WEBPACK_IMPORTED_MODULE_5__]);
-([_pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_11__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _youtube_videos__WEBPACK_IMPORTED_MODULE_13__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_parse__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(7664);
+/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(5871);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_11__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _youtube_videos__WEBPACK_IMPORTED_MODULE_14__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_parse__WEBPACK_IMPORTED_MODULE_5__]);
+([_pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_11__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _youtube_videos__WEBPACK_IMPORTED_MODULE_14__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_parse__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
 
 
 
@@ -2822,11 +2826,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 
 
 
+
 async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_14__/* .unified */ .l)() // third-party plugins:
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)() // third-party plugins:
   .use(remark_parse__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__["default"]).use(remark_footnotes__WEBPACK_IMPORTED_MODULE_2__["default"], {
     inlineNotes: true
   }).use(remark_gfm__WEBPACK_IMPORTED_MODULE_4__["default"]) // .use(sectionize)
@@ -2836,7 +2841,7 @@ async function mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_10__/* .embedAssetUrl */ .Z).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_13__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx) // .use(aliasDirectiveToTex, ctx)
+  .use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_10__/* .embedAssetUrl */ .Z).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_14__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
   .use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_images__WEBPACK_IMPORTED_MODULE_11__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_12__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
@@ -2912,6 +2917,32 @@ function pagebreaks() {
             className: 'pagebreak'
           }
         };
+      }
+    });
+  };
+}
+});
+
+/***/ }),
+
+/***/ 7664:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "j": () => (/* binding */ removeEmptyParagraphs)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+
+function removeEmptyParagraphs() {
+  return async tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'paragraph', (node, index, parent) => {
+      if (node.children.length === 0) {
+        const parentChildren = parent?.children || [];
+        parentChildren.splice(index || 0, 1);
       }
     });
   };
@@ -3661,7 +3692,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.37";
+  const currentVersion = "1.1.38";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));

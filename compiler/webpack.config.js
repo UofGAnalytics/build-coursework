@@ -11,7 +11,7 @@ const __dirname = new URL('.', import.meta.url).pathname;
 const buildPath = path.join(__dirname, 'build')
 const pkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'package.json'), 'utf-8'));
 
-const VERSION = '1.1.37'
+const VERSION = '1.1.38'
 
 export default {
   target: ['node', 'es2020'],
