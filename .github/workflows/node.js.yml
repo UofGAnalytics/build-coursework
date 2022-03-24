@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [16.x, 17.x]
+        node-version: [16.x, 17.7]
         r-version: [release]
 
     steps:
