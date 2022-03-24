@@ -37,12 +37,10 @@ async function createParentFile(unit: Unit, ctx: Context) {
     const directive = `:directory[${fileDir}]`;
 
     // child document
-    const relativePath = path
-      .relative(ctx.cacheDir, filePath)
-      // escape backslash path on windows
-      .replace(/\\/g, '\\\\');
+    // escape backslash path on windows
+    const formattedPath = filePath.replace(/\\/g, '\\\\');
 
-    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}${EOL}\`\`\``;
+    const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${EOL}\`\`\``;
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
 

@@ -16,12 +16,12 @@
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently yarn:compiler yarn:template -c green,cyan",
+    "dev": "concurrently npm:compiler npm:template -c green,cyan",
     "compiler": "babel-node --extensions .ts dev.ts",
-    "template": "yarn workspace template dev",
+    "template": "npm -w template run dev",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
     "check-types": "tsc",
-    "build-release": "tsc && yarn workspace template build && yarn workspace compiler build && yarn merge-release",
+    "build-release": "tsc && npm -w template run build && npm -w compiler run build && npm run merge-release",
     "merge-release": "mkdirp release && rimraf release/* && cpy compiler/build/* release/ --flat && cpy template/build/* release/ --flat",
     "release": "cd release && release-it"
   },
