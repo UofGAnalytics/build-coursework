@@ -13,7 +13,7 @@ import { visit } from 'unist-util-visit';
 import { Element, Image, document } from './domstubs';
 
 // inject globals into pdf.js in a non-leaky way
-const pdfjsLib = SandboxedModule.require('pdfjs-dist/legacy/build/pdf', {
+const pdfjsLib = SandboxedModule.require('pdfjs-dist/build/pdf', {
   globals: { document, Image, Element, Blob, console, process, URL },
 });
 
