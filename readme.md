@@ -172,6 +172,8 @@ LaTeX tabular is not currently supported by MathJax, and recreating all its feat
 
 This is due to `$` symbols being used to delimit LaTeX. If you would like to use a `$` symbol for another purpose please escape it with a preceeding backslash: `\$`.
 
+This message can also occur if the display math style of a double $ is used, you can replace this with a begin{equation} end{equation}.
+
 ## Bug reporting
 
 If you find an issue with the output of this tool, please send an email to david.mcarthur.2@glasgow.ac.uk with the misbehaving Markdown and a description of what you expected to see.
