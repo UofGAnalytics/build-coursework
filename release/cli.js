@@ -7,7 +7,7 @@
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "_": () => (/* binding */ buildUnit)
 /* harmony export */ });
@@ -22,8 +22,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _mdast_combined__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8176);
 /* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(9005);
 /* harmony import */ var _pre_parse__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(6590);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_html__WEBPACK_IMPORTED_MODULE_2__, _hast__WEBPACK_IMPORTED_MODULE_1__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__, _linter__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_8__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__]);
-([_html__WEBPACK_IMPORTED_MODULE_2__, _hast__WEBPACK_IMPORTED_MODULE_1__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__, _linter__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_8__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _pdf__WEBPACK_IMPORTED_MODULE_8__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__]);
+([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_6__, _mdast_combined__WEBPACK_IMPORTED_MODULE_7__, _pdf__WEBPACK_IMPORTED_MODULE_8__, _pre_parse__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -87,7 +87,8 @@ async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
     html
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -95,11 +96,11 @@ async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
 /***/ ((module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony import */ var yargs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2699);
 /* harmony import */ var ___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7329);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([___WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_0__]);
-([___WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([yargs__WEBPACK_IMPORTED_MODULE_0__, ___WEBPACK_IMPORTED_MODULE_1__]);
+([yargs__WEBPACK_IMPORTED_MODULE_0__, ___WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 const {
@@ -172,7 +173,8 @@ const options = {
 // }
 
 (0,___WEBPACK_IMPORTED_MODULE_1__/* .rMarkdown */ .C)(dirPath, options);
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -180,14 +182,14 @@ const options = {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "k": () => (/* binding */ createContext)
 /* harmony export */ });
 /* harmony import */ var _course__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3942);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_utils__WEBPACK_IMPORTED_MODULE_1__, _course__WEBPACK_IMPORTED_MODULE_0__]);
-([_utils_utils__WEBPACK_IMPORTED_MODULE_1__, _course__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_course__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__]);
+([_course__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 async function createContext(dirPath, options = {}) {
@@ -201,7 +203,8 @@ async function createContext(dirPath, options = {}) {
     figureCounter: 0
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -209,7 +212,7 @@ async function createContext(dirPath, options = {}) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "F": () => (/* binding */ collectCoursework)
 /* harmony export */ });
@@ -220,8 +223,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1252);
 /* harmony import */ var _load_course__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8292);
 /* harmony import */ var _load_unit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_2__, _load_unit__WEBPACK_IMPORTED_MODULE_4__, _load_course__WEBPACK_IMPORTED_MODULE_3__]);
-([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_2__, _load_unit__WEBPACK_IMPORTED_MODULE_4__, _load_course__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_2__, _load_course__WEBPACK_IMPORTED_MODULE_3__, _load_unit__WEBPACK_IMPORTED_MODULE_4__]);
+([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_2__, _load_course__WEBPACK_IMPORTED_MODULE_3__, _load_unit__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -273,7 +276,8 @@ function getUnitTitles({
     fileName: (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__["default"])(unitName)
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -281,7 +285,7 @@ function getUnitTitles({
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "n": () => (/* binding */ loadCourseYaml)
 /* harmony export */ });
@@ -290,8 +294,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(626);
 /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4962);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_yaml__WEBPACK_IMPORTED_MODULE_1__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__, yup__WEBPACK_IMPORTED_MODULE_2__]);
-([js_yaml__WEBPACK_IMPORTED_MODULE_1__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__, yup__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__]);
+([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -307,7 +311,8 @@ async function loadCourseYaml(dirPath) {
   const course = js_yaml__WEBPACK_IMPORTED_MODULE_1__["default"].load(fileContents);
   return courseSchema.validateSync(course);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -315,7 +320,7 @@ async function loadCourseYaml(dirPath) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "o": () => (/* binding */ loadUnitYaml)
 /* harmony export */ });
@@ -324,8 +329,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(626);
 /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4962);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_yaml__WEBPACK_IMPORTED_MODULE_1__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__, yup__WEBPACK_IMPORTED_MODULE_2__]);
-([js_yaml__WEBPACK_IMPORTED_MODULE_1__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__, yup__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__]);
+([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -342,7 +347,8 @@ async function loadUnitYaml(dirPath, src) {
   const unit = js_yaml__WEBPACK_IMPORTED_MODULE_1__["default"].load(fileContents);
   return unitSchema.validateSync(unit);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -350,7 +356,7 @@ async function loadUnitYaml(dirPath, src) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "v": () => (/* binding */ embedAssets)
 /* harmony export */ });
@@ -367,8 +373,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(2430);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(153);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_utils__WEBPACK_IMPORTED_MODULE_11__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__]);
-([_utils_utils__WEBPACK_IMPORTED_MODULE_11__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, _utils_utils__WEBPACK_IMPORTED_MODULE_11__]);
+([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, _utils_utils__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -531,7 +537,8 @@ async function embedHtml(imgNode) {
     children: parsed.children
   });
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -539,7 +546,7 @@ async function embedHtml(imgNode) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "s": () => (/* binding */ hastPhase)
 /* harmony export */ });
@@ -548,8 +555,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
 /* harmony import */ var _embed_assets__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8027);
 /* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3517);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_embed_assets__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__, rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__]);
-([_embed_assets__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__, rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _embed_assets__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__]);
+([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _embed_assets__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -566,7 +573,8 @@ async function hastPhase(mdast, ctx, file, targetPdf) {
 
   return processor.run(mdast, file);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -574,14 +582,14 @@ async function hastPhase(mdast, ctx, file, targetPdf) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "l": () => (/* binding */ responsiveTables)
 /* harmony export */ });
 /* harmony import */ var lodash_cloneDeep_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8971);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_cloneDeep_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-([lodash_cloneDeep_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([lodash_cloneDeep_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 function responsiveTables() {
@@ -607,7 +615,8 @@ function responsiveTables() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -615,7 +624,7 @@ function responsiveTables() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "D": () => (/* binding */ htmlPhase)
 /* harmony export */ });
@@ -629,8 +638,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8061);
 /* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7538);
 /* harmony import */ var _wrapper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1162);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__]);
-([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__]);
+([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -687,7 +696,8 @@ function referenceTransform(html, refStore) {
     return `<a href="#${link}">${name}</a>`;
   });
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -695,14 +705,14 @@ function referenceTransform(html, refStore) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "g": () => (/* binding */ pdfWrapper)
 /* harmony export */ });
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3889);
 /* harmony import */ var _wrapper_main__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9060);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_icons__WEBPACK_IMPORTED_MODULE_0__]);
-_utils_icons__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+_utils_icons__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 // import { UnitTitles } from '../course/types';
 
 
@@ -724,7 +734,8 @@ function pdfWrapper(unit) {
     };
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -732,7 +743,7 @@ function pdfWrapper(unit) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "B": () => (/* binding */ htmlWrapper)
 /* harmony export */ });
@@ -740,7 +751,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9060);
 /* harmony import */ var _sidebar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6725);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _sidebar__WEBPACK_IMPORTED_MODULE_1__]);
-([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _sidebar__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _sidebar__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -764,7 +775,8 @@ function htmlWrapper(unit, mdast) {
     };
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -817,7 +829,7 @@ function createH1(titles) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "x": () => (/* binding */ createSidebar)
 /* harmony export */ });
@@ -828,8 +840,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2430);
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3889);
 /* harmony import */ var _view_options__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4048);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_icons__WEBPACK_IMPORTED_MODULE_2__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__, mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__]);
-([_utils_icons__WEBPACK_IMPORTED_MODULE_2__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__, mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, _utils_icons__WEBPACK_IMPORTED_MODULE_2__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__]);
+([mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, _utils_icons__WEBPACK_IMPORTED_MODULE_2__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -884,7 +896,8 @@ async function createLogo() {
     }, hamburgerIcon]
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1080,7 +1093,7 @@ function createTitle(value) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "C": () => (/* binding */ rMarkdown)
 /* harmony export */ });
@@ -1092,8 +1105,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2240);
 /* harmony import */ var _utils_timer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2364);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_1__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _build_unit__WEBPACK_IMPORTED_MODULE_2__, _context__WEBPACK_IMPORTED_MODULE_3__, _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__]);
-([chalk__WEBPACK_IMPORTED_MODULE_1__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _build_unit__WEBPACK_IMPORTED_MODULE_2__, _context__WEBPACK_IMPORTED_MODULE_3__, _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_1__, _build_unit__WEBPACK_IMPORTED_MODULE_2__, _context__WEBPACK_IMPORTED_MODULE_3__, _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__]);
+([chalk__WEBPACK_IMPORTED_MODULE_1__, _build_unit__WEBPACK_IMPORTED_MODULE_2__, _context__WEBPACK_IMPORTED_MODULE_3__, _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1154,7 +1167,8 @@ async function writeUnit(built, ctx, timer) {
     console.log(`✨ ${status} ${filePath}.pdf`);
   }
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1162,7 +1176,7 @@ async function writeUnit(built, ctx, timer) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "M": () => (/* binding */ knitr)
 /* harmony export */ });
@@ -1179,8 +1193,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(6811);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(153);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__, chalk__WEBPACK_IMPORTED_MODULE_4__]);
-([hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__, chalk__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__]);
+([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1406,7 +1420,8 @@ function findLanguageForOutput(prev) {
 //     }
 //   )
 // `;
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1414,15 +1429,15 @@ function findLanguageForOutput(prev) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "F": () => (/* binding */ aliasDirectiveToSvg)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8061);
 /* harmony import */ var _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1246);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_utils__WEBPACK_IMPORTED_MODULE_1__, _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__, unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-([_utils_utils__WEBPACK_IMPORTED_MODULE_1__, _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__, unist_util_visit__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__, _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__]);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__, _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1438,7 +1453,11 @@ function aliasDirectiveToSvg(ctx) {
         case 'blockMath':
           {
             const idx = getTexIdx(node);
-            const mml = ctx.mmlStore[idx];
+            console.log(idx);
+            const mml = ctx.mmlStore[idx]; // if (idx === 10) {
+            //   console.log(mml);
+            // }
+
             const svg = renderSvg(mml);
             const properties = { ...svg.properties,
               className: node.name === 'inlineMath' ? 'inline-math' : 'block-math',
@@ -1507,7 +1526,8 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
   svg.properties = newProperties;
   return svg;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1515,7 +1535,7 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "g3": () => (/* binding */ mmlToSvg),
 /* harmony export */   "yN": () => (/* binding */ mmlToSpeech)
@@ -1532,8 +1552,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2338);
 /* harmony import */ var mathjax_full_js_output_svg_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1192);
 /* harmony import */ var speech_rule_engine__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1150);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([speech_rule_engine__WEBPACK_IMPORTED_MODULE_10__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_8__, mathjax_full_js_output_svg_js__WEBPACK_IMPORTED_MODULE_9__, mathjax_full_js_input_mathml_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_7__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_handlers_html_HTMLDocument_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__]);
-([speech_rule_engine__WEBPACK_IMPORTED_MODULE_10__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_8__, mathjax_full_js_output_svg_js__WEBPACK_IMPORTED_MODULE_9__, mathjax_full_js_input_mathml_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_7__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_handlers_html_HTMLDocument_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_handlers_html_HTMLDocument_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_input_mathml_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_7__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_8__, mathjax_full_js_output_svg_js__WEBPACK_IMPORTED_MODULE_9__, speech_rule_engine__WEBPACK_IMPORTED_MODULE_10__]);
+([mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_handlers_html_HTMLDocument_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_input_mathml_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_7__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_8__, mathjax_full_js_output_svg_js__WEBPACK_IMPORTED_MODULE_9__, speech_rule_engine__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1581,7 +1601,8 @@ function mmlToSvg(mml) {
 function mmlToSpeech(mml) {
   return speech_rule_engine__WEBPACK_IMPORTED_MODULE_10__["default"].toSpeech(mml);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1589,7 +1610,7 @@ function mmlToSpeech(mml) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "T": () => (/* binding */ texToAliasDirective)
 /* harmony export */ });
@@ -1602,8 +1623,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2338);
 /* harmony import */ var _linter_assert_no_tex_tabular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5187);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(153);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__]);
-([mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__]);
+([mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1741,7 +1762,8 @@ function unprotectHtml(html) {
 function removeUnresolvedLabels(html) {
   return html.replace(/\\label{def:.*?}/gm, '');
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1749,7 +1771,7 @@ function removeUnresolvedLabels(html) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "c": () => (/* binding */ assertAssetExists)
 /* harmony export */ });
@@ -1757,7 +1779,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8061);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_2__]);
-([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1786,7 +1808,8 @@ function assertAssetExists() {
     await Promise.all(transformations);
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1794,14 +1817,14 @@ function assertAssetExists() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "N": () => (/* binding */ assertNoH1)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function assertNoH1() {
@@ -1814,7 +1837,8 @@ function assertNoH1() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1853,14 +1877,14 @@ function assertNoTexTabular(file) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "A": () => (/* binding */ assertTaskAnswerStructure)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function assertTaskAnswerStructure() {
@@ -1891,7 +1915,8 @@ function assertTaskAnswerStructure() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1899,14 +1924,14 @@ function assertTaskAnswerStructure() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "c": () => (/* binding */ assertVideoAttributes)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function assertVideoAttributes() {
@@ -1936,7 +1961,8 @@ function getTitle(node) {
   const firstChild = children[0];
   return firstChild?.value || '';
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1944,14 +1970,14 @@ function getTitle(node) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "F": () => (/* binding */ assertWeblinkTarget)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function assertWeblinkTarget() {
@@ -1965,7 +1991,8 @@ function assertWeblinkTarget() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -1973,7 +2000,7 @@ function assertWeblinkTarget() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "E": () => (/* binding */ reportErrors),
 /* harmony export */   "Z": () => (/* binding */ createReport)
@@ -1992,8 +2019,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(3980);
 /* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6737);
 /* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(8987);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_retext__WEBPACK_IMPORTED_MODULE_3__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, retext_english__WEBPACK_IMPORTED_MODULE_4__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, _double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _lint_latex__WEBPACK_IMPORTED_MODULE_11__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_7__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_10__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_8__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_9__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _report__WEBPACK_IMPORTED_MODULE_12__]);
-([remark_retext__WEBPACK_IMPORTED_MODULE_3__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, retext_english__WEBPACK_IMPORTED_MODULE_4__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, _double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _lint_latex__WEBPACK_IMPORTED_MODULE_11__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_7__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_10__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_8__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_9__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _report__WEBPACK_IMPORTED_MODULE_12__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_7__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_8__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_9__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_10__, _lint_latex__WEBPACK_IMPORTED_MODULE_11__, _report__WEBPACK_IMPORTED_MODULE_12__]);
+([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_7__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_8__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_9__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_10__, _lint_latex__WEBPACK_IMPORTED_MODULE_11__, _report__WEBPACK_IMPORTED_MODULE_12__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // @ts-expect-error
  // @ts-expect-error
 
@@ -2047,7 +2074,8 @@ async function createReport(file, mdast, ctx) {
 
   await processor.run(mdast, file);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2055,7 +2083,7 @@ async function createReport(file, mdast, ctx) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "I": () => (/* binding */ lintLatex)
 /* harmony export */ });
@@ -2063,7 +2091,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(child_process__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function lintLatex() {
@@ -2134,7 +2162,8 @@ function formatResponse(response) {
     return acc;
   }, []);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2142,7 +2171,7 @@ function formatResponse(response) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "IC": () => (/* binding */ printReport),
 /* harmony export */   "wC": () => (/* binding */ reportHasFatalErrors)
@@ -2152,7 +2181,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3952);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(153);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__]);
-([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -2242,7 +2271,8 @@ function getStatusColour(status) {
       return chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow;
   }
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2250,7 +2280,7 @@ function getStatusColour(status) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "q": () => (/* binding */ boxouts)
 /* harmony export */ });
@@ -2259,8 +2289,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3286);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
 /* harmony import */ var _utils_counter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6639);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__, lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__, lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__]);
+([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -2450,7 +2480,8 @@ function getTitleValue(node) {
 
   return parent.children || [];
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2458,14 +2489,14 @@ function getTitleValue(node) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "r": () => (/* binding */ codeBlocks)
 /* harmony export */ });
 /* harmony import */ var refractor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9663);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([refractor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-([refractor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([refractor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 function codeBlocks(ctx) {
@@ -2579,7 +2610,8 @@ function parseClass(node) {
 
   return lang.slice(2, -1);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2587,15 +2619,15 @@ function parseClass(node) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "P": () => (/* binding */ combinedMdastPhase)
 /* harmony export */ });
 /* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1807);
 /* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(478);
 /* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6285);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _boxouts__WEBPACK_IMPORTED_MODULE_0__]);
-([_move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _boxouts__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__]);
+([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -2608,7 +2640,8 @@ async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
 
   return processor.run(mdast, file);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2616,7 +2649,7 @@ async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Z": () => (/* binding */ embedAssetUrl)
 /* harmony export */ });
@@ -2624,7 +2657,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function embedAssetUrl() {
@@ -2696,7 +2729,8 @@ function propsToObject(str) {
     return acc;
   }, {});
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2704,13 +2738,13 @@ function propsToObject(str) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "W": () => (/* binding */ images)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 function images(ctx) {
   return tree => {
@@ -2780,7 +2814,8 @@ function createCaption(node, count) {
 
   return result;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2788,7 +2823,7 @@ function createCaption(node, count) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "c": () => (/* binding */ mdastPhase)
 /* harmony export */ });
@@ -2808,8 +2843,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(6264);
 /* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(7664);
 /* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(5871);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_11__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _youtube_videos__WEBPACK_IMPORTED_MODULE_14__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_parse__WEBPACK_IMPORTED_MODULE_5__]);
-([_pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_11__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _youtube_videos__WEBPACK_IMPORTED_MODULE_14__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_parse__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _youtube_videos__WEBPACK_IMPORTED_MODULE_14__]);
+([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _youtube_videos__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -2846,7 +2881,8 @@ async function mdastPhase(file, ctx) {
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2854,18 +2890,20 @@ async function mdastPhase(file, ctx) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "w": () => (/* binding */ moveAnswersToEnd)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 function moveAnswersToEnd() {
   return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', (node, index, parent) => {
-      // remove answer from task rehype
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
+      const index = _index;
+      const parent = _parent; // remove answer from task rehype
+
       if (node.name === 'task' && node.data) {
         const children = node.data.hChildren || [];
         node.data.hChildren = children.filter(o => o.name !== 'answer');
@@ -2891,7 +2929,8 @@ function moveAnswersToEnd() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2899,13 +2938,13 @@ function moveAnswersToEnd() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "m": () => (/* binding */ pagebreaks)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 function pagebreaks() {
   return async tree => {
@@ -2921,7 +2960,8 @@ function pagebreaks() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2929,17 +2969,20 @@ function pagebreaks() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "j": () => (/* binding */ removeEmptyParagraphs)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 function removeEmptyParagraphs() {
   return async tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'paragraph', (node, index, parent) => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'paragraph', (node, _index, _parent) => {
+      const index = _index;
+      const parent = _parent;
+
       if (node.children.length === 0) {
         const parentChildren = parent?.children || [];
         parentChildren.splice(index || 0, 1);
@@ -2947,7 +2990,8 @@ function removeEmptyParagraphs() {
     });
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -2955,14 +2999,14 @@ function removeEmptyParagraphs() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "b": () => (/* binding */ youtubeVideos)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function youtubeVideos() {
@@ -3074,7 +3118,8 @@ function formatDuration(duration = '') {
 
   return `${match[1]}:${match[2].padStart(2, '0')}`;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3082,13 +3127,13 @@ function formatDuration(duration = '') {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "A": () => (/* binding */ convertToPdf)
 /* harmony export */ });
 /* harmony import */ var puppeteer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5462);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([puppeteer__WEBPACK_IMPORTED_MODULE_0__]);
-puppeteer__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+puppeteer__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
  // const footerTemplate = `
 //   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
 //     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
@@ -3120,7 +3165,8 @@ async function convertToPdf(html) {
   await browser.close();
   return pdf;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3128,7 +3174,7 @@ async function convertToPdf(html) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "k": () => (/* binding */ pdfToSvg)
 /* harmony export */ });
@@ -3141,8 +3187,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1807);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6016);
 /* harmony import */ var _domstubs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3257);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_5__, rehype_stringify__WEBPACK_IMPORTED_MODULE_2__, rehype_parse__WEBPACK_IMPORTED_MODULE_1__, svgo__WEBPACK_IMPORTED_MODULE_4__, sandboxed_module__WEBPACK_IMPORTED_MODULE_3__]);
-([unist_util_visit__WEBPACK_IMPORTED_MODULE_5__, rehype_stringify__WEBPACK_IMPORTED_MODULE_2__, rehype_parse__WEBPACK_IMPORTED_MODULE_1__, svgo__WEBPACK_IMPORTED_MODULE_4__, sandboxed_module__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_1__, rehype_stringify__WEBPACK_IMPORTED_MODULE_2__, sandboxed_module__WEBPACK_IMPORTED_MODULE_3__, svgo__WEBPACK_IMPORTED_MODULE_4__, unist_util_visit__WEBPACK_IMPORTED_MODULE_5__]);
+([rehype_parse__WEBPACK_IMPORTED_MODULE_1__, rehype_stringify__WEBPACK_IMPORTED_MODULE_2__, sandboxed_module__WEBPACK_IMPORTED_MODULE_3__, svgo__WEBPACK_IMPORTED_MODULE_4__, unist_util_visit__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3234,7 +3280,8 @@ function getViewBox(properties) {
 
   return `0 0 ${properties.width} ${properties.height}`;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3264,8 +3311,8 @@ function allowNoWhitespaceBeforeHeading(contents) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "u": () => (/* binding */ convertNewPageToDirective),
-/* harmony export */   "c": () => (/* binding */ convertEmptyMBoxToDirective)
+/* harmony export */   "c": () => (/* binding */ convertEmptyMBoxToDirective),
+/* harmony export */   "u": () => (/* binding */ convertNewPageToDirective)
 /* harmony export */ });
 const blockList = ['\\newpage', '\\pagebreak'];
 function convertNewPageToDirective(contents) {
@@ -3386,7 +3433,7 @@ function transformAttributes(containerName, attributesArr) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Z": () => (/* binding */ preParsePhase)
 /* harmony export */ });
@@ -3396,7 +3443,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var _convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9386);
 /* harmony import */ var _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7660);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__]);
-_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 
@@ -3431,7 +3478,8 @@ function escapeDollarsInCodeBlocks(md) {
     return '\n' + match.replace(/\$/g, '\\$') + '\n';
   });
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3439,7 +3487,7 @@ function escapeDollarsInCodeBlocks(md) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "C": () => (/* binding */ reformatPandocSimpleTables)
 /* harmony export */ });
@@ -3447,7 +3495,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var markdown_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4922);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([markdown_table__WEBPACK_IMPORTED_MODULE_1__]);
-markdown_table__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+markdown_table__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 function reformatPandocSimpleTables(contents) {
@@ -3594,7 +3642,8 @@ function multilineReducer(acc, row) {
 
   return acc;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3602,7 +3651,7 @@ function multilineReducer(acc, row) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "G": () => (/* binding */ cacheToFile)
 /* harmony export */ });
@@ -3611,8 +3660,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2386);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils__WEBPACK_IMPORTED_MODULE_2__, hash_sum__WEBPACK_IMPORTED_MODULE_1__]);
-([_utils__WEBPACK_IMPORTED_MODULE_2__, hash_sum__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_1__, _utils__WEBPACK_IMPORTED_MODULE_2__]);
+([hash_sum__WEBPACK_IMPORTED_MODULE_1__, _utils__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3667,7 +3716,8 @@ async function execAndCache({
   await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .writeFile */ .NC)(cachedFilePath, str);
   return out;
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3675,14 +3725,14 @@ async function execAndCache({
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "m": () => (/* binding */ checkForLatestVersion)
 /* harmony export */ });
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7564);
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6544);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, node_fetch__WEBPACK_IMPORTED_MODULE_1__]);
-([chalk__WEBPACK_IMPORTED_MODULE_0__, node_fetch__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([chalk__WEBPACK_IMPORTED_MODULE_0__, node_fetch__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 const repo = 'UofGAnalytics/build-coursework';
@@ -3703,7 +3753,8 @@ async function checkForLatestVersion() {
     console.log('');
   }
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3732,14 +3783,14 @@ function createCounter() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "j": () => (/* binding */ getAssetHast)
 /* harmony export */ });
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1252);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_utils__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_0__]);
-([_utils_utils__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_0__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([to_vfile__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__]);
+([to_vfile__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
  // export async function getAssetHast(name: string) {
 //   const contents = await getAsset(name);
@@ -3755,7 +3806,8 @@ function getAssetHast(value) {
   const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_1__/* .rehypeParser */ .G5)().parse(vfile);
   return parsed.children[0];
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3763,16 +3815,16 @@ function getAssetHast(value) {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "W": () => (/* binding */ createSvg),
-/* harmony export */   "B": () => (/* binding */ createDefs)
+/* harmony export */   "B": () => (/* binding */ createDefs),
+/* harmony export */   "W": () => (/* binding */ createSvg)
 /* harmony export */ });
 /* harmony import */ var _assets_hamburger_icon_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(757);
 /* harmony import */ var _assets_link_icon_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2439);
 /* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2430);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_get_asset_hast__WEBPACK_IMPORTED_MODULE_0__]);
-_get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+_get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 
@@ -3849,7 +3901,8 @@ function createGroup({
     children
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -3858,9 +3911,9 @@ function createGroup({
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "rJ": () => (/* binding */ MessageStatus),
+/* harmony export */   "KU": () => (/* binding */ warnMessage),
 /* harmony export */   "Ob": () => (/* binding */ failMessage),
-/* harmony export */   "KU": () => (/* binding */ warnMessage)
+/* harmony export */   "rJ": () => (/* binding */ MessageStatus)
 /* harmony export */ });
 /* unused harmony export infoMessage */
 let MessageStatus;
@@ -3917,17 +3970,17 @@ function createTimer() {
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "G5": () => (/* binding */ rehypeParser),
-/* harmony export */   "pJ": () => (/* binding */ readFile),
+/* harmony export */   "N5": () => (/* binding */ getCacheDir),
 /* harmony export */   "NC": () => (/* binding */ writeFile),
-/* harmony export */   "qd": () => (/* binding */ checkLocalFileExists),
+/* harmony export */   "Oh": () => (/* binding */ getLibraryDir),
 /* harmony export */   "gr": () => (/* binding */ rmFile),
 /* harmony export */   "i$": () => (/* binding */ mkdir),
 /* harmony export */   "kc": () => (/* binding */ getBuildDir),
-/* harmony export */   "N5": () => (/* binding */ getCacheDir),
-/* harmony export */   "Oh": () => (/* binding */ getLibraryDir)
+/* harmony export */   "pJ": () => (/* binding */ readFile),
+/* harmony export */   "qd": () => (/* binding */ checkLocalFileExists)
 /* harmony export */ });
 /* unused harmony exports rmdir, combineMdastTrees, inspect */
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7147);
@@ -3937,8 +3990,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__) => {
 /* harmony import */ var rehype_parse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1345);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5390);
 /* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_stringify__WEBPACK_IMPORTED_MODULE_3__, rehype_parse__WEBPACK_IMPORTED_MODULE_2__]);
-([rehype_stringify__WEBPACK_IMPORTED_MODULE_3__, rehype_parse__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__]);
+([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -4002,7 +4055,8 @@ function inspect() {
     return tree;
   };
 }
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -4760,9 +4814,9 @@ module.exports = require("url");
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Ee": () => (/* binding */ Image),
 /* harmony export */   "W_": () => (/* binding */ Element),
-/* harmony export */   "tj": () => (/* binding */ document),
-/* harmony export */   "Ee": () => (/* binding */ Image)
+/* harmony export */   "tj": () => (/* binding */ document)
 /* harmony export */ });
 /**
  * @licstart The following is the entire license notice for the
@@ -5075,13 +5129,13 @@ Image.prototype = {
 /***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "C": () => (/* binding */ definitions)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__)[0];
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 /**
  * @typedef {import('mdast').Root|import('mdast').Content} Node
  * @typedef {import('mdast').Definition} Definition
@@ -5136,7 +5190,8 @@ function clean(value) {
   return String(value || '').toUpperCase()
 }
 
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -5169,7 +5224,7 @@ function clean(value) {
  */
 function footer(h) {
   let index = -1
-  /** @type {ElementContent[]} */
+  /** @type {Array<ElementContent>} */
   const listItems = []
 
   while (++index < h.footnoteOrder.length) {
@@ -5183,7 +5238,7 @@ function footer(h) {
     const id = String(def.identifier)
     const safeId = (0,micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_1__/* .sanitizeUri */ .K)(id.toLowerCase())
     let referenceIndex = 0
-    /** @type {ElementContent[]} */
+    /** @type {Array<ElementContent>} */
     const backReferences = []
 
     while (++referenceIndex <= h.footnoteCounts[id]) {
@@ -5544,7 +5599,7 @@ var encode = __webpack_require__(4651);
  *
  * @type {Handler}
  * @param {ImageReference|LinkReference} node
- * @returns {Content|Array.<Content>}
+ * @returns {Content|Array<Content>}
  */
 function revert(h, node) {
   const subtype = node.referenceType
@@ -5731,7 +5786,7 @@ function listItem(h, node, parent) {
   const loose = parent ? listLoose(parent) : listItemLoose(node)
   /** @type {Properties} */
   const props = {}
-  /** @type {Array.<Content>} */
+  /** @type {Array<Content>} */
   const wrapped = []
 
   if (typeof node.checked === 'boolean') {
@@ -5946,19 +6001,22 @@ function table(h, node) {
   const rows = node.children
   let index = -1
   const align = node.align || []
-  /** @type {Array.<Element>} */
+  /** @type {Array<Element>} */
   const result = []
 
   while (++index < rows.length) {
     const row = rows[index].children
     const name = index === 0 ? 'th' : 'td'
-    let pos = node.align ? align.length : row.length
-    /** @type {Array.<Content>} */
+    /** @type {Array<Content>} */
     const out = []
+    let cellIndex = -1
+    const length = node.align ? align.length : row.length
 
-    while (pos--) {
-      const cell = row[pos]
-      out[pos] = h(cell, name, {align: align[pos]}, cell ? (0,traverse/* all */.$)(h, cell) : [])
+    while (++cellIndex < length) {
+      const cell = row[cellIndex]
+      out.push(
+        h(cell, name, {align: align[cellIndex]}, cell ? (0,traverse/* all */.$)(h, cell) : [])
+      )
     }
 
     result[index] = h(rows[index], 'tr', (0,wrap/* wrap */.r)(out, true))
@@ -6085,7 +6143,7 @@ function ignore() {
 /***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__) => {
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Q": () => (/* binding */ toHast)
 /* harmony export */ });
@@ -6098,7 +6156,7 @@ __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 /* harmony import */ var _footer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7191);
 /* harmony import */ var _handlers_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7354);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__]);
-([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? await __webpack_async_dependencies__ : __webpack_async_dependencies__);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /**
  * @typedef {import('mdast').Root|import('mdast').Parent['children'][number]} MdastNode
  * @typedef {import('hast').Root|import('hast').Parent['children'][number]} HastNode
@@ -6116,9 +6174,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
  * @typedef EmbeddedHastFields
  * @property {string} [hName] Defines the tag name of an element
  * @property {Properties} [hProperties] Defines the properties of an element
- * @property {Array.<Content>} [hChildren] Defines the (hast) children of an element
+ * @property {Array<Content>} [hChildren] Defines the (hast) children of an element
  *
- * @typedef {Object.<string, unknown> & EmbeddedHastFields} Data unist data with embedded hast fields
+ * @typedef {Record<string, unknown> & EmbeddedHastFields} Data unist data with embedded hast fields
  *
  * @typedef {MdastNode & {data?: Data}} NodeWithData unist node with embedded hast data
  *
@@ -6126,19 +6184,19 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
  * @param {H} h Handle context
  * @param {any} node mdast node to handle
  * @param {Parent|null} parent Parent of `node`
- * @returns {Content|Array.<Content>|null|undefined} hast node
+ * @returns {Content|Array<Content>|null|undefined} hast node
  *
  * @callback HFunctionProps
  * @param {MdastNode|PositionLike|null|undefined} node mdast node or unist position
  * @param {string} tagName HTML tag name
  * @param {Properties} props Properties
- * @param {Array.<Content>?} [children] hast content
+ * @param {Array<Content>?} [children] hast content
  * @returns {Element}
  *
  * @callback HFunctionNoProps
  * @param {MdastNode|PositionLike|null|undefined} node mdast node or unist position
  * @param {string} tagName HTML tag name
- * @param {Array.<Content>?} [children] hast content
+ * @param {Array<Content>?} [children] hast content
  * @returns {Element}
  *
  * @typedef HFields
@@ -6147,13 +6205,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
  * @property {string} footnoteLabel Label to use to introduce the footnote section
  * @property {string} footnoteBackLabel Label to use to go back to a footnote call from the footnote section
  * @property {(identifier: string) => Definition|null} definition Definition cache
- * @property {Object.<string, FootnoteDefinition>} footnoteById Footnote cache
- * @property {Array.<string>} footnoteOrder Order in which footnotes occur
- * @property {Record.<string, number>} footnoteCounts Counts the same footnote was used
+ * @property {Record<string, FootnoteDefinition>} footnoteById Footnote cache
+ * @property {Array<string>} footnoteOrder Order in which footnotes occur
+ * @property {Record<string, number>} footnoteCounts Counts the same footnote was used
  * @property {Handlers} handlers Applied handlers
  * @property {Handler} unknownHandler Handler for any none not in `passThrough` or otherwise handled
  * @property {(left: NodeWithData|PositionLike|null|undefined, right: Content) => Content} augment Like `h` but lower-level and usable on non-elements.
- * @property {Array.<string>} passThrough List of node types to pass through untouched (except for their children).
+ * @property {Array<string>} passThrough List of node types to pass through untouched (except for their children).
  *
  * @typedef Options
  * @property {boolean} [allowDangerousHtml=false]
@@ -6180,12 +6238,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
  *   Change it if you’re authoring in a different language.
  * @property {Handlers} [handlers]
  *   Object mapping mdast nodes to functions handling them
- * @property {Array.<string>} [passThrough]
+ * @property {Array<string>} [passThrough]
  *   List of custom mdast node types to pass through (keep) in hast
  * @property {Handler} [unknownHandler]
  *   Handler for all unknown nodes.
  *
- * @typedef {Record.<string, Handler>} Handlers
+ * @typedef {Record<string, Handler>} Handlers
  *   Map of node types to handlers
  * @typedef {HFunctionProps & HFunctionNoProps & HFields} H
  *   Handle context
@@ -6211,7 +6269,7 @@ const own = {}.hasOwnProperty
 function factory(tree, options) {
   const settings = options || {}
   const dangerous = settings.allowDangerousHtml || false
-  /** @type {Object.<string, FootnoteDefinition>} */
+  /** @type {Record<string, FootnoteDefinition>} */
   const footnoteById = {}
 
   h.dangerous = dangerous
@@ -6223,9 +6281,9 @@ function factory(tree, options) {
   h.footnoteBackLabel = settings.footnoteBackLabel || 'Back to content'
   h.definition = (0,mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__/* .definitions */ .C)(tree)
   h.footnoteById = footnoteById
-  /** @type {Array.<string>} */
+  /** @type {Array<string>} */
   h.footnoteOrder = []
-  /** @type {Record.<string, number>} */
+  /** @type {Record<string, number>} */
   h.footnoteCounts = {}
   h.augment = augment
   h.handlers = {..._handlers_index_js__WEBPACK_IMPORTED_MODULE_2__/* .handlers */ .q, ...settings.handlers}
@@ -6335,7 +6393,8 @@ function toHast(tree, options) {
 
 
 
-});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -6344,8 +6403,8 @@ function toHast(tree, options) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "J": () => (/* binding */ one),
-/* harmony export */   "$": () => (/* binding */ all)
+/* harmony export */   "$": () => (/* binding */ all),
+/* harmony export */   "J": () => (/* binding */ one)
 /* harmony export */ });
 /* harmony import */ var unist_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8881);
 /**
@@ -6420,7 +6479,7 @@ function returnNode(h, node) {
  * @param {MdastNode} parent
  */
 function all(h, parent) {
-  /** @type {Array.<Content>} */
+  /** @type {Array<Content>} */
   const values = []
 
   if ('children' in parent) {
@@ -6478,12 +6537,12 @@ function all(h, parent) {
  * Wrap `nodes` with line feeds between each entry.
  * Optionally adds line feeds at the start and end.
  *
- * @param {Array.<Content>} nodes
+ * @param {Array<Content>} nodes
  * @param {boolean} [loose=false]
- * @returns {Array.<Content>}
+ * @returns {Array<Content>}
  */
 function wrap(nodes, loose) {
-  /** @type {Array.<Content>} */
+  /** @type {Array<Content>} */
   const result = []
   let index = -1
 
@@ -6905,12 +6964,15 @@ function isPlainObject(value) {
 
 ;// CONCATENATED MODULE: ../node_modules/trough/index.js
 /**
- * @typedef {(error?: Error|null|undefined, ...output: any[]) => void} Callback
- * @typedef {(...input: any[]) => any} Middleware
+ * @typedef {(error?: Error|null|undefined, ...output: Array<any>) => void} Callback
+ * @typedef {(...input: Array<any>) => any} Middleware
  *
- * @typedef {(...input: any[]) => void} Run Call all middleware.
- * @typedef {(fn: Middleware) => Pipeline} Use Add `fn` (middleware) to the list.
+ * @typedef {(...input: Array<any>) => void} Run
+ *   Call all middleware.
+ * @typedef {(fn: Middleware) => Pipeline} Use
+ *   Add `fn` (middleware) to the list.
  * @typedef {{run: Run, use: Use}} Pipeline
+ *   Middleware.
  */
 
 /**
@@ -6919,7 +6981,7 @@ function isPlainObject(value) {
  * @returns {Pipeline}
  */
 function trough() {
-  /** @type {Middleware[]} */
+  /** @type {Array<Middleware>} */
   const fns = []
   /** @type {Pipeline} */
   const pipeline = {run, use}
@@ -6942,7 +7004,7 @@ function trough() {
      * Run the next `fn`, or we’re done.
      *
      * @param {Error|null|undefined} error
-     * @param {any[]} output
+     * @param {Array<any>} output
      */
     function next(error, ...output) {
       const fn = fns[++middlewareIndex]
@@ -7001,7 +7063,8 @@ function wrap(middleware, callback) {
 
   /**
    * Call `middleware`.
-   * @param {any[]} parameters
+   * @this {any}
+   * @param {Array<any>} parameters
    * @returns {void}
    */
   function wrapped(...parameters) {
@@ -7014,10 +7077,9 @@ function wrap(middleware, callback) {
     }
 
     try {
-      result = middleware(...parameters)
+      result = middleware.apply(this, parameters)
     } catch (error) {
-      /** @type {Error} */
-      const exception = error
+      const exception = /** @type {Error} */ (error)
 
       // Well, this is quite the pickle.
       // `middleware` received a callback and called it synchronously, but that
@@ -7196,7 +7258,7 @@ function base() {
       }
 
       if (options[0] === true) {
-        options[1] = undefined
+        options[0] = undefined
       }
 
       /** @type {Transformer|void} */
@@ -7847,19 +7909,18 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ../node_modules/is-buffer/index.js
 var is_buffer = __webpack_require__(8809);
 ;// CONCATENATED MODULE: ../node_modules/unist-util-stringify-position/index.js
-var own = {}.hasOwnProperty
-
 /**
+ * @typedef {import('unist').Point} Point
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Position} Position
- * @typedef {import('unist').Point} Point
+ * @typedef {object & {type: string, position?: Position|undefined}} NodeLike
  */
 
 /**
  * Stringify one point, a position (start and end points), or a node’s
  * positional information.
  *
- * @param {Node|Position|Point} [value]
+ * @param {Node|NodeLike|Position|Point|null} [value]
  * @returns {string}
  */
 function stringifyPosition(value) {
@@ -7869,20 +7930,17 @@ function stringifyPosition(value) {
   }
 
   // Node.
-  if (own.call(value, 'position') || own.call(value, 'type')) {
-    // @ts-ignore looks like a node.
+  if ('position' in value || 'type' in value) {
     return position(value.position)
   }
 
   // Position.
-  if (own.call(value, 'start') || own.call(value, 'end')) {
-    // @ts-ignore looks like a position.
+  if ('start' in value || 'end' in value) {
     return position(value)
   }
 
   // Point.
-  if (own.call(value, 'line') || own.call(value, 'column')) {
-    // @ts-ignore looks like a point.
+  if ('line' in value || 'column' in value) {
     return point(value)
   }
 
@@ -7891,7 +7949,7 @@ function stringifyPosition(value) {
 }
 
 /**
- * @param {Point} point
+ * @param {Point|undefined} point
  * @returns {string}
  */
 function point(point) {
@@ -7899,7 +7957,7 @@ function point(point) {
 }
 
 /**
- * @param {Position} pos
+ * @param {Position|undefined} pos
  * @returns {string}
  */
 function position(pos) {
@@ -7907,7 +7965,7 @@ function position(pos) {
 }
 
 /**
- * @param {number} value
+ * @param {number|undefined} value
  * @returns {number}
  */
 function index(value) {
@@ -7919,6 +7977,7 @@ function index(value) {
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Point} Point
+ * @typedef {object & {type: string, position?: Position|undefined}} NodeLike
  */
 
 
@@ -7929,29 +7988,29 @@ class VFileMessage extends Error {
    * When an error is passed in as `reason`, copies the `stack`.
    *
    * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
+   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
    * @param {string} [origin] Place in code the message originates from (`string`, optional).
    */
   constructor(reason, place, origin) {
-    /** @type {[string?, string?]} */
-    var parts = [null, null]
+    /** @type {[string|null, string|null]} */
+    const parts = [null, null]
     /** @type {Position} */
-    var position = {
+    let position = {
+      // @ts-expect-error: we always follows the structure of `position`.
       start: {line: null, column: null},
+      // @ts-expect-error: "
       end: {line: null, column: null}
     }
-    /** @type {number} */
-    var index
 
     super()
 
     if (typeof place === 'string') {
       origin = place
-      place = null
+      place = undefined
     }
 
     if (typeof origin === 'string') {
-      index = origin.indexOf(':')
+      const index = origin.indexOf(':')
 
       if (index === -1) {
         parts[1] = origin
@@ -7970,12 +8029,10 @@ class VFileMessage extends Error {
       }
       // Position.
       else if ('start' in place || 'end' in place) {
-        // @ts-ignore Looks like a position.
         position = place
       }
       // Point.
       else if ('line' in place || 'column' in place) {
-        // @ts-ignore Looks like a point.
         position.start = place
       }
     }
@@ -8117,6 +8174,7 @@ var external_url_ = __webpack_require__(7310);
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Point} Point
+ * @typedef {Record<string, unknown> & {type: string, position?: Position|undefined}} NodeLike
  * @typedef {import('./minurl.shared.js').URL} URL
  * @typedef {import('..').VFileData} VFileData
  * @typedef {import('..').VFileValue} VFileValue
@@ -8126,7 +8184,6 @@ var external_url_ = __webpack_require__(7310);
  *   This is a copy of the typing from Node, copied to prevent Node globals from
  *   being needed.
  *   Copied from: <https://github.com/DefinitelyTyped/DefinitelyTyped/blob/90a4ec8/types/node/buffer.d.ts#L170>
- *
  *
  * @typedef {VFileValue|VFileOptions|VFile|URL} VFileCompatible
  *   Things that can be passed to the constructor.
@@ -8413,7 +8470,7 @@ class VFile {
    * Create a message and associates it w/ the file.
    *
    * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
+   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
    * @param {string} [origin] Place in code the message originates from (`string`, optional).
    * @returns {VFileMessage}
    */
@@ -8438,7 +8495,7 @@ class VFile {
    * Calls `message()` internally.
    *
    * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
+   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
    * @param {string} [origin] Place in code the message originates from (`string`, optional).
    * @returns {VFileMessage}
    */
@@ -8457,7 +8514,7 @@ class VFile {
    * Calls `message()` internally.
    *
    * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
+   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
    * @param {string} [origin] Place in code the message originates from (`string`, optional).
    * @returns {never}
    */
@@ -8545,6 +8602,7 @@ function assertPath(path, name) {
 /******/ 	(() => {
 /******/ 		var webpackThen = typeof Symbol === "function" ? Symbol("webpack then") : "__webpack_then__";
 /******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
 /******/ 		var completeQueue = (queue) => {
 /******/ 			if(queue) {
 /******/ 				queue.forEach((fn) => (fn.r--));
@@ -8562,16 +8620,20 @@ function assertPath(path, name) {
 /******/ 						obj[webpackExports] = r;
 /******/ 						completeQueue(queue);
 /******/ 						queue = 0;
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						completeQueue(queue);
+/******/ 						queue = 0;
 /******/ 					});
 /******/ 					var obj = {};
-/******/ 												obj[webpackThen] = (fn, reject) => (queueFunction(queue, fn), dep['catch'](reject));
+/******/ 					obj[webpackThen] = (fn, reject) => (queueFunction(queue, fn), dep['catch'](reject));
 /******/ 					return obj;
 /******/ 				}
 /******/ 			}
 /******/ 			var ret = {};
-/******/ 								ret[webpackThen] = (fn) => (completeFunction(fn));
-/******/ 								ret[webpackExports] = dep;
-/******/ 								return ret;
+/******/ 			ret[webpackThen] = (fn) => (completeFunction(fn));
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
 /******/ 		}));
 /******/ 		__webpack_require__.a = (module, body, hasAwait) => {
 /******/ 			var queue = hasAwait && [];
@@ -8601,16 +8663,19 @@ function assertPath(path, name) {
 /******/ 			};
 /******/ 			module.exports = promise;
 /******/ 			body((deps) => {
-/******/ 				if(!deps) return outerResolve();
 /******/ 				currentDeps = wrapDeps(deps);
-/******/ 				var fn, result;
+/******/ 				var fn;
+/******/ 				var getResult = () => (currentDeps.map((d) => {
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
 /******/ 				var promise = new Promise((resolve, reject) => {
-/******/ 					fn = () => (resolve(result = currentDeps.map((d) => (d[webpackExports]))));
+/******/ 					fn = () => (resolve(getResult));
 /******/ 					fn.r = 0;
 /******/ 					whenAll(currentDeps, fn, reject);
 /******/ 				});
-/******/ 				return fn.r ? promise : result;
-/******/ 			}).then(outerResolve, reject);
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}, (err) => (err && reject(promise[webpackError] = err), outerResolve()));
 /******/ 			isEvaluating = false;
 /******/ 		};
 /******/ 	})();

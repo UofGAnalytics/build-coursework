@@ -63,7 +63,7 @@ export default {
     new GeneratePackageJsonPlugin(
       {
         "name": 'build-coursework',
-        "version": pkg.version,
+        "version": VERSION,
         "repository": "https://github.com/UofGAnalytics/build-coursework.git",
         "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
         "license": "MIT",
