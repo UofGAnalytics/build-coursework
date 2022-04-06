@@ -368,13 +368,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6544);
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1252);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6016);
-/* harmony import */ var _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(511);
-/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2303);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(2430);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(153);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, _utils_utils__WEBPACK_IMPORTED_MODULE_11__]);
-([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__, _utils_utils__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2303);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2430);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(153);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8061);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
+([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -383,7 +382,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base
  // import { optimize } from 'svgo';
 
 
-
+// import { pdfToSvg } from '../pdf/pdf-to-svg';
 
 
 
@@ -405,7 +404,8 @@ function embedAssets(ctx) {
           return await embedSvg(node, ctx);
 
         case '.pdf':
-          return await embedPdfSvg(node);
+          // return await embedPdfSvg(node);
+          throw new Error(`Unhandled file extension: .pdf (convert to .svg)`);
 
         case '.html':
           return await embedHtml(node);
@@ -414,8 +414,9 @@ function embedAssets(ctx) {
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (_err) {
+      console.log(_err);
       const err = _err;
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_10__/* .failMessage */ .Ob)(file, err?.message || '', node.position);
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_9__/* .failMessage */ .Ob)(file, err?.message || '', node.position);
     }
   }
 
@@ -445,17 +446,17 @@ async function embedImage(node, ctx, file) {
     };
   } catch (err) {
     console.log(err);
-    (0,_utils_message__WEBPACK_IMPORTED_MODULE_10__/* .failMessage */ .Ob)(file, `Image not found: ${src}`);
+    (0,_utils_message__WEBPACK_IMPORTED_MODULE_9__/* .failMessage */ .Ob)(file, `Image not found: ${src}`);
   }
 }
 
 async function embedSvg(imgNode, ctx) {
   const src = getImageSrc(imgNode);
-  const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .readFile */ .pJ)(src);
+  const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
 
-  const svgNode = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_9__/* .getAssetHast */ .j)(svg);
+  const svgNode = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__/* .getAssetHast */ .j)(svg);
   const className = 'knitr-svg';
   const properties = { ...imgNode.properties,
     ...svgNode.properties,
@@ -493,7 +494,7 @@ function getImageSrc(node) {
 
 async function getImage(src, ctx) {
   if (src.startsWith('http')) {
-    return (0,_utils_cache_to_file__WEBPACK_IMPORTED_MODULE_8__/* .cacheToFile */ .G)({
+    return (0,_utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__/* .cacheToFile */ .G)({
       ctx,
       prefix: 'youtube',
       key: src,
@@ -501,34 +502,34 @@ async function getImage(src, ctx) {
     });
   }
 
-  return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .readFile */ .pJ)(src, 'base64');
+  return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src, 'base64');
 }
 
 async function getImageDataFromWeb(src) {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_4__["default"])(src);
   const buffer = await response.arrayBuffer();
   return (0,base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__.encode)(buffer);
-}
+} // async function embedPdfSvg(imgNode: Element) {
+//   const src = getImageSrc(imgNode);
+//   const svgNode = (await pdfToSvg(src)) as Element;
+//   console.log('hey!');
+//   console.log(svgNode);
+//   const properties = {
+//     ...imgNode.properties,
+//     ...svgNode.properties,
+//   } as Properties;
+//   delete properties.src;
+//   Object.assign(imgNode, svgNode, { properties });
+// }
 
-async function embedPdfSvg(imgNode) {
-  const src = getImageSrc(imgNode);
-  const svgNode = await (0,_pdf_pdf_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .pdfToSvg */ .k)(src);
-  const properties = { ...imgNode.properties,
-    ...svgNode.properties
-  };
-  delete properties.src;
-  Object.assign(imgNode, svgNode, {
-    properties
-  });
-}
 
 async function embedHtml(imgNode) {
   const src = getImageSrc(imgNode);
-  const value = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .readFile */ .pJ)(src);
+  const value = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src);
   const vfile = (0,to_vfile__WEBPACK_IMPORTED_MODULE_5__.toVFile)({
     value
   });
-  const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_11__/* .rehypeParser */ .G5)().parse(vfile);
+  const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .rehypeParser */ .G5)().parse(vfile);
   Object.assign(imgNode, {
     tagName: 'div',
     properties: {
@@ -552,7 +553,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var rehype_raw__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1871);
 /* harmony import */ var remark_rehype__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2509);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(117);
 /* harmony import */ var _embed_assets__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8027);
 /* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3517);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _embed_assets__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__]);
@@ -634,7 +635,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var rehype_document__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6271);
 /* harmony import */ var rehype_format__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2920);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5390);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(117);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8061);
 /* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7538);
 /* harmony import */ var _wrapper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1162);
@@ -1206,7 +1207,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 
 async function knitr(unit, ctx) {
   const parentFile = await createParentFile(unit, ctx);
-  const result = await execKnitr(parentFile, ctx); // console.log(result);
+  const result = await execKnitr(parentFile, ctx, unit.unitPath); // console.log(result);
 
   parentFile.value = result;
   return parentFile;
@@ -1216,25 +1217,33 @@ async function knitr(unit, ctx) {
 
 async function createParentFile(unit, ctx) {
   const file = new vfile__WEBPACK_IMPORTED_MODULE_8__/* .VFile */ .k();
-  file.value = unit.files.reduce((acc, o) => {
+  let value = ''; // pass path to custom python binary to reticulate
+  // https://rstudio.github.io/reticulate/articles/r_markdown.html
+
+  if (ctx.options.pythonBin) {
+    const reticulate = `reticulate::use_python("${ctx.options.pythonBin}")`;
+    value += `\`\`\`{r, echo=FALSE}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}${reticulate}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\`${os__WEBPACK_IMPORTED_MODULE_1__.EOL}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}`;
+  }
+
+  value += unit.files.reduce((acc, o) => {
     const [filePath] = o.history; // directory directive is used to ensure external assets
     // can have relative paths to the .Rmd document.
     // used in embed-asset-url mdast transform
 
     const fileDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(filePath).dir;
     const directive = `:directory[${fileDir}]`; // child document
+    // escape backslash path on windows
 
-    const relativePath = path__WEBPACK_IMPORTED_MODULE_2___default().relative(ctx.cacheDir, filePath) // escape backslash path on windows
-    .replace(/\\/g, '\\\\');
-    const childCodeBlock = `\`\`\`{r, child='${relativePath}'}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\``;
+    const formattedPath = path__WEBPACK_IMPORTED_MODULE_2___default().relative(ctx.cacheDir, filePath).replace(/\\/g, '\\\\');
+    const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\``;
     return acc + directive + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL + childCodeBlock + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL;
-  }, ''); // console.log(file.value);
-
+  }, '');
+  file.value = value;
   return file;
 } // TODO: see what can be done with output when "quiet" in knitr.R is turned off
 
 
-async function execKnitr(file, ctx) {
+async function execKnitr(file, ctx, unitPath) {
   const md = file.value;
   const uniqueId = getUniqueId(md);
   const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
@@ -1242,7 +1251,7 @@ async function execKnitr(file, ctx) {
   await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .mkdir */ .i$)(cacheDir);
   await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .writeFile */ .NC)(cachedFile, md);
   return new Promise((resolve, reject) => {
-    const cmd = createKnitrCommand(file, ctx, uniqueId);
+    const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
     (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
       if (stdErr) {
         console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
@@ -1267,20 +1276,13 @@ function getUniqueId(md) {
   return `knitr-${hash}-${ts}`;
 }
 
-function createKnitrCommand(file, ctx, uniqueId) {
+function createKnitrCommand(ctx, uniqueId, unitPath) {
   const rFileDir = getKnitrFileDir();
   const rFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(rFileDir, 'knitr.R');
-  const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(ctx.course.units[0].unitPath).dir; // TODO
-
+  const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(unitPath).dir;
   const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
-
-  if (ctx.options.pythonBin) {
-    cmd += ` "${ctx.options.pythonBin}"`;
-  }
-
-  return cmd;
+  return `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
 }
 
 function getKnitrFileDir() {
@@ -1453,11 +1455,7 @@ function aliasDirectiveToSvg(ctx) {
         case 'blockMath':
           {
             const idx = getTexIdx(node);
-            console.log(idx);
-            const mml = ctx.mmlStore[idx]; // if (idx === 10) {
-            //   console.log(mml);
-            // }
-
+            const mml = ctx.mmlStore[idx];
             const svg = renderSvg(mml);
             const properties = { ...svg.properties,
               className: node.name === 'inlineMath' ? 'inline-math' : 'block-math',
@@ -2011,7 +2009,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_retext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4540);
 /* harmony import */ var retext_english__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5414);
 /* harmony import */ var retext_spell__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(862);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(117);
 /* harmony import */ var _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2816);
 /* harmony import */ var _assert_no_h1__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1276);
 /* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(4475);
@@ -2623,7 +2621,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "P": () => (/* binding */ combinedMdastPhase)
 /* harmony export */ });
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(117);
 /* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(478);
 /* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6285);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__]);
@@ -2834,7 +2832,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6809);
 /* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6688);
 /* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(117);
 /* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(529);
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3889);
 /* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1982);
@@ -3164,121 +3162,6 @@ async function convertToPdf(html) {
   });
   await browser.close();
   return pdf;
-}
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 511:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "k": () => (/* binding */ pdfToSvg)
-/* harmony export */ });
-/* harmony import */ var buffer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4300);
-/* harmony import */ var buffer__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(buffer__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var rehype_parse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1345);
-/* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5390);
-/* harmony import */ var sandboxed_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4503);
-/* harmony import */ var svgo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6720);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1807);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6016);
-/* harmony import */ var _domstubs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3257);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_1__, rehype_stringify__WEBPACK_IMPORTED_MODULE_2__, sandboxed_module__WEBPACK_IMPORTED_MODULE_3__, svgo__WEBPACK_IMPORTED_MODULE_4__, unist_util_visit__WEBPACK_IMPORTED_MODULE_5__]);
-([rehype_parse__WEBPACK_IMPORTED_MODULE_1__, rehype_stringify__WEBPACK_IMPORTED_MODULE_2__, sandboxed_module__WEBPACK_IMPORTED_MODULE_3__, svgo__WEBPACK_IMPORTED_MODULE_4__, unist_util_visit__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
-
-
-
-
-
- // @ts-expect-error
-
- // inject globals into pdf.js in a non-leaky way
-
-const pdfjsLib = sandboxed_module__WEBPACK_IMPORTED_MODULE_3__["default"].require('pdfjs-dist/legacy/build/pdf', {
-  globals: {
-    document: _domstubs__WEBPACK_IMPORTED_MODULE_6__/* .document */ .tj,
-    Image: _domstubs__WEBPACK_IMPORTED_MODULE_6__/* .Image */ .Ee,
-    Element: _domstubs__WEBPACK_IMPORTED_MODULE_6__/* .Element */ .W_,
-    Blob: buffer__WEBPACK_IMPORTED_MODULE_0__.Blob,
-    console,
-    process,
-    URL
-  }
-});
-
-async function pdfToSvg(filePath) {
-  const doc = await pdfjsLib.getDocument({
-    url: filePath,
-    fontExtraProperties: true,
-    verbosity: 0 // cMapUrl: '../node_modules/pdfjs-dist/cmaps/',
-    // cMapPacked: true,
-
-  }).promise; // may come in handy again...
-  // const metadata = await doc.getMetadata();
-  // if (!isPdfTexDocument(metadata.info)) {
-  //   throw new Error('Unhandled pdf file: was not produced by PdfTeX');
-  // }
-
-  const page = await doc.getPage(1);
-  const opList = await page.getOperatorList();
-  const viewport = page.getViewport({
-    scale: 1.0
-  });
-  const svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
-  svgGfx.embedFonts = true;
-  const svg = await svgGfx.getSVG(opList, viewport);
-  const result = await formatSvg(svg.toString());
-  return result;
-} // function isPdfTexDocument(info: Record<string, string> = {}) {
-//   return info['Producer']?.startsWith('pdfTeX');
-// }
-
-async function formatSvg(_str) {
-  const str = _str.replace(/svg:/g, '');
-
-  const optimised = (0,svgo__WEBPACK_IMPORTED_MODULE_4__.optimize)(str, {
-    multipass: true
-  });
-
-  if (optimised.modernError) {
-    throw optimised.modernError;
-  }
-
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_7__/* .unified */ .l)().use(rehype_parse__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    fragment: true
-  }).use(addWrapper).use(rehype_stringify__WEBPACK_IMPORTED_MODULE_2__["default"]);
-  const parsed = processor.parse(optimised.data);
-  const transformed = await processor.run(parsed);
-  return transformed.children[0];
-}
-
-function addWrapper() {
-  return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_5__.visit)(tree, 'element', node => {
-      if (node.tagName === 'svg') {
-        const properties = node.properties || {};
-        node.properties = {
-          // width: properties.width,
-          // height: properties.height,
-          viewBox: getViewBox(properties),
-          className: 'pdftex'
-        };
-      }
-    });
-  };
-}
-
-function getViewBox(properties) {
-  if (properties.viewBox) {
-    return properties.viewBox;
-  }
-
-  return `0 0 ${properties.width} ${properties.height}`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3989,7 +3872,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var rehype_parse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1345);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5390);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(117);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__]);
 ([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -4705,27 +4588,11 @@ module.exports = import("retext-spell");;
 
 /***/ }),
 
-/***/ 4503:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("sandboxed-module");;
-
-/***/ }),
-
 /***/ 1150:
 /***/ ((module) => {
 
 "use strict";
 module.exports = import("speech-rule-engine");;
-
-/***/ }),
-
-/***/ 6720:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("svgo");;
 
 /***/ }),
 
@@ -4758,14 +4625,6 @@ module.exports = import("yargs");;
 
 "use strict";
 module.exports = import("yup");;
-
-/***/ }),
-
-/***/ 4300:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("buffer");
 
 /***/ }),
 
@@ -4806,322 +4665,6 @@ module.exports = require("path");
 
 "use strict";
 module.exports = require("url");
-
-/***/ }),
-
-/***/ 3257:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Ee": () => (/* binding */ Image),
-/* harmony export */   "W_": () => (/* binding */ Element),
-/* harmony export */   "tj": () => (/* binding */ document)
-/* harmony export */ });
-/**
- * @licstart The following is the entire license notice for the
- * Javascript code in this page
- *
- * Copyright 2020 Mozilla Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @licend The above is the entire license notice for the
- * Javascript code in this page
- */
-
-
-function xmlEncode(s) {
-  var i = 0,
-    ch;
-  s = String(s);
-
-  while (i < s.length && (ch = s[i]) !== "&" && ch !== "<" && ch !== '"' && ch !== "\n" && ch !== "\r" && ch !== "\t") {
-    i++;
-  }
-
-  if (i >= s.length) {
-    return s;
-  }
-
-  var buf = s.substring(0, i);
-
-  while (i < s.length) {
-    ch = s[i++];
-
-    switch (ch) {
-      case "&":
-        buf += "&amp;";
-        break;
-
-      case "<":
-        buf += "&lt;";
-        break;
-
-      case '"':
-        buf += "&quot;";
-        break;
-
-      case "\n":
-        buf += "&#xA;";
-        break;
-
-      case "\r":
-        buf += "&#xD;";
-        break;
-
-      case "\t":
-        buf += "&#x9;";
-        break;
-
-      default:
-        buf += ch;
-        break;
-    }
-  }
-
-  return buf;
-}
-
-function Element(name) {
-  this.nodeName = name;
-  this.childNodes = [];
-  this.attributes = {};
-  this.textContent = "";
-
-  if (name === "style") {
-    this.sheet = {
-      cssRules: [],
-      insertRule: function (rule) {
-        this.cssRules.push(rule);
-      }
-    };
-  }
-}
-
-Element.prototype = {
-  getAttribute: function DOMElement_getAttribute(name) {
-    if (name in this.attributes) {
-      return this.attributes[name];
-    }
-
-    return null;
-  },
-  getAttributeNS: function DOMElement_getAttributeNS(NS, name) {
-    if (name in this.attributes) {
-      return this.attributes[name];
-    }
-
-    if (NS) {
-      var suffix = ":" + name;
-
-      for (var fullName in this.attributes) {
-        if (fullName.slice(-suffix.length) === suffix) {
-          return this.attributes[fullName];
-        }
-      }
-    }
-
-    return null;
-  },
-  setAttribute: function DOMElement_setAttribute(name, value) {
-    value = value || "";
-    value = xmlEncode(value);
-    this.attributes[name] = value;
-  },
-  setAttributeNS: function DOMElement_setAttributeNS(NS, name, value) {
-    this.setAttribute(name, value);
-  },
-  appendChild: function DOMElement_appendChild(element) {
-    var childNodes = this.childNodes;
-
-    if (!childNodes.includes(element)) {
-      childNodes.push(element);
-    }
-  },
-  hasChildNodes: function DOMElement_hasChildNodes() {
-    return this.childNodes.length !== 0;
-  },
-  cloneNode: function DOMElement_cloneNode() {
-    var newNode = new Element(this.nodeName);
-    newNode.childNodes = this.childNodes;
-    newNode.attributes = this.attributes;
-    newNode.textContent = this.textContent;
-    return newNode;
-  },
-  toString: function DOMElement_toString() {
-    var buf = [];
-    var serializer = this.getSerializer();
-    var chunk;
-
-    while ((chunk = serializer.getNext()) !== null) {
-      buf.push(chunk);
-    }
-
-    return buf.join("");
-  },
-  getSerializer: function DOMElement_getSerializer() {
-    return new DOMElementSerializer(this);
-  }
-};
-
-function DOMElementSerializer(node) {
-  this._node = node;
-  this._state = 0;
-  this._loopIndex = 0;
-  this._attributeKeys = null;
-  this._childSerializer = null;
-}
-
-DOMElementSerializer.prototype = {
-  getNext: function DOMElementSerializer_getNext() {
-    var node = this._node;
-
-    switch (this._state) {
-      case 0:
-        ++this._state;
-        return "<" + node.nodeName;
-
-      case 1:
-        ++this._state;
-
-        if (node.nodeName === "svg:svg") {
-          return ' xmlns:xlink="http://www.w3.org/1999/xlink"' + ' xmlns:svg="http://www.w3.org/2000/svg"';
-        }
-
-      case 2:
-        ++this._state;
-        this._loopIndex = 0;
-        this._attributeKeys = Object.keys(node.attributes);
-
-      case 3:
-        if (this._loopIndex < this._attributeKeys.length) {
-          var name = this._attributeKeys[this._loopIndex++];
-          return " " + name + '="' + xmlEncode(node.attributes[name]) + '"';
-        }
-
-        ++this._state;
-        return ">";
-
-      case 4:
-        if (node.nodeName === "svg:tspan" || node.nodeName === "svg:style") {
-          this._state = 6;
-          return xmlEncode(node.textContent);
-        }
-
-        ++this._state;
-        this._loopIndex = 0;
-
-      case 5:
-        var value;
-
-        while (true) {
-          value = this._childSerializer && this._childSerializer.getNext();
-
-          if (value !== null) {
-            return value;
-          }
-
-          var nextChild = node.childNodes[this._loopIndex++];
-
-          if (nextChild) {
-            this._childSerializer = new DOMElementSerializer(nextChild);
-          } else {
-            this._childSerializer = null;
-            ++this._state;
-            break;
-          }
-        }
-
-      case 6:
-        ++this._state;
-        return "</" + node.nodeName + ">";
-
-      case 7:
-        return null;
-
-      default:
-        throw new Error("Unexpected serialization state: " + this._state);
-    }
-  }
-};
-const document = {
-  childNodes: [],
-
-  get currentScript() {
-    return {
-      src: ""
-    };
-  },
-
-  get documentElement() {
-    return this;
-  },
-
-  createElementNS: function (NS, element) {
-    var elObject = new Element(element);
-    return elObject;
-  },
-  createElement: function (element) {
-    return this.createElementNS("", element);
-  },
-  getElementsByTagName: function (element) {
-    if (element === "head") {
-      return [this.head || (this.head = new Element("head"))];
-    }
-
-    return [];
-  }
-};
-
-function Image() {
-  this._src = null;
-  this.onload = null;
-}
-
-Image.prototype = {
-  get src() {
-    return this._src;
-  },
-
-  set src(value) {
-    this._src = value;
-
-    if (this.onload) {
-      this.onload();
-    }
-  }
-
-};
-// exports.document = document;
-// exports.Image = Image;
-// exports.Element = DOMElement;
-// var exported_symbols = Object.keys(exports);
-
-// exports.setStubs = function (namespace) {
-//   exported_symbols.forEach(function (key) {
-//     console.assert(!(key in namespace), "property should not be set: " + key);
-//     namespace[key] = exports[key];
-//   });
-// };
-
-// exports.unsetStubs = function (namespace) {
-//   exported_symbols.forEach(function (key) {
-//     console.assert(key in namespace, "property should be set: " + key);
-//     delete namespace[key];
-//   });
-// };
-
 
 /***/ }),
 
@@ -6924,7 +6467,7 @@ function normalizeUri(value) {
 
 /***/ }),
 
-/***/ 1807:
+/***/ 117:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -6952,7 +6495,7 @@ function bail(error) {
 var is_buffer = __webpack_require__(8809);
 // EXTERNAL MODULE: ../node_modules/extend/index.js
 var extend = __webpack_require__(229);
-;// CONCATENATED MODULE: ../node_modules/is-plain-obj/index.js
+;// CONCATENATED MODULE: ../node_modules/unified/node_modules/is-plain-obj/index.js
 function isPlainObject(value) {
 	if (Object.prototype.toString.call(value) !== '[object Object]') {
 		return false;
@@ -7841,25 +7384,24 @@ function generated(node) {
 /* unused harmony export position */
 /**
  * @typedef {import('unist').Position} Position
+ * @typedef {import('unist').Node} Node
+ * @typedef {Record<string, unknown> & {type: string, position?: PositionLike|undefined}} NodeLike
  * @typedef {import('unist').Point} Point
  *
  * @typedef {Partial<Point>} PointLike
  *
- * @typedef {Object} PositionLike
+ * @typedef PositionLike
  * @property {PointLike} [start]
  * @property {PointLike} [end]
- *
- * @typedef {Object} NodeLike
- * @property {PositionLike} [position]
  */
 
-var pointStart = point('start')
-var pointEnd = point('end')
+const pointStart = point('start')
+const pointEnd = point('end')
 
 /**
  * Get the positional info of `node`.
  *
- * @param {NodeLike} [node]
+ * @param {NodeLike|Node} [node]
  * @returns {Position}
  */
 function position(node) {
@@ -7877,13 +7419,11 @@ function point(type) {
   /**
    * Get the positional info of `node`.
    *
-   * @param {NodeLike} [node]
+   * @param {NodeLike|Node} [node]
    * @returns {Point}
    */
   function point(node) {
-    /** @type {Point} */
-    // @ts-ignore looks like a point
-    var point = (node && node.position && node.position[type]) || {}
+    const point = (node && node.position && node.position[type]) || {}
 
     return {
       line: point.line || null,
