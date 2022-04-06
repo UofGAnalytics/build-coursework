@@ -52,17 +52,18 @@ export async function testProcessor(md: string, options: Options = {}) {
 async function createTestContext(md: string, options: Options = {}) {
   const cacheDir = os.tmpdir();
   const file = await createTestFile(md, cacheDir);
+  const unitPath = 'test';
 
   const course = {
     title: 'Test Course',
     coursePath: cacheDir,
-    units: [{ src: 'test' }],
+    units: [{ src: unitPath }],
   };
 
   const unit = {
     name: 'Week Test',
     title: 'Test Unit',
-    unitPath: cacheDir,
+    unitPath: path.join(cacheDir, unitPath),
     parts: [{ src: '' }],
     files: [file],
   };

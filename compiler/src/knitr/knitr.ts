@@ -38,7 +38,9 @@ async function createParentFile(unit: Unit, ctx: Context) {
 
     // child document
     // escape backslash path on windows
-    const formattedPath = filePath.replace(/\\/g, '\\\\');
+    const formattedPath = path
+      .relative(ctx.cacheDir, filePath)
+      .replace(/\\/g, '\\\\');
 
     const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${EOL}\`\`\``;
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
