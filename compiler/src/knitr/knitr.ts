@@ -15,7 +15,7 @@ import { mkdir, rmFile, writeFile } from '../utils/utils';
 export async function knitr(unit: Unit, ctx: Context) {
   const parentFile = await createParentFile(unit, ctx);
 
-  const result = await execKnitr(parentFile, ctx);
+  const result = await execKnitr(parentFile, ctx, unit.unitPath);
   // console.log(result);
   parentFile.value = result;
   return parentFile;
@@ -27,7 +27,16 @@ export async function knitr(unit: Unit, ctx: Context) {
 async function createParentFile(unit: Unit, ctx: Context) {
   const file = new VFile();
 
-  file.value = unit.files.reduce((acc, o) => {
+  let value = '';
+
+  // pass path to custom python binary to reticulate
+  // https://rstudio.github.io/reticulate/articles/r_markdown.html
+  if (ctx.options.pythonBin) {
+    const reticulate = `reticulate::use_python("${ctx.options.pythonBin}")`;
+    value += `\`\`\`{r, echo=FALSE}${EOL}${reticulate}${EOL}\`\`\`${EOL}${EOL}`;
+  }
+
+  value += unit.files.reduce((acc, o) => {
     const [filePath] = o.history;
 
     // directory directive is used to ensure external assets
@@ -46,13 +55,12 @@ async function createParentFile(unit: Unit, ctx: Context) {
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
 
-  // console.log(file.value);
-
+  file.value = value;
   return file;
 }
 
 // TODO: see what can be done with output when "quiet" in knitr.R is turned off
-async function execKnitr(file: VFile, ctx: Context) {
+async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
   const md = file.value as string;
   const uniqueId = getUniqueId(md);
   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
@@ -61,7 +69,7 @@ async function execKnitr(file: VFile, ctx: Context) {
   await writeFile(cachedFile, md);
 
   return new Promise<string>((resolve, reject) => {
-    const cmd = createKnitrCommand(file, ctx, uniqueId);
+    const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
 
     exec(cmd, async (err, response, stdErr) => {
       if (stdErr) {
@@ -85,19 +93,17 @@ function getUniqueId(md: string) {
   return `knitr-${hash}-${ts}`;
 }
 
-function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
+function createKnitrCommand(
+  ctx: Context,
+  uniqueId: string,
+  unitPath: string
+) {
   const rFileDir = getKnitrFileDir();
   const rFile = path.join(rFileDir, 'knitr.R');
-  const baseDir = path.parse(ctx.course.units[0].unitPath).dir; // TODO
+  const baseDir = path.parse(unitPath).dir;
   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
-
-  if (ctx.options.pythonBin) {
-    cmd += ` "${ctx.options.pythonBin}"`;
-  }
-
-  return cmd;
+  return `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
 }
 
 function getKnitrFileDir() {
