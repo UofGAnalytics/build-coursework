@@ -27,7 +27,16 @@ export async function knitr(unit: Unit, ctx: Context) {
 async function createParentFile(unit: Unit, ctx: Context) {
   const file = new VFile();
 
-  file.value = unit.files.reduce((acc, o) => {
+  let value = '';
+
+  // pass path to custom python binary to reticulate
+  // https://rstudio.github.io/reticulate/articles/r_markdown.html
+  if (ctx.options.pythonBin) {
+    const reticulate = `reticulate::use_python("${ctx.options.pythonBin}")`;
+    value += `\`\`\`{r, echo=FALSE}${EOL}${reticulate}${EOL}\`\`\`${EOL}${EOL}`;
+  }
+
+  value += unit.files.reduce((acc, o) => {
     const [filePath] = o.history;
 
     // directory directive is used to ensure external assets
@@ -46,8 +55,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
 
-  // console.log(file.value);
-
+  file.value = value;
   return file;
 }
 
@@ -91,13 +99,7 @@ function createKnitrCommand(file: VFile, ctx: Context, uniqueId: string) {
   const baseDir = path.parse(ctx.course.units[0].unitPath).dir; // TODO
   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  let cmd = `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
-
-  if (ctx.options.pythonBin) {
-    cmd += ` "${ctx.options.pythonBin}"`;
-  }
-
-  return cmd;
+  return `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
 }
 
 function getKnitrFileDir() {
