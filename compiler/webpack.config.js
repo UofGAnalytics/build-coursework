@@ -9,9 +9,14 @@ import GeneratePackageJsonPlugin from "generate-package-json-webpack-plugin";
 const isProd = process.env.NODE_ENV === 'production'
 const __dirname = new URL('.', import.meta.url).pathname;
 const buildPath = path.join(__dirname, 'build')
-const pkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'package.json'), 'utf-8'));
+const projectPath = path.join(__dirname, '..')
+const projectPkg = JSON.parse(await fs.promises.readFile(path.join(projectPath, 'package.json'), 'utf-8'));
+const releasePkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'package.json'), 'utf-8'));
 
-const VERSION = '1.1.38'
+const currentVersion = releasePkg.version
+const newVersion = projectPkg.version
+
+console.log({ currentVersion, newVersion })
 
 export default {
   target: ['node', 'es2020'],
@@ -63,7 +68,9 @@ export default {
     new GeneratePackageJsonPlugin(
       {
         "name": 'build-coursework',
-        "version": VERSION,
+        // use current version when building release so
+        // release-it can automatically increment the version
+        "version": currentVersion,
         "repository": "https://github.com/UofGAnalytics/build-coursework.git",
         "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
         "license": "MIT",
@@ -73,7 +80,7 @@ export default {
       },
       path.join(__dirname, 'package.json')
     ),
-    new InlineEnvironmentVariablesPlugin({ VERSION }),
+    new InlineEnvironmentVariablesPlugin({ VERSION: newVersion }),
     new CopyPlugin({
       patterns: [
         { from: './src/knitr/knitr.R', to: './' },
