@@ -12,7 +12,7 @@ import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { pdfToSvg } from '../pdf/pdf-to-svg';
+// import { pdfToSvg } from '../pdf/pdf-to-svg';
 import { cacheToFile } from '../utils/cache-to-file';
 import { getAssetHast } from '../utils/get-asset-hast';
 import { failMessage } from '../utils/message';
@@ -32,13 +32,17 @@ export function embedAssets(ctx: Context) {
         case '.svg':
           return await embedSvg(node, ctx);
         case '.pdf':
-          return await embedPdfSvg(node);
+          // return await embedPdfSvg(node);
+          throw new Error(
+            `Unhandled file extension: .pdf (convert to .svg)`
+          );
         case '.html':
           return await embedHtml(node);
         default:
           throw new Error(`Unhandled file extension: ${parsed.ext}`);
       }
     } catch (_err) {
+      console.log(_err);
       const err = _err as Error;
       failMessage(file, err?.message || '', node.position);
     }
@@ -132,19 +136,21 @@ async function getImageDataFromWeb(src: string) {
   return base46Encode(buffer);
 }
 
-async function embedPdfSvg(imgNode: Element) {
-  const src = getImageSrc(imgNode);
-  const svgNode = (await pdfToSvg(src)) as Element;
+// async function embedPdfSvg(imgNode: Element) {
+//   const src = getImageSrc(imgNode);
+//   const svgNode = (await pdfToSvg(src)) as Element;
+//   console.log('hey!');
+//   console.log(svgNode);
 
-  const properties = {
-    ...imgNode.properties,
-    ...svgNode.properties,
-  } as Properties;
+//   const properties = {
+//     ...imgNode.properties,
+//     ...svgNode.properties,
+//   } as Properties;
 
-  delete properties.src;
+//   delete properties.src;
 
-  Object.assign(imgNode, svgNode, { properties });
-}
+//   Object.assign(imgNode, svgNode, { properties });
+// }
 
 async function embedHtml(imgNode: Element) {
   const src = getImageSrc(imgNode);

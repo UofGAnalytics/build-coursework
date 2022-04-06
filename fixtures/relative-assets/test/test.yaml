@@ -5,5 +5,5 @@ content:
     src: test1.Rmd
   - type: text
     src: test2.Rmd
-  - type: text
-    src: test3.Rmd
+  # - type: text
+  #   src: test3.Rmd
