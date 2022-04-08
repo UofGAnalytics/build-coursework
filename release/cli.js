@@ -369,11 +369,11 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1252);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6016);
 /* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2303);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2430);
+/* harmony import */ var _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8530);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(153);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8061);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
-([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
+([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -455,8 +455,9 @@ async function embedSvg(imgNode, ctx) {
   const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src);
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
+  // const svgNode = getAssetHast(svg) as Element;
 
-  const svgNode = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_8__/* .getAssetHast */ .j)(svg);
+  const svgNode = (0,_utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__/* .getSvgHast */ .v)(svg);
   const className = 'knitr-svg';
   const properties = { ...imgNode.properties,
     ...svgNode.properties,
@@ -661,14 +662,14 @@ async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
   }
 
   if (!ctx.options.noDoc) {
-    const cssPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getLibraryDir */ .Oh)(), 'template.css');
+    const cssPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getTemplateDir */ .Ur)(), 'template.css');
     const docOptions = {
       title: unit.titles.docTitle,
       style: `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .readFile */ .pJ)(cssPath)}\n`
     };
 
     if (!targetPdf) {
-      const jsPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getLibraryDir */ .Oh)(), 'template.js2');
+      const jsPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getTemplateDir */ .Ur)(), 'template.js2');
       docOptions.script = `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .readFile */ .pJ)(jsPath)}\n`;
       processor.use(_wrapper__WEBPACK_IMPORTED_MODULE_7__/* .htmlWrapper */ .B, unit, mdast);
     } else {
@@ -3625,7 +3626,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.40";
+  const currentVersion = "1.1.41";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
@@ -3688,6 +3689,65 @@ function getAssetHast(value) {
   });
   const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_1__/* .rehypeParser */ .G5)().parse(vfile);
   return parsed.children[0];
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 8530:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "v": () => (/* binding */ getSvgHast)
+/* harmony export */ });
+/* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2386);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+/* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2430);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__]);
+([hash_sum__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+ // ensure SVG ids will not collide when inlined
+
+function getSvgHast(svg) {
+  const svgNode = (0,_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(svg);
+  const hash = (0,hash_sum__WEBPACK_IMPORTED_MODULE_0__["default"])(svg);
+  (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(svgNode, 'element', node => {
+    if (!node.properties) {
+      return;
+    }
+
+    if (node.properties.id) {
+      node.properties.id = `${node.properties.id}-${hash}`;
+    }
+
+    for (const [key, value] of Object.entries(node.properties)) {
+      const valueStr = String(value);
+
+      if (isIdRef(valueStr)) {
+        node.properties[key] = `${value}-${hash}`;
+      } else if (isUrlIdRef(valueStr)) {
+        node.properties[key] = `url(${extractUrlIdRef(valueStr)}-${hash})`;
+      }
+    }
+  });
+  return svgNode;
+}
+
+function isIdRef(value) {
+  return /^#[\w\d-_]+$/.test(value);
+}
+
+function isUrlIdRef(value) {
+  return /^url\(#[\w\d-_]+\)$/.test(value);
+}
+
+function extractUrlIdRef(value) {
+  const match = value.match(/^url\((#[\w\d-_]+)\)$/);
+  return match && match[1];
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3858,7 +3918,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   "G5": () => (/* binding */ rehypeParser),
 /* harmony export */   "N5": () => (/* binding */ getCacheDir),
 /* harmony export */   "NC": () => (/* binding */ writeFile),
-/* harmony export */   "Oh": () => (/* binding */ getLibraryDir),
+/* harmony export */   "Ur": () => (/* binding */ getTemplateDir),
 /* harmony export */   "gr": () => (/* binding */ rmFile),
 /* harmony export */   "i$": () => (/* binding */ mkdir),
 /* harmony export */   "kc": () => (/* binding */ getBuildDir),
@@ -3917,8 +3977,12 @@ function getBuildDir(dirPath) {
 function getCacheDir(dirPath) {
   return path__WEBPACK_IMPORTED_MODULE_1___default().join(process.cwd(), dirPath, 'cache');
 }
-function getLibraryDir() {
-  return __dirname;
+function getTemplateDir() {
+  if (true) {
+    return __dirname;
+  }
+
+  return path__WEBPACK_IMPORTED_MODULE_1___default().join(process.cwd(), 'template', 'build');
 }
 function combineMdastTrees(mdasts) {
   const children = mdasts.flatMap(mdast => mdast.children || []);
