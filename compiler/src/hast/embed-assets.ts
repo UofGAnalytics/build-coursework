@@ -14,7 +14,7 @@ import { VFile } from 'vfile';
 import { Context } from '../context';
 // import { pdfToSvg } from '../pdf/pdf-to-svg';
 import { cacheToFile } from '../utils/cache-to-file';
-import { getAssetHast } from '../utils/get-asset-hast';
+import { getSvgHast } from '../utils/get-svg-hast';
 import { failMessage } from '../utils/message';
 import { readFile, rehypeParser } from '../utils/utils';
 
@@ -81,7 +81,9 @@ async function embedSvg(imgNode: Element, ctx: Context) {
   const idx = contents.indexOf('<svg');
   const svg = idx === -1 ? contents : contents.slice(idx);
   // const optimised = optimize(svg, { multipass: true }).data;
-  const svgNode = getAssetHast(svg) as Element;
+  // const svgNode = getAssetHast(svg) as Element;
+
+  const svgNode = getSvgHast(svg);
 
   const className = 'knitr-svg';
   const properties = {
