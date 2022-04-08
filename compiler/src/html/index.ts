@@ -11,7 +11,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { getLibraryDir, readFile } from '../utils/utils';
+import { getTemplateDir, readFile } from '../utils/utils';
 import { pdfWrapper } from './pdf';
 import { htmlWrapper } from './wrapper';
 
@@ -31,14 +31,14 @@ export async function htmlPhase(
   }
 
   if (!ctx.options.noDoc) {
-    const cssPath = path.join(getLibraryDir(), 'template.css');
+    const cssPath = path.join(getTemplateDir(), 'template.css');
     const docOptions: Options = {
       title: unit.titles.docTitle,
       style: `\n${await readFile(cssPath)}\n`,
     };
 
     if (!targetPdf) {
-      const jsPath = path.join(getLibraryDir(), 'template.js2');
+      const jsPath = path.join(getTemplateDir(), 'template.js2');
       docOptions.script = `\n${await readFile(jsPath)}\n`;
       processor.use(htmlWrapper, unit, mdast);
     } else {

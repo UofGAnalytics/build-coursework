@@ -16,8 +16,6 @@ const releasePkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'p
 const currentVersion = releasePkg.version
 const newVersion = projectPkg.version
 
-console.log({ currentVersion, newVersion })
-
 export default {
   target: ['node', 'es2020'],
   mode: isProd ? 'production' : 'development',

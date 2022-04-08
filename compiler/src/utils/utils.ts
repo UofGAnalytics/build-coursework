@@ -52,8 +52,11 @@ export function getCacheDir(dirPath: string) {
   return path.join(process.cwd(), dirPath, 'cache');
 }
 
-export function getLibraryDir() {
-  return __dirname;
+export function getTemplateDir() {
+  if (process.env.NODE_ENV === 'production') {
+    return __dirname;
+  }
+  return path.join(process.cwd(), 'template', 'build');
 }
 
 export function combineMdastTrees(mdasts: Parent[]): Parent {
