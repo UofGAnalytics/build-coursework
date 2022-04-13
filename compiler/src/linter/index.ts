@@ -2,7 +2,6 @@
 import lintAltText from '@double-great/remark-lint-alt-text';
 // @ts-expect-error
 import lintLinkText from '@mapbox/remark-lint-link-text';
-// @ts-expect-error
 import dictionary from 'dictionary-en-gb';
 import remark2retext from 'remark-retext';
 import english from 'retext-english';

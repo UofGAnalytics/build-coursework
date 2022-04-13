@@ -21,7 +21,7 @@
     "@mapbox/remark-lint-link-text": "^0.6.0",
     "base64-arraybuffer": "^1.0.2",
     "chalk": "^5.0.0",
-    "dictionary-en-gb": "^2.3.0",
+    "dictionary-en-gb": "^2.4.0",
     "escape-latex": "^1.2.0",
     "figures": "^4.0.0",
     "hash-sum": "^2.0.0",

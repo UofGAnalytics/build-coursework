@@ -49,11 +49,13 @@ async function createParentFile(unit: Unit, ctx: Context) {
     // escape backslash path on windows
     const formattedPath = path
       .relative(ctx.cacheDir, filePath)
-      .replace(/\\/g, '\\\\');
+      .replace(/\\/g, '/');
 
     const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${EOL}\`\`\``;
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
+
+  console.log(value);
 
   file.value = value;
   return file;
@@ -100,10 +102,10 @@ function createKnitrCommand(
 ) {
   const rFileDir = getKnitrFileDir();
   const rFile = path.join(rFileDir, 'knitr.R');
-  const baseDir = path.parse(unitPath).dir;
+  const baseDir = path.parse(unitPath).dir + path.sep;
   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
-  const cacheDir = path.join(ctx.cacheDir, uniqueId);
-  return `Rscript "${rFile}" "${cachedFile}" "${baseDir}/" "${cacheDir}/"`;
+  const cacheDir = path.join(ctx.cacheDir, uniqueId) + path.sep;
+  return `Rscript "${rFile}" "${cachedFile}" "${baseDir}" "${cacheDir}"`;
 }
 
 function getKnitrFileDir() {
