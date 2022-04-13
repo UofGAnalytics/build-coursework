@@ -46,7 +46,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
     const directive = `:directory[${fileDir}]`;
 
     // child document
-    // escape backslash path on windows
+    // convert all file paths to forward slash (windows anaconda/knitr bug)
     const formattedPath = path
       .relative(ctx.cacheDir, filePath)
       .replace(/\\/g, '/');
@@ -55,7 +55,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
 
-  console.log(value);
+  // console.log(value);
 
   file.value = value;
   return file;
@@ -102,9 +102,9 @@ function createKnitrCommand(
 ) {
   const rFileDir = getKnitrFileDir();
   const rFile = path.join(rFileDir, 'knitr.R');
-  const baseDir = path.parse(unitPath).dir + path.sep;
+  const baseDir = path.parse(unitPath).dir;
   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
-  const cacheDir = path.join(ctx.cacheDir, uniqueId) + path.sep;
+  const cacheDir = path.join(ctx.cacheDir, uniqueId);
   return `Rscript "${rFile}" "${cachedFile}" "${baseDir}" "${cacheDir}"`;
 }
 
