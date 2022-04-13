@@ -1233,13 +1233,13 @@ async function createParentFile(unit, ctx) {
 
     const fileDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(filePath).dir;
     const directive = `:directory[${fileDir}]`; // child document
-    // escape backslash path on windows
+    // convert all file paths to forward slash (windows anaconda/knitr bug)
 
     const formattedPath = path__WEBPACK_IMPORTED_MODULE_2___default().relative(ctx.cacheDir, filePath).replace(/\\/g, '/');
     const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\``;
     return acc + directive + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL + childCodeBlock + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL;
-  }, '');
-  console.log(value);
+  }, ''); // console.log(value);
+
   file.value = value;
   return file;
 } // TODO: see what can be done with output when "quiet" in knitr.R is turned off
@@ -1281,9 +1281,9 @@ function getUniqueId(md) {
 function createKnitrCommand(ctx, uniqueId, unitPath) {
   const rFileDir = getKnitrFileDir();
   const rFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(rFileDir, 'knitr.R');
-  const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(unitPath).dir + (path__WEBPACK_IMPORTED_MODULE_2___default().sep);
+  const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(unitPath).dir;
   const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
-  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId) + (path__WEBPACK_IMPORTED_MODULE_2___default().sep);
+  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
   return `Rscript "${rFile}" "${cachedFile}" "${baseDir}" "${cacheDir}"`;
 }
 
@@ -3626,7 +3626,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.43";
+  const currentVersion = "1.1.44";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
