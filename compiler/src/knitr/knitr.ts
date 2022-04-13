@@ -46,7 +46,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
     const directive = `:directory[${fileDir}]`;
 
     // child document
-    // escape backslash path on windows
+    // convert windows backslash to forward slash (Anaconda Windows/knitr fix)
     const formattedPath = path
       .relative(ctx.cacheDir, filePath)
       .replace(/\\/g, '/');
@@ -55,7 +55,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
   }, '');
 
-  console.log(value);
+  // console.log(value);
 
   file.value = value;
   return file;
