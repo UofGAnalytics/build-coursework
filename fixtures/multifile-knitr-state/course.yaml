@@ -1,4 +1,7 @@
 title: Multifile counter
 type: course
+catalog: STATS5078
+authors: David McArthur
+academic_year: 2021-22
 units:
   - src: test/test.yaml

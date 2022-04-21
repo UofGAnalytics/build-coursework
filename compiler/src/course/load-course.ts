@@ -13,6 +13,9 @@ const courseSchema = yup.object().shape({
       src: yup.string().required(),
     })
   ),
+  catalog: yup.string().required(),
+  authors: yup.string().required(),
+  academic_year: yup.string().required(),
 });
 
 export async function loadCourseYaml(dirPath: string) {
