@@ -1,8 +1,15 @@
 import { Node } from 'unist';
+import { visit } from 'unist-util-visit';
 
-import { UnitTitles } from '../../course/types';
+import coverSvg from '../../../assets/cover.svg';
+import { Course, UnitTitles } from '../../course/types';
+import { getAssetHast } from '../../utils/get-asset-hast';
 
-export async function createMain(titles: UnitTitles, content: Node[]) {
+export async function createMain(
+  titles: UnitTitles,
+  course: Course,
+  content: Node[]
+) {
   return {
     type: 'element',
     tagName: 'main',
@@ -13,7 +20,11 @@ export async function createMain(titles: UnitTitles, content: Node[]) {
         properties: {
           className: 'wrapper',
         },
-        children: [createH1(titles), ...content],
+        children: [
+          createH1(titles),
+          createLogo(course.catalog),
+          ...content,
+        ],
       },
     ],
   };
@@ -43,4 +54,23 @@ function createH1(titles: UnitTitles) {
       },
     ],
   };
+}
+
+function createLogo(catalog: string) {
+  const cover = getAssetHast(coverSvg);
+
+  visit(cover, 'element', (node) => {
+    if (node.tagName === 'g') {
+      const properties = node.properties || {};
+      const [className] = (properties.className || []) as string[];
+      if (catalog === className) {
+        properties.className = ['active'];
+      } else {
+        properties.className = [];
+      }
+      node.properties = properties;
+    }
+  });
+
+  return cover;
 }
