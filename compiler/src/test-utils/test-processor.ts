@@ -56,6 +56,9 @@ async function createTestContext(md: string, options: Options = {}) {
 
   const course = {
     title: 'Test Course',
+    catalog: 'STATS5078',
+    authors: 'David McArthur',
+    academic_year: '2021-22',
     coursePath: cacheDir,
     units: [{ src: unitPath }],
   };

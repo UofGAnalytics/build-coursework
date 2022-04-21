@@ -2,6 +2,9 @@ import { VFile } from 'vfile';
 
 export type CourseYaml = {
   title: string;
+  catalog: string;
+  authors: string;
+  academic_year: string;
   units: FileRef[];
 };
 
@@ -22,6 +25,9 @@ export type Unit = {
 
 export type Course = {
   title: string;
+  catalog: string;
+  authors: string;
+  academic_year: string;
   coursePath: string;
   units: Unit[];
 };
