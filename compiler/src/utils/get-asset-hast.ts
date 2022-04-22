@@ -1,3 +1,4 @@
+import { Element } from 'hast';
 import { toVFile } from 'to-vfile';
 
 import { rehypeParser } from '../utils/utils';
@@ -12,5 +13,5 @@ import { rehypeParser } from '../utils/utils';
 export function getAssetHast(value: string) {
   const vfile = toVFile({ value });
   const parsed = rehypeParser().parse(vfile);
-  return parsed.children[0];
+  return parsed.children[0] as Element;
 }

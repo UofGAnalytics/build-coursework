@@ -1,7 +1,8 @@
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 
-import coverSvg from '../../../assets/cover.svg';
+import dagLogoSvg from '../../../assets/dag-logo.svg';
+import coverSvg from '../../../assets/hexagons.svg';
 import { Course, UnitTitles } from '../../course/types';
 import { getAssetHast } from '../../utils/get-asset-hast';
 
@@ -20,10 +21,30 @@ export async function createMain(
         properties: {
           className: 'wrapper',
         },
+        children: [createCover(titles, course), ...content],
+      },
+    ],
+  };
+}
+
+function createCover(titles: UnitTitles, course: Course) {
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: {
+      className: 'cover',
+    },
+    children: [
+      createH1(titles),
+      {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: 'logos',
+        },
         children: [
-          createH1(titles),
-          createLogo(course.catalog),
-          ...content,
+          createCoverHexagons(course.catalog),
+          getAssetHast(dagLogoSvg),
         ],
       },
     ],
@@ -56,10 +77,10 @@ function createH1(titles: UnitTitles) {
   };
 }
 
-function createLogo(catalog: string) {
-  const cover = getAssetHast(coverSvg);
+function createCoverHexagons(catalog: string) {
+  const hexagons = getAssetHast(coverSvg);
 
-  visit(cover, 'element', (node) => {
+  visit(hexagons, 'element', (node) => {
     if (node.tagName === 'g') {
       const properties = node.properties || {};
       const [className] = (properties.className || []) as string[];
@@ -72,5 +93,5 @@ function createLogo(catalog: string) {
     }
   });
 
-  return cover;
+  return hexagons;
 }

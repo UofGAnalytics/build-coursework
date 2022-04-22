@@ -91,6 +91,7 @@ h5,
 h6,
 .boxout .title {
   font-weight: 700;
+  line-height: 1.2;
   margin: 1.5em 0 1em;
 }
 
@@ -103,17 +104,6 @@ h4,
 h5,
 h6 {
   color: var(--highlightColor);
-}
-
-h1 {
-  font-size: 3.3em;
-  margin: 1.5em 0 1.45em;
-}
-h1 span {
-  display: block;
-  font-size: 0.4em;
-  opacity: 0.4;
-  margin-top: -0.5em;
 }
 
 h2 {
