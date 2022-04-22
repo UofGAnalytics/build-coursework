@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: [16.x, 17.x]
-        r-version: [4.x]
+        r-version: [4.1.x]
 
     steps:
       - name: install curl
