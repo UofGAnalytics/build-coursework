@@ -13,12 +13,14 @@ figure {
   }
   figcaption {
     margin-bottom: 3rem;
-    text-align: center;
     padding-top: 0.5rem;
-    font-style: italic;
-    color: var(--fadedTextColor);
-    .caption-count {
-      color: var(--highlightColor);
+    text-align: center;
+    a {
+      font-style: italic;
+      color: var(--fadedTextColor);
+      .caption-count {
+        color: var(--highlightColor);
+      }
     }
   }
 }

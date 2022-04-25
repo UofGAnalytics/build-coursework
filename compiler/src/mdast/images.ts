@@ -1,5 +1,6 @@
-import { Element } from 'hast';
-import { Image, Text } from 'mdast';
+import { Element, ElementContent } from 'hast';
+import kebabCase from 'lodash/kebabCase.js';
+import { Image } from 'mdast';
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 
@@ -31,7 +32,23 @@ function template(node: Image, count: number) {
     };
   }
 
-  const caption = createCaption(node, count);
+  const alt = getAltText(node);
+  const slug = kebabCase(alt ? alt : `Figure ${count}`);
+
+  const caption = {
+    type: 'element',
+    tagName: 'figcaption',
+    children: [
+      {
+        type: 'element',
+        tagName: 'a',
+        properties: {
+          href: `#${slug}`,
+        },
+        children: createLabel(alt, count),
+      },
+    ],
+  };
 
   Object.assign(node, {
     type: 'custom-image',
@@ -39,17 +56,16 @@ function template(node: Image, count: number) {
       hName: 'figure',
       hProperties: {
         className: ['img-wrapper'],
+        id: slug,
       },
       hChildren: [image, caption],
     },
   });
 }
 
-function createCaption(node: Image, count: number) {
-  const result: Element = {
-    type: 'element',
-    tagName: 'figcaption',
-    children: [
+function createLabel(alt: string, count: number): ElementContent[] {
+  if (alt) {
+    return [
       {
         type: 'element',
         tagName: 'span',
@@ -59,25 +75,37 @@ function createCaption(node: Image, count: number) {
         children: [
           {
             type: 'text',
-            value: `Figure ${count}`,
+            value: `Figure ${count}:`,
           },
         ],
       },
-    ],
-  };
-
-  const altText = node.alt || '';
-
-  if (altText !== '' && !altText.includes('unnamed-chunk')) {
-    const currentCaption = result.children[0] as Element;
-    const currentValue = currentCaption.children[0] as Text;
-    currentValue.value += ': ';
-
-    result.children.push({
-      type: 'text',
-      value: `${node.alt}`,
-    });
+      {
+        type: 'text',
+        value: ` ${alt}`,
+      },
+    ];
   }
+  return [
+    {
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: 'caption-count',
+      },
+      children: [
+        {
+          type: 'text',
+          value: `Figure ${count}`,
+        },
+      ],
+    },
+  ];
+}
 
-  return result;
+function getAltText(node: Image) {
+  const altText = node.alt || '';
+  if (altText.includes('unnamed-chunk')) {
+    return '';
+  }
+  return altText;
 }
