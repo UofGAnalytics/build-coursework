@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import chalk from 'chalk';
+import figures from 'figures';
 import yargs from 'yargs';
 
 import { Options } from '../context';
@@ -77,16 +79,13 @@ const options: Options = {
   force: argv.force,
 };
 
-// async function rMarkdown(dirPath: string, options: Options = {}) {
-//   try {
-//     return await run(dirPath, options);
-//   } catch (err) {
-//     console.error(err);
-//     if (err instanceof Error) {
-//       console.error(err.stack);
-//     }
-//     process.exit(1);
-//   }
-// }
+async function run() {
+  try {
+    await rMarkdown(dirPath, options);
+  } catch (err: any) {
+    console.log(chalk.red(figures.cross + ' ' + err.message));
+    process.exit(1);
+  }
+}
 
-rMarkdown(dirPath, options);
+run();

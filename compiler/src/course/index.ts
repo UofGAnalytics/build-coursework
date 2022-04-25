@@ -3,6 +3,7 @@ import path from 'path';
 import kebabCase from 'lodash/kebabCase.js';
 import { toVFile } from 'to-vfile';
 
+import { checkLocalFileExists } from '../utils/utils';
 import { loadCourseYaml } from './load-course';
 import { loadUnitYaml } from './load-unit';
 import {
@@ -31,8 +32,11 @@ async function collectUnit(
   const { content, ...yaml } = await loadUnitYaml(dirPath, unit.src);
   const unitPath = path.join(process.cwd(), dirPath, unit.src);
   const files = await Promise.all(
-    content.map((c) => {
-      const filePath = path.join(dirPath, unit.src, '..', c.src);
+    content.map(async (c) => {
+      const filePath = path.resolve(dirPath, unit.src, '..', c.src);
+      if (!(await checkLocalFileExists(filePath))) {
+        throw new Error(`No Rmd file exists at ${filePath}`);
+      }
       return toVFile.read(filePath, 'utf-8');
     })
   );

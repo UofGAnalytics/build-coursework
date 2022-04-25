@@ -3,7 +3,7 @@ import path from 'path';
 import yaml from 'js-yaml';
 import * as yup from 'yup';
 
-import { readFile } from '../utils/utils';
+import { checkLocalFileExists, readFile } from '../utils/utils';
 import { CourseYaml } from './types';
 
 export const validCatalogValues = [
@@ -35,7 +35,13 @@ const courseSchema = yup.object().shape({
 });
 
 export async function loadCourseYaml(dirPath: string) {
-  const fileContents = await readFile(path.join(dirPath, 'course.yaml'));
+  const courseYamlPath = path.join(dirPath, 'course.yaml');
+  if (!(await checkLocalFileExists(courseYamlPath))) {
+    throw Error(
+      `No course.yaml file exists in ${path.join(process.cwd(), dirPath)}`
+    );
+  }
+  const fileContents = await readFile(courseYamlPath);
   const course = yaml.load(fileContents);
   return courseSchema.validateSync(course) as CourseYaml;
 }
