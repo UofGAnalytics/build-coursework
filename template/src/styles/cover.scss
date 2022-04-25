@@ -1,0 +1,76 @@
+.cover {
+  h1 {
+    font-size: 3.3em;
+    margin: 0.5em 0 1.45em;
+  }
+
+  h1 span {
+    display: block;
+    font-size: 0.4em;
+    opacity: 0.4;
+    margin-top: 1em;
+  }
+
+  .logos {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .hexagons {
+    display: block;
+    width: 30%;
+    margin-bottom: 2rem;
+
+    .hex {
+      stroke: rgb(var(--primaryColor));
+    }
+
+    .hex-logo {
+      fill: rgb(var(--primaryColor));
+    }
+
+    .active .hex {
+      fill: rgb(var(--primaryColor));
+    }
+
+    .active .hex-logo {
+      fill: var(--bg);
+    }
+  }
+
+  .dag-logo {
+    display: block;
+    width: 20%;
+    margin-bottom: 5rem;
+    position: relative;
+    bottom: 1rem;
+
+    .primary {
+      fill: rgb(var(--primaryColor));
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .cover {
+    h1 {
+      font-size: 3em;
+      margin: 2em 0 1em;
+    }
+
+    .logos {
+      display: block;
+    }
+
+    .hexagons {
+      width: 100%;
+    }
+
+    .dag-logo {
+      width: 50%;
+      bottom: 0;
+    }
+  }
+}

@@ -1,7 +1,12 @@
 @media print {
+  .hamburger-icon {
+    display: none !important;
+  }
+
   .pagebreak {
     break-after: page;
   }
+
   h1,
   h2,
   h3,
@@ -10,7 +15,28 @@
   h6 {
     break-after: avoid;
   }
-  .boxout {
-    break-inside: avoid;
+
+  .cover {
+    height: 95vh;
+    position: relative;
+
+    .logos {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .hexagons {
+      width: 60%;
+    }
+
+    .dag-logo {
+      width: 25%;
+      bottom: 1rem;
+    }
   }
 }

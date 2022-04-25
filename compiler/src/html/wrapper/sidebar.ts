@@ -1,7 +1,6 @@
-import { Root } from 'mdast';
+import { Parent, Root } from 'mdast';
 import { toHast } from 'mdast-util-to-hast';
 import { toc as getToc } from 'mdast-util-toc';
-import { Node } from 'unist';
 
 import crestSvg from '../../../assets/crest.svg';
 import uOfGSvg from '../../../assets/uofg.svg';
@@ -12,7 +11,7 @@ import {
   createViewOptionsButton,
 } from './view-options';
 
-export async function createSidebar(mdast: Node) {
+export async function createSidebar(mdast: Parent) {
   const logo = await createLogo();
   const toc = getToc(mdast as Root, { maxDepth: 3 }).map;
   const tocChildren = toc === null ? [] : [toHast(toc)];

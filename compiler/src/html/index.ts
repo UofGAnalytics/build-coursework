@@ -40,9 +40,9 @@ export async function htmlPhase(
     if (!targetPdf) {
       const jsPath = path.join(getTemplateDir(), 'template.js2');
       docOptions.script = `\n${await readFile(jsPath)}\n`;
-      processor.use(htmlWrapper, unit, mdast);
+      processor.use(htmlWrapper, unit, mdast, ctx);
     } else {
-      processor.use(pdfWrapper, unit);
+      processor.use(pdfWrapper, unit, ctx);
     }
 
     processor.use(doc, docOptions);
