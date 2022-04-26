@@ -1,5 +1,6 @@
 import path from "path";
 import fs from 'fs'
+import { fileURLToPath } from 'url';
 import nodeExternals from "webpack-node-externals";
 import CopyPlugin from "copy-webpack-plugin";
 import ShebangPlugin from "webpack-shebang-plugin";
@@ -7,7 +8,7 @@ import InlineEnvironmentVariablesPlugin from "inline-environment-variables-webpa
 import GeneratePackageJsonPlugin from "generate-package-json-webpack-plugin";
 
 const isProd = process.env.NODE_ENV === 'production'
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const buildPath = path.join(__dirname, 'build')
 const projectPath = path.join(__dirname, '..')
 const projectPkg = JSON.parse(await fs.promises.readFile(path.join(projectPath, 'package.json'), 'utf-8'));
@@ -51,7 +52,7 @@ export default {
         ]
       },
       {
-        test: /\/assets\//,
+        test: /assets/,
         use: 'raw-loader',
       },
       // {
