@@ -11,6 +11,7 @@ import { htmlPhase } from './html';
 import { knitr } from './knitr/knitr';
 import { texToAliasDirective } from './latex/tex-to-directive';
 import { createReport, reportErrors } from './linter';
+import { assertNoImageAttributes } from './linter/assert-no-image-attributes';
 import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';
@@ -78,6 +79,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
 }
 
 async function inSituTransforms(file: VFile, ctx: Context) {
+  assertNoImageAttributes(file);
   preParsePhase(file);
   texToAliasDirective(file, ctx);
   return mdastPhase(file, ctx);
