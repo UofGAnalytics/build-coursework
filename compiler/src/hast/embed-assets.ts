@@ -19,43 +19,44 @@ import { failMessage } from '../utils/message';
 import { readFile, rehypeParser } from '../utils/utils';
 
 export function embedAssets(ctx: Context) {
-  async function embed(node: Element, file: VFile) {
-    const src = getImageSrc(node);
-    const parsed = path.parse(src);
-    try {
-      switch (parsed.ext) {
-        case '.png':
-        case '.jpg':
-        case '.jpeg':
-        case '.gif':
-          return await embedImage(node, ctx, file);
-        case '.svg':
-          return await embedSvg(node, ctx);
-        case '.pdf':
-          // return await embedPdfSvg(node);
-          throw new Error(
-            `Unhandled file extension: .pdf (convert to .svg)`
-          );
-        case '.html':
-          return await embedHtml(node);
-        default:
-          throw new Error(`Unhandled file extension: ${parsed.ext}`);
-      }
-    } catch (_err) {
-      console.log(_err);
-      const err = _err as Error;
-      failMessage(file, err?.message || '', node.position);
-    }
-  }
   return async (tree: Element, file: VFile) => {
     const transformations: Promise<void>[] = [];
     visit(tree, 'element', (node) => {
       if (node.tagName === 'img') {
-        transformations.push(embed(node, file));
+        transformations.push(embed(node, file, ctx));
       }
     });
     await Promise.all(transformations);
   };
+}
+
+async function embed(node: Element, file: VFile, ctx: Context) {
+  const src = getImageSrc(node);
+  const parsed = path.parse(src);
+  try {
+    switch (parsed.ext) {
+      case '.png':
+      case '.jpg':
+      case '.jpeg':
+      case '.gif':
+        return await embedImage(node, ctx, file);
+      case '.svg':
+        return await embedSvg(node, ctx);
+      case '.pdf':
+        // return await embedPdfSvg(node);
+        throw new Error(
+          `Unhandled file extension: .pdf (convert to .svg)`
+        );
+      case '.html':
+        return await embedHtml(node);
+      default:
+        throw new Error(`Unhandled file extension: ${parsed.ext}`);
+    }
+  } catch (_err) {
+    console.log(_err);
+    const err = _err as Error;
+    failMessage(file, err?.message || '', node.position);
+  }
 }
 
 async function embedImage(node: Element, ctx: Context, file: VFile) {

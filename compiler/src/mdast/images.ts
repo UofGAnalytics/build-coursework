@@ -17,12 +17,21 @@ export function images(ctx: Context) {
 function template(node: Image, count: number) {
   const image: Element = {
     type: 'element',
-    tagName: 'img',
+    tagName: 'div',
     properties: {
-      src: node.url,
-      alt: node.alt,
+      className: 'img-bg',
     },
-    children: [],
+    children: [
+      {
+        type: 'element',
+        tagName: 'img',
+        properties: {
+          src: node.url,
+          alt: node.alt,
+        },
+        children: [],
+      },
+    ],
   };
 
   if (node.data?.width) {

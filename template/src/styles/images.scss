@@ -5,17 +5,17 @@ img {
 }
 
 figure {
-  svg.pdftex, svg.knitr-svg {
-    margin-bottom: 0;
+  text-align: center;
+  .img-bg {
+    display: inline-block;
     background: white;
   }
-  img {
-    margin: 0 auto;
+  svg.pdftex, svg.knitr-svg {
+    margin-bottom: 0;
   }
   figcaption {
     margin-bottom: 3rem;
     padding-top: 0.5rem;
-    text-align: center;
     a {
       font-style: italic;
       color: var(--fadedTextColor);
