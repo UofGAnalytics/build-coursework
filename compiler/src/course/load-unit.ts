@@ -3,7 +3,7 @@ import path from 'path';
 import yaml from 'js-yaml';
 import * as yup from 'yup';
 
-import { readFile } from '../utils/utils';
+import { checkLocalFileExists, readFile } from '../utils/utils';
 import { UnitYaml } from './types';
 
 const unitSchema = yup.object().shape({
@@ -17,7 +17,13 @@ const unitSchema = yup.object().shape({
 });
 
 export async function loadUnitYaml(dirPath: string, src: string) {
-  const fileContents = await readFile(path.join(dirPath, src));
+  const contentsPath = path.join(dirPath, src);
+  if (!(await checkLocalFileExists(contentsPath))) {
+    throw Error(
+      `No yaml file exists at ${path.join(process.cwd(), contentsPath)}`
+    );
+  }
+  const fileContents = await readFile(contentsPath);
   const unit = yaml.load(fileContents);
   return unitSchema.validateSync(unit) as UnitYaml;
 }
