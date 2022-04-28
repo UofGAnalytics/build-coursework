@@ -5,7 +5,7 @@ import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { embedAssets } from './embed-assets';
+import { inlineRelativeAssets } from './inline-files';
 import { responsiveTables } from './responsive-tables';
 
 export async function hastPhase(
@@ -20,7 +20,7 @@ export async function hastPhase(
     .use(responsiveTables);
 
   if (!ctx.options.noEmbedAssets) {
-    processor.use(embedAssets, ctx);
+    processor.use(inlineRelativeAssets, ctx);
   }
 
   return processor.run(mdast, file);

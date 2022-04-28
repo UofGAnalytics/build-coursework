@@ -1,3 +1,1 @@
-```{r, echo=FALSE, out.width = '70%'}
-knitr::include_graphics("venn_disjoint.pdf")
-```
+![Dag logo](dag-logo.svg)
