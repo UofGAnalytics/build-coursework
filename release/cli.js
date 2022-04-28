@@ -392,26 +392,222 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var rehype_raw__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1871);
 /* harmony import */ var remark_rehype__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2509);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(117);
-/* harmony import */ var _embed_assets__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4277);
-/* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3517);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _responsive_tables__WEBPACK_IMPORTED_MODULE_2__]);
-([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _responsive_tables__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(117);
+/* harmony import */ var _inline_files__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1675);
+/* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3517);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _inline_files__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__]);
+([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _inline_files__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
 
 
 async function hastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_3__/* .unified */ .l)().use(remark_rehype__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(remark_rehype__WEBPACK_IMPORTED_MODULE_1__["default"], {
     allowDangerousHtml: true
-  }).use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_2__/* .responsiveTables */ .l);
+  }).use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_3__/* .responsiveTables */ .l);
 
   if (!ctx.options.noEmbedAssets) {
-    processor.use(_embed_assets__WEBPACK_IMPORTED_MODULE_4__.embedAssets, ctx);
+    processor.use(_inline_files__WEBPACK_IMPORTED_MODULE_2__/* .inlineRelativeAssets */ .d, ctx);
   }
 
   return processor.run(mdast, file);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 1675:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "d": () => (/* binding */ inlineRelativeAssets)
+/* harmony export */ });
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2845);
+/* harmony import */ var image_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7632);
+/* harmony import */ var mime_lite_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(799);
+/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6544);
+/* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1252);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6016);
+/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2303);
+/* harmony import */ var _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8530);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(153);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8061);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
+([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+
+
+ // import { optimize } from 'svgo';
+
+
+// import { pdfToSvg } from '../pdf/pdf-to-svg';
+
+
+
+
+function inlineRelativeAssets(ctx) {
+  return async (tree, file) => {
+    const transformations = [];
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_6__.visit)(tree, 'element', node => {
+      if (node.tagName === 'img') {
+        transformations.push(embed(node, file, ctx));
+      }
+    });
+    await Promise.all(transformations);
+  };
+}
+
+async function embed(node, file, ctx) {
+  const src = getImageSrc(node);
+  const parsed = path__WEBPACK_IMPORTED_MODULE_0___default().parse(src);
+
+  try {
+    switch (parsed.ext) {
+      case '.png':
+      case '.jpg':
+      case '.jpeg':
+      case '.gif':
+        return await embedImage(node, ctx, file);
+
+      case '.svg':
+        return await embedSvg(node, ctx);
+
+      case '.pdf':
+        // return await embedPdfSvg(node);
+        throw new Error(`Unhandled file extension: .pdf (convert to .svg)`);
+
+      case '.html':
+        return await embedHtml(node);
+
+      default:
+        throw new Error(`Unhandled file extension: ${parsed.ext}`);
+    }
+  } catch (_err) {
+    console.log(_err);
+    const err = _err;
+    (0,_utils_message__WEBPACK_IMPORTED_MODULE_9__/* .failMessage */ .Ob)(file, err?.message || '', node.position);
+  }
+}
+
+async function embedImage(node, ctx, file) {
+  const src = getImageSrc(node);
+  const mime = mime_lite_js__WEBPACK_IMPORTED_MODULE_3__["default"].getType(path__WEBPACK_IMPORTED_MODULE_0___default().extname(src));
+
+  try {
+    const image = await getImage(src, ctx);
+    const {
+      width
+    } = (0,image_size__WEBPACK_IMPORTED_MODULE_2__["default"])(Buffer.from(image, 'base64'));
+    node.properties = { ...node.properties,
+      src: `data:${mime};base64,${image}`,
+      style: [`max-width: ${width}px`]
+    };
+  } catch (err) {
+    console.log(err);
+    (0,_utils_message__WEBPACK_IMPORTED_MODULE_9__/* .failMessage */ .Ob)(file, `Image not found: ${src}`);
+  }
+}
+
+async function embedSvg(imgNode, ctx) {
+  const src = getImageSrc(imgNode);
+  const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src);
+  const idx = contents.indexOf('<svg');
+  const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
+  // const svgNode = getAssetHast(svg) as Element;
+
+  const svgNode = (0,_utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__/* .getSvgHast */ .v)(svg);
+  const svgProperties = svgNode.properties || {}; // helps to ensure the svg is responsive
+
+  delete svgProperties.width;
+  delete svgProperties.height;
+  const className = 'knitr-svg';
+  const properties = { ...imgNode.properties,
+    ...svgProperties,
+    className: [className, ...getNodeClassNames(imgNode, className), ...getNodeClassNames(svgNode, className)]
+  };
+  delete properties.src;
+  Object.assign(imgNode, svgNode, {
+    properties
+  });
+}
+
+function getNodeClassNames(node, removeClass) {
+  const classes = node.properties?.className;
+
+  if (typeof classes === 'string' && classes !== removeClass) {
+    return [classes];
+  }
+
+  if (Array.isArray(classes)) {
+    return classes.map(x => String(x)).filter(s => s !== removeClass);
+  }
+
+  return [];
+}
+
+function getImageSrc(node) {
+  const properties = node.properties || {};
+
+  if (!properties.src) {
+    throw new Error('Image has no src');
+  }
+
+  return properties.src;
+}
+
+async function getImage(src, ctx) {
+  if (src.startsWith('http')) {
+    return (0,_utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__/* .cacheToFile */ .G)({
+      ctx,
+      prefix: 'youtube',
+      key: src,
+      execFn: getImageDataFromWeb
+    });
+  }
+
+  return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src, 'base64');
+}
+
+async function getImageDataFromWeb(src) {
+  const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_4__["default"])(src);
+  const buffer = await response.arrayBuffer();
+  return (0,base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__.encode)(buffer);
+} // async function embedPdfSvg(imgNode: Element) {
+//   const src = getImageSrc(imgNode);
+//   const svgNode = (await pdfToSvg(src)) as Element;
+//   console.log('hey!');
+//   console.log(svgNode);
+//   const properties = {
+//     ...imgNode.properties,
+//     ...svgNode.properties,
+//   } as Properties;
+//   delete properties.src;
+//   Object.assign(imgNode, svgNode, { properties });
+// }
+
+
+async function embedHtml(imgNode) {
+  const src = getImageSrc(imgNode);
+  const value = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src);
+  const vfile = (0,to_vfile__WEBPACK_IMPORTED_MODULE_5__.toVFile)({
+    value
+  });
+  const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .rehypeParser */ .G5)().parse(vfile);
+  Object.assign(imgNode, {
+    tagName: 'div',
+    properties: {
+      className: 'interactive-element'
+    },
+    children: parsed.children
+  });
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3483,6 +3679,80 @@ __webpack_async_result__();
 
 /***/ }),
 
+/***/ 2303:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "G": () => (/* binding */ cacheToFile)
+/* harmony export */ });
+/* unused harmony export cacheJsonToFile */
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2386);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8061);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_1__, _utils__WEBPACK_IMPORTED_MODULE_2__]);
+([hash_sum__WEBPACK_IMPORTED_MODULE_1__, _utils__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+async function cacheToFile(options) {
+  const {
+    ctx,
+    prefix,
+    key,
+    execFn,
+    json
+  } = options;
+
+  if (ctx.options.noCache === true) {
+    return execFn(key);
+  }
+
+  const filePath = `${prefix}-${(0,hash_sum__WEBPACK_IMPORTED_MODULE_1__["default"])(key)}.txt`;
+  const cachedFilePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.cacheDir, filePath);
+  const exists = await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(cachedFilePath);
+
+  if (exists) {
+    const str = await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .readFile */ .pJ)(cachedFilePath); // ignore cache if json is corrupt
+
+    if (json) {
+      try {
+        return JSON.parse(str);
+      } catch (err) {
+        return execAndCache(options, cachedFilePath);
+      }
+    }
+
+    return str;
+  }
+
+  return execAndCache(options, cachedFilePath);
+}
+async function cacheJsonToFile(options) {
+  return cacheToFile({ ...options,
+    json: true
+  });
+}
+
+async function execAndCache({
+  ctx,
+  key,
+  execFn,
+  json
+}, cachedFilePath) {
+  const out = await execFn(key);
+  const str = json ? JSON.stringify(out, null, 2) : out;
+  await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .mkdir */ .i$)(ctx.cacheDir);
+  await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .writeFile */ .NC)(cachedFilePath, str);
+  return out;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
 /***/ 2240:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -3504,7 +3774,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.45";
+  const currentVersion = "1.1.46";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
@@ -3567,6 +3837,65 @@ function getAssetHast(value) {
   });
   const parsed = (0,_utils_utils__WEBPACK_IMPORTED_MODULE_1__/* .rehypeParser */ .G5)().parse(vfile);
   return parsed.children[0];
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 8530:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "v": () => (/* binding */ getSvgHast)
+/* harmony export */ });
+/* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2386);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+/* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2430);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__]);
+([hash_sum__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+ // ensure SVG ids will not collide when inlined
+
+function getSvgHast(svg) {
+  const svgNode = (0,_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(svg);
+  const hash = (0,hash_sum__WEBPACK_IMPORTED_MODULE_0__["default"])(svg);
+  (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(svgNode, 'element', node => {
+    if (!node.properties) {
+      return;
+    }
+
+    if (node.properties.id) {
+      node.properties.id = `${node.properties.id}-${hash}`;
+    }
+
+    for (const [key, value] of Object.entries(node.properties)) {
+      const valueStr = String(value);
+
+      if (isIdRef(valueStr)) {
+        node.properties[key] = `${value}-${hash}`;
+      } else if (isUrlIdRef(valueStr)) {
+        node.properties[key] = `url(${extractUrlIdRef(valueStr)}-${hash})`;
+      }
+    }
+  });
+  return svgNode;
+}
+
+function isIdRef(value) {
+  return /^#[\w\d-_]+$/.test(value);
+}
+
+function isUrlIdRef(value) {
+  return /^url\(#[\w\d-_]+\)$/.test(value);
+}
+
+function extractUrlIdRef(value) {
+  const match = value.match(/^url\((#[\w\d-_]+)\)$/);
+  return match && match[1];
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3823,14 +4152,6 @@ function inspect() {
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 4277:
-/***/ (() => {
-
-"use strict";
-/* unused harmony default export */ var __WEBPACK_DEFAULT_EXPORT__ = ("import path from 'path';\n\nimport { encode as base46Encode } from 'base64-arraybuffer';\nimport { Element, Properties } from 'hast';\nimport sizeOf from 'image-size';\nimport mimes from 'mime/lite.js';\nimport fetch from 'node-fetch';\nimport { toVFile } from 'to-vfile';\n// import { optimize } from 'svgo';\nimport { Parent } from 'unist';\nimport { visit } from 'unist-util-visit';\nimport { VFile } from 'vfile';\n\nimport { Context } from '../context';\n// import { pdfToSvg } from '../pdf/pdf-to-svg';\nimport { cacheToFile } from '../utils/cache-to-file';\nimport { getSvgHast } from '../utils/get-svg-hast';\nimport { failMessage } from '../utils/message';\nimport { readFile, rehypeParser } from '../utils/utils';\n\nexport function embedAssets(ctx: Context) {\n  return async (tree: Element, file: VFile) => {\n    const transformations: Promise<void>[] = [];\n    visit(tree, 'element', (node) => {\n      if (node.tagName === 'img') {\n        transformations.push(embed(node, file, ctx));\n      }\n    });\n    await Promise.all(transformations);\n  };\n}\n\nasync function embed(node: Element, file: VFile, ctx: Context) {\n  const src = getImageSrc(node);\n  const parsed = path.parse(src);\n  try {\n    switch (parsed.ext) {\n      case '.png':\n      case '.jpg':\n      case '.jpeg':\n      case '.gif':\n        return await embedImage(node, ctx, file);\n      case '.svg':\n        return await embedSvg(node, ctx);\n      case '.pdf':\n        // return await embedPdfSvg(node);\n        throw new Error(\n          `Unhandled file extension: .pdf (convert to .svg)`\n        );\n      case '.html':\n        return await embedHtml(node);\n      default:\n        throw new Error(`Unhandled file extension: ${parsed.ext}`);\n    }\n  } catch (_err) {\n    console.log(_err);\n    const err = _err as Error;\n    failMessage(file, err?.message || '', node.position);\n  }\n}\n\nasync function embedImage(node: Element, ctx: Context, file: VFile) {\n  const src = getImageSrc(node);\n  const mime = mimes.getType(path.extname(src));\n  try {\n    const image = await getImage(src, ctx);\n    const { width } = sizeOf(Buffer.from(image, 'base64'));\n    node.properties = {\n      ...node.properties,\n      src: `data:${mime};base64,${image}`,\n      style: [`max-width: ${width}px`],\n    };\n  } catch (err) {\n    console.log(err);\n    failMessage(file, `Image not found: ${src}`);\n  }\n}\n\nasync function embedSvg(imgNode: Element, ctx: Context) {\n  const src = getImageSrc(imgNode);\n  const contents = await readFile(src);\n  const idx = contents.indexOf('<svg');\n  const svg = idx === -1 ? contents : contents.slice(idx);\n  // const optimised = optimize(svg, { multipass: true }).data;\n  // const svgNode = getAssetHast(svg) as Element;\n\n  const svgNode = getSvgHast(svg);\n\n  const className = 'knitr-svg';\n  const properties = {\n    ...imgNode.properties,\n    ...svgNode.properties,\n    className: [\n      className,\n      ...getNodeClassNames(imgNode, className),\n      ...getNodeClassNames(svgNode, className),\n    ],\n  } as Properties;\n\n  delete properties.src;\n\n  Object.assign(imgNode, svgNode, { properties });\n}\n\nfunction getNodeClassNames(node: Element, removeClass: string) {\n  const classes = node.properties?.className;\n  if (typeof classes === 'string' && classes !== removeClass) {\n    return [classes];\n  }\n  if (Array.isArray(classes)) {\n    return classes.map((x) => String(x)).filter((s) => s !== removeClass);\n  }\n  return [];\n}\n\nfunction getImageSrc(node: Element) {\n  const properties = (node.properties || {}) as { src: string };\n  if (!properties.src) {\n    throw new Error('Image has no src');\n  }\n  return properties.src;\n}\n\nasync function getImage(src: string, ctx: Context) {\n  if (src.startsWith('http')) {\n    return cacheToFile({\n      ctx,\n      prefix: 'youtube',\n      key: src,\n      execFn: getImageDataFromWeb,\n    });\n  }\n  return readFile(src, 'base64');\n}\n\nasync function getImageDataFromWeb(src: string) {\n  const response = await fetch(src);\n  const buffer = await response.arrayBuffer();\n  return base46Encode(buffer);\n}\n\n// async function embedPdfSvg(imgNode: Element) {\n//   const src = getImageSrc(imgNode);\n//   const svgNode = (await pdfToSvg(src)) as Element;\n//   console.log('hey!');\n//   console.log(svgNode);\n\n//   const properties = {\n//     ...imgNode.properties,\n//     ...svgNode.properties,\n//   } as Properties;\n\n//   delete properties.src;\n\n//   Object.assign(imgNode, svgNode, { properties });\n// }\n\nasync function embedHtml(imgNode: Element) {\n  const src = getImageSrc(imgNode);\n  const value = await readFile(src);\n  const vfile = toVFile({ value });\n  const parsed = rehypeParser().parse(vfile) as Parent;\n\n  Object.assign(imgNode, {\n    tagName: 'div',\n    properties: {\n      className: 'interactive-element',\n    },\n    children: parsed.children,\n  });\n}\n");
 
 /***/ }),
 
@@ -4165,6 +4486,14 @@ module.exports = import("@mapbox/remark-lint-link-text");;
 
 /***/ }),
 
+/***/ 2845:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("base64-arraybuffer");;
+
+/***/ }),
+
 /***/ 7564:
 /***/ ((module) => {
 
@@ -4194,6 +4523,14 @@ module.exports = import("figures");;
 
 "use strict";
 module.exports = import("hash-sum");;
+
+/***/ }),
+
+/***/ 7632:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("image-size");;
 
 /***/ }),
 
@@ -4322,6 +4659,14 @@ module.exports = import("mathjax-full/js/output/svg.js");;
 
 "use strict";
 module.exports = import("mdast-util-toc");;
+
+/***/ }),
+
+/***/ 799:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("mime/lite.js");;
 
 /***/ }),
 
