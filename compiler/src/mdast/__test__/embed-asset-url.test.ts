@@ -7,7 +7,7 @@ describe('embedAssetUrl', () => {
     });
     // console.log(html);
     const imgCount = (html.match(/img-wrapper/g) || []).length;
-    expect(imgCount).toBe(2);
+    expect(imgCount).toBe(3);
 
     // const svgCount = (html.match(/<svg.*?style="width: 70%;".*?>/) || [])
     //   .length;
@@ -17,6 +17,6 @@ describe('embedAssetUrl', () => {
       .match(/<span class="caption-count">Figure (\d+)/g)
       ?.map((s) => Number(s.slice(-1)));
 
-    expect(figureNum).toEqual([1, 2]);
+    expect(figureNum).toEqual([1, 2, 3]);
   });
 });

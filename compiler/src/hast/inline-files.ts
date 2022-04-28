@@ -18,7 +18,7 @@ import { getSvgHast } from '../utils/get-svg-hast';
 import { failMessage } from '../utils/message';
 import { readFile, rehypeParser } from '../utils/utils';
 
-export function embedAssets(ctx: Context) {
+export function inlineRelativeAssets(ctx: Context) {
   return async (tree: Element, file: VFile) => {
     const transformations: Promise<void>[] = [];
     visit(tree, 'element', (node) => {
@@ -85,11 +85,16 @@ async function embedSvg(imgNode: Element, ctx: Context) {
   // const svgNode = getAssetHast(svg) as Element;
 
   const svgNode = getSvgHast(svg);
+  const svgProperties = svgNode.properties || {};
+
+  // helps to ensure the svg is responsive
+  delete svgProperties.width;
+  delete svgProperties.height;
 
   const className = 'knitr-svg';
   const properties = {
     ...imgNode.properties,
-    ...svgNode.properties,
+    ...svgProperties,
     className: [
       className,
       ...getNodeClassNames(imgNode, className),
