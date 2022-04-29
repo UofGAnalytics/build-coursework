@@ -12,6 +12,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { assertAssetExists } from './assert-asset-exists';
+import { assertColumnStructure } from './assert-columns';
 import { assertNoH1 } from './assert-no-h1';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
@@ -51,6 +52,7 @@ export async function createReport(
     .use(assertAssetExists)
     .use(assertVideoAttributes)
     .use(assertTaskAnswerStructure)
+    .use(assertColumnStructure)
     .use(assertWeblinkTarget)
     .use(assertNoH1)
     .use(lintLatex)
