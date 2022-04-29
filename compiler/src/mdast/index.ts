@@ -38,13 +38,13 @@ export async function mdastPhase(file: VFile, ctx: Context) {
       linkProperties: { className: 'link' },
     })
     // custom plugins:
-    .use(embedAssetUrl)
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
     .use(removeEmptyParagraphs)
     // .use(aliasDirectiveToTex, ctx)
     .use(codeBlocks, ctx)
     .use(columns)
+    .use(embedAssetUrl)
     .use(images, ctx)
     .use(pagebreaks);
 
