@@ -3,7 +3,9 @@ import path from 'path';
 import { Literal, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
 
-export function embedAssetUrl() {
+import { Context } from '../context';
+
+export function embedAssetUrl(ctx: Context) {
   return async (tree: Root) => {
     let activeDir = '';
 
@@ -19,7 +21,7 @@ export function embedAssetUrl() {
       }
 
       if (node.type === 'image') {
-        node.url = getPath(node.url, activeDir);
+        node.url = getPath(node.url, activeDir, ctx);
       }
 
       // also fix for raw html nodes sometimes output by knitr
@@ -29,7 +31,7 @@ export function embedAssetUrl() {
           const { src, ...otherProps } = props;
           Object.assign(node, {
             type: 'image',
-            url: getPath(src, activeDir),
+            url: getPath(src, activeDir, ctx),
             value: '',
             data: otherProps,
           });
@@ -39,8 +41,10 @@ export function embedAssetUrl() {
   };
 }
 
-function getPath(url: string, dirname: string) {
-  return path.isAbsolute(url) || url.startsWith('http')
+function getPath(url: string, dirname: string, ctx: Context) {
+  return path.isAbsolute(url) ||
+    url.startsWith('http') ||
+    ctx.options.noEmbedAssetUrl
     ? url
     : path.join(dirname, url);
 }

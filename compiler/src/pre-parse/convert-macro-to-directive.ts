@@ -44,6 +44,7 @@ function renderContainerDirective({ name, title, attributes }: Container) {
 function getColons(name: string) {
   switch (name.replace('/', '')) {
     case 'task':
+    case 'columns':
       return '::::';
     case 'video':
       return '::';

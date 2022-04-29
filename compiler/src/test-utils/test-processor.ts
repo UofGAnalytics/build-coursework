@@ -91,6 +91,7 @@ async function createTestContext(md: string, options: Options = {}) {
       noSyntaxHighlight: true,
       noReport: true,
       noEmbedAssets: true,
+      noEmbedAssetUrl: true,
       force: true,
       format: true,
       ...options,

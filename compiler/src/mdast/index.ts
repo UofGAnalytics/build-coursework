@@ -13,6 +13,7 @@ import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 // import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 import { createSvg } from '../utils/icons';
 import { codeBlocks } from './code-blocks';
+import { columns } from './columns';
 import { embedAssetUrl } from './embed-asset-url';
 import { images } from './images';
 import { pagebreaks } from './pagebreaks';
@@ -37,7 +38,8 @@ export async function mdastPhase(file: VFile, ctx: Context) {
       linkProperties: { className: 'link' },
     })
     // custom plugins:
-    .use(embedAssetUrl)
+    .use(columns)
+    .use(embedAssetUrl, ctx)
     .use(youtubeVideos)
     .use(aliasDirectiveToSvg, ctx)
     .use(removeEmptyParagraphs)
