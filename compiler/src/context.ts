@@ -10,6 +10,7 @@ export type Options = {
   noReport?: boolean;
   reportOnlyErrors?: boolean;
   noEmbedAssets?: boolean;
+  noEmbedAssetUrl?: boolean;
   noCache?: boolean;
   noTexSvg?: boolean;
   week?: number;

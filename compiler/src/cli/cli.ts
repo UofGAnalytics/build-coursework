@@ -40,6 +40,10 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: "Don't embed assets",
   })
+  .option('noEmbedAssetUrl', {
+    type: 'boolean',
+    description: "Don't complete asset Url",
+  })
   .option('noCache', {
     type: 'boolean',
     description: 'No cache',
@@ -72,6 +76,7 @@ const options: Options = {
   noSyntaxHighlight: argv.noSyntaxHighlight,
   noReport: argv.noReport,
   noEmbedAssets: argv.noEmbedAssets,
+  noEmbedAssetUrl: argv.noEmbedAssetUrl,
   noCache: argv.noCache,
   noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
