@@ -52,7 +52,7 @@ export default {
         ]
       },
       {
-        test: /assets/,
+        test: /[\\\/]+assets[\\\/]+/,
         use: 'raw-loader',
       },
       // {
