@@ -19,6 +19,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Ubuntu specific
+      - name: Install curl
+        if: startsWith(matrix.os, 'ubuntu')
+        run: sudo apt update && sudo apt install libcurl4-openssl-dev
+
       # Node
       - name: Setup Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v3
