@@ -19,11 +19,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Typescript
-      - name: Check types
-        if: startsWith(matrix.os, 'ubuntu')
-        run: npm run check-types
-
       # Node
       - name: Setup Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -32,6 +27,11 @@ jobs:
 
       - name: Install node modules
         run: npm install
+
+      # Typescript
+      - name: Check types
+        if: startsWith(matrix.os, 'ubuntu')
+        run: npm run check-types
 
       # R
       - name: Setup R v${{ matrix.r-version }}
