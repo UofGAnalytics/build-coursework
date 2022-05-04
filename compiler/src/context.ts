@@ -21,6 +21,7 @@ export type Options = {
   noWrite?: boolean;
   format?: boolean;
   pythonBin?: string;
+  verbose?: boolean;
 };
 
 export type Context = {

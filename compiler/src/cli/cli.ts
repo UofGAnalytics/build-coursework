@@ -63,6 +63,10 @@ const { argv } = yargs(process.argv.slice(2))
   .option('force', {
     type: 'boolean',
     description: 'Compile even with fatal errors',
+  })
+  .option('verbose', {
+    type: 'boolean',
+    description: 'Show error stack',
   });
 
 const dirPath = String(argv._[0] || '.');
@@ -82,6 +86,7 @@ const options: Options = {
   spelling: argv.spelling,
   pythonBin: argv.pythonBin,
   force: argv.force,
+  verbose: argv.verbose,
 };
 
 async function run() {
@@ -89,6 +94,9 @@ async function run() {
     await rMarkdown(dirPath, options);
   } catch (err: any) {
     console.log(chalk.red(figures.cross + ' ' + err.message));
+    if (options.verbose) {
+      console.error(err);
+    }
     process.exit(1);
   }
 }
