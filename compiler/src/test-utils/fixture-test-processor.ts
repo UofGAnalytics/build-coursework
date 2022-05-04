@@ -1,45 +1,51 @@
+import { spawn } from 'child_process';
 import path from 'path';
 
-import { Parent as HastParent } from 'hast';
-import { Parent as MDastParent } from 'mdast';
-import { VFile } from 'vfile';
+import dargs from 'dargs';
 
 import { Options } from '../context';
-import { rMarkdown } from '..';
 
 export async function fixtureTestProcessor(
   fixture: string,
   options: Options = {}
 ) {
-  const unit = {
-    md: '',
-    files: [] as VFile[],
-    mdast: {} as MDastParent,
-    hast: {} as HastParent,
-    html: '',
-  };
+  const flags = dargs(
+    {
+      noDoc: true,
+      noCache: true,
+      noPdf: true,
+      noReport: true,
+      noWrite: true,
+      noEmbedAssets: true,
+      output: 'md',
+      verbose: true,
+      ...options,
+    },
+    { allowCamelCase: true }
+  );
 
-  const [result] = await rMarkdown(path.join('./fixtures', fixture), {
-    noDoc: true,
-    noCache: true,
-    noPdf: true,
-    noReport: true,
-    noWrite: true,
-    noEmbedAssets: true,
-    ...options,
+  return new Promise<string>((resolve, reject) => {
+    const args = [path.join('./fixtures', fixture), ...flags];
+    const rmarkdown = spawn('rmarkdown', args);
+
+    const result: string[] = [];
+
+    rmarkdown.stdout.on('data', (data) => {
+      const str = data.toString();
+
+      if (str.startsWith('✖')) {
+        return reject(str);
+      }
+
+      result.push(str);
+    });
+
+    rmarkdown.stdout.on('end', () => {
+      resolve(result.join(''));
+    });
+
+    rmarkdown.stderr.on('data', (data) => {
+      reject(data.toString());
+    });
   });
-
-  unit.md = result.md;
-  unit.files = result.files;
-  if (result.html) {
-    unit.mdast = result.html.mdast;
-    unit.hast = result.html.hast;
-    unit.html = result.html.html;
-  } else {
-    console.log(
-      '[test processor]: no html object returned from buildUnit'
-    );
-  }
-
-  return unit;
 }

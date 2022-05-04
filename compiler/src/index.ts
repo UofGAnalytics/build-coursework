@@ -9,7 +9,9 @@ import { Timer, createTimer } from './utils/timer';
 import { mkdir, writeFile } from './utils/utils';
 
 export async function rMarkdown(dirPath: string, options: Options = {}) {
-  await checkForLatestVersion();
+  if (!options.output) {
+    await checkForLatestVersion();
+  }
 
   const timer = createTimer();
   const ctx = await createContext(dirPath, options);
@@ -53,8 +55,11 @@ async function writeUnit(built: BuiltUnit, ctx: Context, timer: Timer) {
 
   if (built.html) {
     await writeFile(filePath + '.html', built.html.html);
-    const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
-    console.log(`✨ ${status} ${filePath}.html`);
+
+    if (!ctx.options.output) {
+      const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
+      console.log(`✨ ${status} ${filePath}.html`);
+    }
   }
 
   if (built.pdf) {
@@ -63,7 +68,9 @@ async function writeUnit(built: BuiltUnit, ctx: Context, timer: Timer) {
     // debug
     // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
-    const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
-    console.log(`✨ ${status} ${filePath}.pdf`);
+    if (!ctx.options.output) {
+      const status = chalk.green.bold(`Complete in ${timer.seconds()}s`);
+      console.log(`✨ ${status} ${filePath}.pdf`);
+    }
   }
 }

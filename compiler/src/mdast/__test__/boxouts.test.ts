@@ -243,7 +243,9 @@ describe('weblink', () => {
   });
 
   it('should increment counter across .Rmd files', async () => {
-    const { html } = await fixtureTestProcessor('multifile-counter');
+    const html = await fixtureTestProcessor('multifile-counter', {
+      output: 'html',
+    });
     expect(html.includes('id="task-2"')).toBe(true);
   });
 
