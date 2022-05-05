@@ -18,25 +18,34 @@ Next, you need to run a few terminal commands. If you are unfamiliar with this, 
 
 ### Install Node.js
 
-Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.13.0):
+Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.15.0):
 
 ```bash
-nvm install 16.13.0
-nvm use 16.13.0
+nvm install 16.15.0
+nvm use 16.15.0
 ```
 
 To check everything installed correctly, run the following:
 
 ```bash
 node –v
-# v16.13.0 or similar
+# v16.15.0 or similar
 ```
 
-Node Package Manager should automatically be installed:
+Node Package Manager (npm) should automatically be installed:
 
 ```bash
 npm –v
-# 8.1.0 or similar
+# 8.5.5 or similar
+```
+
+However since npm version 8.5.2, there is a niche bug affecting [installing Github packages globally](https://github.com/npm/cli/issues/3692), so please rollback npm version 8.5.1 for now:
+
+```bash
+npm install -g npm@8.5.1
+npm audit fix # automatically fix the vulnerability found by dependabot
+npm –v
+# 8.5.1
 ```
 
 ### Ensure Git is installed
@@ -57,7 +66,7 @@ Rscript --version
 
 If not, please follow these instructions for [Windows](https://info201.github.io/r-intro.html#windows-command-line) or these for [Mac and Linux](https://stackoverflow.com/questions/38456144/rscript-command-not-found#67086041)
 
-### Install this project from Github with NPM
+### Install this project from Github with npm
 
 ```bash
 npm install -g UofGAnalytics/build-coursework
