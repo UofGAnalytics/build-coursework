@@ -1,5 +1,5 @@
 import path from "path";
-// import fs from 'fs'
+import fs from 'fs'
 import { fileURLToPath } from 'url';
 import nodeExternals from "webpack-node-externals";
 import CopyPlugin from "copy-webpack-plugin";
