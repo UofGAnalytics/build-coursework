@@ -54,13 +54,8 @@ jobs:
       - name: Build release
         run: npm run build-release
 
-      - name: Link release (Mac/Linux)
-        if: startsWith(matrix.os, 'windows') == false
+      - name: Link release
         run: npm link ./release
-
-      - name: Link release (Windows)
-        if: startsWith(matrix.os, 'windows')
-        run: npm link .\\release
 
       # -----------------------
       # SETUP -----------------
