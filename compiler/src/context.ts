@@ -21,6 +21,8 @@ export type Options = {
   noWrite?: boolean;
   format?: boolean;
   pythonBin?: string;
+  verbose?: boolean;
+  output?: 'md' | 'html';
 };
 
 export type Context = {
