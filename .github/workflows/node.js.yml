@@ -10,10 +10,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [17.x]
+        node-version: [16.x, 17.x]
         r-version: [4.1.x]
 
     steps:
+      # -----------------------
+      # SETUP -----------------
+      # -----------------------
+
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
@@ -47,8 +51,21 @@ jobs:
       - name: Cache Renv packages
         uses: r-lib/actions/setup-renv@v2
 
-      - run: npm run build-release
-      - run: npm link ./release
+      - name: Build release
+        run: npm run build-release
+
+      - name: Link release (Mac/Linux)
+        if: startsWith(matrix.os, 'windows') == false
+        run: npm link ./release
+
+      - name: Link release (Windows)
+        if: startsWith(matrix.os, 'windows')
+        run: npm link .\release
+
+      # -----------------------
+      # SETUP -----------------
+      # -----------------------
+
       - run: npm run test
 
       # - run: |
