@@ -60,7 +60,7 @@ jobs:
 
       - name: Link release (Windows)
         if: startsWith(matrix.os, 'windows')
-        run: npm link .\release
+        run: npm link .\\release
 
       # -----------------------
       # SETUP -----------------
