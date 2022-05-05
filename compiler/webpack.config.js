@@ -1,5 +1,5 @@
 import path from "path";
-import fs from 'fs'
+// import fs from 'fs'
 import { fileURLToPath } from 'url';
 import nodeExternals from "webpack-node-externals";
 import CopyPlugin from "copy-webpack-plugin";
@@ -12,9 +12,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const buildPath = path.join(__dirname, 'build')
 const projectPath = path.join(__dirname, '..')
 const projectPkg = JSON.parse(await fs.promises.readFile(path.join(projectPath, 'package.json'), 'utf-8'));
-const releasePkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'package.json'), 'utf-8'));
+// const releasePkg = JSON.parse(await fs.promises.readFile(path.join(buildPath, 'package.json'), 'utf-8'));
 
-const currentVersion = releasePkg.version
+// const currentVersion = releasePkg.version
 const newVersion = projectPkg.version
 
 export default {
@@ -69,7 +69,7 @@ export default {
         "name": 'build-coursework',
         // use current version when building release so
         // release-it can automatically increment the version
-        "version": currentVersion,
+        // "version": currentVersion,
         "repository": "https://github.com/UofGAnalytics/build-coursework.git",
         "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
         "license": "MIT",
