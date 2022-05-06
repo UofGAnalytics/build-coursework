@@ -243,25 +243,41 @@ While checking the output of this tool you may notice whole paragraphs have gone
 
 You may also spot an error in the parsing of inline LaTeX due to whitespace - adding a space before and/or after the delimiters should fix it.
 
-### Transparent images
+### LaTeX differences
 
-Due to having different background colour options for accessibility, a transparent image that looks legible against a light background will probably not be legible on a dark background. Transparent images should be avoided and a solid white background preferred.
+The previous compiler, BOLDTools converted coursework as:
 
-### Inline LaTeX references
+1. RMarkdown -> LaTeX with [Knitr](https://yihui.org/knitr)
+2. LaTeX -> PDF (or HTML) with [Pandoc](https://pandoc.org)
+
+In this compiler, the journey goes:
+
+1. RMarkdown -> Markdown with [Knitr](https://yihui.org/knitr)
+2. Markdown with embedded TeX -> HTML with embedded TeX with [Remark](https://remark.js.org)
+3. HTML with embedded TeX -> HTML with accessible rendered SVG equations with [MathJax](https://www.mathjax.org)
+4. HTML -> PDF with [Puppetteer](https://pptr.dev)
+
+The real-world difference is at no point is the document entirely LaTeX using this compiler. Previously, LaTeX could be used in place of equivalent Markdown syntax, which although not idiomatic RMarkdown, worked anyway. Unfortunately now it probably wont work— TeX should only be used for math equations.
+
+#### Inline references
 
 Due to limitations of [MathJax](https://www.mathjax.org), the LaTeX rendering tool with accessibility features that is used in this project, you can only reference numbered sections using, for example `\begin{align}`.
 
-### LaTeX \textbf
+#### `\textbf`
 
 LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bold text\*\*). If you have used `\textbf` to highlight some characters in an equation please use an alternative such as `\boldsymbol`.
 
-### LaTeX \tabular
+#### `\tabular`
 
 LaTeX tabular is not currently supported by MathJax, and recreating all its features in HTML would be a complex project on its own. Instead, I recommend you use [Markdown table syntax](https://github.github.com/gfm/#table) to be most accessible. If you have a use case for a heavily formatted LaTeX table, you can always render it as a PDF and include the PDF as an image, however please be aware that the data in this table not be readable by assistive tools.
 
-### You can't use 'macro parameter character #' in math mode
+#### You can't use 'macro parameter character #' in math mode
 
 This is due to `$` symbols being used to delimit LaTeX. If you would like to use a `$` symbol for another purpose please escape it with a preceeding backslash: `\$`.
+
+#### Wiki
+
+If you come across other TeX/LaTeX which needs to be converted to a Markdown equivalent, you can help other coursework authors by documenting it on the [TeX to Markdown conversion chart](https://github.com/UofGAnalytics/build-coursework/wiki/TeX-to-Markdown-conversion-chart).
 
 ## Bug reporting
 
