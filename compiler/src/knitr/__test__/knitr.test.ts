@@ -333,5 +333,5 @@ describe('knitr', () => {
     `);
 
     expect(ignoreWhitespace(html)).toBe(result);
-  });
+  }, 60000);
 });

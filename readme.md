@@ -18,25 +18,34 @@ Next, you need to run a few terminal commands. If you are unfamiliar with this, 
 
 ### Install Node.js
 
-Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.13.0):
+Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.15.0):
 
 ```bash
-nvm install 16.13.0
-nvm use 16.13.0
+nvm install 16.15.0
+nvm use 16.15.0
 ```
 
 To check everything installed correctly, run the following:
 
 ```bash
 node –v
-# v16.13.0 or similar
+# v16.15.0 or similar
 ```
 
-Node Package Manager should automatically be installed:
+Node Package Manager (npm) should automatically be installed:
 
 ```bash
 npm –v
-# 8.1.0 or similar
+# 8.5.5 or similar
+```
+
+Since npm version 8.5.2, there is a niche bug affecting [installing Github packages globally](https://github.com/npm/cli/issues/3692), which is what we're about to do, so please rollback npm version 8.5.1 for now:
+
+```bash
+npm install -g npm@8.5.1
+npm audit fix # automatically fix the vulnerability found by dependabot
+npm –v
+# 8.5.1
 ```
 
 ### Ensure Git is installed
@@ -57,7 +66,7 @@ Rscript --version
 
 If not, please follow these instructions for [Windows](https://info201.github.io/r-intro.html#windows-command-line) or these for [Mac and Linux](https://stackoverflow.com/questions/38456144/rscript-command-not-found#67086041)
 
-### Install this project from Github with NPM
+### Install this project from Github with npm
 
 ```bash
 npm install -g UofGAnalytics/build-coursework
@@ -98,7 +107,7 @@ rmarkdown --noPdf --week=1
 rmarkdown --pythonBin="/opt/homebrew/bin/python3"
 ```
 
-Once complete, you will find a `build` folder in beside the `course.yaml` file, with the .html and/or .pdf files inside. You can open the .html files with a browser such as Chrome or Firefox.
+Once complete, you will find a `build` folder in beside the `course.yaml` file, with the .html and/or .pdf files inside. You can open the .html files with a web browser such as Chrome or Firefox.
 
 > Each time you re-run the command (press the up arrow and enter to quickly re-run your previous command in the terminal) the previous file(s) will be overwritten, and you can refresh your browser window to see the changes.
 
@@ -131,6 +140,88 @@ If you would like to update to the latest version, just run the command that is 
 
 I perform various static analysis on the coursework and report any problems found. Problems are classified as _errors_ or _warnings_. By default _errors_ will not create new files, however this can be changed using the `--force` option.
 
+### Boxouts
+
+Various boxed-out sections are available for use:
+
+- example
+- supplement
+- background
+- definition
+- weblink
+- theorem
+- proposition
+
+Example syntax:
+
+```
+####[example]
+My example
+####[/example]
+```
+
+#### Task/answer boxout
+
+There is special functionality for tasks and answers. Each task should have one answer, and each answer must be nested inside a task. A task can be marked as optional.
+
+```
+###[task, optional]
+An optional task.
+####[answer]
+The answer
+####[/answer]
+###[/task]
+```
+
+In the resulting HTML, the answer is hidden and revealed by clicking "Show answer". In the PDF version, all answers are put at the end of the document.
+
+### Columns
+
+If you'd like to show 2 plots side-by-side for comparison, there is column syntax. In the HTML version this will collapse to single columns on smaller screens.
+
+This syntax is backwards compatible with BOLDtools:
+
+```
+##[columns]
+###[column, imgsrc="LMpr.svg"]
+Samples from the prior distribution
+###[/column]
+###[column, imgsrc="LMpo.svg"]
+Samples from the posterior distribution
+###[/column]
+##[/columns]
+```
+
+If you no longer need to compile notes with BOLDtools, then you can use conventional Markdown image syntax:
+
+```
+##[columns]
+###[column]
+![Samples from the prior distribution](LMpr.svg)
+###[/column]
+###[column]
+![Samples from the posterior distribution](LMpo.svg)
+###[/column]
+##[/columns]
+```
+
+Or knitr code blocks:
+
+````
+##[columns]
+###[column]
+```{r}
+(my plot)
+```
+###[/column]
+###[column]
+```{r}
+(my plot)
+```
+###[/column]
+##[/columns]
+````
+
 ## Known Issues
 
 I've tried to keep necessary changes to a minimum, but there are few things that may pop up depending on how you have written the coursework.
@@ -148,29 +239,45 @@ There is a Table of Contents in the HTML files with links to all the `<h2>`'s an
 
 ### Whitespace
 
-While checking the output of this tool you may notice whole paragraphs have gone missing. This is due to a difference in the parsing of Markdown whitespace in [Pandoc](https://github.com/jgm/pandoc) (used in BOLDtools) and [Remark](https://github.com/remarkjs/remark) (used here). Generally each bit of content written in Markdown should be separated with an empty line, and Remark is unfortunately more strict about this than Pandoc. The fix should just be to add an empty line between sections.
+While checking the output of this tool you may notice whole paragraphs have gone missing. This is due to a difference in the parsing of Markdown whitespace in [Pandoc](https://github.com/jgm/pandoc) (used in BOLDtools) and [Remark](https://github.com/remarkjs/remark) (used here). Generally each bit of block content written in Markdown should be separated with an empty line, and Remark is unfortunately more strict about this than Pandoc. The fix should just be to add an empty line between sections.
 
 You may also spot an error in the parsing of inline LaTeX due to whitespace - adding a space before and/or after the delimiters should fix it.
 
-### Transparent images
+### LaTeX differences
 
-Due to having different background colour options for accessibility, a transparent image that looks legible against a light background will probably not be legible on a dark background. Transparent images should be avoided and a solid white background preferred.
+The previous compiler, BOLDTools converted coursework as:
 
-### Inline LaTeX references
+1. RMarkdown -> LaTeX with [Knitr](https://yihui.org/knitr)
+2. LaTeX -> PDF (or HTML) with [Pandoc](https://pandoc.org)
+
+In this compiler, the journey goes:
+
+1. RMarkdown -> Markdown with [Knitr](https://yihui.org/knitr)
+2. Markdown with embedded TeX -> HTML with embedded TeX with [Remark](https://remark.js.org)
+3. HTML with embedded TeX -> HTML with accessible rendered SVG equations with [MathJax](https://www.mathjax.org)
+4. HTML -> PDF with [Puppetteer](https://pptr.dev)
+
+The real-world difference is at no point is the document entirely LaTeX using this compiler. Previously, LaTeX could be used in place of equivalent Markdown syntax, which although not idiomatic RMarkdown, worked anyway. Unfortunately now it probably wont work— TeX should only be used for math equations.
+
+#### Inline references
 
 Due to limitations of [MathJax](https://www.mathjax.org), the LaTeX rendering tool with accessibility features that is used in this project, you can only reference numbered sections using, for example `\begin{align}`.
 
-### LaTeX \textbf
+#### `\textbf`
 
 LaTeX syntax `\textbf` is currently converted to the equivalent Markdown (\*\*bold text\*\*). If you have used `\textbf` to highlight some characters in an equation please use an alternative such as `\boldsymbol`.
 
-### LaTeX \tabular
+#### `\tabular`
 
 LaTeX tabular is not currently supported by MathJax, and recreating all its features in HTML would be a complex project on its own. Instead, I recommend you use [Markdown table syntax](https://github.github.com/gfm/#table) to be most accessible. If you have a use case for a heavily formatted LaTeX table, you can always render it as a PDF and include the PDF as an image, however please be aware that the data in this table not be readable by assistive tools.
 
-### You can't use 'macro parameter character #' in math mode
+#### You can't use 'macro parameter character #' in math mode
 
 This is due to `$` symbols being used to delimit LaTeX. If you would like to use a `$` symbol for another purpose please escape it with a preceeding backslash: `\$`.
+
+#### Wiki
+
+If you come across other TeX/LaTeX which needs to be converted to a Markdown equivalent, you can help other coursework authors by documenting it on the [TeX to Markdown conversion chart](https://github.com/UofGAnalytics/build-coursework/wiki/TeX-to-Markdown-conversion-chart).
 
 ## Bug reporting
 
