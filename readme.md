@@ -79,6 +79,9 @@ npm list –g --depth=0
 > ...
 > build-coursework@... -> ...github:UofGAnalytics/build-coursework...
 > ...
+
+rmarkdown --version
+# 1.1.47 or similar
 ```
 
 ## Usage
