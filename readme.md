@@ -39,7 +39,7 @@ npm –v
 # 8.5.5 or similar
 ```
 
-However since npm version 8.5.2, there is a niche bug affecting [installing Github packages globally](https://github.com/npm/cli/issues/3692), so please rollback npm version 8.5.1 for now:
+Since npm version 8.5.2, there is a niche bug affecting [installing Github packages globally](https://github.com/npm/cli/issues/3692), which is what we're about to do, so please rollback npm version 8.5.1 for now:
 
 ```bash
 npm install -g npm@8.5.1
@@ -107,7 +107,7 @@ rmarkdown --noPdf --week=1
 rmarkdown --pythonBin="/opt/homebrew/bin/python3"
 ```
 
-Once complete, you will find a `build` folder in beside the `course.yaml` file, with the .html and/or .pdf files inside. You can open the .html files with a browser such as Chrome or Firefox.
+Once complete, you will find a `build` folder in beside the `course.yaml` file, with the .html and/or .pdf files inside. You can open the .html files with a web browser such as Chrome or Firefox.
 
 > Each time you re-run the command (press the up arrow and enter to quickly re-run your previous command in the terminal) the previous file(s) will be overwritten, and you can refresh your browser window to see the changes.
 
@@ -140,6 +140,88 @@ If you would like to update to the latest version, just run the command that is 
 
 I perform various static analysis on the coursework and report any problems found. Problems are classified as _errors_ or _warnings_. By default _errors_ will not create new files, however this can be changed using the `--force` option.
 
+### Boxouts
+
+Various boxed-out sections are available for use:
+
+- example
+- supplement
+- background
+- definition
+- weblink
+- theorem
+- proposition
+
+Example syntax:
+
+```
+####[example]
+My example
+####[/example]
+```
+
+#### Task/answer boxout
+
+There is special functionality for tasks and answers. Each task should have one answer, and each answer must be nested inside a task. A task can be marked as optional.
+
+```
+###[task, optional]
+An optional task.
+####[answer]
+The answer
+####[/answer]
+###[/task]
+```
+
+In the resulting HTML, the answer is hidden and revealed by clicking "Show answer". In the PDF version, all answers are put at the end of the document.
+
+### Columns
+
+If you'd like to show 2 plots side-by-side for comparison, there is column syntax. In the HTML version this will collapse to single columns on smaller screens.
+
+This syntax is backwards compatible with BOLDtools:
+
+```
+##[columns]
+###[column, imgsrc="LMpr.svg"]
+Samples from the prior distribution
+###[/column]
+###[column, imgsrc="LMpo.svg"]
+Samples from the posterior distribution
+###[/column]
+##[/columns]
+```
+
+If you no longer need to compile notes with BOLDtools, then you can use conventional Markdown image syntax:
+
+```
+##[columns]
+###[column]
+![Samples from the prior distribution](LMpr.svg)
+###[/column]
+###[column]
+![Samples from the posterior distribution](LMpo.svg)
+###[/column]
+##[/columns]
+```
+
+Or knitr code blocks:
+
+````
+##[columns]
+###[column]
+```{r}
+(my plot)
+```
+###[/column]
+###[column]
+```{r}
+(my plot)
+```
+###[/column]
+##[/columns]
+````
+
 ## Known Issues
 
 I've tried to keep necessary changes to a minimum, but there are few things that may pop up depending on how you have written the coursework.
@@ -157,7 +239,7 @@ There is a Table of Contents in the HTML files with links to all the `<h2>`'s an
 
 ### Whitespace
 
-While checking the output of this tool you may notice whole paragraphs have gone missing. This is due to a difference in the parsing of Markdown whitespace in [Pandoc](https://github.com/jgm/pandoc) (used in BOLDtools) and [Remark](https://github.com/remarkjs/remark) (used here). Generally each bit of content written in Markdown should be separated with an empty line, and Remark is unfortunately more strict about this than Pandoc. The fix should just be to add an empty line between sections.
+While checking the output of this tool you may notice whole paragraphs have gone missing. This is due to a difference in the parsing of Markdown whitespace in [Pandoc](https://github.com/jgm/pandoc) (used in BOLDtools) and [Remark](https://github.com/remarkjs/remark) (used here). Generally each bit of block content written in Markdown should be separated with an empty line, and Remark is unfortunately more strict about this than Pandoc. The fix should just be to add an empty line between sections.
 
 You may also spot an error in the parsing of inline LaTeX due to whitespace - adding a space before and/or after the delimiters should fix it.
 
