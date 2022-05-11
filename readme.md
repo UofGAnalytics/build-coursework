@@ -225,6 +225,23 @@ Or knitr code blocks:
 ##[/columns]
 ````
 
+### knitr Output devices
+
+This project uses the knitr output device `svglite` by default. SVGs are ideal for HTML documents as they remain sharp at every size, and can be made interactive easily. However there are some occassions where SVGs are not suitable:
+
+- If your plot has too many points
+- If your plot contains raster-like visualisation such as heat maps or photos
+
+In these cases it makes more sense to output a PNG image. You can achieve this by overriding the default `dev`:
+
+````
+```{r, dev='png'}
+(my plot)
+```
+````
+
+I have set a default of `fig.retina=2` which means the resulting plot is just over 1000px in width, which should be a sensible default for most screens.
+
 ## Known Issues
 
 I've tried to keep necessary changes to a minimum, but there are few things that may pop up depending on how you have written the coursework.
