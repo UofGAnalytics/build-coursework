@@ -78,11 +78,24 @@ describe('knitr', () => {
     `,
       { noEmbedAssets: false }
     );
+    expect(html).toContain('<svg xmlns="http://www.w3.org/2000/svg"');
+  });
 
-    const match =
-      html.match(/<svg alt="plot of chunk unnamed-chunk-2"/) || [];
+  it('should output a graph as png', async () => {
+    const { html } = await testProcessor(
+      `
+      \`\`\`{r, dev='png'}
+      x <- rnorm(100)
+      hist(x)
+      \`\`\`
+    `,
+      { noEmbedAssets: false }
+    );
 
-    expect(match.length).toBe(1);
+    expect(html).toContain('<img src="data:image/png;base64');
+
+    // testing fig.retina=2 in knitr.R
+    expect(html).toContain('style="max-width: 1008px"');
   });
 
   it('should ignore tab whitespace', async () => {

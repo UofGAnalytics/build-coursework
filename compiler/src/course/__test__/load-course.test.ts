@@ -12,7 +12,7 @@ describe('loadCourse', () => {
     const courseYaml = path.join('fixtures', 'basic', 'course.yaml');
 
     try {
-      await fixtureTestProcessor('basic', { week: 2 });
+      await fixtureTestProcessor('basic', { week: 2, shouldFail: true });
     } catch (err) {
       expect(err).toContain(`Week 2 not found in ${courseYaml}`);
     }
