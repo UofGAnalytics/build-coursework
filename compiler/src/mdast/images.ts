@@ -34,7 +34,7 @@ function template(node: Image, count: number) {
     ],
   };
 
-  if (node.data?.width) {
+  if (node.data?.width && /^\d+px/.test(String(node.data.width))) {
     image.properties = {
       ...image.properties,
       style: `width: ${node.data.width};`,

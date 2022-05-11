@@ -30,11 +30,15 @@ export async function fixtureTestProcessor(
 
     exec(cmd, (err, response, stdErr) => {
       if (stdErr) {
-        console.log(stdErr);
+        if (!options.shouldFail) {
+          console.log(stdErr);
+        }
         reject(stdErr);
       }
       if (err) {
-        console.error(err);
+        if (!options.shouldFail) {
+          console.error(err);
+        }
         reject(err);
       }
       resolve(response);

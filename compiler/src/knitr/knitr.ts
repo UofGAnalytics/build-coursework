@@ -14,6 +14,7 @@ import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 export async function knitr(unit: Unit, ctx: Context) {
   const parentFile = await createParentFile(unit, ctx);
+  // console.log(parentFile.value);
 
   const result = await execKnitr(parentFile, ctx, unit.unitPath);
   // console.log(result);
@@ -61,7 +62,6 @@ async function createParentFile(unit: Unit, ctx: Context) {
   return file;
 }
 
-// TODO: see what can be done with output when "quiet" in knitr.R is turned off
 async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
   const md = file.value as string;
   const uniqueId = getUniqueId(md);
@@ -105,6 +105,10 @@ function createKnitrCommand(
   const baseDir = path.parse(unitPath).dir;
   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path.join(ctx.cacheDir, uniqueId);
+
+  // spawn args
+  // return [rFile, cachedFile, baseDir, cacheDir];
+
   return `Rscript "${rFile}" "${cachedFile}" "${baseDir}" "${cacheDir}"`;
 }
 
@@ -233,24 +237,45 @@ function findLanguageForOutput(prev: string[]) {
   return match[1];
 }
 
-// attempt at changing knitr output. doesn't completely work
-// const hooks = `
-//   knit_hooks$set(
-//     source = function(x, options) {
-//       paste(c("\`\`\`r", x, "\`\`\`"), collapse = "\n")
-//     },
-//     output = function(x, options) {
-//       paste(c("\`\`\`", x, "\`\`\`"), collapse = "\n")
-//     },
-//     error = function(x, options) {
-//       paste(
-//         c(
-//           "\`\`\`plaintext error",
-//           gsub("## Error", "\#\# Error", x),
-//           "\`\`\`"
-//         ),
-//         collapse = "\n"
-//       )
-//     }
-//   )
-// `;
+// experimental streaming output
+// async function spawnKnitr(file: VFile, ctx: Context, unitPath: string) {
+//   const md = file.value as string;
+//   const uniqueId = getUniqueId(md);
+//   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
+//   const cacheDir = path.join(ctx.cacheDir, uniqueId);
+//   await mkdir(cacheDir);
+//   await writeFile(cachedFile, md);
+
+//   return new Promise<string>((resolve, reject) => {
+//     const args = createKnitrCommand(ctx, uniqueId, unitPath);
+//     const knitr = spawn('Rscript', args);
+//     const result: string[] = [];
+
+//     knitr.stdout.on('data', (data) => {
+//       const str = data.toString();
+//       console.log(str);
+//       result.push(str);
+//     });
+
+//     knitr.stdout.on('end', () => {
+//       console.log('STDOUT END');
+//       const end = result.join('');
+//       console.log('END', end);
+//       reportErrors(end, file);
+//       resolve(formatResponse(end));
+//     });
+
+//     knitr.stdout.on('error', (err) => {
+//       console.log('STDOUT ERROR', err, err.toString());
+//       reject();
+//     });
+
+//     knitr.stderr.on('data', (data) => {
+//       const str = data.toString();
+//       console.log('STDERR ERROR', str);
+//     });
+//   }).then(async (result) => {
+//     await rmFile(cachedFile);
+//     return result;
+//   });
+// }
