@@ -154,6 +154,13 @@ const {
 }).option('force', {
   type: 'boolean',
   description: 'Compile even with fatal errors'
+}).option('verbose', {
+  type: 'boolean',
+  description: 'Show error stack'
+}).option('output', {
+  type: 'string',
+  description: 'output to stdout',
+  choices: ['md', 'html']
 });
 const dirPath = String(argv._[0] || '.');
 const options = {
@@ -170,14 +177,33 @@ const options = {
   noTexSvg: argv.noTexSvg,
   spelling: argv.spelling,
   pythonBin: argv.pythonBin,
-  force: argv.force
+  force: argv.force,
+  verbose: argv.verbose,
+  output: argv.output
 };
 
 async function run() {
   try {
-    await (0,___WEBPACK_IMPORTED_MODULE_3__/* .rMarkdown */ .C)(dirPath, options);
+    const weeks = await (0,___WEBPACK_IMPORTED_MODULE_3__/* .rMarkdown */ .C)(dirPath, options);
+
+    if (weeks.length === 1) {
+      const result = weeks[0];
+
+      if (options.output === 'html') {
+        console.log(result.html?.html || '');
+      }
+
+      if (options.output === 'md') {
+        console.log(result.md);
+      }
+    }
   } catch (err) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].red(figures__WEBPACK_IMPORTED_MODULE_1__["default"].cross + ' ' + err.message));
+
+    if (options.verbose) {
+      console.error(err);
+    }
+
     process.exit(1);
   }
 }
@@ -306,7 +332,6 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "n": () => (/* binding */ loadCourseYaml)
 /* harmony export */ });
-/* unused harmony export validCatalogValues */
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(626);
@@ -318,13 +343,27 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_y
 
 
 
-const validCatalogValues = ['STATS5077', 'STATS5078', 'STATS5075', 'STATS5084', 'STATS5074', 'STATS5081', 'STATS5080', 'STATS5073', 'STATS5076', 'STATS5079', 'STATS5082', 'STATS5094', 'STATS5083'];
+// export const validCatalogValues = [
+//   'STATS5077',
+//   'STATS5078',
+//   'STATS5075',
+//   'STATS5084',
+//   'STATS5074',
+//   'STATS5081',
+//   'STATS5080',
+//   'STATS5073',
+//   'STATS5076',
+//   'STATS5079',
+//   'STATS5082',
+//   'STATS5094',
+//   'STATS5083',
+// ];
 const courseSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
   title: yup__WEBPACK_IMPORTED_MODULE_2__.string().required(),
   units: yup__WEBPACK_IMPORTED_MODULE_2__.array().of(yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
     src: yup__WEBPACK_IMPORTED_MODULE_2__.string().required()
   })),
-  catalog: yup__WEBPACK_IMPORTED_MODULE_2__.string().oneOf(validCatalogValues).required(),
+  catalog: yup__WEBPACK_IMPORTED_MODULE_2__.string(),
   authors: yup__WEBPACK_IMPORTED_MODULE_2__.string().required(),
   academic_year: yup__WEBPACK_IMPORTED_MODULE_2__.string().required()
 });
@@ -866,7 +905,7 @@ function createCover(titles, course) {
       properties: {
         className: 'logos'
       },
-      children: [createCoverHexagons(course.catalog), (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_dag_logo_svg__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)]
+      children: [createCoverHexagons(course.catalog || ''), (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_dag_logo_svg__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)]
     }]
   };
 }
@@ -894,20 +933,24 @@ function createH1(titles) {
 
 function createCoverHexagons(catalog) {
   const hexagons = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_hexagons_svg__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z);
-  (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(hexagons, 'element', node => {
-    if (node.tagName === 'g') {
-      const properties = node.properties || {};
-      const [className] = properties.className || [];
 
-      if (catalog === className) {
-        properties.className = ['active'];
-      } else {
-        properties.className = [];
+  if (catalog !== '') {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(hexagons, 'element', node => {
+      if (node.tagName === 'g') {
+        const properties = node.properties || {};
+        const [className] = properties.className || [];
+
+        if (catalog === className) {
+          properties.className = ['active'];
+        } else {
+          properties.className = [];
+        }
+
+        node.properties = properties;
       }
+    });
+  }
 
-      node.properties = properties;
-    }
-  });
   return hexagons;
 }
 __webpack_async_result__();
@@ -1205,7 +1248,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 
 
 async function rMarkdown(dirPath, options = {}) {
-  await (0,_utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__/* .checkForLatestVersion */ .m)();
+  if (!options.output) {
+    await (0,_utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__/* .checkForLatestVersion */ .m)();
+  }
+
   const timer = (0,_utils_timer__WEBPACK_IMPORTED_MODULE_6__/* .createTimer */ .e)();
   const ctx = await (0,_context__WEBPACK_IMPORTED_MODULE_3__/* .createContext */ .k)(dirPath, options);
   const result = [];
@@ -1245,16 +1291,21 @@ async function writeUnit(built, ctx, timer) {
 
   if (built.html) {
     await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .writeFile */ .NC)(filePath + '.html', built.html.html);
-    const status = chalk__WEBPACK_IMPORTED_MODULE_1__["default"].green.bold(`Complete in ${timer.seconds()}s`);
-    console.log(`✨ ${status} ${filePath}.html`);
+
+    if (!ctx.options.output) {
+      const status = chalk__WEBPACK_IMPORTED_MODULE_1__["default"].green.bold(`Complete in ${timer.seconds()}s`);
+      console.log(`✨ ${status} ${filePath}.html`);
+    }
   }
 
   if (built.pdf) {
     await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .writeFile */ .NC)(filePath + '.pdf', built.pdf.pdf); // debug
     // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
-    const status = chalk__WEBPACK_IMPORTED_MODULE_1__["default"].green.bold(`Complete in ${timer.seconds()}s`);
-    console.log(`✨ ${status} ${filePath}.pdf`);
+    if (!ctx.options.output) {
+      const status = chalk__WEBPACK_IMPORTED_MODULE_1__["default"].green.bold(`Complete in ${timer.seconds()}s`);
+      console.log(`✨ ${status} ${filePath}.pdf`);
+    }
   }
 }
 __webpack_async_result__();
@@ -1293,9 +1344,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 
 
 
+ // bypass knitr for debugging
+// export async function knitr(unit: Unit, ctx: Context) {
+//   const file = new VFile();
+//   file.value = unit.files.reduce((acc, o) => {
+//     return acc + EOL + EOL + o.value;
+//   }, '');
+//   return file;
+// }
 
 async function knitr(unit, ctx) {
-  const parentFile = await createParentFile(unit, ctx);
+  const parentFile = await createParentFile(unit, ctx); // console.log(parentFile.value);
+
   const result = await execKnitr(parentFile, ctx, unit.unitPath); // console.log(result);
 
   parentFile.value = result;
@@ -1330,8 +1390,7 @@ async function createParentFile(unit, ctx) {
 
   file.value = value;
   return file;
-} // TODO: see what can be done with output when "quiet" in knitr.R is turned off
-
+}
 
 async function execKnitr(file, ctx, unitPath) {
   const md = file.value;
@@ -1371,7 +1430,9 @@ function createKnitrCommand(ctx, uniqueId, unitPath) {
   const rFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(rFileDir, 'knitr.R');
   const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(unitPath).dir;
   const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
-  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
+  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId); // spawn args
+  // return [rFile, cachedFile, baseDir, cacheDir];
+
   return `Rscript "${rFile}" "${cachedFile}" "${baseDir}" "${cacheDir}"`;
 }
 
@@ -1491,27 +1552,43 @@ function findLanguageForOutput(prev) {
 
   const match = prevOpening.match(pattern);
   return match[1];
-} // attempt at changing knitr output. doesn't completely work
-// const hooks = `
-//   knit_hooks$set(
-//     source = function(x, options) {
-//       paste(c("\`\`\`r", x, "\`\`\`"), collapse = "\n")
-//     },
-//     output = function(x, options) {
-//       paste(c("\`\`\`", x, "\`\`\`"), collapse = "\n")
-//     },
-//     error = function(x, options) {
-//       paste(
-//         c(
-//           "\`\`\`plaintext error",
-//           gsub("## Error", "\#\# Error", x),
-//           "\`\`\`"
-//         ),
-//         collapse = "\n"
-//       )
-//     }
-//   )
-// `;
+} // experimental streaming output
+// async function spawnKnitr(file: VFile, ctx: Context, unitPath: string) {
+//   const md = file.value as string;
+//   const uniqueId = getUniqueId(md);
+//   const cachedFile = path.join(ctx.cacheDir, `${uniqueId}.Rmd`);
+//   const cacheDir = path.join(ctx.cacheDir, uniqueId);
+//   await mkdir(cacheDir);
+//   await writeFile(cachedFile, md);
+//   return new Promise<string>((resolve, reject) => {
+//     const args = createKnitrCommand(ctx, uniqueId, unitPath);
+//     const knitr = spawn('Rscript', args);
+//     const result: string[] = [];
+//     knitr.stdout.on('data', (data) => {
+//       const str = data.toString();
+//       console.log(str);
+//       result.push(str);
+//     });
+//     knitr.stdout.on('end', () => {
+//       console.log('STDOUT END');
+//       const end = result.join('');
+//       console.log('END', end);
+//       reportErrors(end, file);
+//       resolve(formatResponse(end));
+//     });
+//     knitr.stdout.on('error', (err) => {
+//       console.log('STDOUT ERROR', err, err.toString());
+//       reject();
+//     });
+//     knitr.stderr.on('data', (data) => {
+//       const str = data.toString();
+//       console.log('STDERR ERROR', str);
+//     });
+//   }).then(async (result) => {
+//     await rmFile(cachedFile);
+//     return result;
+//   });
+// }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
 
@@ -3008,7 +3085,7 @@ function template(node, count) {
     }]
   };
 
-  if (node.data?.width) {
+  if (node.data?.width && /^\d+px/.test(String(node.data.width))) {
     image.properties = { ...image.properties,
       style: `width: ${node.data.width};`
     };
@@ -3897,7 +3974,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.47";
+  const currentVersion = "1.1.48";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
