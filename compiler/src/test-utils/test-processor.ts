@@ -13,6 +13,7 @@ import { writeFile } from '../utils/utils';
 import {
   createHasFailingMessage,
   createHasWarningMessage,
+  createMessageReasons,
 } from './has-message';
 
 export async function testProcessor(md: string, options: Options = {}) {
@@ -46,7 +47,9 @@ export async function testProcessor(md: string, options: Options = {}) {
   const hasFailingMessage = createHasFailingMessage(ctx, unit.files);
   const hasWarningMessage = createHasWarningMessage(ctx, unit.files);
 
-  return { file, hasFailingMessage, hasWarningMessage, ...unit };
+  const messages = createMessageReasons(unit.files);
+
+  return { file, hasFailingMessage, hasWarningMessage, messages, ...unit };
 }
 
 async function createTestContext(md: string, options: Options = {}) {

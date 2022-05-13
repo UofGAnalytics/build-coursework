@@ -43,7 +43,7 @@ function createCover(titles: UnitTitles, course: Course) {
           className: 'logos',
         },
         children: [
-          createCoverHexagons(course.catalog),
+          createCoverHexagons(course.catalog || ''),
           getAssetHast(dagLogoSvg),
         ],
       },
@@ -80,18 +80,20 @@ function createH1(titles: UnitTitles) {
 function createCoverHexagons(catalog: string) {
   const hexagons = getAssetHast(coverSvg);
 
-  visit(hexagons, 'element', (node) => {
-    if (node.tagName === 'g') {
-      const properties = node.properties || {};
-      const [className] = (properties.className || []) as string[];
-      if (catalog === className) {
-        properties.className = ['active'];
-      } else {
-        properties.className = [];
+  if (catalog !== '') {
+    visit(hexagons, 'element', (node) => {
+      if (node.tagName === 'g') {
+        const properties = node.properties || {};
+        const [className] = (properties.className || []) as string[];
+        if (catalog === className) {
+          properties.className = ['active'];
+        } else {
+          properties.className = [];
+        }
+        node.properties = properties;
       }
-      node.properties = properties;
-    }
-  });
+    });
+  }
 
   return hexagons;
 }
