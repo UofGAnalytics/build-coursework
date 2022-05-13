@@ -33,7 +33,7 @@ describe('loadCourse', () => {
     expect(ignoreWhitespace(html)).toContain('<!--R--><gclass="active">');
   });
 
-  it.only('should have no highlighted hexagons', async () => {
+  it('should have no highlighted hexagons', async () => {
     const html = await fixtureTestProcessor('basic-no-catalog', {
       output: 'html',
       noDoc: false,
