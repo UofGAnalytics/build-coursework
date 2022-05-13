@@ -12,6 +12,17 @@ import { Unit } from '../course/types';
 import { warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
+// bypass knitr for debugging
+// export async function knitr(unit: Unit, ctx: Context) {
+//   const file = new VFile();
+
+//   file.value = unit.files.reduce((acc, o) => {
+//     return acc + EOL + EOL + o.value;
+//   }, '');
+
+//   return file;
+// }
+
 export async function knitr(unit: Unit, ctx: Context) {
   const parentFile = await createParentFile(unit, ctx);
   // console.log(parentFile.value);

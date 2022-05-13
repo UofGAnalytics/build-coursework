@@ -54,3 +54,10 @@ export function createHasWarningMessage(ctx: Context, files: VFile[]) {
     return reportHasWarnings(files, ctx);
   };
 }
+
+export function createMessageReasons(files: VFile[]) {
+  return files.reduce((acc: string[], o) => {
+    const reasons = o.messages.map((m) => m.reason);
+    return [...acc, ...reasons];
+  }, []);
+}
