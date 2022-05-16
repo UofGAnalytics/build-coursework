@@ -9,7 +9,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { warnMessage } from '../utils/message';
+import { infoMessage, warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 // bypass knitr for debugging
@@ -92,7 +92,7 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
         console.error('ERROR', err);
         reject(err);
       } else {
-        reportErrors(response, file);
+        reportErrors(response, file, ctx);
         resolve(formatResponse(response));
       }
       await rmFile(cachedFile);
@@ -132,11 +132,59 @@ function getKnitrFileDir() {
   return path.dirname(fileURLToPath(import.meta.url));
 }
 
-function reportErrors(response: string, file: VFile) {
-  response.split('\n').forEach((line, idx) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('## Error')) {
-      warnMessage(file, trimmed.replace('## ', ''), {
+function reportErrors(response: string, file: VFile, ctx: Context) {
+  const lines = response
+    .split(EOL)
+    .filter((s) => !s.startsWith(':directory'));
+
+  const trimmed = lines.join(EOL).trim();
+
+  // Warning at the start of a document
+  if (trimmed.startsWith('WARNING -')) {
+    const match = trimmed.match(/^WARNING - (.+?)[\r\n]{2,}/ms);
+
+    // Check the original file doesn't start with WARNING
+    const original = String(ctx.course.units[0].files[0].value)
+      .split(EOL)
+      .filter((s) => !s.startsWith(':directory'))
+      .join(EOL)
+      .trim();
+
+    if (match !== null && !original.startsWith('WARNING -')) {
+      warnMessage(file, match[1], {
+        start: {
+          line: 1,
+          column: 0,
+        },
+        end: {
+          line: 1,
+          column: lines[0].length,
+        },
+      });
+    }
+
+    // Python binary path
+  } else if (trimmed.startsWith('$python [1]')) {
+    const match = trimmed.match(/^\$python\s\[1\]\s("\S+")/);
+    if (match !== null) {
+      infoMessage(file, match[1], {
+        start: {
+          line: 1,
+          column: 0,
+        },
+        end: {
+          line: 1,
+          column: lines[0].length,
+        },
+      });
+    }
+  }
+
+  // Errors throughout document
+  lines.forEach((line, idx) => {
+    const trimmedLine = line.trim();
+    if (trimmedLine.startsWith('## Error')) {
+      warnMessage(file, trimmedLine.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0,
@@ -153,6 +201,7 @@ function reportErrors(response: string, file: VFile) {
 async function formatResponse(response: string) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
+  md = removePythonWarningMessage(md);
   md = addCodeBlockClasses(md);
   md = addErrorCodeBlock(md);
   md = removeHashSigns(md);
@@ -163,6 +212,10 @@ async function formatResponse(response: string) {
 
 function removeCustomPythonBinNotice(md: string) {
   return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
+}
+
+function removePythonWarningMessage(md: string) {
+  return md.replace(/^WARNING - .+?[\r\n]+/m, '');
 }
 
 function addCodeBlockClasses(md: string) {
