@@ -9,7 +9,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { warnMessage } from '../utils/message';
+import { infoMessage, warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 // bypass knitr for debugging
@@ -133,22 +133,50 @@ function getKnitrFileDir() {
 }
 
 function reportErrors(response: string, file: VFile) {
-  response.split(EOL).forEach((line, idx) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('WARNING -')) {
-      warnMessage(file, trimmed.replace('WARNING - ', ''), {
+  const lines = response
+    .split(EOL)
+    .filter((s) => !s.startsWith(':directory'));
+
+  const trimmed = lines.join(EOL).trim();
+
+  // Warning at the start of a document
+  if (trimmed.startsWith('WARNING -')) {
+    const match = trimmed.match(/^WARNING - (.+?)[\r\n]{2,}/ms);
+    if (match !== null) {
+      warnMessage(file, match[1], {
         start: {
-          line: idx + 1,
+          line: 1,
           column: 0,
         },
         end: {
-          line: idx + 1,
-          column: line.length,
+          line: 1,
+          column: lines[0].length,
         },
       });
     }
-    if (trimmed.startsWith('## Error')) {
-      warnMessage(file, trimmed.replace('## ', ''), {
+
+    // Python binary path
+  } else if (trimmed.startsWith('$python [1]')) {
+    const match = trimmed.match(/^\$python\s\[1\]\s("\S+")/);
+    if (match !== null) {
+      infoMessage(file, match[1], {
+        start: {
+          line: 1,
+          column: 0,
+        },
+        end: {
+          line: 1,
+          column: lines[0].length,
+        },
+      });
+    }
+  }
+
+  // Errors throughout document
+  lines.forEach((line, idx) => {
+    const trimmedLine = line.trim();
+    if (trimmedLine.startsWith('## Error')) {
+      warnMessage(file, trimmedLine.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0,
