@@ -347,4 +347,20 @@ describe('knitr', () => {
 
     expect(ignoreWhitespace(html)).toBe(result);
   }, 120000);
+
+  it('should remove python warnings from the top of knitr output', async () => {
+    const { md } = await testProcessor(`
+      WARNING - All triples will be processed in the same batch (batches_count=1).
+      When processing large graphs it is recommended to batch the input knowledge
+      graph instead.
+
+      ## Introduction
+
+      In the first two week of this course we have focused on the use of networks
+      to analyse social systems, using a mixture of global statistics, node
+      statistics, and ERGM modelling.
+    `);
+
+    expect(md.trim().startsWith('WARNING')).toBe(false);
+  });
 });

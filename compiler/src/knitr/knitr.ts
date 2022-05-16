@@ -153,6 +153,7 @@ function reportErrors(response: string, file: VFile) {
 async function formatResponse(response: string) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
+  md = removePythonWarningMessage(md);
   md = addCodeBlockClasses(md);
   md = addErrorCodeBlock(md);
   md = removeHashSigns(md);
@@ -163,6 +164,10 @@ async function formatResponse(response: string) {
 
 function removeCustomPythonBinNotice(md: string) {
   return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
+}
+
+function removePythonWarningMessage(md: string) {
+  return md.replace(/^WARNING - .+?[\r\n]+/m, '');
 }
 
 function addCodeBlockClasses(md: string) {
