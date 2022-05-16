@@ -1,5 +1,6 @@
 import { Literal } from 'hast';
 
+import { reportHasWarnings } from '../../linter/report';
 import {
   ignoreWhitespace,
   testProcessor,
@@ -349,7 +350,7 @@ describe('knitr', () => {
   }, 120000);
 
   it('should remove python warnings from the top of knitr output', async () => {
-    const { md } = await testProcessor(`
+    const { md, messages } = await testProcessor(`
       WARNING - All triples will be processed in the same batch (batches_count=1).
       When processing large graphs it is recommended to batch the input knowledge
       graph instead.
@@ -362,5 +363,9 @@ describe('knitr', () => {
     `);
 
     expect(md.trim().startsWith('WARNING')).toBe(false);
+
+    expect(messages[0].startsWith('All triples will be processed')).toBe(
+      true
+    );
   });
 });

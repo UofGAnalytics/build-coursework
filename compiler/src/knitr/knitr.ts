@@ -133,8 +133,20 @@ function getKnitrFileDir() {
 }
 
 function reportErrors(response: string, file: VFile) {
-  response.split('\n').forEach((line, idx) => {
+  response.split(EOL).forEach((line, idx) => {
     const trimmed = line.trim();
+    if (trimmed.startsWith('WARNING -')) {
+      warnMessage(file, trimmed.replace('WARNING - ', ''), {
+        start: {
+          line: idx + 1,
+          column: 0,
+        },
+        end: {
+          line: idx + 1,
+          column: line.length,
+        },
+      });
+    }
     if (trimmed.startsWith('## Error')) {
       warnMessage(file, trimmed.replace('## ', ''), {
         start: {
