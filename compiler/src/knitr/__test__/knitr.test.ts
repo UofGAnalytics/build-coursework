@@ -348,7 +348,7 @@ describe('knitr', () => {
     expect(ignoreWhitespace(html)).toBe(result);
   }, 120000);
 
-  it('should remove python warnings from the top of knitr output', async () => {
+  it.skip('should remove python warnings from the top of knitr output', async () => {
     const { md, messages } = await testProcessor(`
       WARNING - All triples will be processed in the same batch (batches_count=1).
       When processing large graphs it is recommended to batch the input knowledge

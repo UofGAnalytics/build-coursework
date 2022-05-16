@@ -92,7 +92,7 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
         console.error('ERROR', err);
         reject(err);
       } else {
-        reportErrors(response, file);
+        reportErrors(response, file, ctx);
         resolve(formatResponse(response));
       }
       await rmFile(cachedFile);
@@ -132,7 +132,7 @@ function getKnitrFileDir() {
   return path.dirname(fileURLToPath(import.meta.url));
 }
 
-function reportErrors(response: string, file: VFile) {
+function reportErrors(response: string, file: VFile, ctx: Context) {
   const lines = response
     .split(EOL)
     .filter((s) => !s.startsWith(':directory'));
@@ -142,7 +142,15 @@ function reportErrors(response: string, file: VFile) {
   // Warning at the start of a document
   if (trimmed.startsWith('WARNING -')) {
     const match = trimmed.match(/^WARNING - (.+?)[\r\n]{2,}/ms);
-    if (match !== null) {
+
+    // Check the original file doesn't start with WARNING
+    const original = String(ctx.course.units[0].files[0].value)
+      .split(EOL)
+      .filter((s) => !s.startsWith(':directory'))
+      .join(EOL)
+      .trim();
+
+    if (match !== null && !original.startsWith('WARNING -')) {
       warnMessage(file, match[1], {
         start: {
           line: 1,
