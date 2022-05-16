@@ -1410,7 +1410,7 @@ async function execKnitr(file, ctx, unitPath) {
         console.error('ERROR', err);
         reject(err);
       } else {
-        reportErrors(response, file);
+        reportErrors(response, file, ctx);
         resolve(formatResponse(response));
       }
 
@@ -1446,12 +1446,51 @@ function getKnitrFileDir() {
   return path__WEBPACK_IMPORTED_MODULE_2___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_3__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/knitr.ts"));
 }
 
-function reportErrors(response, file) {
-  response.split('\n').forEach((line, idx) => {
-    const trimmed = line.trim();
+function reportErrors(response, file, ctx) {
+  const lines = response.split(os__WEBPACK_IMPORTED_MODULE_1__.EOL).filter(s => !s.startsWith(':directory'));
+  const trimmed = lines.join(os__WEBPACK_IMPORTED_MODULE_1__.EOL).trim(); // Warning at the start of a document
 
-    if (trimmed.startsWith('## Error')) {
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, trimmed.replace('## ', ''), {
+  if (trimmed.startsWith('WARNING -')) {
+    const match = trimmed.match(/^WARNING - (.+?)[\r\n]{2,}/ms); // Check the original file doesn't start with WARNING
+
+    const original = String(ctx.course.units[0].files[0].value).split(os__WEBPACK_IMPORTED_MODULE_1__.EOL).filter(s => !s.startsWith(':directory')).join(os__WEBPACK_IMPORTED_MODULE_1__.EOL).trim();
+
+    if (match !== null && !original.startsWith('WARNING -')) {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, match[1], {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: lines[0].length
+        }
+      });
+    } // Python binary path
+
+  } else if (trimmed.startsWith('$python [1]')) {
+    const match = trimmed.match(/^\$python\s\[1\]\s("\S+")/);
+
+    if (match !== null) {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .infoMessage */ .ei)(file, match[1], {
+        start: {
+          line: 1,
+          column: 0
+        },
+        end: {
+          line: 1,
+          column: lines[0].length
+        }
+      });
+    }
+  } // Errors throughout document
+
+
+  lines.forEach((line, idx) => {
+    const trimmedLine = line.trim();
+
+    if (trimmedLine.startsWith('## Error')) {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, trimmedLine.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0
@@ -1468,6 +1507,7 @@ function reportErrors(response, file) {
 async function formatResponse(response) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
+  md = removePythonWarningMessage(md);
   md = addCodeBlockClasses(md);
   md = addErrorCodeBlock(md);
   md = removeHashSigns(md);
@@ -1478,6 +1518,10 @@ async function formatResponse(response) {
 
 function removeCustomPythonBinNotice(md) {
   return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
+}
+
+function removePythonWarningMessage(md) {
+  return md.replace(/^WARNING - .+?[\r\n]+/m, '');
 }
 
 function addCodeBlockClasses(md) {
@@ -3974,7 +4018,7 @@ async function checkForLatestVersion() {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.48";
+  const currentVersion = "1.1.49";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
@@ -4204,9 +4248,9 @@ __webpack_async_result__();
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "KU": () => (/* binding */ warnMessage),
 /* harmony export */   "Ob": () => (/* binding */ failMessage),
+/* harmony export */   "ei": () => (/* binding */ infoMessage),
 /* harmony export */   "rJ": () => (/* binding */ MessageStatus)
 /* harmony export */ });
-/* unused harmony export infoMessage */
 let MessageStatus;
 
 (function (MessageStatus) {
