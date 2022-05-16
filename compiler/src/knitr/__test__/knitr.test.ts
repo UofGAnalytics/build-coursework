@@ -1,6 +1,5 @@
 import { Literal } from 'hast';
 
-import { reportHasWarnings } from '../../linter/report';
 import {
   ignoreWhitespace,
   testProcessor,
