@@ -3,7 +3,7 @@ import { ContainerDirective } from 'mdast-util-directive';
 import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
 
-import { failMessage } from '../utils/message';
+import { createExcerpt, failMessage } from '../utils/message';
 
 export function assertTaskAnswerStructure() {
   return (tree: Root, file: VFile) => {
@@ -14,10 +14,20 @@ export function assertTaskAnswerStructure() {
         const children = node.children as ContainerDirective[];
         const answers = children.filter((o) => o.name === 'answer');
         if (answers.length < 1) {
-          failMessage(file, `Task ${count} has no answer`, node.position);
+          failMessage(
+            file,
+            `Task ${count} has no answer`,
+            node.position,
+            createExcerpt(file, node.position)
+          );
         }
         if (answers.length > 1) {
-          failMessage(file, 'Task has multiple answers', node.position);
+          failMessage(
+            file,
+            'Task has multiple answers',
+            node.position,
+            createExcerpt(file, node.position)
+          );
         }
       }
       if (node.name === 'answer') {
@@ -26,7 +36,8 @@ export function assertTaskAnswerStructure() {
           failMessage(
             file,
             'Answer must be nested inside task',
-            node.position
+            node.position,
+            createExcerpt(file, node.position)
           );
         }
       }

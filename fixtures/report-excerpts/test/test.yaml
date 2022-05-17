@@ -1,0 +1,5 @@
+name: 'Test'
+title: 'Report excerpts'
+content:
+  - type: text
+    src: test.Rmd
