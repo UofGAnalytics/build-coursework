@@ -4006,19 +4006,30 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   "m": () => (/* binding */ checkForLatestVersion)
 /* harmony export */ });
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7564);
-/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6544);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, node_fetch__WEBPACK_IMPORTED_MODULE_1__]);
-([chalk__WEBPACK_IMPORTED_MODULE_0__, node_fetch__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3952);
+/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6544);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, node_fetch__WEBPACK_IMPORTED_MODULE_2__]);
+([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, node_fetch__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_1__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
+  const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_2__["default"])(`https://api.github.com/repos/${repo}/releases/latest`);
   const json = await response.json();
+  const currentVersion = "1.1.50";
+
+  if (json.tag_name === undefined) {
+    const message = `Can't read latest version from Github`;
+    console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold(`${figures__WEBPACK_IMPORTED_MODULE_1__["default"].warning}  ${message}`));
+    console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow(`Current version: ${currentVersion}`));
+    console.log('');
+    return;
+  }
+
   const latestTag = json.tag_name.replace('v', '');
-  const currentVersion = "1.1.49";
 
   if (latestTag !== currentVersion) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow.bold('New version available'));
