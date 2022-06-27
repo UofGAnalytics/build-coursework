@@ -4007,13 +4007,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2081);
 /* harmony import */ var child_process__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(child_process__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2037);
-/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7564);
-/* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3952);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_2__, figures__WEBPACK_IMPORTED_MODULE_3__]);
-([chalk__WEBPACK_IMPORTED_MODULE_2__, figures__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
+/* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7564);
+/* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3952);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_1__, figures__WEBPACK_IMPORTED_MODULE_2__]);
+([chalk__WEBPACK_IMPORTED_MODULE_1__, figures__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -4021,59 +4018,44 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.51";
+  const currentVersion = "1.1.52";
 
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
 
     if (latestTag !== currentVersion) {
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow.bold('New version available'));
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow(`Current version: ${currentVersion}`));
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow(`Latest version: ${latestTag}`));
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow(`Run the following command to update:`));
-      console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow(`npm install -g ${repo}`));
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow.bold('New version available'));
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Current version: ${currentVersion}`));
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Latest version: ${latestTag}`));
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Run the following command to update:`));
+      console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`npm install -g ${repo}`));
       console.log('');
     } else {// console.log(chalk.yellow(`Up to date :)`));
     }
   } catch (err) {
     const message = `Can't read latest version from Github`;
-    console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow.bold(`${figures__WEBPACK_IMPORTED_MODULE_3__["default"].warning}  ${message}`));
-    console.log(chalk__WEBPACK_IMPORTED_MODULE_2__["default"].yellow(`Current version: ${currentVersion}`));
+    console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow.bold(`${figures__WEBPACK_IMPORTED_MODULE_2__["default"].warning}  ${message}`));
+    console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Current version: ${currentVersion}`));
     console.log('');
   }
-}
+} // https://stackoverflow.com/questions/10649814#12704727
 
 async function listRemoteGitTags() {
   return new Promise((resolve, reject) => {
-    // https://stackoverflow.com/questions/10649814#12704727
-    const lsRemote = (0,child_process__WEBPACK_IMPORTED_MODULE_0__.spawn)('git', ['-c', 'versionsort.suffix=-', 'ls-remote', '--tags', '--sort=v:refname', `https://github.com/${repo}`]);
-    const result = [];
-    lsRemote.stdout.on('data', data => {
-      const line = data.toString(); // console.log('LINE', line);
-
-      result.push(line);
-    });
-    lsRemote.stdout.on('end', () => {
-      // console.log('STDOUT END');
-      const end = result.join('').trim(); // console.log('END', end);
-
-      resolve(end);
-    });
-    lsRemote.stdout.on('error', err => {
-      console.error('[get-latest-version]:', 'STDOUT error', err.message);
-      reject();
-    });
-    lsRemote.stderr.on('data', data => {
-      const str = data.toString();
-      console.error('[get-latest-version]:', 'STDERR', str);
-      reject();
+    const cmd = `git -c "versionsort.suffix=-" ls-remote --tags --sort="v:refname" "git@github.com:${repo}.git"`;
+    (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(response);
+      }
     });
   });
 }
 
 function parseLatestTag(tags) {
-  const lines = tags.split(os__WEBPACK_IMPORTED_MODULE_1__.EOL);
+  const lines = tags.trim().split('\n');
   const lastLine = lines[lines.length - 1];
   const match = lastLine.match(/tags\/v(\d+.\d+.\d+)/);
 
