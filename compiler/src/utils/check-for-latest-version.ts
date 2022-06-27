@@ -1,5 +1,4 @@
-import { spawn } from 'child_process';
-import { EOL } from 'os';
+import { exec } from 'child_process';
 
 import chalk from 'chalk';
 import figureSet from 'figures';
@@ -35,48 +34,22 @@ export async function checkForLatestVersion() {
   }
 }
 
+// https://stackoverflow.com/questions/10649814#12704727
 async function listRemoteGitTags() {
   return new Promise<string>((resolve, reject) => {
-    // https://stackoverflow.com/questions/10649814#12704727
-    const lsRemote = spawn('git', [
-      '-c',
-      'versionsort.suffix=-',
-      'ls-remote',
-      '--tags',
-      '--sort=v:refname',
-      `https://github.com/${repo}`,
-    ]);
-
-    const result: string[] = [];
-
-    lsRemote.stdout.on('data', (data) => {
-      const line = data.toString();
-      // console.log('LINE', line);
-      result.push(line);
-    });
-
-    lsRemote.stdout.on('end', () => {
-      // console.log('STDOUT END');
-      const end = result.join('').trim();
-      // console.log('END', end);
-      resolve(end);
-    });
-
-    lsRemote.stdout.on('error', (err) => {
-      console.error('[get-latest-version]:', 'STDOUT error', err.message);
-      reject();
-    });
-
-    lsRemote.stderr.on('data', (data) => {
-      const str = data.toString();
-      console.error('[get-latest-version]:', 'STDERR', str);
-      reject();
+    const cmd = `git -c "versionsort.suffix=-" ls-remote --tags --sort="v:refname" "git@github.com:${repo}.git"`;
+    exec(cmd, async (err, response, stdErr) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(response);
+      }
     });
   });
 }
 
 function parseLatestTag(tags: string) {
-  const lines = tags.split(EOL);
+  const lines = tags.trim().split('\n');
   const lastLine = lines[lines.length - 1];
   const match = lastLine.match(/tags\/v(\d+.\d+.\d+)/);
   if (match === null) {
