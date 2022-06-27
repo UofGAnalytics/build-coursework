@@ -1,16 +1,16 @@
+h1 {
+  font-size: 3.3em;
+  margin: 0.5em 0 1.45em;
+}
+
+h1 span {
+  display: block;
+  font-size: 0.4em;
+  opacity: 0.4;
+  margin-top: 1em;
+}
+
 .cover {
-  h1 {
-    font-size: 3.3em;
-    margin: 0.5em 0 1.45em;
-  }
-
-  h1 span {
-    display: block;
-    font-size: 0.4em;
-    opacity: 0.4;
-    margin-top: 1em;
-  }
-
   .logos {
     display: flex;
     flex-direction: row-reverse;
@@ -54,12 +54,11 @@
 }
 
 @media (max-width: 1000px) {
+  h1 {
+    font-size: 3em;
+    margin: 2em 0 1em;
+  }
   .cover {
-    h1 {
-      font-size: 3em;
-      margin: 2em 0 1em;
-    }
-
     .logos {
       display: block;
     }

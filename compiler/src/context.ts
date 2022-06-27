@@ -13,6 +13,7 @@ export type Options = {
   noEmbedAssetUrl?: boolean;
   noCache?: boolean;
   noTexSvg?: boolean;
+  noHexagons?: boolean;
   week?: number;
   watch?: boolean;
   shouldFail?: boolean;

@@ -52,6 +52,10 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: 'No Tex Svg',
   })
+  .option('noHexagons', {
+    type: 'boolean',
+    description: 'No cover hexagons',
+  })
   .option('spelling', {
     type: 'boolean',
     description: 'Check spelling',
@@ -88,6 +92,7 @@ const options: Options = {
   noEmbedAssetUrl: argv.noEmbedAssetUrl,
   noCache: argv.noCache,
   noTexSvg: argv.noTexSvg,
+  noHexagons: argv.noHexagons,
   spelling: argv.spelling,
   pythonBin: argv.pythonBin,
   force: argv.force,
