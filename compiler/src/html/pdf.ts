@@ -10,7 +10,7 @@ export function pdfWrapper(unit: Unit, ctx: Context) {
   return async (tree: Node) => {
     const main = await createMain(
       unit.titles,
-      ctx.course,
+      ctx,
       (tree as Parent).children
     );
     const iconDefs = createDefs();

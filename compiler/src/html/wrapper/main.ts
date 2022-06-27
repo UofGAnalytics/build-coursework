@@ -3,14 +3,25 @@ import { visit } from 'unist-util-visit';
 
 import dagLogoSvg from '../../../assets/dag-logo.svg';
 import coverSvg from '../../../assets/hexagons.svg';
+import { Context } from '../../context';
 import { Course, UnitTitles } from '../../course/types';
 import { getAssetHast } from '../../utils/get-asset-hast';
 
 export async function createMain(
   titles: UnitTitles,
-  course: Course,
+  ctx: Context,
   content: Node[]
 ) {
+  const children = [];
+
+  if (ctx.options.noHexagons) {
+    children.push(createH1(titles));
+  } else {
+    children.push(createCover(titles, ctx.course));
+  }
+
+  children.push(...content);
+
   return {
     type: 'element',
     tagName: 'main',
@@ -21,7 +32,7 @@ export async function createMain(
         properties: {
           className: 'wrapper',
         },
-        children: [createCover(titles, course), ...content],
+        children,
       },
     ],
   };
