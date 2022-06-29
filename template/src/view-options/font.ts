@@ -1,4 +1,5 @@
-import { saveState, state } from './util';
+import { saveState } from '../util';
+import { state } from './state';
 
 document.documentElement.classList.add(state.font);
 
@@ -20,5 +21,5 @@ function setFont(e: Event) {
   const main = document.querySelector('main') as Element;
   main.classList.replace(state.font, name);
   state.font = name;
-  saveState(state);
+  saveState('view-options', state);
 }

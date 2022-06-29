@@ -1,0 +1,18 @@
+.platform {
+  display: none;
+}
+
+html.platform-mac .platform.mac,
+html.platform-windows .platform.windows,
+html.platform-linux .platform.linux {
+  display: block;
+}
+
+.program {
+  display: none;
+}
+
+html.program-cli .program.cli,
+html.program-github-desktop .program.github-desktop {
+  display: block;
+}

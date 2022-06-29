@@ -3,3 +3,4 @@ import './html-font-size';
 import './view-options';
 import './toggle-answers';
 import './toggle-sidebar';
+import './environment';
