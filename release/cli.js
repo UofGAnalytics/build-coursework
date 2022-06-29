@@ -145,6 +145,9 @@ const {
 }).option('noTexSvg', {
   type: 'boolean',
   description: 'No Tex Svg'
+}).option('noHexagons', {
+  type: 'boolean',
+  description: 'No cover hexagons'
 }).option('spelling', {
   type: 'boolean',
   description: 'Check spelling'
@@ -157,6 +160,12 @@ const {
 }).option('verbose', {
   type: 'boolean',
   description: 'Show error stack'
+}).option('envPlatform', {
+  type: 'string',
+  description: 'Specify which environment platform to display'
+}).option('envProgram', {
+  type: 'string',
+  description: 'Specify which environment program to display'
 }).option('output', {
   type: 'string',
   description: 'output to stdout',
@@ -175,10 +184,13 @@ const options = {
   noEmbedAssetUrl: argv.noEmbedAssetUrl,
   noCache: argv.noCache,
   noTexSvg: argv.noTexSvg,
+  noHexagons: argv.noHexagons,
   spelling: argv.spelling,
   pythonBin: argv.pythonBin,
   force: argv.force,
   verbose: argv.verbose,
+  envPlatform: argv.envPlatform,
+  envProgram: argv.envProgram,
   output: argv.output
 };
 
@@ -797,7 +809,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_uti
 
 function pdfWrapper(unit, ctx) {
   return async tree => {
-    const main = await (0,_wrapper_main__WEBPACK_IMPORTED_MODULE_1__/* .createMain */ .C)(unit.titles, ctx.course, tree.children);
+    const main = await (0,_wrapper_main__WEBPACK_IMPORTED_MODULE_1__/* .createMain */ .C)(unit.titles, ctx, tree.children);
     const iconDefs = (0,_utils_icons__WEBPACK_IMPORTED_MODULE_0__/* .createDefs */ .B)();
     return {
       type: 'root',
@@ -838,7 +850,7 @@ function htmlWrapper(unit, mdast, ctx) {
   return async tree => {
     const hamburgerIcon = (0,_utils_icons__WEBPACK_IMPORTED_MODULE_0__/* .createSvg */ .W)('hamburger-icon');
     const sidebar = await (0,_sidebar__WEBPACK_IMPORTED_MODULE_2__/* .createSidebar */ .x)(mdast);
-    const main = await (0,_main__WEBPACK_IMPORTED_MODULE_1__/* .createMain */ .C)(unit.titles, ctx.course, tree.children);
+    const main = await (0,_main__WEBPACK_IMPORTED_MODULE_1__/* .createMain */ .C)(unit.titles, ctx, tree.children);
     const iconDefs = (0,_utils_icons__WEBPACK_IMPORTED_MODULE_0__/* .createDefs */ .B)();
     return {
       type: 'root',
@@ -877,7 +889,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 
 
 
-async function createMain(titles, course, content) {
+async function createMain(titles, ctx, content) {
+  const children = [];
+
+  if (ctx.options.noHexagons) {
+    children.push(createH1(titles));
+  } else {
+    children.push(createCover(titles, ctx.course));
+  }
+
+  children.push(...content);
   return {
     type: 'element',
     tagName: 'main',
@@ -887,7 +908,7 @@ async function createMain(titles, course, content) {
       properties: {
         className: 'wrapper'
       },
-      children: [createCover(titles, course), ...content]
+      children
     }]
   };
 }
@@ -2978,19 +2999,21 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "P": () => (/* binding */ combinedMdastPhase)
 /* harmony export */ });
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(117);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(117);
 /* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(478);
-/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6285);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__]);
-([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3491);
+/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6285);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _environment__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__]);
+([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _environment__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
 async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_2__/* .unified */ .l)().use(_boxouts__WEBPACK_IMPORTED_MODULE_0__/* .boxouts */ .q, ctx.refStore);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_3__/* .unified */ .l)().use(_environment__WEBPACK_IMPORTED_MODULE_1__/* .environment */ .N, ctx, targetPdf).use(_boxouts__WEBPACK_IMPORTED_MODULE_0__/* .boxouts */ .q, ctx.refStore);
 
   if (targetPdf) {
-    processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__/* .moveAnswersToEnd */ .w);
+    processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__/* .moveAnswersToEnd */ .w);
   }
 
   return processor.run(mdast, file);
@@ -3083,6 +3106,187 @@ function propsToObject(str) {
 
     return acc;
   }, {});
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 3491:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "N": () => (/* binding */ environment)
+/* harmony export */ });
+/* harmony import */ var lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9659);
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3286);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__]);
+([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+const platforms = ['mac', 'windows', 'linux'];
+const programs = ['cli', 'github-desktop'];
+function environment(ctx, targetPdf) {
+  const platformFlag = ctx.options.envPlatform;
+
+  if (platformFlag !== undefined && !platforms.includes(platformFlag)) {
+    throw new Error(`[environment]: envPlatform ${platformFlag} should be one of ${platforms}`);
+  }
+
+  const programFlag = ctx.options.envProgram;
+
+  if (programFlag !== undefined && !programs.includes(programFlag)) {
+    throw new Error(`[environment]: envProgram ${programFlag} should be one of ${programs}`);
+  }
+
+  return async tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
+      const index = _index;
+      const parent = _parent;
+
+      if (node.name === 'environment') {
+        if (targetPdf || platformFlag && programFlag) {
+          removeNode(parent, index);
+        } else {
+          createEnvironmentConfig(node, platformFlag, programFlag);
+        }
+      }
+    });
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
+      const index = _index;
+      const parent = _parent;
+
+      if (platforms.includes(node.name)) {
+        node.data = {
+          hProperties: {
+            className: ['platform', node.name]
+          }
+        };
+
+        if (platformFlag && platformFlag !== node.name) {
+          removeNode(parent, index);
+        }
+      }
+    }, true);
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
+      const index = _index;
+      const parent = _parent;
+
+      if (programs.includes(node.name)) {
+        node.data = {
+          hProperties: {
+            className: ['program', node.name]
+          }
+        };
+
+        if (programFlag && programFlag !== node.name) {
+          removeNode(parent, index);
+        }
+      }
+    }, true);
+  };
+}
+
+function removeNode(parent, index) {
+  const parentChildren = parent?.children || [];
+  parentChildren.splice(index || 0, 1);
+}
+
+function createEnvironmentConfig(node, platformFlag, programFlag) {
+  const hName = 'div';
+  const hProperties = {
+    id: 'environment',
+    className: 'boxout'
+  };
+  const hChildren = [{
+    type: 'element',
+    tagName: 'span',
+    properties: {
+      className: ['type']
+    },
+    children: [{
+      type: 'text',
+      value: 'Environment'
+    }]
+  }, ...node.children.map(node => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__/* .toHast */ .Q)(node))];
+
+  if (!platformFlag) {
+    hChildren.push({
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        id: 'platforms'
+      },
+      children: [{
+        type: 'element',
+        tagName: 'h3',
+        children: [{
+          type: 'text',
+          value: 'Platform'
+        }]
+      }, ...platforms.map((platform, idx) => {
+        return createRadioInput('platform', platform, idx);
+      })]
+    });
+  }
+
+  if (!programFlag) {
+    hChildren.push({
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        id: 'programs'
+      },
+      children: [{
+        type: 'element',
+        tagName: 'h3',
+        children: [{
+          type: 'text',
+          value: 'Program'
+        }]
+      }, ...programs.map((program, idx) => {
+        return createRadioInput('program', program, idx);
+      })]
+    });
+  }
+
+  node.data = {
+    hName,
+    hProperties,
+    hChildren
+  };
+}
+
+function createRadioInput(name, value, idx) {
+  return {
+    type: 'element',
+    tagName: 'label',
+    properties: {
+      [`data-${name}`]: value
+    },
+    children: [{
+      type: 'element',
+      tagName: 'input',
+      properties: {
+        type: 'radio',
+        name,
+        value,
+        checked: idx === 0
+      },
+      children: []
+    }, {
+      type: 'element',
+      tagName: 'span',
+      children: [{
+        type: 'text',
+        value: (0,lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(value)
+      }]
+    }]
+  };
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4018,7 +4222,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.52";
+  const currentVersion = "1.1.53";
 
   try {
     const tags = await listRemoteGitTags();

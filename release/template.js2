@@ -117,22 +117,12 @@ var __webpack_exports__ = {};
 var html_font_size = __webpack_require__(48);
 // EXTERNAL MODULE: ./src/view-options/toggle.ts
 var toggle = __webpack_require__(512);
-;// CONCATENATED MODULE: ./src/view-options/util.ts
-const defaultState = Object.freeze({
-  theme: 'theme-light',
-  font: 'font-default',
-  fontSize: '1',
-  lineSpacing: '1',
-  letterSpacing: '0',
-  lineWidth: '1'
-});
-const state = getSavedState();
-function saveState(state) {
-  localStorage.setItem('view-options', JSON.stringify(state));
+;// CONCATENATED MODULE: ./src/util.ts
+function saveState(name, state) {
+  localStorage.setItem(name, JSON.stringify(state));
 }
-
-function getSavedState() {
-  const saved = localStorage.getItem('view-options');
+function getSavedState(name, defaultState) {
+  const saved = localStorage.getItem(name);
 
   if (saved === null) {
     return { ...defaultState
@@ -147,7 +137,19 @@ function getSavedState() {
     return acc;
   }, {});
 }
+;// CONCATENATED MODULE: ./src/view-options/state.ts
+
+const defaultState = Object.freeze({
+  theme: 'theme-light',
+  font: 'font-default',
+  fontSize: '1',
+  lineSpacing: '1',
+  letterSpacing: '0',
+  lineWidth: '1'
+});
+const state = getSavedState('view-options', defaultState);
 ;// CONCATENATED MODULE: ./src/view-options/theme.ts
+
 
 document.documentElement.classList.add(state.theme);
 const current = state.theme.replace('theme-', '');
@@ -166,9 +168,10 @@ function setTheme(e) {
   target.classList.add('selected');
   document.documentElement.classList.replace(state.theme, name);
   state.theme = name;
-  saveState(state);
+  saveState('view-options', state);
 }
 ;// CONCATENATED MODULE: ./src/view-options/font.ts
+
 
 document.documentElement.classList.add(state.font);
 const font_current = state.font.replace('font-', '');
@@ -188,9 +191,10 @@ function setFont(e) {
   const main = document.querySelector('main');
   main.classList.replace(state.font, name);
   state.font = name;
-  saveState(state);
+  saveState('view-options', state);
 }
 ;// CONCATENATED MODULE: ./src/view-options/readability.ts
+
 
 document.documentElement.style.setProperty('--fontSize', state.fontSize);
 document.documentElement.style.setProperty('--lineSpacing', state.lineSpacing);
@@ -227,7 +231,7 @@ function handleMinus(e) {
   const strValue = String(newValue);
   document.documentElement.style.setProperty(`--${props.name}`, strValue);
   state[props.name] = strValue;
-  saveState(state);
+  saveState('view-options', state);
 }
 
 function handlePlus(e) {
@@ -243,7 +247,7 @@ function handlePlus(e) {
   const strValue = String(newValue);
   document.documentElement.style.setProperty(`--${props.name}`, strValue);
   state[props.name] = strValue;
-  saveState(state);
+  saveState('view-options', state);
 }
 
 function handleReset(e) {
@@ -258,7 +262,7 @@ function handleReset(e) {
   target.classList.add('disabled');
   document.documentElement.style.setProperty(`--${props.name}`, props.defaultValue);
   state[props.name] = props.defaultValue;
-  saveState(state);
+  saveState('view-options', state);
 }
 
 function setDisabledClasses(newValue, props) {
@@ -308,7 +312,74 @@ function getProps(elem) {
 var toggle_answers = __webpack_require__(137);
 // EXTERNAL MODULE: ./src/toggle-sidebar.ts
 var toggle_sidebar = __webpack_require__(567);
+;// CONCATENATED MODULE: ./src/environment/state.ts
+
+const state_defaultState = Object.freeze({
+  platform: 'mac',
+  program: 'cli'
+});
+const state_state = getSavedState('environment', state_defaultState);
+;// CONCATENATED MODULE: ./src/environment/platform.ts
+
+
+const platform_current = `platform-${state_state.platform}`;
+document.documentElement.classList.add(platform_current);
+document.querySelectorAll('#platforms input').forEach(elem => {
+  const input = elem;
+  input.checked = input.value === state_state.platform;
+});
+document.querySelectorAll('#platforms label').forEach(elem => {
+  elem.addEventListener('click', setPlatform);
+});
+
+function setPlatform(e) {
+  const target = e.currentTarget;
+  const platform = target.getAttribute('data-platform');
+  const newClass = `platform-${platform}`;
+  console.log({
+    platform,
+    newClass
+  });
+
+  if (document.documentElement.classList.contains(newClass)) {
+    return;
+  }
+
+  document.documentElement.classList.replace(platform_current, newClass);
+  state_state.platform = platform;
+  saveState('environment', state_state);
+}
+;// CONCATENATED MODULE: ./src/environment/program.ts
+
+
+const program_current = `program-${state_state.program}`;
+document.documentElement.classList.add(program_current);
+document.querySelectorAll('#programs input').forEach(elem => {
+  const input = elem;
+  input.checked = input.value === state_state.program;
+});
+document.querySelectorAll('#programs label').forEach(elem => {
+  elem.addEventListener('click', setProgram);
+});
+
+function setProgram(e) {
+  const target = e.currentTarget;
+  const program = target.getAttribute('data-program');
+  const newClass = `program-${program}`;
+
+  if (document.documentElement.classList.contains(newClass)) {
+    return;
+  }
+
+  document.documentElement.classList.replace(program_current, newClass);
+  state_state.program = program;
+  saveState('environment', state_state);
+}
+;// CONCATENATED MODULE: ./src/environment/index.ts
+
+
 ;// CONCATENATED MODULE: ./src/index.ts
+
 
 
 
