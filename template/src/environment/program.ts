@@ -1,7 +1,14 @@
 import { saveState } from '../util';
 import { state } from './state';
 
-document.documentElement.classList.add(state.program);
+const current = `program-${state.program}`;
+
+document.documentElement.classList.add(current);
+
+document.querySelectorAll('#programs input').forEach((elem) => {
+  const input = elem as HTMLInputElement;
+  input.checked = input.value === state.program;
+});
 
 document.querySelectorAll('#programs label').forEach((elem) => {
   elem.addEventListener('click', setProgram);
@@ -16,7 +23,7 @@ function setProgram(e: Event) {
     return;
   }
 
-  document.documentElement.classList.replace(state.program, newClass);
-  state.program = newClass;
+  document.documentElement.classList.replace(current, newClass);
+  state.program = program;
   saveState('environment', state);
 }

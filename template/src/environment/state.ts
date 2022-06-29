@@ -6,8 +6,8 @@ export type State = {
 };
 
 export const defaultState: State = Object.freeze({
-  platform: 'platform-mac',
-  program: 'program-cli',
+  platform: 'mac',
+  program: 'cli',
 });
 
 export const state = getSavedState('environment', defaultState);

@@ -1,6 +1,7 @@
 import startCase from 'lodash/startCase.js';
-import { ContainerDirective, LeafDirective } from 'mdast-util-directive';
-import { Node } from 'unist';
+import { ContainerDirective } from 'mdast-util-directive';
+import { toHast } from 'mdast-util-to-hast';
+import { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 
 const platforms = ['mac', 'windows', 'linux'];
@@ -11,15 +12,10 @@ export function environment() {
   // const defaultProgram = programs[0];
 
   return async (tree: Node) => {
-    visit(tree, 'leafDirective', (node: LeafDirective) => {
-      if (node.name === 'environment') {
-        node.data = createEnvironmentConfig();
-      }
-      // console.log('leaf', node);
-    });
-
     visit(tree, 'containerDirective', (node: ContainerDirective) => {
-      if (platforms.includes(node.name)) {
+      if (node.name === 'environment') {
+        node.data = createEnvironmentConfig(node);
+      } else if (platforms.includes(node.name)) {
         node.data = {
           hProperties: {
             className: ['platform', node.name],
@@ -32,19 +28,33 @@ export function environment() {
           },
         };
       }
-      // console.log('container', node);
     });
   };
 }
 
-function createEnvironmentConfig() {
+function createEnvironmentConfig(node: Parent) {
   const hName = 'div';
 
   const hProperties = {
     id: 'environment',
+    className: 'boxout',
   };
 
   const hChildren = [
+    {
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: ['type'],
+      },
+      children: [
+        {
+          type: 'text',
+          value: 'Environment',
+        },
+      ],
+    },
+    ...node.children.map((node) => toHast(node as any)),
     {
       type: 'element',
       tagName: 'div',
