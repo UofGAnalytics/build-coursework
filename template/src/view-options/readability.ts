@@ -1,4 +1,5 @@
-import { State, defaultState, saveState, state } from './util';
+import { saveState } from '../util';
+import { State, defaultState, state } from './state';
 
 document.documentElement.style.setProperty('--fontSize', state.fontSize);
 document.documentElement.style.setProperty(
@@ -44,7 +45,7 @@ function handleMinus(e: Event) {
   const strValue = String(newValue);
   document.documentElement.style.setProperty(`--${props.name}`, strValue);
   state[props.name] = strValue;
-  saveState(state);
+  saveState('view-options', state);
 }
 
 function handlePlus(e: Event) {
@@ -65,7 +66,7 @@ function handlePlus(e: Event) {
   const strValue = String(newValue);
   document.documentElement.style.setProperty(`--${props.name}`, strValue);
   state[props.name] = strValue;
-  saveState(state);
+  saveState('view-options', state);
 }
 
 function handleReset(e: Event) {
@@ -83,7 +84,7 @@ function handleReset(e: Event) {
     props.defaultValue
   );
   state[props.name] = props.defaultValue;
-  saveState(state);
+  saveState('view-options', state);
 }
 
 function setDisabledClasses(newValue: number, props: Props) {

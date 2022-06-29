@@ -1,4 +1,5 @@
-import { saveState, state } from './util';
+import { saveState } from '../util';
+import { state } from './state';
 
 document.documentElement.classList.add(state.theme);
 
@@ -19,5 +20,5 @@ function setTheme(e: Event) {
   target.classList.add('selected');
   document.documentElement.classList.replace(state.theme, name);
   state.theme = name;
-  saveState(state);
+  saveState('view-options', state);
 }
