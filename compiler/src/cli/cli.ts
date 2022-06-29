@@ -72,6 +72,14 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'boolean',
     description: 'Show error stack',
   })
+  .option('envPlatform', {
+    type: 'string',
+    description: 'Specify which environment platform to display',
+  })
+  .option('envProgram', {
+    type: 'string',
+    description: 'Specify which environment program to display',
+  })
   .option('output', {
     type: 'string',
     description: 'output to stdout',
@@ -97,6 +105,8 @@ const options: Options = {
   pythonBin: argv.pythonBin,
   force: argv.force,
   verbose: argv.verbose,
+  envPlatform: argv.envPlatform,
+  envProgram: argv.envProgram,
   output: argv.output as 'md' | 'html',
 };
 

@@ -13,7 +13,9 @@ export async function combinedMdastPhase(
   file: VFile,
   targetPdf?: boolean
 ) {
-  const processor = unified().use(environment).use(boxouts, ctx.refStore);
+  const processor = unified()
+    .use(environment, ctx, targetPdf)
+    .use(boxouts, ctx.refStore);
 
   if (targetPdf) {
     processor.use(moveAnswersToEnd);

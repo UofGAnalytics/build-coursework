@@ -23,6 +23,8 @@ export type Options = {
   format?: boolean;
   pythonBin?: string;
   verbose?: boolean;
+  envPlatform?: string;
+  envProgram?: string;
   output?: 'md' | 'html';
 };
 

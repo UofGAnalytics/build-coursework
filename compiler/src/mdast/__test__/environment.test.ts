@@ -1,47 +1,50 @@
-// import {
-//   testProcessor,
-//   unindentString,
-// } from '../../test-utils/test-processor';
+import {
+  testProcessor,
+  unindentString,
+} from '../../test-utils/test-processor';
 
-// describe('environment', () => {
-//   it('should only show mac and cli sections', async () => {
-//     const { html } = await testProcessor(`
-//       ::environment
+describe('environment', () => {
+  it('should only show windows and cli sections', async () => {
+    const { html } = await testProcessor(
+      `
+      :::environment
+      :::
 
-//       :::mac
-//       I am mac
-//       :::
+      :::mac
+      I am mac
+      :::
 
-//       :::windows
-//       I am windows
-//       :::
+      :::windows
+      I am windows
+      :::
 
-//       :::cli
-//       I am cli
-//       :::
+      :::linux
+      I am linux
+      :::
 
-//       :::github-desktop
-//       I am Github Desktop
-//       :::
-//     `);
+      :::cli
+      I am cli
+      :::
 
-//     console.log(html);
+      :::github-desktop
+      I am Github Desktop
+      :::
+    `,
+      {
+        envPlatform: 'windows',
+        envProgram: 'cli',
+      }
+    );
 
-//     const expected = unindentString(`
-//       <div class="platform">
-//         <p>I am mac</p>
-//       </div>
-//       <div class="platform hide">
-//         <p>I am windows</p>
-//       </div>
-//       <div class="program">
-//         <p>I am cli</p>
-//       </div>
-//       <div class="program hide">
-//         <p>I am Github Desktop</p>
-//       </div>
-//     `);
+    const expected = unindentString(`
+      <div class="platform windows">
+        <p>I am windows</p>
+      </div>
+      <div class="program cli">
+        <p>I am cli</p>
+      </div>
+    `);
 
-//     expect(html.endsWith(expected)).toBe(true);
-//   });
-// });
+    expect(html).toBe(expected);
+  });
+});
