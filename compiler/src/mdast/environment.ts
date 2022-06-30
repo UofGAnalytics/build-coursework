@@ -53,7 +53,11 @@ export function environment(ctx: Context, targetPdf?: boolean) {
         if (platforms.includes(node.name)) {
           node.data = {
             hProperties: {
-              className: ['platform', node.name],
+              className: [
+                'platform',
+                node.name,
+                platformFlag === node.name ? 'show' : '',
+              ],
             },
           };
           if (platformFlag && platformFlag !== node.name) {
@@ -74,7 +78,11 @@ export function environment(ctx: Context, targetPdf?: boolean) {
         if (programs.includes(node.name)) {
           node.data = {
             hProperties: {
-              className: ['program', node.name],
+              className: [
+                'program',
+                node.name,
+                programFlag === node.name ? 'show' : '',
+              ],
             },
           };
           if (programFlag && programFlag !== node.name) {
