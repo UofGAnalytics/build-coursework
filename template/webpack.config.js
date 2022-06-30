@@ -9,10 +9,6 @@ const {
   generateJSReferences
 } = require('mini-html-webpack-plugin');
 
-const COURSE = 'apm'
-const UNIT = 'week-2.html'
-const htmlFilePath = `../fixtures/${COURSE}/build/${UNIT}`
-
 const isProd = process.env.NODE_ENV === 'production';
 
 const plugins = [
@@ -31,7 +27,7 @@ if (isProd) {
 if (!isProd) {
   plugins.push(
     // new WatchExternalFilesPlugin({ files: [htmlFilePath] }),
-    new MiniHtmlWebpackPlugin({ template })
+    new MiniHtmlWebpackPlugin()
   )
 }
 
@@ -100,7 +96,6 @@ module.exports = {
 function template({ css, js2 }) {
   const cssTags = generateCSSReferences({ files: css })
   const jsTags = generateJSReferences({ files: js2 })
-  const content = fs.readFileSync(htmlFilePath, 'utf-8')
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -112,7 +107,6 @@ function template({ css, js2 }) {
         ${cssTags}
       </head>
       <body>
-        ${content}
         <div id="modal">
           <div id="modal-bg"></div>
           <div id="modal-wrapper">
