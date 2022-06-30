@@ -3163,7 +3163,7 @@ function environment(ctx, targetPdf) {
       if (platforms.includes(node.name)) {
         node.data = {
           hProperties: {
-            className: ['platform', node.name]
+            className: ['platform', node.name, platformFlag === node.name ? 'show' : '']
           }
         };
 
@@ -3179,7 +3179,7 @@ function environment(ctx, targetPdf) {
       if (programs.includes(node.name)) {
         node.data = {
           hProperties: {
-            className: ['program', node.name]
+            className: ['program', node.name, programFlag === node.name ? 'show' : '']
           }
         };
 
@@ -4222,7 +4222,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.53";
+  const currentVersion = "1.1.54";
 
   try {
     const tags = await listRemoteGitTags();
