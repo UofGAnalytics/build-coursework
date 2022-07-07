@@ -37,10 +37,10 @@ describe('environment', () => {
     );
 
     const expected = unindentString(`
-      <div class="platform windows">
+      <div class="platform windows show">
         <p>I am windows</p>
       </div>
-      <div class="program cli">
+      <div class="program cli show">
         <p>I am cli</p>
       </div>
     `);
