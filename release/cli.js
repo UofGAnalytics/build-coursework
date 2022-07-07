@@ -166,6 +166,9 @@ const {
 }).option('envProgram', {
   type: 'string',
   description: 'Specify which environment program to display'
+}).option('fileName', {
+  type: 'string',
+  description: 'Specify name of output file'
 }).option('output', {
   type: 'string',
   description: 'output to stdout',
@@ -191,6 +194,7 @@ const options = {
   verbose: argv.verbose,
   envPlatform: argv.envPlatform,
   envProgram: argv.envProgram,
+  fileName: argv.fileName,
   output: argv.output
 };
 
@@ -1308,7 +1312,8 @@ async function writeUnit(built, ctx, timer) {
   }
 
   await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .mkdir */ .i$)(ctx.buildDir);
-  const filePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.buildDir, built.unit.titles.fileName);
+  const fileName = ctx.options.fileName ? ctx.options.fileName : built.unit.titles.fileName;
+  const filePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.buildDir, fileName);
 
   if (built.html) {
     await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .writeFile */ .NC)(filePath + '.html', built.html.html);
@@ -4222,7 +4227,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.54";
+  const currentVersion = "1.1.55";
 
   try {
     const tags = await listRemoteGitTags();
