@@ -51,7 +51,10 @@ async function writeUnit(built: BuiltUnit, ctx: Context, timer: Timer) {
   }
 
   await mkdir(ctx.buildDir);
-  const filePath = path.join(ctx.buildDir, built.unit.titles.fileName);
+  const fileName = ctx.options.fileName
+    ? ctx.options.fileName
+    : built.unit.titles.fileName;
+  const filePath = path.join(ctx.buildDir, fileName);
 
   if (built.html) {
     await writeFile(filePath + '.html', built.html.html);

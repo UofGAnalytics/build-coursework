@@ -25,6 +25,7 @@ export type Options = {
   verbose?: boolean;
   envPlatform?: string;
   envProgram?: string;
+  fileName?: string;
   output?: 'md' | 'html';
 };
 
