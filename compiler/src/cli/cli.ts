@@ -80,6 +80,10 @@ const { argv } = yargs(process.argv.slice(2))
     type: 'string',
     description: 'Specify which environment program to display',
   })
+  .option('fileName', {
+    type: 'string',
+    description: 'Specify name of output file',
+  })
   .option('output', {
     type: 'string',
     description: 'output to stdout',
@@ -107,6 +111,7 @@ const options: Options = {
   verbose: argv.verbose,
   envPlatform: argv.envPlatform,
   envProgram: argv.envProgram,
+  fileName: argv.fileName,
   output: argv.output as 'md' | 'html',
 };
 
