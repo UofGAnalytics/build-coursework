@@ -85,7 +85,7 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
 
     exec(cmd, async (err, response, stdErr) => {
-      if (stdErr) {
+      if (stdErr && !ctx.options.output) {
         console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
       }
       if (err) {

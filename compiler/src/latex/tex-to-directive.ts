@@ -152,9 +152,10 @@ function extractAnchorLinkFromMml(mml: string, tex: string, file: VFile) {
 }
 
 function postParse(html: string) {
-  let result = html;
+  let result = html.trim();
   result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
+  result = removeHTMLClosingTags(result);
   return result;
 }
 
@@ -168,4 +169,8 @@ function unprotectHtml(html: string) {
 
 function removeUnresolvedLabels(html: string) {
   return html.replace(/\\label{def:.*?}/gm, '');
+}
+
+function removeHTMLClosingTags(html: string) {
+  return html.replace(/(<\/\w+>)+$/, '');
 }

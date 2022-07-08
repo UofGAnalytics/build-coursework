@@ -121,10 +121,10 @@ async function run() {
     if (weeks.length === 1) {
       const result = weeks[0];
       if (options.output === 'html') {
-        console.log(result.html?.html || '');
+        console.log((result.html?.html || '').trim());
       }
       if (options.output === 'md') {
-        console.log(result.md);
+        console.log(result.md.trim());
       }
     }
   } catch (err: any) {
