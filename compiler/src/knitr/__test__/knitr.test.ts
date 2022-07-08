@@ -342,7 +342,6 @@ describe('knitr', () => {
         <h6 class="console-heading">R Console</h6>
         <pre><code>Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
       </div>
-      <p></p>
     `);
 
     expect(ignoreWhitespace(html)).toBe(result);
