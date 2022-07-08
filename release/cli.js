@@ -206,11 +206,11 @@ async function run() {
       const result = weeks[0];
 
       if (options.output === 'html') {
-        console.log(result.html?.html || '');
+        console.log((result.html?.html || '').trim());
       }
 
       if (options.output === 'md') {
-        console.log(result.md);
+        console.log(result.md.trim());
       }
     }
   } catch (err) {
@@ -1428,7 +1428,7 @@ async function execKnitr(file, ctx, unitPath) {
   return new Promise((resolve, reject) => {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
     (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
-      if (stdErr) {
+      if (stdErr && !ctx.options.output) {
         console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
       }
 
@@ -1983,9 +1983,10 @@ function extractAnchorLinkFromMml(mml, tex, file) {
 }
 
 function postParse(html) {
-  let result = html;
+  let result = html.trim();
   result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
+  result = removeHTMLClosingTags(result);
   return result;
 } // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
 
@@ -1996,6 +1997,10 @@ function unprotectHtml(html) {
 
 function removeUnresolvedLabels(html) {
   return html.replace(/\\label{def:.*?}/gm, '');
+}
+
+function removeHTMLClosingTags(html) {
+  return html.replace(/(<\/\w+>)+$/, '');
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4227,7 +4232,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.55";
+  const currentVersion = "1.1.56";
 
   try {
     const tags = await listRemoteGitTags();
