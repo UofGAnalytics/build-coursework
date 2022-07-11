@@ -9,7 +9,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { infoMessage, warnMessage } from '../utils/message';
+import { failMessage, infoMessage, warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 // bypass knitr for debugging
@@ -85,9 +85,15 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
 
     exec(cmd, async (err, response, stdErr) => {
-      if (stdErr && !ctx.options.output) {
-        console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
+      if (stdErr) {
+        if (!ctx.options.output) {
+          console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
+        }
+        if (isFailingStdErr(stdErr)) {
+          failMessage(file, stdErr);
+        }
       }
+
       if (err) {
         console.error('ERROR', err);
         reject(err);
@@ -130,6 +136,11 @@ function getKnitrFileDir() {
     return __dirname;
   }
   return path.dirname(fileURLToPath(import.meta.url));
+}
+
+function isFailingStdErr(stdErr: string) {
+  // console.log({ stdErr });
+  return /status 1\d*$/.test(stdErr.trim());
 }
 
 function reportErrors(response: string, file: VFile, ctx: Context) {
