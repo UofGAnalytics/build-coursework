@@ -89,11 +89,12 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
         if (!ctx.options.output) {
           console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
         }
-        if (stdErr.trim().endsWith('status 1')) {
+        if (isFailingStdErr(stdErr)) {
           failMessage(file, stdErr);
-          resolve(formatResponse(response));
         }
-      } else if (err) {
+      }
+
+      if (err) {
         console.error('ERROR', err);
         reject(err);
       } else {
@@ -135,6 +136,11 @@ function getKnitrFileDir() {
     return __dirname;
   }
   return path.dirname(fileURLToPath(import.meta.url));
+}
+
+function isFailingStdErr(stdErr: string) {
+  // console.log({ stdErr });
+  return /status 1\d*$/.test(stdErr.trim());
 }
 
 function reportErrors(response: string, file: VFile, ctx: Context) {
