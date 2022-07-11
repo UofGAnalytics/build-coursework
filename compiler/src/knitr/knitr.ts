@@ -9,7 +9,7 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { Unit } from '../course/types';
-import { infoMessage, warnMessage } from '../utils/message';
+import { failMessage, infoMessage, warnMessage } from '../utils/message';
 import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 // bypass knitr for debugging
@@ -85,10 +85,15 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
 
     exec(cmd, async (err, response, stdErr) => {
-      if (stdErr && !ctx.options.output) {
-        console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
-      }
-      if (err) {
+      if (stdErr) {
+        if (!ctx.options.output) {
+          console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));
+        }
+        if (stdErr.trim().endsWith('status 1')) {
+          failMessage(file, stdErr);
+          resolve(formatResponse(response));
+        }
+      } else if (err) {
         console.error('ERROR', err);
         reject(err);
       } else {
