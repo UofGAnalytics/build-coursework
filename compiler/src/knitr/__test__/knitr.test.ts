@@ -377,7 +377,7 @@ describe('knitr', () => {
       { shouldFail: true }
     );
 
-    expect(hasFailingMessage(`had status 1`)).toBe(true);
+    expect(hasFailingMessage(`cat does-not-exist.txt`)).toBe(true);
   });
 
   it('should error on bad git code chunk', async () => {
@@ -390,6 +390,6 @@ describe('knitr', () => {
       { shouldFail: true }
     );
 
-    expect(hasFailingMessage(`had status 128`)).toBe(true);
+    expect(hasFailingMessage(`git add does-not-exist.txt`)).toBe(true);
   });
 });
