@@ -38,7 +38,7 @@ export function reportErrors(files: VFile[], ctx: Context) {
     if (ctx.options.force) {
       console.log('Compiling using force option...');
     } else {
-      process.exit();
+      process.exit(1);
     }
   }
 }
