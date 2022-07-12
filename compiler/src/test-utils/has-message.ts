@@ -15,8 +15,8 @@ export function createHasFailingMessage(ctx: Context, files: VFile[]) {
       (acc: VFileMessage[], o) => [...acc, ...o.messages],
       []
     );
-    const errors = fileMessages.filter(
-      (o) => o.reason === reason
+    const errors = fileMessages.filter((o) =>
+      o.reason.includes(reason)
     ) as unknown as ReportMessage[];
     if (errors.length === 0) {
       console.log('Message not found in these messages:');
@@ -38,8 +38,8 @@ export function createHasWarningMessage(ctx: Context, files: VFile[]) {
       (acc: VFileMessage[], o) => [...acc, ...o.messages],
       []
     );
-    const errors = fileMessages.filter(
-      (o) => o.reason === reason
+    const errors = fileMessages.filter((o) =>
+      o.reason.includes(reason)
     ) as unknown as ReportMessage[];
     if (errors.length === 0) {
       console.log('Message not found in these messages:');

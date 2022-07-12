@@ -366,4 +366,30 @@ describe('knitr', () => {
       true
     );
   });
+
+  it('should error on bad bash code chunk', async () => {
+    const { hasFailingMessage } = await testProcessor(
+      `
+      \`\`\`{bash}
+      cat does-not-exist.txt
+      \`\`\`
+    `,
+      { shouldFail: true }
+    );
+
+    expect(hasFailingMessage(`cat does-not-exist.txt`)).toBe(true);
+  });
+
+  it('should error on bad git code chunk', async () => {
+    const { hasFailingMessage } = await testProcessor(
+      `
+      \`\`\`{bash}
+      git add does-not-exist.txt
+      \`\`\`
+    `,
+      { shouldFail: true }
+    );
+
+    expect(hasFailingMessage(`git add does-not-exist.txt`)).toBe(true);
+  });
 });
