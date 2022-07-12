@@ -1428,8 +1428,14 @@ async function execKnitr(file, ctx, unitPath) {
   return new Promise((resolve, reject) => {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
     (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
-      if (stdErr && !ctx.options.output) {
-        console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
+      if (stdErr) {
+        if (!ctx.options.output) {
+          console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
+        }
+
+        if (isFailingStdErr(stdErr)) {
+          (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .failMessage */ .Ob)(file, stdErr);
+        }
       }
 
       if (err) {
@@ -1470,6 +1476,11 @@ function getKnitrFileDir() {
   }
 
   return path__WEBPACK_IMPORTED_MODULE_2___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_3__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/knitr.ts"));
+}
+
+function isFailingStdErr(stdErr) {
+  // console.log({ stdErr });
+  return /status 1\d*$/.test(stdErr.trim());
 }
 
 function reportErrors(response, file, ctx) {
@@ -4232,7 +4243,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.56";
+  const currentVersion = "1.1.57";
 
   try {
     const tags = await listRemoteGitTags();
