@@ -2381,7 +2381,7 @@ function reportErrors(files, ctx) {
     if (ctx.options.force) {
       console.log('Compiling using force option...');
     } else {
-      process.exit();
+      process.exit(1);
     }
   }
 }
@@ -4243,7 +4243,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.57";
+  const currentVersion = "1.1.58";
 
   try {
     const tags = await listRemoteGitTags();
