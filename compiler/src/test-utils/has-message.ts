@@ -28,7 +28,7 @@ export function createHasFailingMessage(ctx: Context, files: VFile[]) {
       console.log(errors[0]);
       return false;
     }
-    return reportHasFatalErrors(files, ctx);
+    return reportHasFatalErrors(files);
   };
 }
 
@@ -51,7 +51,7 @@ export function createHasWarningMessage(ctx: Context, files: VFile[]) {
       console.log(errors[0]);
       return false;
     }
-    return reportHasWarnings(files, ctx);
+    return reportHasWarnings(files);
   };
 }
 

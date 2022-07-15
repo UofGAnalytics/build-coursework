@@ -47,7 +47,7 @@ export function printReport(files: VFile[], ctx: Context) {
   }
 }
 
-export function reportHasFatalErrors(files: VFile[], ctx: Context) {
+export function reportHasFatalErrors(files: VFile[]) {
   return files.some((file) => {
     const messages = file.messages as unknown as ReportMessage[];
     return messages.some(
@@ -56,7 +56,7 @@ export function reportHasFatalErrors(files: VFile[], ctx: Context) {
   });
 }
 
-export function reportHasWarnings(files: VFile[], ctx: Context) {
+export function reportHasWarnings(files: VFile[]) {
   return files.some((file) => {
     const messages = file.messages as unknown as ReportMessage[];
     return messages.some(
