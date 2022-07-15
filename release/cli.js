@@ -103,9 +103,11 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7564);
 /* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3952);
 /* harmony import */ var yargs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2699);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7329);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, ___WEBPACK_IMPORTED_MODULE_3__]);
-([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, ___WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _linter_report__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8987);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7329);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, _linter_report__WEBPACK_IMPORTED_MODULE_3__, ___WEBPACK_IMPORTED_MODULE_4__]);
+([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, _linter_report__WEBPACK_IMPORTED_MODULE_3__, ___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -200,17 +202,22 @@ const options = {
 
 async function run() {
   try {
-    const weeks = await (0,___WEBPACK_IMPORTED_MODULE_3__/* .rMarkdown */ .C)(dirPath, options);
+    const weeks = await (0,___WEBPACK_IMPORTED_MODULE_4__/* .rMarkdown */ .C)(dirPath, options);
 
-    if (weeks.length === 1) {
-      const result = weeks[0];
-
+    for (const week of weeks) {
       if (options.output === 'html') {
-        console.log((result.html?.html || '').trim());
+        console.log((week.html?.html || '').trim());
       }
 
       if (options.output === 'md') {
-        console.log(result.md.trim());
+        console.log(week.md.trim());
+      }
+    } // correct exit code even when using --force
+
+
+    for (const week of weeks) {
+      if ((0,_linter_report__WEBPACK_IMPORTED_MODULE_3__/* .reportHasFatalErrors */ .wC)(week.files)) {
+        process.exit(1);
       }
     }
   } catch (err) {
@@ -2367,7 +2374,7 @@ function reportErrors(files, ctx) {
     (0,_report__WEBPACK_IMPORTED_MODULE_13__/* .printReport */ .IC)(files, ctx);
   }
 
-  if ((0,_report__WEBPACK_IMPORTED_MODULE_13__/* .reportHasFatalErrors */ .wC)(files, ctx)) {
+  if ((0,_report__WEBPACK_IMPORTED_MODULE_13__/* .reportHasFatalErrors */ .wC)(files)) {
     if (ctx.options.noReport) {
       (0,_report__WEBPACK_IMPORTED_MODULE_13__/* .printReport */ .IC)(files, { ...ctx,
         options: { ...ctx.options,
@@ -2533,13 +2540,13 @@ function printReport(files, ctx) {
     }
   }
 }
-function reportHasFatalErrors(files, ctx) {
+function reportHasFatalErrors(files) {
   return files.some(file => {
     const messages = file.messages;
     return messages.some(message => message.status === _utils_message__WEBPACK_IMPORTED_MODULE_2__/* .MessageStatus.fail */ .rJ.fail);
   });
 }
-function reportHasWarnings(files, ctx) {
+function reportHasWarnings(files) {
   return files.some(file => {
     const messages = file.messages;
     return messages.some(message => message.status === MessageStatus.warning);
@@ -4243,7 +4250,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.58";
+  const currentVersion = "1.1.59";
 
   try {
     const tags = await listRemoteGitTags();
