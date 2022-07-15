@@ -24,7 +24,7 @@ export function reportErrors(files: VFile[], ctx: Context) {
   if (!ctx.options.noReport) {
     printReport(files, ctx);
   }
-  if (reportHasFatalErrors(files, ctx)) {
+  if (reportHasFatalErrors(files)) {
     if (ctx.options.noReport) {
       printReport(files, {
         ...ctx,

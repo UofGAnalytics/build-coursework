@@ -5,6 +5,7 @@ import figures from 'figures';
 import yargs from 'yargs';
 
 import { Options } from '../context';
+import { reportHasFatalErrors } from '../linter/report';
 import { rMarkdown } from '..';
 
 const { argv } = yargs(process.argv.slice(2))
@@ -118,13 +119,19 @@ const options: Options = {
 async function run() {
   try {
     const weeks = await rMarkdown(dirPath, options);
-    if (weeks.length === 1) {
-      const result = weeks[0];
+    for (const week of weeks) {
       if (options.output === 'html') {
-        console.log((result.html?.html || '').trim());
+        console.log((week.html?.html || '').trim());
       }
       if (options.output === 'md') {
-        console.log(result.md.trim());
+        console.log(week.md.trim());
+      }
+    }
+
+    // correct exit code even when using --force
+    for (const week of weeks) {
+      if (reportHasFatalErrors(week.files)) {
+        process.exit(1);
       }
     }
   } catch (err: any) {
