@@ -9,6 +9,7 @@ import { VFile } from 'vfile';
 import { buildUnit } from '../build-unit';
 import { Context, Options } from '../context';
 import { getUnitTitles } from '../course';
+import { VFileWithMessages } from '../utils/message';
 import { writeFile } from '../utils/utils';
 import {
   createHasFailingMessage,
@@ -22,7 +23,7 @@ export async function testProcessor(md: string, options: Options = {}) {
 
   const unit = {
     md: '',
-    files: [] as VFile[],
+    files: [] as VFileWithMessages[],
     mdast: {} as MDastParent,
     hast: {} as HastParent,
     html: '',

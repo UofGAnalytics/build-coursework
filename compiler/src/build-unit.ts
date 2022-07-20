@@ -16,11 +16,12 @@ import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
+import { VFileWithMessages } from './utils/message';
 
 export type BuiltUnit = {
   unit: Unit;
   md: string;
-  files: VFile[];
+  files: VFileWithMessages[];
   html?: {
     mdast: MdastParent;
     hast: HastParent;
@@ -45,7 +46,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
   const result: BuiltUnit = {
     unit,
     md: combineMdFiles(unifiedFile),
-    files: [unifiedFile],
+    files: [unifiedFile as VFileWithMessages],
   };
 
   if (!ctx.options.noHtml) {

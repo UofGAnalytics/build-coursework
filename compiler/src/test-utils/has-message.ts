@@ -7,7 +7,11 @@ import {
   reportHasFatalErrors,
   reportHasWarnings,
 } from '../linter/report';
-import { MessageStatus } from '../utils/message';
+import {
+  Message,
+  MessageStatus,
+  VFileWithMessages,
+} from '../utils/message';
 
 export function createHasFailingMessage(ctx: Context, files: VFile[]) {
   return function hasFailingMessage(reason: string) {
@@ -55,9 +59,12 @@ export function createHasWarningMessage(ctx: Context, files: VFile[]) {
   };
 }
 
-export function createMessageReasons(files: VFile[]) {
-  return files.reduce((acc: string[], o) => {
-    const reasons = o.messages.map((m) => m.reason);
-    return [...acc, ...reasons];
+export function createMessages(files: VFileWithMessages[]) {
+  return files.reduce((acc: Message[], file) => {
+    return [...acc, ...file.messages];
   }, []);
+}
+
+export function createMessageReasons(files: VFileWithMessages[]) {
+  return createMessages(files).map((o) => o.reason);
 }
