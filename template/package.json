@@ -29,7 +29,7 @@
     "svgo": "^2.2.2",
     "unescape-html": "^1.1.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.66.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.4.0",
     "webpack-dev-server": "^4.8.1",
     "webpack-virtual-modules": "^0.4.2"

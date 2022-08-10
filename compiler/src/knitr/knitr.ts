@@ -272,9 +272,11 @@ function addErrorCodeBlock(md: string) {
   return md
     .split('\n')
     .reduce((acc: string[], line, idx) => {
-      if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
-        const lang = findLanguageForOutput(acc.slice(0, -1));
-        acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
+      if (idx > 0 && acc[idx - 1].startsWith('```')) {
+        if (line.startsWith('## Error') || line.startsWith('## fatal')) {
+          const lang = findLanguageForOutput(acc.slice(0, -1));
+          acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
+        }
       }
       acc.push(line);
       return acc;

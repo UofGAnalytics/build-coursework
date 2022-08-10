@@ -42,7 +42,7 @@
     "pdfjs-dist": "^2.12.313",
     "puppeteer": "^13.1.1",
     "puppeteer-core": "^13.1.1",
-    "refractor": "^4.4.0",
+    "refractor": "^4.7.0",
     "rehype-document": "^6.0.1",
     "rehype-format": "^4.0.1",
     "rehype-highlight": "^5.0.2",
@@ -98,7 +98,7 @@
     "inline-environment-variables-webpack-plugin": "^1.2.1",
     "raw-loader": "^4.0.2",
     "style-loader": "^3.3.1",
-    "webpack": "^5.66.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.4.0",
     "webpack-node-externals": "^3.0.0",
     "webpack-shebang-plugin": "^1.1.4"

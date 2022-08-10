@@ -40,6 +40,9 @@ export default {
     minimize: false,
   },
   module: {
+    // parser: {
+    //   javascript: { importMeta: false }
+    // },
     rules: [
       {
         test: /\.ts$/,
