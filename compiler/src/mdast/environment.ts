@@ -25,7 +25,7 @@ export function environment(ctx: Context, targetPdf?: boolean) {
     );
   }
 
-  return async (tree: Node) => {
+  return (tree: Node) => {
     visit(
       tree,
       'containerDirective',
