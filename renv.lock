@@ -25,7 +25,7 @@
     },
     "reticulate": {
       "Package": "reticulate",
-      "Version": "1.25",
+      "Version": "1.22",
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "b34a8bb69005168078d1d546a53912b2"
