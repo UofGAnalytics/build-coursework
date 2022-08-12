@@ -24,7 +24,7 @@
     "mime": "3.0.0",
     "node-fetch": "3.2.3",
     "puppeteer": "13.5.2",
-    "refractor": "4.5.0",
+    "refractor": "4.7.0",
     "rehype-document": "6.0.1",
     "rehype-format": "4.0.1",
     "rehype-parse": "8.0.4",

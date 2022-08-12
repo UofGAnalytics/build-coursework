@@ -1606,9 +1606,11 @@ function removeEmptyLog(md) {
 
 function addErrorCodeBlock(md) {
   return md.split('\n').reduce((acc, line, idx) => {
-    if (line.startsWith('## Error') && acc[idx - 1].startsWith('```')) {
-      const lang = findLanguageForOutput(acc.slice(0, -1));
-      acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
+    if (idx > 0 && acc[idx - 1].startsWith('```')) {
+      if (line.startsWith('## Error') || line.startsWith('## fatal')) {
+        const lang = findLanguageForOutput(acc.slice(0, -1));
+        acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
+      }
     }
 
     acc.push(line);
@@ -2824,10 +2826,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "r": () => (/* binding */ codeBlocks)
 /* harmony export */ });
-/* harmony import */ var refractor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9663);
+/* harmony import */ var refractor_lib_all_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1139);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([refractor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-([refractor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([refractor_lib_all_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
+([refractor_lib_all_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 function codeBlocks(ctx) {
@@ -2846,16 +2848,9 @@ function codeBlocks(ctx) {
 }
 
 function customCode(node, ctx, file) {
-  // const { language, options, value } = parseCodeParams(node);
   const language = parseLanguage(node);
   const klass = parseClass(node);
-  const meta = node.meta || '';
   const codeProps = {};
-
-  if (meta !== '') {
-    codeProps.className = meta;
-  }
-
   const children = [];
   const trimmed = node.value.trim();
 
@@ -2865,7 +2860,7 @@ function customCode(node, ctx, file) {
       value: trimmed
     });
   } else {
-    const highlighted = refractor__WEBPACK_IMPORTED_MODULE_0__.refractor.highlight(trimmed, language);
+    const highlighted = refractor_lib_all_js__WEBPACK_IMPORTED_MODULE_0__.refractor.highlight(trimmed, language);
     children.push(...highlighted.children);
   }
 
@@ -2925,8 +2920,18 @@ function addConsoleHeading(klass) {
 function parseLanguage(node) {
   const lang = node.lang || '';
 
-  if (lang === 'plaintext' || lang.startsWith('{')) {
+  if (lang === 'plaintext') {
     return '';
+  }
+
+  if (lang.startsWith('{')) {
+    const match = lang.match(/.lang-(\w+)/);
+
+    if (match === null) {
+      return '';
+    }
+
+    return match[1].toLowerCase();
   }
 
   return lang.toLowerCase();
@@ -2934,12 +2939,14 @@ function parseLanguage(node) {
 
 function parseClass(node) {
   const lang = node.lang || '';
+  const meta = node.meta || '';
+  const combined = `${lang} ${meta}`.trim();
 
-  if (!lang.startsWith('{.')) {
+  if (!combined.startsWith('{.')) {
     return '';
   }
 
-  return lang.slice(2, -1);
+  return combined.slice(1, -1).replace(/\./g, '');
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3171,7 +3178,7 @@ function environment(ctx, targetPdf) {
     throw new Error(`[environment]: envProgram ${programFlag} should be one of ${programs}`);
   }
 
-  return async tree => {
+  return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
       const index = _index;
       const parent = _parent;
@@ -3454,7 +3461,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6809);
 /* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6688);
 /* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(117);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(117);
 /* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(529);
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3889);
 /* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1982);
@@ -3463,9 +3470,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(4457);
 /* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6264);
 /* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(7664);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(5871);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _images__WEBPACK_IMPORTED_MODULE_12__, _pagebreaks__WEBPACK_IMPORTED_MODULE_13__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__, _youtube_videos__WEBPACK_IMPORTED_MODULE_15__]);
-([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _images__WEBPACK_IMPORTED_MODULE_12__, _pagebreaks__WEBPACK_IMPORTED_MODULE_13__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__, _youtube_videos__WEBPACK_IMPORTED_MODULE_15__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(5239);
+/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(5871);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _images__WEBPACK_IMPORTED_MODULE_12__, _pagebreaks__WEBPACK_IMPORTED_MODULE_13__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__, _styled_terminal__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__]);
+([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _images__WEBPACK_IMPORTED_MODULE_12__, _pagebreaks__WEBPACK_IMPORTED_MODULE_13__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__, _styled_terminal__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3484,11 +3492,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rema
 
 
 
+
 async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_16__/* .unified */ .l)() // third-party plugins:
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_17__/* .unified */ .l)() // third-party plugins:
   .use(remark_parse__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__["default"]).use(remark_footnotes__WEBPACK_IMPORTED_MODULE_2__["default"], {
     inlineNotes: true
   }).use(remark_gfm__WEBPACK_IMPORTED_MODULE_4__["default"]) // .use(sectionize)
@@ -3498,8 +3507,8 @@ async function mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_15__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
-  .use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_images__WEBPACK_IMPORTED_MODULE_12__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_13__/* .pagebreaks */ .m);
+  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_16__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_14__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
+  .use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_15__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_12__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_13__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -3610,6 +3619,57 @@ function removeEmptyParagraphs() {
         parentChildren.splice(index || 0, 1);
       }
     });
+  };
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 5239:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "h": () => (/* binding */ styledTerminal)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+function styledTerminal() {
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'custom-code', (node, index, parent) => {
+      if (node.lang === 'bash') {
+        wrapInStyledTerminal(node, index, parent);
+      }
+    });
+  };
+}
+
+function wrapInStyledTerminal(code, index, parent) {
+  const codeChildren = code.data?.hChildren || [];
+  const responseChildren = [];
+  const nextIdx = index + 1;
+  const nextNode = parent.children[nextIdx];
+
+  if (nextNode.type === 'custom-code') {
+    const response = nextNode;
+
+    if (response.lang === '{.bash-output}') {
+      const children = response.data?.hChildren || [];
+      responseChildren.push(...children); // remove response element
+
+      parent.children.splice(nextIdx, 1);
+    }
+  }
+
+  code.data = {
+    hProperties: {
+      className: 'terminal'
+    },
+    hChildren: [...codeChildren, ...responseChildren]
   };
 }
 __webpack_async_result__();
@@ -4250,7 +4310,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.59";
+  const currentVersion = "1.1.60";
 
   try {
     const tags = await listRemoteGitTags();
@@ -5200,11 +5260,11 @@ module.exports = import("puppeteer");;
 
 /***/ }),
 
-/***/ 9663:
+/***/ 1139:
 /***/ ((module) => {
 
 "use strict";
-module.exports = import("refractor");;
+module.exports = import("refractor/lib/all.js");;
 
 /***/ }),
 
@@ -8888,67 +8948,53 @@ function assertPath(path, name) {
 /************************************************************************/
 /******/ 	/* webpack/runtime/async module */
 /******/ 	(() => {
-/******/ 		var webpackThen = typeof Symbol === "function" ? Symbol("webpack then") : "__webpack_then__";
+/******/ 		var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
 /******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
 /******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
-/******/ 		var completeQueue = (queue) => {
-/******/ 			if(queue) {
+/******/ 		var resolveQueue = (queue) => {
+/******/ 			if(queue && !queue.d) {
+/******/ 				queue.d = 1;
 /******/ 				queue.forEach((fn) => (fn.r--));
 /******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
 /******/ 			}
 /******/ 		}
-/******/ 		var completeFunction = (fn) => (!--fn.r && fn());
-/******/ 		var queueFunction = (queue, fn) => (queue ? queue.push(fn) : completeFunction(fn));
 /******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
 /******/ 			if(dep !== null && typeof dep === "object") {
-/******/ 				if(dep[webpackThen]) return dep;
+/******/ 				if(dep[webpackQueues]) return dep;
 /******/ 				if(dep.then) {
 /******/ 					var queue = [];
+/******/ 					queue.d = 0;
 /******/ 					dep.then((r) => {
 /******/ 						obj[webpackExports] = r;
-/******/ 						completeQueue(queue);
-/******/ 						queue = 0;
+/******/ 						resolveQueue(queue);
 /******/ 					}, (e) => {
 /******/ 						obj[webpackError] = e;
-/******/ 						completeQueue(queue);
-/******/ 						queue = 0;
+/******/ 						resolveQueue(queue);
 /******/ 					});
 /******/ 					var obj = {};
-/******/ 					obj[webpackThen] = (fn, reject) => (queueFunction(queue, fn), dep['catch'](reject));
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
 /******/ 					return obj;
 /******/ 				}
 /******/ 			}
 /******/ 			var ret = {};
-/******/ 			ret[webpackThen] = (fn) => (completeFunction(fn));
+/******/ 			ret[webpackQueues] = x => {};
 /******/ 			ret[webpackExports] = dep;
 /******/ 			return ret;
 /******/ 		}));
 /******/ 		__webpack_require__.a = (module, body, hasAwait) => {
-/******/ 			var queue = hasAwait && [];
+/******/ 			var queue;
+/******/ 			hasAwait && ((queue = []).d = 1);
+/******/ 			var depQueues = new Set();
 /******/ 			var exports = module.exports;
 /******/ 			var currentDeps;
 /******/ 			var outerResolve;
 /******/ 			var reject;
-/******/ 			var isEvaluating = true;
-/******/ 			var nested = false;
-/******/ 			var whenAll = (deps, onResolve, onReject) => {
-/******/ 				if (nested) return;
-/******/ 				nested = true;
-/******/ 				onResolve.r += deps.length;
-/******/ 				deps.map((dep, i) => (dep[webpackThen](onResolve, onReject)));
-/******/ 				nested = false;
-/******/ 			};
 /******/ 			var promise = new Promise((resolve, rej) => {
 /******/ 				reject = rej;
-/******/ 				outerResolve = () => (resolve(exports), completeQueue(queue), queue = 0);
+/******/ 				outerResolve = resolve;
 /******/ 			});
 /******/ 			promise[webpackExports] = exports;
-/******/ 			promise[webpackThen] = (fn, rejectFn) => {
-/******/ 				if (isEvaluating) { return completeFunction(fn); }
-/******/ 				if (currentDeps) whenAll(currentDeps, fn, rejectFn);
-/******/ 				queueFunction(queue, fn);
-/******/ 				promise['catch'](rejectFn);
-/******/ 			};
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
 /******/ 			module.exports = promise;
 /******/ 			body((deps) => {
 /******/ 				currentDeps = wrapDeps(deps);
@@ -8957,14 +9003,15 @@ function assertPath(path, name) {
 /******/ 					if(d[webpackError]) throw d[webpackError];
 /******/ 					return d[webpackExports];
 /******/ 				}))
-/******/ 				var promise = new Promise((resolve, reject) => {
+/******/ 				var promise = new Promise((resolve) => {
 /******/ 					fn = () => (resolve(getResult));
 /******/ 					fn.r = 0;
-/******/ 					whenAll(currentDeps, fn, reject);
+/******/ 					var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
 /******/ 				});
 /******/ 				return fn.r ? promise : getResult();
-/******/ 			}, (err) => (err && reject(promise[webpackError] = err), outerResolve()));
-/******/ 			isEvaluating = false;
+/******/ 			}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
+/******/ 			queue && (queue.d = 0);
 /******/ 		};
 /******/ 	})();
 /******/ 	

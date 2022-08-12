@@ -322,58 +322,46 @@ const state_state = getSavedState('environment', state_defaultState);
 ;// CONCATENATED MODULE: ./src/environment/platform.ts
 
 
-const platform_current = `platform-${state_state.platform}`;
-document.documentElement.classList.add(platform_current);
+document.documentElement.classList.add(`platform-${state_state.platform}`);
 document.querySelectorAll('#platforms input').forEach(elem => {
   const input = elem;
   input.checked = input.value === state_state.platform;
-});
-document.querySelectorAll('#platforms label').forEach(elem => {
-  elem.addEventListener('click', setPlatform);
+  elem.addEventListener('change', setPlatform);
 });
 
 function setPlatform(e) {
   const target = e.currentTarget;
-  const platform = target.getAttribute('data-platform');
+  const platform = target.value;
   const newClass = `platform-${platform}`;
-  console.log({
-    platform,
-    newClass
-  });
 
-  if (document.documentElement.classList.contains(newClass)) {
-    return;
+  if (!document.documentElement.classList.contains(newClass)) {
+    const oldClass = `platform-${state_state.platform}`;
+    document.documentElement.classList.replace(oldClass, newClass);
+    state_state.platform = platform;
+    saveState('environment', state_state);
   }
-
-  document.documentElement.classList.replace(platform_current, newClass);
-  state_state.platform = platform;
-  saveState('environment', state_state);
 }
 ;// CONCATENATED MODULE: ./src/environment/program.ts
 
 
-const program_current = `program-${state_state.program}`;
-document.documentElement.classList.add(program_current);
+document.documentElement.classList.add(`program-${state_state.program}`);
 document.querySelectorAll('#programs input').forEach(elem => {
   const input = elem;
   input.checked = input.value === state_state.program;
-});
-document.querySelectorAll('#programs label').forEach(elem => {
-  elem.addEventListener('click', setProgram);
+  elem.addEventListener('change', setProgram);
 });
 
 function setProgram(e) {
   const target = e.currentTarget;
-  const program = target.getAttribute('data-program');
+  const program = target.value;
   const newClass = `program-${program}`;
 
-  if (document.documentElement.classList.contains(newClass)) {
-    return;
+  if (!document.documentElement.classList.contains(newClass)) {
+    const oldClass = `program-${state_state.program}`;
+    document.documentElement.classList.replace(oldClass, newClass);
+    state_state.program = program;
+    saveState('environment', state_state);
   }
-
-  document.documentElement.classList.replace(program_current, newClass);
-  state_state.program = program;
-  saveState('environment', state_state);
 }
 ;// CONCATENATED MODULE: ./src/environment/index.ts
 
