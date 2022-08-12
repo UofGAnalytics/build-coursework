@@ -392,4 +392,75 @@ describe('knitr', () => {
 
     expect(hasFailingMessage(`git add does-not-exist.txt`)).toBe(true);
   });
+
+  it('should display r code correctly', async () => {
+    const { md, html } = await testProcessor(
+      `
+      \`\`\`r
+      beetles$propkilled <- beetles$killed / beetles$number
+      \`\`\`
+    `,
+      { noSyntaxHighlight: false }
+    );
+    expect(md).toContain(
+      'beetles$propkilled <- beetles$killed / beetles$number'
+    );
+    expect(ignoreWhitespace(html)).toContain(
+      ignoreWhitespace(`
+      <div class="code-wrapper">
+        <pre>
+          <code>
+            beetles
+            <span class="token operator">$</span>
+            propkilled
+            <span class="token operator">&#x3C;-</span>
+            beetles
+            <span class="token operator">$</span>
+            killed
+            <span class="token operator">/</span>
+            beetles
+            <span class="token operator">$</span>
+            number
+          </code>
+        </pre>
+      </div>
+    `)
+    );
+  });
+
+  it('should output R errors correctly', async () => {
+    const { md, hasWarningMessage } = await testProcessor(`
+      \`\`\`{r}
+      "120" + "5"
+      \`\`\`
+    `);
+
+    expect(ignoreWhitespace(md)).toContain(
+      ignoreWhitespace(`
+        \`\`\`{.r-error-output}
+        Error in "120" + "5": non-numeric argument to binary operator
+        \`\`\`
+      `)
+    );
+
+    expect(
+      hasWarningMessage(
+        'Error in "120" + "5": non-numeric argument to binary operator'
+      )
+    ).toBe(true);
+  });
+
+  it('should add the correct language output class', async () => {
+    const { html } = await testProcessor(
+      `
+      \`\`\`{bash, class.output='lang-git'}
+      git status
+      \`\`\`
+    `,
+      { noSyntaxHighlight: false }
+    );
+
+    expect(html).toContain('bash-error-output');
+    expect(html).toContain('fatal: not a git repository');
+  });
 });

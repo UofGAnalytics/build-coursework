@@ -1,7 +1,6 @@
 import { Properties, Text } from 'hast';
 import { Code } from 'mdast';
-import { refractor } from 'refractor';
-import { RefractorElement } from 'refractor/lib/core';
+import { RefractorElement, refractor } from 'refractor/lib/all.js';
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import { VFile } from 'vfile';
@@ -25,18 +24,13 @@ export function codeBlocks(ctx: Context) {
 }
 
 function customCode(node: Code, ctx: Context, file: VFile) {
-  // const { language, options, value } = parseCodeParams(node);
   const language = parseLanguage(node);
   const klass = parseClass(node);
-  const meta = (node.meta || '') as string;
 
   const codeProps: Properties = {};
-  if (meta !== '') {
-    codeProps.className = meta;
-  }
-
   const children: (RefractorElement | Text)[] = [];
   const trimmed = node.value.trim();
+
   if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
       type: 'text',
@@ -109,16 +103,26 @@ function addConsoleHeading(klass: string) {
 
 function parseLanguage(node: Code) {
   const lang = (node.lang || '') as string;
-  if (lang === 'plaintext' || lang.startsWith('{')) {
+
+  if (lang === 'plaintext') {
     return '';
+  }
+  if (lang.startsWith('{')) {
+    const match = lang.match(/.lang-(\w+)/);
+    if (match === null) {
+      return '';
+    }
+    return match[1].toLowerCase();
   }
   return lang.toLowerCase();
 }
 
 function parseClass(node: Code) {
-  const lang = (node.lang || '') as string;
-  if (!lang.startsWith('{.')) {
+  const lang = node.lang || '';
+  const meta = node.meta || '';
+  const combined = `${lang} ${meta}`.trim();
+  if (!combined.startsWith('{.')) {
     return '';
   }
-  return lang.slice(2, -1);
+  return combined.slice(1, -1).replace(/\./g, '');
 }

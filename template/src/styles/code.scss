@@ -6,7 +6,7 @@ code {
   border-radius: 0.2rem;
 }
 
-.code-wrapper {
+.code-wrapper, .terminal {
   margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 0.3rem;
@@ -20,7 +20,6 @@ code {
   }
 
   pre {
-    // overflow: auto;
     font-family: monospace;
     white-space: pre-wrap;
   }
@@ -38,6 +37,18 @@ code {
     & > h6.console-heading {
       color: white;
     }
+  }
+}
+
+.terminal {
+  position: relative;
+  padding-left: 2.5rem;
+  &::before {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-weight: bold;
+    content: '>';
   }
 }
 
