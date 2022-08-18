@@ -21,16 +21,22 @@ import { readFile, rehypeParser } from '../utils/utils';
 export function inlineRelativeAssets(ctx: Context) {
   return async (tree: Element, file: VFile) => {
     const transformations: Promise<void>[] = [];
+    const loadedScripts: string[] = [];
+
     visit(tree, 'element', (node) => {
       if (node.tagName === 'img') {
-        transformations.push(embed(node, file, ctx));
+        transformations.push(embedFile(node, file, ctx));
+      }
+      if (node.tagName === 'script' && node.properties?.src) {
+        transformations.push(embedScript(node, loadedScripts));
       }
     });
+
     await Promise.all(transformations);
   };
 }
 
-async function embed(node: Element, file: VFile, ctx: Context) {
+async function embedFile(node: Element, file: VFile, ctx: Context) {
   const src = getImageSrc(node);
   const parsed = path.parse(src);
   try {
@@ -173,4 +179,28 @@ async function embedHtml(imgNode: Element) {
     },
     children: parsed.children,
   });
+}
+
+async function embedScript(node: Element, loadedScripts: string[]) {
+  if (!node.properties?.src) {
+    return;
+  }
+
+  const src = node.properties.src as string;
+
+  if (loadedScripts.includes(src)) {
+    return;
+  }
+
+  delete node.properties.src;
+  const response = await fetch(src);
+  const value = await response.text();
+  loadedScripts.push(src);
+
+  node.children = [
+    {
+      type: 'text',
+      value,
+    },
+  ];
 }
