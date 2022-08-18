@@ -23,12 +23,14 @@ export function inlineRelativeAssets(ctx: Context) {
     const transformations: Promise<void>[] = [];
     const loadedScripts: string[] = [];
 
-    visit(tree, 'element', (node) => {
+    visit(tree, 'element', (node, index, parent) => {
       if (node.tagName === 'img') {
         transformations.push(embedFile(node, file, ctx));
       }
       if (node.tagName === 'script' && node.properties?.src) {
-        transformations.push(embedScript(node, loadedScripts));
+        transformations.push(
+          embedScript(node, index, parent, loadedScripts)
+        );
       }
     });
 
@@ -181,7 +183,12 @@ async function embedHtml(imgNode: Element) {
   });
 }
 
-async function embedScript(node: Element, loadedScripts: string[]) {
+async function embedScript(
+  node: Element,
+  index: number | null,
+  parent: Parent | null,
+  loadedScripts: string[]
+) {
   if (!node.properties?.src) {
     return;
   }
@@ -189,18 +196,22 @@ async function embedScript(node: Element, loadedScripts: string[]) {
   const src = node.properties.src as string;
 
   if (loadedScripts.includes(src)) {
+    // script already inlined, remove tag
+    const parentChildren = parent?.children || [];
+    parentChildren.splice(index || 0, 1);
     return;
   }
+
+  loadedScripts.push(src);
 
   delete node.properties.src;
   const response = await fetch(src);
   const value = await response.text();
-  loadedScripts.push(src);
 
   node.children = [
     {
       type: 'text',
-      value,
+      value: `// ${src}\n${value}\n`,
     },
   ];
 }
