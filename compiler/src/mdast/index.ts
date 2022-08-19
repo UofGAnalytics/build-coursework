@@ -15,6 +15,7 @@ import { createSvg } from '../utils/icons';
 import { codeBlocks } from './code-blocks';
 import { columns } from './columns';
 import { embedAssetUrl } from './embed-asset-url';
+import { gitGraph } from './gitgraph';
 import { images } from './images';
 import { pagebreaks } from './pagebreaks';
 import { removeEmptyParagraphs } from './remove-empty-paragraphs';
@@ -45,6 +46,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(aliasDirectiveToSvg, ctx)
     .use(removeEmptyParagraphs)
     // .use(aliasDirectiveToTex, ctx)
+    .use(gitGraph)
     .use(codeBlocks, ctx)
     .use(styledTerminal)
     .use(images, ctx)

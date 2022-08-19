@@ -1,0 +1,12 @@
+.gitgraph {
+  padding: 2rem 0;
+
+  & > div {
+    overflow: auto;
+  }
+
+  svg {
+    display: block;
+    margin: 0 auto;
+  }
+}
