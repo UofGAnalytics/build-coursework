@@ -31,7 +31,7 @@ function createGitGraph(node: Code, counter: number) {
         {
           type: 'element',
           tagName: 'div',
-          properties: { id },
+          properties: { id: `gitgraph-${counter}` },
         },
         {
           type: 'text',
@@ -58,10 +58,18 @@ function createGitGraph(node: Code, counter: number) {
               type: 'text',
               value: [
                 '',
+                // The global template js (template/src/index.ts) emits a custom event
+                // 'template-ready' when initialised.  This is handy as the document
+                // gets serveral <html> element classes added to it which causes re-renders.
+                // Here, we wait for this custom event before rendering the gitgraphs,
+                // and are careful to define all variables inside the the event callback
+                `document.documentElement.addEventListener('template-ready', () => {`,
+                '',
                 `const graphContainer = document.getElementById("${id}");`,
                 `const gitgraph = GitgraphJS.createGitgraph(graphContainer, ${options});`,
+                `${node.value}`,
                 '',
-                node.value,
+                `})`,
                 '',
               ].join('\n'),
             },
@@ -77,36 +85,45 @@ function createGitGraph(node: Code, counter: number) {
 }
 
 function createDefaultOptions() {
-  const template = {
-    colors: ['#be4d00', '#7a6855', '#00843d', '#7d2239', '#951272'],
-    branch: {
-      color: '#9ACCE6',
-      lineWidth: 5,
-      mergeStyle: 'bezier',
-      spacing: 40,
-      label: {
-        display: true,
-        bgColor: 'transparent',
-        borderRadius: 10,
+  return JSON.stringify({
+    // orientation: 'vertical-reverse',
+    template: {
+      colors: ['#0075b0', '#00843d', '#7d2239', '#951272', '#7a6855'],
+      branch: {
+        color: '#ccc',
+        lineWidth: 5,
+        mergeStyle: 'bezier',
+        spacing: 40,
+        label: {
+          display: true,
+          bgColor: 'transparent',
+          borderRadius: 10,
+        },
       },
+      arrow: {
+        // size: 10,
+        // color: '#ccc',
+        // offset: -1.5
+      },
+      commit: {
+        spacing: 40,
+        hasTooltipInCompactMode: true,
+        dot: {
+          // size: 8,
+          // strokeWidth: 0,
+          size: 16,
+          strokeWidth: 6,
+          strokeColor: 'white',
+        },
+        message: {
+          display: true,
+          displayAuthor: false,
+          displayHash: false,
+          font: 'inherit',
+          color: '#333',
+        },
+      },
+      tag: {},
     },
-    commit: {
-      spacing: 40,
-      hasTooltipInCompactMode: true,
-      dot: {
-        size: 16,
-        strokeWidth: 6,
-        strokeColor: 'white',
-      },
-      message: {
-        display: true,
-        displayAuthor: false,
-        displayHash: false,
-        font: 'inherit',
-      },
-    },
-    arrow: {},
-    tag: {},
-  };
-  return JSON.stringify({ template });
+  });
 }

@@ -4,3 +4,5 @@ import './view-options';
 import './toggle-answers';
 import './toggle-sidebar';
 import './environment';
+
+document.documentElement.dispatchEvent(new Event('template-ready'));
