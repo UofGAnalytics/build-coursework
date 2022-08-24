@@ -124,37 +124,37 @@ function createEnvironmentConfig(
       children: [
         {
           type: 'text',
-          value: 'Environment',
+          value: 'Program',
         },
       ],
     },
     ...node.children.map((node) => toHast(node as any) as HastNode),
   ];
 
-  if (!platformFlag) {
-    hChildren.push({
-      type: 'element',
-      tagName: 'div',
-      properties: {
-        id: 'platforms',
-      },
-      children: [
-        {
-          type: 'element',
-          tagName: 'h3',
-          children: [
-            {
-              type: 'text',
-              value: 'Platform',
-            },
-          ],
-        },
-        ...platforms.map((platform, idx) => {
-          return createRadioInput('platform', platform, idx);
-        }),
-      ],
-    });
-  }
+  // if (!platformFlag) {
+  //   hChildren.push({
+  //     type: 'element',
+  //     tagName: 'div',
+  //     properties: {
+  //       id: 'platforms',
+  //     },
+  //     children: [
+  //       {
+  //         type: 'element',
+  //         tagName: 'h3',
+  //         children: [
+  //           {
+  //             type: 'text',
+  //             value: 'Platform',
+  //           },
+  //         ],
+  //       },
+  //       ...platforms.map((platform, idx) => {
+  //         return createRadioInput('platform', platform, idx);
+  //       }),
+  //     ],
+  //   });
+  // }
 
   if (!programFlag) {
     hChildren.push({
@@ -164,16 +164,16 @@ function createEnvironmentConfig(
         id: 'programs',
       },
       children: [
-        {
-          type: 'element',
-          tagName: 'h3',
-          children: [
-            {
-              type: 'text',
-              value: 'Program',
-            },
-          ],
-        },
+        // {
+        //   type: 'element',
+        //   tagName: 'h3',
+        //   children: [
+        //     {
+        //       type: 'text',
+        //       value: 'Program',
+        //     },
+        //   ],
+        // },
         ...programs.map((program, idx) => {
           return createRadioInput('program', program, idx);
         }),
@@ -217,7 +217,7 @@ function createRadioInput(
         children: [
           {
             type: 'text',
-            value: startCase(value),
+            value: value === 'cli' ? 'Command-line' : startCase(value),
           },
         ],
       },
