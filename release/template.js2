@@ -373,6 +373,7 @@ function setProgram(e) {
 
 
 
+document.documentElement.dispatchEvent(new Event('template-ready'));
 })();
 
 /******/ })()

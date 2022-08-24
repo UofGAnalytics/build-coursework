@@ -3274,29 +3274,32 @@ function createEnvironmentConfig(node, platformFlag, programFlag) {
     },
     children: [{
       type: 'text',
-      value: 'Environment'
+      value: 'Program'
     }]
-  }, ...node.children.map(node => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__/* .toHast */ .Q)(node))];
-
-  if (!platformFlag) {
-    hChildren.push({
-      type: 'element',
-      tagName: 'div',
-      properties: {
-        id: 'platforms'
-      },
-      children: [{
-        type: 'element',
-        tagName: 'h3',
-        children: [{
-          type: 'text',
-          value: 'Platform'
-        }]
-      }, ...platforms.map((platform, idx) => {
-        return createRadioInput('platform', platform, idx);
-      })]
-    });
-  }
+  }, ...node.children.map(node => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__/* .toHast */ .Q)(node))]; // if (!platformFlag) {
+  //   hChildren.push({
+  //     type: 'element',
+  //     tagName: 'div',
+  //     properties: {
+  //       id: 'platforms',
+  //     },
+  //     children: [
+  //       {
+  //         type: 'element',
+  //         tagName: 'h3',
+  //         children: [
+  //           {
+  //             type: 'text',
+  //             value: 'Platform',
+  //           },
+  //         ],
+  //       },
+  //       ...platforms.map((platform, idx) => {
+  //         return createRadioInput('platform', platform, idx);
+  //       }),
+  //     ],
+  //   });
+  // }
 
   if (!programFlag) {
     hChildren.push({
@@ -3305,14 +3308,17 @@ function createEnvironmentConfig(node, platformFlag, programFlag) {
       properties: {
         id: 'programs'
       },
-      children: [{
-        type: 'element',
-        tagName: 'h3',
-        children: [{
-          type: 'text',
-          value: 'Program'
-        }]
-      }, ...programs.map((program, idx) => {
+      children: [// {
+      //   type: 'element',
+      //   tagName: 'h3',
+      //   children: [
+      //     {
+      //       type: 'text',
+      //       value: 'Program',
+      //     },
+      //   ],
+      // },
+      ...programs.map((program, idx) => {
         return createRadioInput('program', program, idx);
       })]
     });
@@ -3347,7 +3353,7 @@ function createRadioInput(name, value, idx) {
       tagName: 'span',
       children: [{
         type: 'text',
-        value: (0,lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(value)
+        value: value === 'cli' ? 'Command-line' : (0,lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(value)
       }]
     }]
   };
@@ -3397,7 +3403,7 @@ function createGitGraph(node, counter) {
         type: 'element',
         tagName: 'div',
         properties: {
-          id
+          id: `gitgraph-${counter}`
         }
       }, {
         type: 'text',
@@ -3418,7 +3424,12 @@ function createGitGraph(node, counter) {
         tagName: 'script',
         children: [{
           type: 'text',
-          value: ['', `const graphContainer = document.getElementById("${id}");`, `const gitgraph = GitgraphJS.createGitgraph(graphContainer, ${options});`, '', node.value, ''].join('\n')
+          value: ['', // The global template js (template/src/index.ts) emits a custom event
+          // 'template-ready' when initialised.  This is handy as the document
+          // gets serveral <html> element classes added to it which causes re-renders.
+          // Here, we wait for this custom event before rendering the gitgraphs,
+          // and are careful to define all variables inside the the event callback
+          `document.documentElement.addEventListener('template-ready', () => {`, '', `const graphContainer = document.getElementById("${id}");`, `const gitgraph = GitgraphJS.createGitgraph(graphContainer, ${options});`, `${node.value}`, '', `})`, ''].join('\n')
         }]
       }, {
         type: 'text',
@@ -3429,39 +3440,45 @@ function createGitGraph(node, counter) {
 }
 
 function createDefaultOptions() {
-  const template = {
-    colors: ['#be4d00', '#7a6855', '#00843d', '#7d2239', '#951272'],
-    branch: {
-      color: '#9ACCE6',
-      lineWidth: 5,
-      mergeStyle: 'bezier',
-      spacing: 40,
-      label: {
-        display: true,
-        bgColor: 'transparent',
-        borderRadius: 10
-      }
-    },
-    commit: {
-      spacing: 40,
-      hasTooltipInCompactMode: true,
-      dot: {
-        size: 16,
-        strokeWidth: 6,
-        strokeColor: 'white'
-      },
-      message: {
-        display: true,
-        displayAuthor: false,
-        displayHash: false,
-        font: 'inherit'
-      }
-    },
-    arrow: {},
-    tag: {}
-  };
   return JSON.stringify({
-    template
+    // orientation: 'vertical-reverse',
+    template: {
+      colors: ['#0075b0', '#00843d', '#7d2239', '#951272', '#7a6855'],
+      branch: {
+        color: '#ccc',
+        lineWidth: 5,
+        mergeStyle: 'bezier',
+        spacing: 40,
+        label: {
+          display: true,
+          bgColor: 'transparent',
+          borderRadius: 10
+        }
+      },
+      arrow: {// size: 10,
+        // color: '#ccc',
+        // offset: -1.5
+      },
+      commit: {
+        spacing: 40,
+        hasTooltipInCompactMode: true,
+        dot: {
+          // size: 8,
+          // strokeWidth: 0,
+          size: 16,
+          strokeWidth: 6,
+          strokeColor: 'white'
+        },
+        message: {
+          display: true,
+          displayAuthor: false,
+          displayHash: false,
+          font: 'inherit',
+          color: '#333'
+        }
+      },
+      tag: {}
+    }
   });
 }
 __webpack_async_result__();
@@ -3602,7 +3619,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6809);
 /* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6688);
 /* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(117);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(117);
 /* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(529);
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3889);
 /* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1982);
@@ -3613,9 +3630,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(6264);
 /* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(7664);
 /* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(5239);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(5871);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _youtube_videos__WEBPACK_IMPORTED_MODULE_17__]);
-([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _youtube_videos__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _textFile__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(6828);
+/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(5871);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _textFile__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__]);
+([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _textFile__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3636,11 +3654,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rema
 
 
 
+
 async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_18__/* .unified */ .l)() // third-party plugins:
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_19__/* .unified */ .l)() // third-party plugins:
   .use(remark_parse__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__["default"]).use(remark_footnotes__WEBPACK_IMPORTED_MODULE_2__["default"], {
     inlineNotes: true
   }).use(remark_gfm__WEBPACK_IMPORTED_MODULE_4__["default"]) // .use(sectionize)
@@ -3650,8 +3669,8 @@ async function mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_17__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
-  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_12__/* .gitGraph */ .D).use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_16__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_13__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_14__/* .pagebreaks */ .m);
+  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_18__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
+  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_12__/* .gitGraph */ .D).use(_textFile__WEBPACK_IMPORTED_MODULE_17__/* .textFile */ .K).use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_16__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_13__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_14__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -3814,6 +3833,81 @@ function wrapInStyledTerminal(code, index, parent) {
     },
     hChildren: [...codeChildren, ...responseChildren]
   };
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 6828:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "K": () => (/* binding */ textFile)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+function textFile() {
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'code', node => {
+      if (node.lang === 'textfile') {
+        createTextFile(node);
+      }
+    });
+  };
+}
+
+function createTextFile(node) {
+  Object.assign(node, {
+    type: 'text-file',
+    data: {
+      hName: 'div',
+      hProperties: {
+        className: 'text-file'
+      },
+      hChildren: [{
+        type: 'text',
+        value: '\n'
+      }, {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: 'text-file-wrapper'
+        },
+        children: [{
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            className: 'text-file-header'
+          },
+          children: [{
+            type: 'text',
+            value: node.meta?.trim() || ''
+          }]
+        }, {
+          type: 'text',
+          value: '\n'
+        }, {
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            className: 'text-file-content'
+          },
+          children: [{
+            type: 'text',
+            value: node.value
+          }]
+        }, {
+          type: 'text',
+          value: '\n'
+        }]
+      }]
+    }
+  });
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4453,7 +4547,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.61";
+  const currentVersion = "1.1.62";
 
   try {
     const tags = await listRemoteGitTags();
