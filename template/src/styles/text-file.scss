@@ -1,0 +1,28 @@
+.text-file {
+  padding: 2rem 0;
+  text-align: center;
+
+  .text-file-wrapper {
+    display: inline-block;
+    border: 1px solid #0003;
+    border-radius: 1rem;
+    box-shadow: 0 0.2rem 0.5rem #0003;
+    overflow: hidden;
+  }
+
+  .text-file-header {
+    border-bottom: 1px solid #0003;
+    background: #f2f2f2;
+    text-align: center;
+    font-weight: bold;
+    line-height: 2.2;
+  }
+
+  .text-file-content {
+    padding: 1rem;
+    overflow: auto;
+    line-height: 1.25;
+    white-space: pre-wrap;
+    text-align: left;
+  }
+}

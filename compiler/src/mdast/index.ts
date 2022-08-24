@@ -20,6 +20,7 @@ import { images } from './images';
 import { pagebreaks } from './pagebreaks';
 import { removeEmptyParagraphs } from './remove-empty-paragraphs';
 import { styledTerminal } from './styled-terminal';
+import { textFile } from './textFile';
 import { youtubeVideos } from './youtube-videos';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
@@ -47,6 +48,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(removeEmptyParagraphs)
     // .use(aliasDirectiveToTex, ctx)
     .use(gitGraph)
+    .use(textFile)
     .use(codeBlocks, ctx)
     .use(styledTerminal)
     .use(images, ctx)
