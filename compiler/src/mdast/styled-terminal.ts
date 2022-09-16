@@ -44,37 +44,35 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
 }
 
 function ansiToHast(children: Node[]): Node[] {
-  const codeNode = {
-    type: 'code',
-    children: children.filter((o) => o !== null),
-  };
+  const pre = children[1] as Parent;
+  const code = pre.children[0] as Parent;
+  const text = code.children[0] as Literal;
+  const parsed = parse(text.value);
 
-  visit(codeNode, 'text', (node: Literal, _, parent: Parent) => {
-    const parsed = parse(node.value);
-    const hast = parsed.spans.map((o) => {
-      if (!o.color) {
-        return {
-          type: 'text',
-          value: o.text,
-        };
-      } else {
-        return {
-          type: 'element',
-          tagName: 'span',
-          properties: {
-            className: o.color.name,
-          },
-          children: [
-            {
-              type: 'text',
-              value: o.text,
-            },
-          ],
-        };
-      }
-    });
-    parent.children = hast;
+  const hast = parsed.spans.map((o) => {
+    const text = {
+      type: 'text',
+      value: o.text,
+    };
+    if (!o.color) {
+      return text;
+    } else {
+      return {
+        type: 'element',
+        tagName: 'span',
+        properties: {
+          className: [
+            o.color.name || '',
+            o.bold ? 'bold' : '',
+            o.color.bright ? 'bright' : '',
+          ].filter(Boolean),
+        },
+        children: [text],
+      };
+    }
   });
 
-  return codeNode.children;
+  code.children = hast;
+
+  return children;
 }
