@@ -1,4 +1,5 @@
-import { Code } from 'mdast';
+import { parse } from 'ansicolor';
+import { Code, Literal } from 'mdast';
 import { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 
@@ -22,11 +23,13 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
 
   const nextIdx = index + 1;
   const nextNode = parent.children[nextIdx];
-  if (nextNode.type === 'custom-code') {
+  if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode as Code;
     if (response.lang === '{.bash-output}') {
       const children = (response.data?.hChildren || []) as Node[];
-      responseChildren.push(...children);
+      const responseWithColours = ansiToHast(children);
+      responseChildren.push(...responseWithColours);
+
       // remove response element
       parent.children.splice(nextIdx, 1);
     }
@@ -38,4 +41,40 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
     },
     hChildren: [...codeChildren, ...responseChildren],
   };
+}
+
+function ansiToHast(children: Node[]): Node[] {
+  const codeNode = {
+    type: 'code',
+    children: children.filter((o) => o !== null),
+  };
+
+  visit(codeNode, 'text', (node: Literal, _: number, parent: Parent) => {
+    const parsed = parse(node.value);
+    const hast = parsed.spans.map((o) => {
+      if (!o.color) {
+        return {
+          type: 'text',
+          value: o.text,
+        };
+      } else {
+        return {
+          type: 'element',
+          tagName: 'span',
+          properties: {
+            className: o.color.name,
+          },
+          children: [
+            {
+              type: 'text',
+              value: o.text,
+            },
+          ],
+        };
+      }
+    });
+    parent.children = hast;
+  });
+
+  return codeNode.children;
 }
