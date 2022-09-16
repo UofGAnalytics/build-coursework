@@ -1,4 +1,4 @@
-import { parse } from 'ansicolor';
+import ansiColor from 'ansicolor';
 import { Code, Literal } from 'mdast';
 import { Node, Parent } from 'unist';
 import { visit } from 'unist-util-visit';
@@ -47,7 +47,7 @@ function ansiToHast(children: Node[]): Node[] {
   const pre = children[1] as Parent;
   const code = pre.children[0] as Parent;
   const text = code.children[0] as Literal;
-  const parsed = parse(text.value);
+  const parsed = ansiColor.parse(text.value);
 
   const hast = parsed.spans.map((o) => {
     const text = {
