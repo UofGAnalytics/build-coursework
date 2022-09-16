@@ -49,7 +49,7 @@ function ansiToHast(children: Node[]): Node[] {
     children: children.filter((o) => o !== null),
   };
 
-  visit(codeNode, 'text', (node: Literal, _: number, parent: Parent) => {
+  visit(codeNode, 'text', (node: Literal, _, parent: Parent) => {
     const parsed = parse(node.value);
     const hast = parsed.spans.map((o) => {
       if (!o.color) {
