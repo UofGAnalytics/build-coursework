@@ -172,5 +172,5 @@ function removeUnresolvedLabels(html: string) {
 }
 
 function removeHTMLClosingTags(html: string) {
-  return html.replace(/(<\/\w+>)+$/, '');
+  return html.replace(/(<\/\S+>)+$/, '');
 }
