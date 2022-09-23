@@ -25,7 +25,10 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
   const nextNode = parent.children[nextIdx];
   if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode as Code;
-    if (response.lang === '{.bash-output}') {
+    if (
+      response.lang === '{.bash-output}' ||
+      response.lang === '{.bash-error-output}'
+    ) {
       const children = (response.data?.hChildren || []) as Node[];
       const responseWithColours = ansiToHast(children);
       responseChildren.push(...responseWithColours);
