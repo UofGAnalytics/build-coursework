@@ -1,2 +1,0 @@
-import './platform';
-import './program';

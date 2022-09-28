@@ -1,0 +1,51 @@
+html.program-command-line .program-switcher > .program:not([data-program="command-line"]),
+html.program-github-desktop .program-switcher > .program:not([data-program="github-desktop"]) {
+  display: none;
+}
+
+html.program-command-line .program-switcher > ul > li[data-program="command-line"],
+html.program-github-desktop .program-switcher  > ul > li[data-program="github-desktop"] {
+  color: var(--highlightColor);
+  cursor: default;
+  &:hover {
+    color: var(--highlightColor);
+  }
+}
+
+.program-switcher {
+  position: relative;
+
+  & > ul {
+    position: absolute;
+    top: -0.8rem;
+    right: 2rem;
+    padding: 0 0.2rem 0.1rem;
+    background: var(--boxoutBg);
+    border-radius: 0.6rem;
+
+    li {
+      display: inline-block;
+      padding: 0 0.5rem;
+      margin: 0;
+      font-weight: 700;
+      font-size: 0.8rem;
+      line-height: 1;
+      color: var(--fadedTextColor);
+      transition: color 0.2s;
+      cursor: pointer;
+      &:not(:first-child) {
+        border-left: 1px solid var(--fadedTextColor);
+      }
+      &:hover {
+        color: var(--textColor);
+      }
+    }
+
+  }
+
+  & > .program {
+    padding: 1rem;
+    border: 3px solid var(--boxoutBg);
+    border-radius: 0.6rem;
+  }
+}
