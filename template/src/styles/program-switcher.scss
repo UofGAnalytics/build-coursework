@@ -44,8 +44,9 @@ html.program-github-desktop .program-switcher  > ul > li[data-program="github-de
   }
 
   & > .program {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     border: 3px solid var(--boxoutBg);
     border-radius: 0.6rem;
+    margin: 1.5rem 0;
   }
 }
