@@ -312,48 +312,37 @@ function getProps(elem) {
 var toggle_answers = __webpack_require__(137);
 // EXTERNAL MODULE: ./src/toggle-sidebar.ts
 var toggle_sidebar = __webpack_require__(567);
-;// CONCATENATED MODULE: ./src/environment/state.ts
+;// CONCATENATED MODULE: ./src/program-switcher/state.ts
 
 const state_defaultState = Object.freeze({
-  platform: 'mac',
-  program: 'cli'
+  program: 'command-line'
 });
 const state_state = getSavedState('environment', state_defaultState);
-;// CONCATENATED MODULE: ./src/environment/platform.ts
-
-
-document.documentElement.classList.add(`platform-${state_state.platform}`);
-document.querySelectorAll('#platforms input').forEach(elem => {
-  const input = elem;
-  input.checked = input.value === state_state.platform;
-  elem.addEventListener('change', setPlatform);
-});
-
-function setPlatform(e) {
-  const target = e.currentTarget;
-  const platform = target.value;
-  const newClass = `platform-${platform}`;
-
-  if (!document.documentElement.classList.contains(newClass)) {
-    const oldClass = `platform-${state_state.platform}`;
-    document.documentElement.classList.replace(oldClass, newClass);
-    state_state.platform = platform;
-    saveState('environment', state_state);
-  }
-}
-;// CONCATENATED MODULE: ./src/environment/program.ts
+;// CONCATENATED MODULE: ./src/program-switcher/index.ts
 
 
 document.documentElement.classList.add(`program-${state_state.program}`);
-document.querySelectorAll('#programs input').forEach(elem => {
-  const input = elem;
-  input.checked = input.value === state_state.program;
-  elem.addEventListener('change', setProgram);
+document.querySelectorAll('.program-switcher > ul > li').forEach(elem => {
+  const element = elem;
+  console.log(element.dataset.program, state_state.program);
+
+  if (element.dataset.program === state_state.program) {
+    element.classList.add('active');
+  }
+
+  element.addEventListener('click', setProgram);
+});
+document.querySelectorAll('.program-switcher > .program').forEach(elem => {
+  const element = elem;
+
+  if (element.dataset.program === state_state.program) {
+    element.classList.add('show');
+  }
 });
 
 function setProgram(e) {
   const target = e.currentTarget;
-  const program = target.value;
+  const program = target.dataset.program;
   const newClass = `program-${program}`;
 
   if (!document.documentElement.classList.contains(newClass)) {
@@ -363,9 +352,6 @@ function setProgram(e) {
     saveState('environment', state_state);
   }
 }
-;// CONCATENATED MODULE: ./src/environment/index.ts
-
-
 ;// CONCATENATED MODULE: ./src/index.ts
 
 

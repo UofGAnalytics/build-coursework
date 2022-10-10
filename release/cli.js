@@ -2049,7 +2049,7 @@ function removeUnresolvedLabels(html) {
 }
 
 function removeHTMLClosingTags(html) {
-  return html.replace(/(<\/\w+>)+$/, '');
+  return html.replace(/(<\/\S+>)+$/, '');
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2234,6 +2234,53 @@ function assertNoTexTabular(file) {
 
 /***/ }),
 
+/***/ 5705:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "F": () => (/* binding */ assertProgramSwitcherStructure)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+
+function assertProgramSwitcherStructure() {
+  return (tree, file) => {
+    let count = 0;
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', (node, index, _parent) => {
+      if (node.name === 'task') {
+        count++;
+        const children = node.children;
+        const answers = children.filter(o => o.name === 'answer');
+
+        if (answers.length < 1) {
+          (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `Task ${count} has no answer`, node.position);
+        }
+
+        if (answers.length > 1) {
+          (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Task has multiple answers', node.position);
+        }
+      }
+
+      if (node.name === 'answer') {
+        const parent = _parent;
+
+        if (!parent || parent.name !== 'task') {
+          (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Answer must be nested inside task', node.position);
+        }
+      }
+    });
+  };
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
 /***/ 4475:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -2372,17 +2419,18 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_retext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4540);
 /* harmony import */ var retext_english__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5414);
 /* harmony import */ var retext_spell__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(862);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(117);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(117);
 /* harmony import */ var _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2816);
 /* harmony import */ var _assert_columns__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(6935);
 /* harmony import */ var _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1276);
-/* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(4475);
-/* harmony import */ var _assert_video_attributes__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(2712);
-/* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(3980);
-/* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(6737);
-/* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(8987);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_9__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_10__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_11__, _lint_latex__WEBPACK_IMPORTED_MODULE_12__, _report__WEBPACK_IMPORTED_MODULE_13__]);
-([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_9__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_10__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_11__, _lint_latex__WEBPACK_IMPORTED_MODULE_12__, _report__WEBPACK_IMPORTED_MODULE_13__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5705);
+/* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4475);
+/* harmony import */ var _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(2712);
+/* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(3980);
+/* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6737);
+/* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(8987);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__, _lint_latex__WEBPACK_IMPORTED_MODULE_13__, _report__WEBPACK_IMPORTED_MODULE_14__]);
+([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__, _lint_latex__WEBPACK_IMPORTED_MODULE_13__, _report__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // @ts-expect-error
  // @ts-expect-error
 
@@ -2400,14 +2448,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_dou
 
 
 
+
 function reportErrors(files, ctx) {
   if (!ctx.options.noReport) {
-    (0,_report__WEBPACK_IMPORTED_MODULE_13__/* .printReport */ .IC)(files, ctx);
+    (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, ctx);
   }
 
-  if ((0,_report__WEBPACK_IMPORTED_MODULE_13__/* .reportHasFatalErrors */ .wC)(files)) {
+  if ((0,_report__WEBPACK_IMPORTED_MODULE_14__/* .reportHasFatalErrors */ .wC)(files)) {
     if (ctx.options.noReport) {
-      (0,_report__WEBPACK_IMPORTED_MODULE_13__/* .printReport */ .IC)(files, { ...ctx,
+      (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, { ...ctx,
         options: { ...ctx.options,
           reportOnlyErrors: true
         }
@@ -2424,10 +2473,10 @@ function reportErrors(files, ctx) {
   }
 }
 async function createReport(file, mdast, ctx) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_14__/* .unified */ .l)().use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_10__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_9__/* .assertTaskAnswerStructure */ .A).use(_assert_columns__WEBPACK_IMPORTED_MODULE_7__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_11__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_8__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_12__/* .lintLatex */ .I).use(_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__["default"]);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)().use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_10__/* .assertTaskAnswerStructure */ .A).use(_assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__/* .assertProgramSwitcherStructure */ .F).use(_assert_columns__WEBPACK_IMPORTED_MODULE_7__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_8__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_13__/* .lintLatex */ .I).use(_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
   if (ctx.options.spelling) {
-    const retextProcessor = (0,unified__WEBPACK_IMPORTED_MODULE_14__/* .unified */ .l)().use(retext_english__WEBPACK_IMPORTED_MODULE_4__["default"]).use(retext_spell__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    const retextProcessor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)().use(retext_english__WEBPACK_IMPORTED_MODULE_4__["default"]).use(retext_spell__WEBPACK_IMPORTED_MODULE_5__["default"], {
       dictionary: dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__["default"],
       max: 1
     });
@@ -3065,19 +3114,19 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(117);
 /* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(478);
-/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3491);
-/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6285);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _environment__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__]);
-([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _environment__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6285);
+/* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2486);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _program_switcher__WEBPACK_IMPORTED_MODULE_2__]);
+([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _program_switcher__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
 
 async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_3__/* .unified */ .l)().use(_environment__WEBPACK_IMPORTED_MODULE_1__/* .environment */ .N, ctx, targetPdf).use(_boxouts__WEBPACK_IMPORTED_MODULE_0__/* .boxouts */ .q, ctx.refStore);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_3__/* .unified */ .l)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_2__/* .programSwitcher */ .D, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_0__/* .boxouts */ .q, ctx.refStore);
 
   if (targetPdf) {
-    processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__/* .moveAnswersToEnd */ .w);
+    processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__/* .moveAnswersToEnd */ .w);
   }
 
   return processor.run(mdast, file);
@@ -3170,193 +3219,6 @@ function propsToObject(str) {
 
     return acc;
   }, {});
-}
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 3491:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "N": () => (/* binding */ environment)
-/* harmony export */ });
-/* harmony import */ var lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9659);
-/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3286);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__]);
-([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
-
-
-const platforms = ['mac', 'windows', 'linux'];
-const programs = ['cli', 'github-desktop'];
-function environment(ctx, targetPdf) {
-  const platformFlag = ctx.options.envPlatform;
-
-  if (platformFlag !== undefined && !platforms.includes(platformFlag)) {
-    throw new Error(`[environment]: envPlatform ${platformFlag} should be one of ${platforms}`);
-  }
-
-  const programFlag = ctx.options.envProgram;
-
-  if (programFlag !== undefined && !programs.includes(programFlag)) {
-    throw new Error(`[environment]: envProgram ${programFlag} should be one of ${programs}`);
-  }
-
-  return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
-      const index = _index;
-      const parent = _parent;
-
-      if (node.name === 'environment') {
-        if (targetPdf || platformFlag && programFlag) {
-          removeNode(parent, index);
-        } else {
-          createEnvironmentConfig(node, platformFlag, programFlag);
-        }
-      }
-    });
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
-      const index = _index;
-      const parent = _parent;
-
-      if (platforms.includes(node.name)) {
-        node.data = {
-          hProperties: {
-            className: ['platform', node.name, platformFlag === node.name ? 'show' : '']
-          }
-        };
-
-        if (platformFlag && platformFlag !== node.name) {
-          removeNode(parent, index);
-        }
-      }
-    }, true);
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
-      const index = _index;
-      const parent = _parent;
-
-      if (programs.includes(node.name)) {
-        node.data = {
-          hProperties: {
-            className: ['program', node.name, programFlag === node.name ? 'show' : '']
-          }
-        };
-
-        if (programFlag && programFlag !== node.name) {
-          removeNode(parent, index);
-        }
-      }
-    }, true);
-  };
-}
-
-function removeNode(parent, index) {
-  const parentChildren = parent?.children || [];
-  parentChildren.splice(index || 0, 1);
-}
-
-function createEnvironmentConfig(node, platformFlag, programFlag) {
-  const hName = 'div';
-  const hProperties = {
-    id: 'environment',
-    className: 'boxout'
-  };
-  const hChildren = [{
-    type: 'element',
-    tagName: 'span',
-    properties: {
-      className: ['type']
-    },
-    children: [{
-      type: 'text',
-      value: 'Program'
-    }]
-  }, ...node.children.map(node => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_2__/* .toHast */ .Q)(node))]; // if (!platformFlag) {
-  //   hChildren.push({
-  //     type: 'element',
-  //     tagName: 'div',
-  //     properties: {
-  //       id: 'platforms',
-  //     },
-  //     children: [
-  //       {
-  //         type: 'element',
-  //         tagName: 'h3',
-  //         children: [
-  //           {
-  //             type: 'text',
-  //             value: 'Platform',
-  //           },
-  //         ],
-  //       },
-  //       ...platforms.map((platform, idx) => {
-  //         return createRadioInput('platform', platform, idx);
-  //       }),
-  //     ],
-  //   });
-  // }
-
-  if (!programFlag) {
-    hChildren.push({
-      type: 'element',
-      tagName: 'div',
-      properties: {
-        id: 'programs'
-      },
-      children: [// {
-      //   type: 'element',
-      //   tagName: 'h3',
-      //   children: [
-      //     {
-      //       type: 'text',
-      //       value: 'Program',
-      //     },
-      //   ],
-      // },
-      ...programs.map((program, idx) => {
-        return createRadioInput('program', program, idx);
-      })]
-    });
-  }
-
-  node.data = {
-    hName,
-    hProperties,
-    hChildren
-  };
-}
-
-function createRadioInput(name, value, idx) {
-  return {
-    type: 'element',
-    tagName: 'label',
-    properties: {
-      [`data-${name}`]: value
-    },
-    children: [{
-      type: 'element',
-      tagName: 'input',
-      properties: {
-        type: 'radio',
-        name,
-        value,
-        checked: idx === 0
-      },
-      children: []
-    }, {
-      type: 'element',
-      tagName: 'span',
-      children: [{
-        type: 'text',
-        value: value === 'cli' ? 'Command-line' : (0,lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(value)
-      }]
-    }]
-  };
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3758,6 +3620,107 @@ __webpack_async_result__();
 
 /***/ }),
 
+/***/ 2486:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "D": () => (/* binding */ programSwitcher)
+/* harmony export */ });
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3286);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__]);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+const programs = ['command-line', 'github-desktop'];
+const titleCase = ['Command-line', 'GitHub Desktop'];
+function programSwitcher(ctx) {
+  const programFlag = ctx.options.envProgram;
+
+  if (programFlag !== undefined && !programs.includes(programFlag)) {
+    throw new Error(`[environment]: envProgram ${programFlag} should be one of ${programs}`);
+  }
+
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', node => {
+      if (node.name === 'program-switcher') {
+        const nav = processMenu(node, programFlag);
+        const children = processChildren(node, programFlag);
+        node.data = {
+          hProperties: {
+            className: 'program-switcher'
+          },
+          hChildren: [nav, ...children]
+        };
+      }
+    });
+  };
+}
+
+function processMenu(parent, programFlag) {
+  const children = parent.children;
+
+  if (programFlag !== undefined) {
+    return null;
+  }
+
+  return {
+    type: 'element',
+    tagName: 'ul',
+    children: children.map(node => {
+      const element = {
+        type: 'element',
+        tagName: 'li',
+        properties: {
+          'data-program': node.name
+        },
+        children: [{
+          type: 'text',
+          value: titleCase[programs.indexOf(node.name)]
+        }]
+      };
+      return element;
+    })
+  };
+}
+
+function processChildren(parent, programFlag) {
+  const children = parent.children.map(node => {
+    const parent = node;
+
+    if (programs.includes(parent.name)) {
+      node.data = {
+        hProperties: {
+          'data-program': parent.name,
+          className: ['program', programFlag === parent.name ? 'show' : '']
+        }
+      };
+    }
+
+    return node;
+  });
+  let filtered = children;
+
+  if (programFlag !== undefined) {
+    filtered = filtered.filter(node => {
+      const parent = node;
+      return programFlag === parent.name;
+    });
+  }
+
+  const parentHast = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__/* .toHast */ .Q)({
+    type: 'root',
+    children: filtered
+  });
+  return parentHast.children;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
 /***/ 7664:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -3796,13 +3759,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "h": () => (/* binding */ styledTerminal)
 /* harmony export */ });
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var ansicolor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9742);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([ansicolor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
+([ansicolor__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 function styledTerminal() {
   return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'custom-code', (node, index, parent) => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'custom-code', (node, index, parent) => {
       if (node.lang === 'bash') {
         wrapInStyledTerminal(node, index, parent);
       }
@@ -3816,12 +3781,13 @@ function wrapInStyledTerminal(code, index, parent) {
   const nextIdx = index + 1;
   const nextNode = parent.children[nextIdx];
 
-  if (nextNode.type === 'custom-code') {
+  if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode;
 
-    if (response.lang === '{.bash-output}') {
+    if (response.lang === '{.bash-output}' || response.lang === '{.bash-error-output}') {
       const children = response.data?.hChildren || [];
-      responseChildren.push(...children); // remove response element
+      const responseWithColours = ansiToHast(children);
+      responseChildren.push(...responseWithColours); // remove response element
 
       parent.children.splice(nextIdx, 1);
     }
@@ -3833,6 +3799,34 @@ function wrapInStyledTerminal(code, index, parent) {
     },
     hChildren: [...codeChildren, ...responseChildren]
   };
+}
+
+function ansiToHast(children) {
+  const pre = children[1];
+  const code = pre.children[0];
+  const text = code.children[0];
+  const parsed = ansicolor__WEBPACK_IMPORTED_MODULE_0__["default"].parse(text.value);
+  const hast = parsed.spans.map(o => {
+    const text = {
+      type: 'text',
+      value: o.text
+    };
+
+    if (!o.color) {
+      return text;
+    } else {
+      return {
+        type: 'element',
+        tagName: 'span',
+        properties: {
+          className: [o.color.name || '', o.bold ? 'bold' : '', o.color.bright ? 'bright' : ''].filter(Boolean)
+        },
+        children: [text]
+      };
+    }
+  });
+  code.children = hast;
+  return children;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4547,7 +4541,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.62";
+  const currentVersion = "1.1.63";
 
   try {
     const tags = await listRemoteGitTags();
@@ -4697,7 +4691,11 @@ function getSvgHast(svg) {
 }
 
 function isIdRef(value) {
-  return /^#[\w\d-_]+$/.test(value);
+  return !isHexColour(value) && /^#[\w\d\-_]+$/.test(value);
+}
+
+function isHexColour(value) {
+  return /^#([0-9a-f]{3}){1,2}$/i.test(value);
 }
 
 function isUrlIdRef(value) {
@@ -5294,6 +5292,14 @@ module.exports = import("@double-great/remark-lint-alt-text");;
 
 "use strict";
 module.exports = import("@mapbox/remark-lint-link-text");;
+
+/***/ }),
+
+/***/ 9742:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("ansicolor");;
 
 /***/ }),
 
