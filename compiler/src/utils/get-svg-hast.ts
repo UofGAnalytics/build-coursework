@@ -33,7 +33,11 @@ export function getSvgHast(svg: string) {
 }
 
 function isIdRef(value: string) {
-  return /^#[\w\d-_]+$/.test(value);
+  return !isHexColour(value) && /^#[\w\d\-_]+$/.test(value);
+}
+
+function isHexColour(value: string) {
+  return /^#([0-9a-f]{3}){1,2}$/i.test(value);
 }
 
 function isUrlIdRef(value: string) {
