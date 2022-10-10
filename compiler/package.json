@@ -19,6 +19,7 @@
   "dependencies": {
     "@double-great/remark-lint-alt-text": "^0.7.0",
     "@mapbox/remark-lint-link-text": "^0.6.0",
+    "ansicolor": "^1.1.100",
     "base64-arraybuffer": "^1.0.2",
     "chalk": "^5.0.0",
     "dargs": "^8.1.0",

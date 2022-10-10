@@ -50,6 +50,35 @@ code {
     font-weight: bold;
     content: '>';
   }
+  span {
+    &.bold {
+      font-weight: 600;
+    }
+    &.black {
+      color: black;
+    }
+    &.red {
+      color: red;
+    }
+    &.green {
+      color: green;
+    }
+    &.yellow {
+      color: yellow;
+    }
+    &.blue {
+      color: blue;
+    }
+    &.purple {
+      color: purple;
+    }
+    &.cyan {
+      color: cyan;
+    }
+    &.white {
+      color: white;
+    }
+  }
 }
 
 // ------------------------

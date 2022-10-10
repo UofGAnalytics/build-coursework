@@ -201,3 +201,13 @@ li:not(:last-child) {
     background: rgba(var(--primaryColor), 0.2);
   }
 }
+
+// ------------------------
+// blockquote -------------
+// ------------------------
+
+blockquote {
+  padding: 1rem;
+  border: 3px solid rgba(var(--primaryColor), 0.1);
+  border-radius: 0.6rem;
+}

@@ -449,18 +449,4 @@ describe('knitr', () => {
       )
     ).toBe(true);
   });
-
-  it('should add the correct language output class', async () => {
-    const { html } = await testProcessor(
-      `
-      \`\`\`{bash, class.output='lang-git'}
-      git status
-      \`\`\`
-    `,
-      { noSyntaxHighlight: false }
-    );
-
-    expect(html).toContain('bash-error-output');
-    expect(html).toContain('fatal: not a git repository');
-  });
 });

@@ -4,8 +4,8 @@ import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { boxouts } from './boxouts';
-import { environment } from './environment';
 import { moveAnswersToEnd } from './move-answers-to-end';
+import { programSwitcher } from './program-switcher';
 
 export async function combinedMdastPhase(
   mdast: Root,
@@ -14,7 +14,7 @@ export async function combinedMdastPhase(
   targetPdf?: boolean
 ) {
   const processor = unified()
-    .use(environment, ctx, targetPdf)
+    .use(programSwitcher, ctx)
     .use(boxouts, ctx.refStore);
 
   if (targetPdf) {

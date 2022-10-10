@@ -14,6 +14,7 @@ import { Context } from '../context';
 import { assertAssetExists } from './assert-asset-exists';
 import { assertColumnStructure } from './assert-columns';
 import { assertNoH1 } from './assert-no-h1';
+import { assertProgramSwitcherStructure } from './assert-program-switcher';
 import { assertTaskAnswerStructure } from './assert-task-answer';
 import { assertVideoAttributes } from './assert-video-attributes';
 import { assertWeblinkTarget } from './assert-weblink-target';
@@ -52,6 +53,7 @@ export async function createReport(
     .use(assertAssetExists)
     .use(assertVideoAttributes)
     .use(assertTaskAnswerStructure)
+    .use(assertProgramSwitcherStructure)
     .use(assertColumnStructure)
     .use(assertWeblinkTarget)
     .use(assertNoH1)
