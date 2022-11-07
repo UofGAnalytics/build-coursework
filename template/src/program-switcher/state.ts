@@ -5,7 +5,7 @@ export type State = {
 };
 
 export const defaultState: State = Object.freeze({
-  program: 'command-line',
+  program: 'github-desktop',
 });
 
 export const state = getSavedState('environment', defaultState);

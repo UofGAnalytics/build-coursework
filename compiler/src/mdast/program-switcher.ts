@@ -6,8 +6,8 @@ import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 
-const programs = ['command-line', 'github-desktop'];
-const titleCase = ['Command-line', 'GitHub Desktop'];
+const programs = ['github-desktop', 'command-line'];
+const titleCase = ['GitHub Desktop', 'Command-line'];
 
 export function programSwitcher(ctx: Context) {
   const programFlag = ctx.options.envProgram;
