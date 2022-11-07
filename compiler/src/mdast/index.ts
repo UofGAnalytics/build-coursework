@@ -12,6 +12,7 @@ import { Context } from '../context';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 // import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 import { createSvg } from '../utils/icons';
+import { browserWindow } from './browser-window';
 import { codeBlocks } from './code-blocks';
 import { columns } from './columns';
 import { embedAssetUrl } from './embed-asset-url';
@@ -49,6 +50,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     // .use(aliasDirectiveToTex, ctx)
     .use(gitGraph)
     .use(textFile)
+    .use(browserWindow)
     .use(codeBlocks, ctx)
     .use(styledTerminal)
     .use(images, ctx)

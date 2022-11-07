@@ -1,0 +1,36 @@
+.browser-window {
+  padding: 2rem 0;
+  text-align: center;
+
+  .browser-window-wrapper {
+    display: inline-block;
+    border: 1px solid #0003;
+    border-radius: 1rem;
+    box-shadow: 0 0.2rem 0.5rem #0003;
+    overflow: hidden;
+  }
+
+  .browser-window-header {
+    border-bottom: 1px solid #0003;
+    background: #f2f2f2;
+    font-weight: bold;
+    padding: 0.5rem;
+  }
+
+  .browser-window-address-bar {
+    border: 1px solid #0003;
+    text-align: left;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.5rem;
+    background: white;
+    font-size: 0.7rem;
+  }
+
+  .browser-window-content {
+    overflow: auto;
+    line-height: 1.25;
+    white-space: pre-wrap;
+    text-align: left;
+  }
+}

@@ -2896,6 +2896,113 @@ __webpack_async_result__();
 
 /***/ }),
 
+/***/ 8164:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "T": () => (/* binding */ browserWindow)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+
+function browserWindow() {
+  return (tree, file) => {
+    // visit(tree, 'image', (node) => {
+    //   console.log(node);
+    // });
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'leafDirective', node => {
+      if (node.name === 'browser') {
+        createBrowserWindow(node, file);
+      }
+    });
+  };
+}
+
+function createBrowserWindow(node, file) {
+  const {
+    url
+  } = node.attributes;
+  const imagePath = getImagePath(node, file);
+  Object.assign(node, {
+    type: 'browser-window',
+    data: {
+      hName: 'div',
+      hProperties: {
+        className: 'browser-window'
+      },
+      hChildren: [{
+        type: 'text',
+        value: '\n'
+      }, {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: 'browser-window-wrapper'
+        },
+        children: [{
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            className: 'browser-window-header'
+          },
+          children: [{
+            type: 'element',
+            tagName: 'div',
+            properties: {
+              className: 'browser-window-address-bar'
+            },
+            children: [{
+              type: 'text',
+              value: url?.trim() || ''
+            }]
+          }]
+        }, {
+          type: 'text',
+          value: '\n'
+        }, {
+          type: 'element',
+          tagName: 'div',
+          properties: {
+            className: 'browser-window-content'
+          },
+          children: [{
+            type: 'element',
+            tagName: 'img',
+            properties: {
+              src: imagePath,
+              alt: ''
+            }
+          }]
+        }, {
+          type: 'text',
+          value: '\n'
+        }]
+      }]
+    }
+  });
+}
+
+function getImagePath(node, file) {
+  const children = node.children;
+  const firstChild = children[0];
+  const title = firstChild?.value || '';
+
+  if (title.trim() === '') {
+    (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Video has no title', node.position);
+  }
+
+  return title;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
 /***/ 1982:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -3167,6 +3274,12 @@ function embedAssetUrl(ctx) {
 
       if (node.type === 'image') {
         node.url = getPath(node.url, activeDir, ctx);
+      } // also fix for browser template
+
+
+      if (node.type === 'leafDirective' && node.name === 'browser') {
+        const firstChild = node.children[0];
+        firstChild.value = getPath(firstChild.value, activeDir, ctx);
       } // also fix for raw html nodes sometimes output by knitr
 
 
@@ -3481,21 +3594,22 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6809);
 /* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6688);
 /* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(117);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(117);
 /* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(529);
 /* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3889);
-/* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1982);
-/* harmony import */ var _columns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7859);
-/* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(5783);
-/* harmony import */ var _gitgraph__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(9724);
-/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(4457);
-/* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(6264);
-/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(7664);
-/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(5239);
-/* harmony import */ var _textFile__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(6828);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(5871);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _textFile__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__]);
-([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _textFile__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _browser_window__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8164);
+/* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1982);
+/* harmony import */ var _columns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7859);
+/* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(5783);
+/* harmony import */ var _gitgraph__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9724);
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(4457);
+/* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(6264);
+/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(7664);
+/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(5239);
+/* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(8482);
+/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(5871);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _browser_window__WEBPACK_IMPORTED_MODULE_9__, _code_blocks__WEBPACK_IMPORTED_MODULE_10__, _columns__WEBPACK_IMPORTED_MODULE_11__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__, _gitgraph__WEBPACK_IMPORTED_MODULE_13__, _images__WEBPACK_IMPORTED_MODULE_14__, _pagebreaks__WEBPACK_IMPORTED_MODULE_15__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__, _styled_terminal__WEBPACK_IMPORTED_MODULE_17__, _text_file__WEBPACK_IMPORTED_MODULE_18__, _youtube_videos__WEBPACK_IMPORTED_MODULE_19__]);
+([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _browser_window__WEBPACK_IMPORTED_MODULE_9__, _code_blocks__WEBPACK_IMPORTED_MODULE_10__, _columns__WEBPACK_IMPORTED_MODULE_11__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__, _gitgraph__WEBPACK_IMPORTED_MODULE_13__, _images__WEBPACK_IMPORTED_MODULE_14__, _pagebreaks__WEBPACK_IMPORTED_MODULE_15__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__, _styled_terminal__WEBPACK_IMPORTED_MODULE_17__, _text_file__WEBPACK_IMPORTED_MODULE_18__, _youtube_videos__WEBPACK_IMPORTED_MODULE_19__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3517,11 +3631,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rema
 
 
 
+
 async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_19__/* .unified */ .l)() // third-party plugins:
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_20__/* .unified */ .l)() // third-party plugins:
   .use(remark_parse__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__["default"]).use(remark_footnotes__WEBPACK_IMPORTED_MODULE_2__["default"], {
     inlineNotes: true
   }).use(remark_gfm__WEBPACK_IMPORTED_MODULE_4__["default"]) // .use(sectionize)
@@ -3531,8 +3646,8 @@ async function mdastPhase(file, ctx) {
       className: 'link'
     }
   }) // custom plugins:
-  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_18__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
-  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_12__/* .gitGraph */ .D).use(_textFile__WEBPACK_IMPORTED_MODULE_17__/* .textFile */ .K).use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_16__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_13__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_14__/* .pagebreaks */ .m);
+  .use(_columns__WEBPACK_IMPORTED_MODULE_11__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_12__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_19__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
+  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_13__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_18__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_9__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_10__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_17__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_14__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_15__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -3833,7 +3948,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6828:
+/***/ 8482:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
