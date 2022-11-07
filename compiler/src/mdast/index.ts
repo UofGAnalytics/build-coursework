@@ -12,6 +12,7 @@ import { Context } from '../context';
 import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
 // import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 import { createSvg } from '../utils/icons';
+import { browserWindow } from './browser-window';
 import { codeBlocks } from './code-blocks';
 import { columns } from './columns';
 import { embedAssetUrl } from './embed-asset-url';
@@ -20,7 +21,7 @@ import { images } from './images';
 import { pagebreaks } from './pagebreaks';
 import { removeEmptyParagraphs } from './remove-empty-paragraphs';
 import { styledTerminal } from './styled-terminal';
-import { textFile } from './textFile';
+import { textFile } from './text-file';
 import { youtubeVideos } from './youtube-videos';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
@@ -49,6 +50,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     // .use(aliasDirectiveToTex, ctx)
     .use(gitGraph)
     .use(textFile)
+    .use(browserWindow)
     .use(codeBlocks, ctx)
     .use(styledTerminal)
     .use(images, ctx)

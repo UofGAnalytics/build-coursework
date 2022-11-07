@@ -20,4 +20,15 @@ describe('embedAssetUrl', () => {
 
     expect(figureNum).toEqual([1, 2, 3]);
   });
+
+  it('should embed asset URL for browser window', async () => {
+    const html = await fixtureTestProcessor('relative-assets', {
+      noEmbedAssets: false,
+      output: 'html',
+    });
+
+    expect(html).toContain(
+      '<div class="browser-window-content"><img src="data:image/png;base64,'
+    );
+  });
 });

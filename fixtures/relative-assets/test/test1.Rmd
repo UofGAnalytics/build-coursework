@@ -1,2 +1,4 @@
 
 ![](yl1.png)
+
+::browser[yl1.png]{url=https://github.com/bla/bla}

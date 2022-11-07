@@ -24,6 +24,12 @@ export function embedAssetUrl(ctx: Context) {
         node.url = getPath(node.url, activeDir, ctx);
       }
 
+      // also fix for browser template
+      if (node.type === 'leafDirective' && node.name === 'browser') {
+        const firstChild = node.children[0] as Literal;
+        firstChild.value = getPath(firstChild.value, activeDir, ctx);
+      }
+
       // also fix for raw html nodes sometimes output by knitr
       if (node.type === 'html') {
         const props = getProps(node.value);

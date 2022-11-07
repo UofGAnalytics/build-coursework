@@ -1,8 +1,8 @@
-.text-file {
+.browser-window {
   padding: 2rem 0;
   text-align: center;
 
-  .text-file-wrapper {
+  .browser-window-wrapper {
     display: inline-block;
     border: 1px solid #0003;
     border-radius: 1rem;
@@ -10,17 +10,24 @@
     overflow: hidden;
   }
 
-  .text-file-header {
+  .browser-window-header {
     border-bottom: 1px solid #0003;
     background: #f2f2f2;
-    text-align: center;
     font-weight: bold;
-    line-height: 2.2;
-    padding: 0 1rem;
+    padding: 0.5rem;
   }
 
-  .text-file-content {
-    padding: 1rem;
+  .browser-window-address-bar {
+    border: 1px solid #0003;
+    text-align: left;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.5rem;
+    background: white;
+    font-size: 0.7rem;
+  }
+
+  .browser-window-content {
     overflow: auto;
     line-height: 1.25;
     white-space: pre-wrap;
