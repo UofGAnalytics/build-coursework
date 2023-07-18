@@ -323,7 +323,7 @@ describe('knitr', () => {
       </div>
       <div class="code-wrapper python-error-output">
         <h6 class="console-heading">Python Console</h6>
-        <pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'a' is not defined
+        <pre><code>Error: NameError: name 'a' is not defined
         Detailed traceback:
           File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
       </div>
