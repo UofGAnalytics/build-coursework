@@ -1049,6 +1049,7 @@ async function createSidebar(mdast) {
     maxDepth: 3
   }).map;
   const tocChildren = toc === null ? [] : [(0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__/* .toHast */ .Q)(toc)];
+  printTableOfContents(toc);
   return {
     type: 'element',
     tagName: 'aside',
@@ -1089,6 +1090,26 @@ async function createLogo() {
       children: [crest, uofg]
     }, hamburgerIcon]
   };
+}
+
+function printTableOfContents(toc) {// toc?.children.forEach((a) => {
+  //   a.children.forEach((b) => {
+  //     if (b.type === 'paragraph') {
+  //       // @ts-ignore
+  //       console.log(`- [ ] ${b.children[0].children[0].value}`);
+  //     }
+  //     if (b.type === 'list') {
+  //       b.children.forEach((c) => {
+  //         c.children.forEach((d) => {
+  //           if (d.type === 'paragraph') {
+  //             // @ts-ignore
+  //             console.log(`  - [ ] ${d.children[0].children[0].value}`);
+  //           }
+  //         });
+  //       });
+  //     }
+  //   });
+  // });
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2912,79 +2933,112 @@ unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.
 
 function browserWindow() {
   return (tree, file) => {
-    // visit(tree, 'image', (node) => {
-    //   console.log(node);
-    // });
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'leafDirective', node => {
       if (node.name === 'browser') {
-        createBrowserWindow(node, file);
+        template(node, file);
       }
     });
   };
 }
 
-function createBrowserWindow(node, file) {
-  const {
-    url
-  } = node.attributes;
+function template(node, file) {
+  const url = node.attributes?.url || '';
+  const alt = node.attributes?.alt || '';
   const imagePath = getImagePath(node, file);
+  const browser = createBrowserWindow(imagePath, url, alt);
+  const caption = createCaption(alt);
   Object.assign(node, {
     type: 'browser-window',
     data: {
-      hName: 'div',
+      hName: 'figure',
       hProperties: {
-        className: 'browser-window'
+        className: ['browser']
       },
-      hChildren: [{
+      hChildren: [browser, caption]
+    }
+  });
+}
+
+function createBrowserWindow(imagePath, url, alt) {
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: {
+      className: 'browser-window'
+    },
+    children: [{
+      type: 'text',
+      value: '\n'
+    }, {
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        className: 'browser-window-wrapper'
+      },
+      children: [createBrowserHeader(url), {
         type: 'text',
         value: '\n'
       }, {
         type: 'element',
         tagName: 'div',
         properties: {
-          className: 'browser-window-wrapper'
+          className: 'browser-window-content'
         },
         children: [{
           type: 'element',
-          tagName: 'div',
+          tagName: 'img',
           properties: {
-            className: 'browser-window-header'
+            src: imagePath,
+            alt
           },
-          children: [{
-            type: 'element',
-            tagName: 'div',
-            properties: {
-              className: 'browser-window-address-bar'
-            },
-            children: [{
-              type: 'text',
-              value: url?.trim() || ''
-            }]
-          }]
-        }, {
-          type: 'text',
-          value: '\n'
-        }, {
-          type: 'element',
-          tagName: 'div',
-          properties: {
-            className: 'browser-window-content'
-          },
-          children: [{
-            type: 'element',
-            tagName: 'img',
-            properties: {
-              src: imagePath,
-              alt: ''
-            }
-          }]
-        }, {
-          type: 'text',
-          value: '\n'
+          children: []
         }]
+      }, {
+        type: 'text',
+        value: '\n'
       }]
-    }
-  });
+    }]
+  };
+}
+
+function createBrowserHeader(url) {
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: {
+      className: 'browser-window-header'
+    },
+    children: [{
+      type: 'element',
+      tagName: 'div',
+      properties: {
+        className: 'browser-window-address-bar'
+      },
+      children: [{
+        type: 'text',
+        value: url?.trim() || ''
+      }]
+    }]
+  };
+}
+
+function createCaption(alt) {
+  if (alt.trim() === '') {
+    return null;
+  }
+
+  return {
+    type: 'element',
+    tagName: 'figcaption',
+    children: [{
+      type: 'element',
+      tagName: 'a',
+      children: [{
+        type: 'text',
+        value: ` ${alt}`
+      }]
+    }]
+  };
 }
 
 function getImagePath(node, file) {
@@ -3749,8 +3803,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 ([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
-const programs = ['command-line', 'github-desktop'];
-const titleCase = ['Command-line', 'GitHub Desktop'];
+const programs = ['github-desktop', 'command-line'];
+const titleCase = ['GitHub Desktop', 'Command-line'];
 function programSwitcher(ctx) {
   const programFlag = ctx.options.envProgram;
 
@@ -4656,7 +4710,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.63";
+  const currentVersion = "1.1.64";
 
   try {
     const tags = await listRemoteGitTags();

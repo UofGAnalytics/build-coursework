@@ -315,7 +315,7 @@ var toggle_sidebar = __webpack_require__(567);
 ;// CONCATENATED MODULE: ./src/program-switcher/state.ts
 
 const state_defaultState = Object.freeze({
-  program: 'command-line'
+  program: 'github-desktop'
 });
 const state_state = getSavedState('environment', state_defaultState);
 ;// CONCATENATED MODULE: ./src/program-switcher/index.ts
