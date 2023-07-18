@@ -15,11 +15,9 @@ import { mkdir, rmFile, writeFile } from '../utils/utils';
 // bypass knitr for debugging
 // export async function knitr(unit: Unit, ctx: Context) {
 //   const file = new VFile();
-
 //   file.value = unit.files.reduce((acc, o) => {
 //     return acc + EOL + EOL + o.value;
 //   }, '');
-
 //   return file;
 // }
 
