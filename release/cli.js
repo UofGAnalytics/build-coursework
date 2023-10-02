@@ -3358,7 +3358,22 @@ function embedAssetUrl(ctx) {
 }
 
 function getPath(url, dirname, ctx) {
-  return path__WEBPACK_IMPORTED_MODULE_0___default().isAbsolute(url) || url.startsWith('http') || ctx.options.noEmbedAssetUrl ? url : path__WEBPACK_IMPORTED_MODULE_0___default().join(dirname, url);
+  if (ctx.options.noEmbedAssetUrl) {
+    return url;
+  }
+
+  if (path__WEBPACK_IMPORTED_MODULE_0___default().isAbsolute(url) || url.startsWith('http')) {
+    return url;
+  } // pythons matplotlib appears to assign plot images a path
+  // relative to the project root, whereas all other libraries use
+  // an absolute path.
+
+
+  if (url.startsWith('cache')) {
+    return path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.cacheDir, url.replace('cache', ''));
+  }
+
+  return path__WEBPACK_IMPORTED_MODULE_0___default().join(dirname, url);
 }
 
 function getProps(value) {
@@ -4710,7 +4725,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.64";
+  const currentVersion = "1.1.65";
 
   try {
     const tags = await listRemoteGitTags();
