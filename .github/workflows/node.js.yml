@@ -53,6 +53,9 @@ jobs:
       - name: Cache Renv packages
         uses: r-lib/actions/setup-renv@v2
 
+      # - name: Renv snapshot
+      #   run: Rscript -e "renv::snapshot()"
+
       # Python
       - name: Set up Python
         uses: actions/setup-python@v3

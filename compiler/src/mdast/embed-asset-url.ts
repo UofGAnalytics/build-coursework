@@ -48,11 +48,19 @@ export function embedAssetUrl(ctx: Context) {
 }
 
 function getPath(url: string, dirname: string, ctx: Context) {
-  return path.isAbsolute(url) ||
-    url.startsWith('http') ||
-    ctx.options.noEmbedAssetUrl
-    ? url
-    : path.join(dirname, url);
+  if (ctx.options.noEmbedAssetUrl) {
+    return url;
+  }
+  if (path.isAbsolute(url) || url.startsWith('http')) {
+    return url;
+  }
+  // pythons matplotlib appears to assign plot images a path
+  // relative to the project root, whereas all other libraries use
+  // an absolute path.
+  if (url.startsWith('cache')) {
+    return path.join(ctx.cacheDir, url.replace('cache', ''));
+  }
+  return path.join(dirname, url);
 }
 
 function getProps(value: string) {
