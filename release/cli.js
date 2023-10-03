@@ -3540,19 +3540,61 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3908);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2430);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__]);
+([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 function images(ctx) {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'image', node => {
-      template(node, ++ctx.figureCounter);
+      templateFromImage(node, ++ctx.figureCounter);
+    }); // knitr can output HTML for plots instead of Markdown now
+
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'html', node => {
+      const value = String(node.value);
+
+      if (value.startsWith('<div class="figure">')) {
+        const hast = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(value);
+        templateFromHTML(node, hast, ++ctx.figureCounter);
+      }
     });
   };
 }
 
-function template(node, count) {
+function templateFromImage(node, count) {
+  const alt = getAltText(node.alt || '');
+  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
+  createFigure(node, slug, node.url, alt, node.data?.width, count);
+}
+
+function templateFromHTML(node, hast, count) {
+  const children = hast.children;
+  const img = children.find(o => o.tagName === 'img');
+  const properties = img?.properties || {};
+  const src = String(properties.src);
+  const alt = getAltText(String(properties.alt));
+  const width = properties.width;
+  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
+  createFigure(node, slug, src, alt, width, count);
+}
+
+function createFigure(node, slug, src, alt, width, count) {
+  Object.assign(node, {
+    type: 'custom-image',
+    data: {
+      hName: 'figure',
+      hProperties: {
+        className: ['img-wrapper'],
+        id: slug
+      },
+      hChildren: [createImage(src, alt, width), createCaption(alt, slug, count)]
+    }
+  });
+}
+
+function createImage(src, alt, width) {
   const image = {
     type: 'element',
     tagName: 'div',
@@ -3563,22 +3605,24 @@ function template(node, count) {
       type: 'element',
       tagName: 'img',
       properties: {
-        src: node.url,
-        alt: node.alt
+        src,
+        alt
       },
       children: []
     }]
   };
 
-  if (node.data?.width && /^\d+px/.test(String(node.data.width))) {
+  if (width && /^\d+px/.test(String(width))) {
     image.properties = { ...image.properties,
-      style: `width: ${node.data.width};`
+      style: `width: ${width};`
     };
   }
 
-  const alt = getAltText(node);
-  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
-  const caption = {
+  return image;
+}
+
+function createCaption(alt, slug, count) {
+  return {
     type: 'element',
     tagName: 'figcaption',
     children: [{
@@ -3590,38 +3634,10 @@ function template(node, count) {
       children: createLabel(alt, count)
     }]
   };
-  Object.assign(node, {
-    type: 'custom-image',
-    data: {
-      hName: 'figure',
-      hProperties: {
-        className: ['img-wrapper'],
-        id: slug
-      },
-      hChildren: [image, caption]
-    }
-  });
 }
 
 function createLabel(alt, count) {
-  if (alt) {
-    return [{
-      type: 'element',
-      tagName: 'span',
-      properties: {
-        className: 'caption-count'
-      },
-      children: [{
-        type: 'text',
-        value: `Figure ${count}:`
-      }]
-    }, {
-      type: 'text',
-      value: ` ${alt}`
-    }];
-  }
-
-  return [{
+  const label = [{
     type: 'element',
     tagName: 'span',
     properties: {
@@ -3632,11 +3648,18 @@ function createLabel(alt, count) {
       value: `Figure ${count}`
     }]
   }];
+
+  if (alt) {
+    label.push({
+      type: 'text',
+      value: ` ${alt}`
+    });
+  }
+
+  return label;
 }
 
-function getAltText(node) {
-  const altText = node.alt || '';
-
+function getAltText(altText) {
   if (altText.includes('unnamed-chunk')) {
     return '';
   }
@@ -4725,7 +4748,7 @@ const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
 
-  const currentVersion = "1.1.65";
+  const currentVersion = "1.1.66";
 
   try {
     const tags = await listRemoteGitTags();

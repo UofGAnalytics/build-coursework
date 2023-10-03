@@ -11,7 +11,7 @@
     "compiler",
     "template"
   ],
-  "version": "1.1.65",
+  "version": "1.1.66",
   "repository": "https://github.com/UofGAnalytics/build-coursework.git",
   "author": "David McArthur <david.mcarthur.2@glasgow.ac.uk>",
   "license": "MIT",
