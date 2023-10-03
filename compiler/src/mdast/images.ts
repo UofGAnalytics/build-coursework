@@ -1,20 +1,71 @@
 import { Element, ElementContent } from 'hast';
 import kebabCase from 'lodash/kebabCase.js';
 import { Image } from 'mdast';
-import { Node } from 'unist';
+import { Literal, Node } from 'unist';
 import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
+import { getAssetHast } from '../utils/get-asset-hast';
 
 export function images(ctx: Context) {
   return (tree: Node) => {
     visit(tree, 'image', (node) => {
-      template(node, ++ctx.figureCounter);
+      templateFromImage(node, ++ctx.figureCounter);
+    });
+
+    // knitr can output HTML for plots instead of Markdown now
+    visit(tree, 'html', (node: Literal) => {
+      const value = String(node.value);
+      if (value.startsWith('<div class="figure">')) {
+        const hast = getAssetHast(value);
+        templateFromHTML(node, hast, ++ctx.figureCounter);
+      }
     });
   };
 }
 
-function template(node: Image, count: number) {
+function templateFromImage(node: Image, count: number) {
+  const alt = getAltText(node.alt || '');
+  const slug = kebabCase(alt ? alt : `Figure ${count}`);
+  createFigure(node, slug, node.url, alt, node.data?.width, count);
+}
+
+function templateFromHTML(node: Literal, hast: Element, count: number) {
+  const children = hast.children as Element[];
+  const img = children.find((o) => o.tagName === 'img');
+  const properties = img?.properties || {};
+  const src = String(properties.src);
+  const alt = getAltText(String(properties.alt));
+  const width = properties.width;
+  const slug = kebabCase(alt ? alt : `Figure ${count}`);
+  createFigure(node, slug, src, alt, width, count);
+}
+
+function createFigure(
+  node: Image | Literal,
+  slug: string,
+  src: string,
+  alt: string,
+  width: unknown,
+  count: number
+) {
+  Object.assign(node, {
+    type: 'custom-image',
+    data: {
+      hName: 'figure',
+      hProperties: {
+        className: ['img-wrapper'],
+        id: slug,
+      },
+      hChildren: [
+        createImage(src, alt, width),
+        createCaption(alt, slug, count),
+      ],
+    },
+  });
+}
+
+function createImage(src: string, alt: string, width: unknown) {
   const image: Element = {
     type: 'element',
     tagName: 'div',
@@ -25,26 +76,24 @@ function template(node: Image, count: number) {
       {
         type: 'element',
         tagName: 'img',
-        properties: {
-          src: node.url,
-          alt: node.alt,
-        },
+        properties: { src, alt },
         children: [],
       },
     ],
   };
 
-  if (node.data?.width && /^\d+px/.test(String(node.data.width))) {
+  if (width && /^\d+px/.test(String(width))) {
     image.properties = {
       ...image.properties,
-      style: `width: ${node.data.width};`,
+      style: `width: ${width};`,
     };
   }
 
-  const alt = getAltText(node);
-  const slug = kebabCase(alt ? alt : `Figure ${count}`);
+  return image;
+}
 
-  const caption = {
+function createCaption(alt: string, slug: string, count: number) {
+  return {
     type: 'element',
     tagName: 'figcaption',
     children: [
@@ -58,43 +107,10 @@ function template(node: Image, count: number) {
       },
     ],
   };
-
-  Object.assign(node, {
-    type: 'custom-image',
-    data: {
-      hName: 'figure',
-      hProperties: {
-        className: ['img-wrapper'],
-        id: slug,
-      },
-      hChildren: [image, caption],
-    },
-  });
 }
 
-function createLabel(alt: string, count: number): ElementContent[] {
-  if (alt) {
-    return [
-      {
-        type: 'element',
-        tagName: 'span',
-        properties: {
-          className: 'caption-count',
-        },
-        children: [
-          {
-            type: 'text',
-            value: `Figure ${count}:`,
-          },
-        ],
-      },
-      {
-        type: 'text',
-        value: ` ${alt}`,
-      },
-    ];
-  }
-  return [
+function createLabel(alt: string, count: number) {
+  const label: ElementContent[] = [
     {
       type: 'element',
       tagName: 'span',
@@ -109,10 +125,18 @@ function createLabel(alt: string, count: number): ElementContent[] {
       ],
     },
   ];
+
+  if (alt) {
+    label.push({
+      type: 'text',
+      value: ` ${alt}`,
+    });
+  }
+
+  return label;
 }
 
-function getAltText(node: Image) {
-  const altText = node.alt || '';
+function getAltText(altText: string) {
   if (altText.includes('unnamed-chunk')) {
     return '';
   }

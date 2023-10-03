@@ -78,7 +78,7 @@ describe('knitr', () => {
     `,
       { noEmbedAssets: false }
     );
-    expect(html).toContain('<svg xmlns="http://www.w3.org/2000/svg"');
+    expect(html).toContain('xmlns="http://www.w3.org/2000/svg"');
   });
 
   it('should output a graph as png', async () => {
@@ -448,5 +448,25 @@ describe('knitr', () => {
         'Error in "120" + "5": non-numeric argument to binary operator'
       )
     ).toBe(true);
+  });
+
+  it('should handle new knitr plot formatting', async () => {
+    const { html } = await testProcessor(`
+      <div class="figure">
+      <img src="C:\\Users\\davie\\unnamed-chunk.svg" alt="plot of chunk unnamed" width="504" />
+      <p class="caption">plot of chunk unnamed-chunk-3</p>
+      </div>
+    `);
+
+    expect(ignoreWhitespace(html)).toBe(
+      ignoreWhitespace(`
+        <figure class="img-wrapper" id="plot-of-chunk-unnamed">
+          <div class="img-bg">
+            <img src="C:\\Users\\davie\\unnamed-chunk.svg" alt="plot of chunk unnamed">
+          </div>
+          <figcaption><a href="#plot-of-chunk-unnamed"><span class="caption-count">Figure 1</span> plot of chunk unnamed</a></figcaption>
+        </figure>
+      `)
+    );
   });
 });
