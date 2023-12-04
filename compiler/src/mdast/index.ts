@@ -9,7 +9,7 @@ import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
-import { aliasDirectiveToSvg } from '../latex/directive-to-svg';
+import { aliasDirectiveToLatexSvg } from '../latex/directive-to-svg';
 // import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 import { createSvg } from '../utils/icons';
 import { browserWindow } from './browser-window';
@@ -23,6 +23,7 @@ import { removeEmptyParagraphs } from './remove-empty-paragraphs';
 import { styledTerminal } from './styled-terminal';
 import { textFile } from './text-file';
 import { youtubeVideos } from './youtube-videos';
+import { aliasDirectiveToCode } from '../code/alias-directive-to-code';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
   // https://github.com/unifiedjs/unified
@@ -45,7 +46,8 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(columns)
     .use(embedAssetUrl, ctx)
     .use(youtubeVideos)
-    .use(aliasDirectiveToSvg, ctx)
+    .use(aliasDirectiveToCode, ctx)
+    .use(aliasDirectiveToLatexSvg, ctx)
     .use(removeEmptyParagraphs)
     // .use(aliasDirectiveToTex, ctx)
     .use(gitGraph)

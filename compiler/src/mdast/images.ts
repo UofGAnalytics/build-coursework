@@ -1,4 +1,4 @@
-import { Element, ElementContent } from 'hast';
+import { Element, ElementContent, Parent } from 'hast';
 import kebabCase from 'lodash/kebabCase.js';
 import { Image } from 'mdast';
 import { Literal, Node } from 'unist';
@@ -127,6 +127,10 @@ function createLabel(alt: string, count: number) {
   ];
 
   if (alt) {
+    const elem = label[0] as Parent;
+    const content = elem.children[0] as Literal;
+    content.value += ':';
+
     label.push({
       type: 'text',
       value: ` ${alt}`,

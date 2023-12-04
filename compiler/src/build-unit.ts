@@ -16,6 +16,7 @@ import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
+import { codeToAliasDirective } from './code/code-to-alias-directive';
 
 export type BuiltUnit = {
   unit: Unit;
@@ -81,6 +82,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
 async function inSituTransforms(file: VFile, ctx: Context) {
   assertNoImageAttributes(file);
   preParsePhase(file);
+  await codeToAliasDirective(file, ctx);
   texToAliasDirective(file, ctx);
   return mdastPhase(file, ctx);
 }

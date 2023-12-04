@@ -115,7 +115,7 @@ describe('columns', () => {
           <div class="column">
             <figure class="img-wrapper" id="figure-1">
               <div class="img-bg">
-                <img src="LMpr.pdf">
+                <img src="LMpr.pdf" alt="">
               </div>
               <figcaption><a href="#figure-1"><span class="caption-count">Figure 1</span></a></figcaption>
             </figure>
@@ -123,7 +123,7 @@ describe('columns', () => {
           <div class="column">
             <figure class="img-wrapper" id="figure-2">
               <div class="img-bg">
-                <img src="LMpo.pdf">
+                <img src="LMpo.pdf" alt="">
               </div>
               <figcaption><a href="#figure-2"><span class="caption-count">Figure 2</span></a></figcaption>
             </figure>

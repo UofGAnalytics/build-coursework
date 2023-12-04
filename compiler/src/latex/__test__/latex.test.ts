@@ -57,8 +57,8 @@ describe('latex', () => {
 
     expect(
       hasFailingMessage(
-        `Invalid reference: \\ref{def:scoreuniv}. You may only reference numbered sections.`
-      )
+        `Invalid reference: \\ref{def:scoreuniv}. You may only reference numbered sections.`,
+      ),
     ).toBe(true);
   });
 
@@ -75,13 +75,13 @@ describe('latex', () => {
     `);
 
     expect(
-      hasFailingMessage(`LaTeX error: "Unknown environment 'center'".`)
+      hasFailingMessage(`LaTeX error: "Unknown environment 'center'".`),
     ).toBe(true);
 
     expect(
       hasFailingMessage(
-        'LaTeX tables are not allowed, please use Markdown syntax'
-      )
+        'LaTeX tables are not allowed, please use Markdown syntax',
+      ),
     ).toBe(true);
   });
 

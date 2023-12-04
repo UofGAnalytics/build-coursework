@@ -9,14 +9,6 @@ import { Context } from '../context';
 
 export function codeBlocks(ctx: Context) {
   return async (tree: Node, file: VFile) => {
-    // replace \\n with \n in code samples
-    // visit<InlineCode>(tree, 'inlineCode', (node) => {
-    //   const old = node.value;
-    //   const transformed = old.replace(/\\\\n/g, '\\n');
-    //   // console.log({ old, transformed, same: old === transformed });
-    //   node.value = transformed;
-    // });
-
     visit(tree, 'code', (node: Code) => {
       customCode(node, ctx, file);
     });

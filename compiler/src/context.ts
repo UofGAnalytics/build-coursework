@@ -29,6 +29,12 @@ export type Options = {
   output?: 'md' | 'html';
 };
 
+export type CodeBlock = {
+  lang: string,
+  meta: string,
+  value: string
+}
+
 export type Context = {
   dirPath: string;
   buildDir: string;
@@ -36,6 +42,7 @@ export type Context = {
   course: Course;
   options: Options;
   mmlStore?: string[];
+  codeStore?: CodeBlock[];
   refStore: Record<string, string>;
   figureCounter: number;
 };

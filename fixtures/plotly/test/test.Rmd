@@ -1,0 +1,10 @@
+---
+always_allow_html: yes
+---
+
+A plotly plot:
+
+```{r pressure, echo=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length)
+```

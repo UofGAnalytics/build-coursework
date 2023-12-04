@@ -464,7 +464,7 @@ describe('knitr', () => {
           <div class="img-bg">
             <img src="C:\\Users\\davie\\unnamed-chunk.svg" alt="plot of chunk unnamed">
           </div>
-          <figcaption><a href="#plot-of-chunk-unnamed"><span class="caption-count">Figure 1</span> plot of chunk unnamed</a></figcaption>
+          <figcaption><a href="#plot-of-chunk-unnamed"><span class="caption-count">Figure 1:</span> plot of chunk unnamed</a></figcaption>
         </figure>
       `)
     );
