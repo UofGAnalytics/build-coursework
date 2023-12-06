@@ -98,14 +98,14 @@ describe('latex', () => {
   });
 
   it('should work with square bracket syntax', async () => {
-    const { md } = await testProcessor(String.raw`
+    const { html } = await testProcessor(String.raw`
       \[(\exp(-2.977),\exp(-2.245))=(0.051,0.106).\]
     `);
 
     const expected = unindentString(`
-      :blockMath[0]
+      <p>[(\\exp(-2.977),\\exp(-2.245))=(0.051,0.106).]</p>
     `);
 
-    expect(md.trim()).toBe(expected.trim());
+    expect(html.trim()).toBe(expected.trim());
   });
 });

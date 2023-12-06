@@ -13,7 +13,7 @@ export function embedAssetUrl(ctx: Context) {
     // to derive the document directory
     visit(tree, (node, index, parent) => {
       // to ensure relative paths to assets across multiple .Rmd files
-      if (node.type === 'textDirective' && node.name === 'directory') {
+      if (node.type === 'leafDirective' && node.name === 'directory') {
         const firstChild = node.children[0] as Literal;
         activeDir = firstChild.value || '';
         const parentChildren = parent?.children || [];

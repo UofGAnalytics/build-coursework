@@ -109,10 +109,9 @@ function parseLanguage(node: Code) {
   return lang.toLowerCase();
 }
 
-function parseClass(node: Code) {
-  const lang = node.lang || '';
-  const meta = node.meta || '';
-  const combined = `${lang} ${meta}`.trim();
+function parseClass({ lang, meta }: Code) {
+  const m = meta === '' || meta === 'null' ? '' : meta;
+  const combined = `${lang || ''} ${m}`.trim();
   if (!combined.startsWith('{.')) {
     return '';
   }

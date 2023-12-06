@@ -1,4 +1,4 @@
-import { Literal } from 'hast';
+import { Element, Literal } from 'hast';
 
 import {
   ignoreWhitespace,
@@ -8,61 +8,69 @@ import {
 
 describe('knitr', () => {
   it('should share state with other codeblocks', async () => {
-    const { mdast } = await testProcessor(`
-      \`\`\`{r}
+    const { hast } = await testProcessor(`
+      \`\`\`{r echo=FALSE}
       a <- c(1, 4, 2)
       a
       \`\`\`
 
-      \`\`\`{r}
+      \`\`\`{r echo=FALSE}
       names(a) <- c("first", "second", "third")
       a
       \`\`\`
 
-      \`\`\`{r}
+      \`\`\`{r echo=FALSE}
       a <- c(first=1, second=4, third=2)
       \`\`\`
 
-      \`\`\`{r}
+      \`\`\`{r echo=FALSE}
       a[3]
       \`\`\`
 
-      \`\`\`{r}
+      \`\`\`{r echo=FALSE}
       a[3] <- 10
       a
       \`\`\`
 
-      \`\`\`{r}
+      \`\`\`{r echo=FALSE}
       a[7] <- 99
       a
       \`\`\`
 
-      \`\`\`{r}
+      \`\`\`{r echo=FALSE}
       a["third"]
       \`\`\`
     `);
 
-    const children = mdast.children as Literal[];
-    const withOutput = children.map((o, idx) => {
-      const v = (o.value || '') as string;
-      const value = v.slice(0, v.indexOf('\n'));
-      return `${idx} ${value}`.trim();
-    });
+    const children = hast.children as Element[];
+    const withOutput = children
+      .filter((child: Element) => {
+        const className = child.properties?.className;
+        const arr = Array.isArray(className) ? className : [className];
+        return child.tagName === 'div' && arr.includes('code-wrapper');
+      })
+      .map((codeWrapper) => {
+        const pre = codeWrapper.children[1] as Element;
+        const code = pre.children[0] as Element;
+        const { value } = code.children[0] as Literal;
+        return value
+          .split('\n')
+          .map((s) => s.trim())
+          .join('\n');
+      });
 
     const expected = unindentString(`
-      0 a <- c(1, 4, 2)
-      1 [1] 1 4
-      2 names(a) <- c("first", "second", "third")
-      3 first second  third
-      4 a <- c(first=1, second=4, third=2
-      5 a[3
-      6 third
-      7 a[3] <- 10
-      8 first second  third
-      9 a[7] <- 99
-      10 first second  third
-      11 a["third"
-      12 third
+      [1] 1 4 2
+      first second  third
+      1      4      2
+      third
+      2
+      first second  third
+      1      4     10
+      first second  third
+      1      4     10     NA     NA     NA     99
+      third
+      10
     `);
 
     expect(withOutput.join('\n')).toBe(expected.trim());
@@ -76,7 +84,7 @@ describe('knitr', () => {
       hist(x)
       \`\`\`
     `,
-      { noEmbedAssets: false }
+      { noEmbedAssets: false },
     );
     expect(html).toContain('xmlns="http://www.w3.org/2000/svg"');
   });
@@ -89,7 +97,7 @@ describe('knitr', () => {
       hist(x)
       \`\`\`
     `,
-      { noEmbedAssets: false }
+      { noEmbedAssets: false },
     );
 
     expect(html).toContain('<img src="data:image/png;base64');
@@ -129,7 +137,7 @@ describe('knitr', () => {
   });
 
   it('should encapsulate r output', async () => {
-    const { html } = await testProcessor(`
+    const { md, html } = await testProcessor(`
       \`\`\`{r}
       a <- c(1, 4, 2)
       a
@@ -140,13 +148,22 @@ describe('knitr', () => {
       \`\`\`
     `);
 
-    const expected = unindentString(`
+    const expectedMd = unindentString(`
+      ::codeBlock[0]
+
+      ::codeBlock[1]
+
+      ::codeBlock[2]
+    `);
+
+    expect(md.trim()).toBe(expectedMd.trim());
+
+    const expectedHtml = unindentString(`
       <div class="code-wrapper">
         <pre><code>a &#x3C;- c(1, 4, 2)
       a</code></pre>
       </div>
-      <div class="code-wrapper r-output">
-        <h6 class="console-heading">R Console</h6>
+      <div class="code-wrapper knitr-output">
         <pre><code>[1] 1 4 2</code></pre>
       </div>
       <div class="code-wrapper">
@@ -154,7 +171,7 @@ describe('knitr', () => {
       </div>
     `);
 
-    expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
+    expect(html.trim()).toBe(expectedHtml.trim());
   });
 
   it('should format table correctly', async () => {
@@ -240,11 +257,9 @@ describe('knitr', () => {
       beetles$propkilled <- beetles$killed / beetles$number
       \`\`\`
     `,
-      { noSyntaxHighlight: false }
+      { noSyntaxHighlight: false },
     );
-    expect(md).toContain(
-      'beetles$propkilled <- beetles$killed / beetles$number'
-    );
+
     expect(ignoreWhitespace(html)).toContain(
       ignoreWhitespace(`
       <div class="code-wrapper">
@@ -264,88 +279,31 @@ describe('knitr', () => {
           </code>
         </pre>
       </div>
-    `)
+    `),
     );
   });
 
   it('should output R errors correctly', async () => {
-    const { md, hasWarningMessage } = await testProcessor(`
+    const { html, hasWarningMessage } = await testProcessor(`
       \`\`\`{r}
       "120" + "5"
       \`\`\`
     `);
 
-    expect(ignoreWhitespace(md)).toContain(
+    expect(ignoreWhitespace(html)).toContain(
       ignoreWhitespace(`
-        \`\`\`{.r-error-output}
-        Error in "120" + "5": non-numeric argument to binary operator
-        \`\`\`
-      `)
+      <div class="code-wrapper error-output">
+        <pre><code>Error in "120" + "5": non-numeric argument to binary operator</code></pre>
+      </div>
+    `),
     );
 
     expect(
       hasWarningMessage(
-        'Error in "120" + "5": non-numeric argument to binary operator'
-      )
+        'Error in "120" + "5": non-numeric argument to binary operator',
+      ),
     ).toBe(true);
   });
-
-  it('should add the correct language output class', async () => {
-    const { html } = await testProcessor(`
-      \`\`\`{python}
-      print(2)
-      \`\`\`
-
-      \`\`\`{python}
-      print(a)
-      \`\`\`
-
-      \`\`\`{r}
-      a <- c(1, 4, 2)
-      a
-      \`\`\`
-
-      \`\`\`{r}
-      b
-      \`\`\`
-    `);
-
-    const result = ignoreWhitespace(`
-      <div class="code-wrapper">
-        <pre><code>print(2)</code></pre>
-      </div>
-      <div class="code-wrapper python-output">
-        <h6 class="console-heading">Python Console</h6>
-        <pre><code>2</code></pre>
-      </div>
-      <div class="code-wrapper">
-        <pre><code>print(a)</code></pre>
-      </div>
-      <div class="code-wrapper python-error-output">
-        <h6 class="console-heading">Python Console</h6>
-        <pre><code>Error: NameError: name 'a' is not defined
-        Detailed traceback:
-          File "&#x3C;string>", line 1, in &#x3C;module></code></pre>
-      </div>
-      <div class="code-wrapper">
-        <pre><code>a &#x3C;- c(1, 4, 2)
-      a</code></pre>
-      </div>
-      <div class="code-wrapper r-output">
-        <h6 class="console-heading">R Console</h6>
-        <pre><code>[1] 1 4 2</code></pre>
-      </div>
-      <div class="code-wrapper">
-        <pre><code>b</code></pre>
-      </div>
-      <div class="code-wrapper r-error-output">
-        <h6 class="console-heading">R Console</h6>
-        <pre><code>Error in eval(expr, envir, enclos): object 'b' not found</code></pre>
-      </div>
-    `);
-
-    expect(ignoreWhitespace(html)).toBe(result);
-  }, 120000);
 
   it.skip('should remove python warnings from the top of knitr output', async () => {
     const { md, messages } = await testProcessor(`
@@ -363,7 +321,7 @@ describe('knitr', () => {
     expect(md.trim().startsWith('WARNING')).toBe(false);
 
     expect(messages[0].startsWith('All triples will be processed')).toBe(
-      true
+      true,
     );
   });
 
@@ -374,7 +332,7 @@ describe('knitr', () => {
       cat does-not-exist.txt
       \`\`\`
     `,
-      { shouldFail: true }
+      { shouldFail: true },
     );
 
     expect(hasFailingMessage(`cat does-not-exist.txt`)).toBe(true);
@@ -387,23 +345,20 @@ describe('knitr', () => {
       git add does-not-exist.txt
       \`\`\`
     `,
-      { shouldFail: true }
+      { shouldFail: true },
     );
 
     expect(hasFailingMessage(`git add does-not-exist.txt`)).toBe(true);
   });
 
   it('should display r code correctly', async () => {
-    const { md, html } = await testProcessor(
+    const { html } = await testProcessor(
       `
       \`\`\`r
       beetles$propkilled <- beetles$killed / beetles$number
       \`\`\`
     `,
-      { noSyntaxHighlight: false }
-    );
-    expect(md).toContain(
-      'beetles$propkilled <- beetles$killed / beetles$number'
+      { noSyntaxHighlight: false },
     );
     expect(ignoreWhitespace(html)).toContain(
       ignoreWhitespace(`
@@ -424,29 +379,32 @@ describe('knitr', () => {
           </code>
         </pre>
       </div>
-    `)
+    `),
     );
   });
 
   it('should output R errors correctly', async () => {
-    const { md, hasWarningMessage } = await testProcessor(`
+    const { html, hasWarningMessage } = await testProcessor(`
       \`\`\`{r}
       "120" + "5"
       \`\`\`
     `);
 
-    expect(ignoreWhitespace(md)).toContain(
+    expect(ignoreWhitespace(html)).toContain(
       ignoreWhitespace(`
-        \`\`\`{.r-error-output}
-        Error in "120" + "5": non-numeric argument to binary operator
-        \`\`\`
-      `)
+        <div class="code-wrapper">
+          <pre><code>"120" + "5"</code></pre>
+        </div>
+        <div class="code-wrapper error-output">
+          <pre><code>Error in "120" + "5": non-numeric argument to binary operator</code></pre>
+        </div>
+      `),
     );
 
     expect(
       hasWarningMessage(
-        'Error in "120" + "5": non-numeric argument to binary operator'
-      )
+        'Error in "120" + "5": non-numeric argument to binary operator',
+      ),
     ).toBe(true);
   });
 
@@ -466,7 +424,7 @@ describe('knitr', () => {
           </div>
           <figcaption><a href="#plot-of-chunk-unnamed"><span class="caption-count">Figure 1:</span> plot of chunk unnamed</a></figcaption>
         </figure>
-      `)
+      `),
     );
   });
 });

@@ -42,7 +42,7 @@ function codeBlocks(store: CodeBlock[]) {
         value: node.value,
       });
       Object.assign(node, {
-        type: 'textDirective',
+        type: 'leafDirective',
         name: 'codeBlock',
         lang: undefined,
         meta: undefined,

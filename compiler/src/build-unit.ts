@@ -54,7 +54,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
       mdast,
       unifiedFile,
       unit,
-      ctx
+      ctx,
     );
   }
 
@@ -64,7 +64,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
       unifiedFile,
       unit,
       ctx,
-      true
+      true,
     );
     result.pdf = {
       ...transformed,
@@ -94,7 +94,7 @@ function combineMdFiles(file: VFile) {
 function removeDirectoryLines(md: string) {
   return md
     .split(EOL)
-    .filter((line) => !/^:directory\[.+\]$/.test(line))
+    .filter((line) => !/^::directory\[.+\]$/.test(line))
     .join(EOL);
 }
 
@@ -103,14 +103,14 @@ async function syntaxTreeTransforms(
   file: VFile,
   unit: Unit,
   ctx: Context,
-  targetPdf?: boolean
+  targetPdf?: boolean,
 ) {
   const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
   const hast = (await hastPhase(
     mdast,
     ctx,
     file,
-    targetPdf
+    targetPdf,
   )) as HastParent;
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return { mdast, hast, html };

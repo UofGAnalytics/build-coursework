@@ -1,6 +1,5 @@
 import headings from 'remark-autolink-headings';
 import directive from 'remark-directive';
-import footnotes from 'remark-footnotes';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
@@ -34,7 +33,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(markdown)
     .use(directive)
     .use(frontmatter)
-    .use(footnotes, { inlineNotes: true })
+    // .use(footnotes, { inlineNotes: true })
     .use(gfm)
     // .use(sectionize)
     .use(slug)
