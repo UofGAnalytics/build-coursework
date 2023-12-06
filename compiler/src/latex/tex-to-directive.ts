@@ -89,7 +89,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
               newMarkdown = `[${refNum}](${anchor})`;
             }
 
-            // normal use case (equation)...
+            // normal use case (math notation)...
             else {
               store.push(mml);
               const type = item.display ? 'blockMath' : 'inlineMath';

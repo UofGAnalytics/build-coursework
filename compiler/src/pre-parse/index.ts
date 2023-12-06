@@ -18,7 +18,7 @@ import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
 export function preParsePhase(file: VFile) {
   let result = file.value as string;
   result = removeCommentedSections(result);
-  result = escapeDollarsInCodeBlocks(result);
+  // result = escapeDollarsInCodeBlocks(result);
   result = allowNoWhitespaceBeforeHeading(result);
   result = convertMacroToDirective(result);
   result = convertTextBfToMd(result);
@@ -34,8 +34,8 @@ function removeCommentedSections(md: string) {
   return md.replace(/<!--[^-][\s\S]*?-->/g, '').replace(/<!---/g, '<!--');
 }
 
-function escapeDollarsInCodeBlocks(md: string) {
-  return md.replace(/(```.+?```)/gms, (match) => {
-    return '\n' + match.replace(/\$/g, '\\$') + '\n';
-  });
-}
+// function escapeDollarsInCodeBlocks(md: string) {
+//   return md.replace(/(```.+?```)/gms, (match) => {
+//     return '\n' + match.replace(/\$/g, '\\$') + '\n';
+//   });
+// }

@@ -115,7 +115,8 @@ describe('reformatPandocSimpleTables', () => {
       | Poisson            | :inlineMath[2]                                 | :inlineMath[3]                            |
       | Binomial           | :inlineMath[4]  | :inlineMath[5] |
 
-      :::weblink{target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng" icon=book}
+      :::weblink{target="http://encore.lib.gla.ac.uk/iii/encore/record/C__Rb2939999?lang=eng" icon="book"}
+      :::
     `);
 
     expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));

@@ -1,0 +1,5 @@
+name: 'Test'
+title: 'Plotly example'
+content:
+  - type: text
+    src: test.Rmd

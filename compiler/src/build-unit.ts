@@ -16,6 +16,7 @@ import { mdastPhase } from './mdast';
 import { combinedMdastPhase } from './mdast/combined';
 import { convertToPdf } from './pdf';
 import { preParsePhase } from './pre-parse';
+import { codeToAliasDirective } from './code/code-to-alias-directive';
 
 export type BuiltUnit = {
   unit: Unit;
@@ -53,7 +54,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
       mdast,
       unifiedFile,
       unit,
-      ctx
+      ctx,
     );
   }
 
@@ -63,7 +64,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
       unifiedFile,
       unit,
       ctx,
-      true
+      true,
     );
     result.pdf = {
       ...transformed,
@@ -81,6 +82,7 @@ export async function buildUnit(unit: Unit, ctx: Context) {
 async function inSituTransforms(file: VFile, ctx: Context) {
   assertNoImageAttributes(file);
   preParsePhase(file);
+  await codeToAliasDirective(file, ctx);
   texToAliasDirective(file, ctx);
   return mdastPhase(file, ctx);
 }
@@ -92,7 +94,7 @@ function combineMdFiles(file: VFile) {
 function removeDirectoryLines(md: string) {
   return md
     .split(EOL)
-    .filter((line) => !/^:directory\[.+\]$/.test(line))
+    .filter((line) => !/^::directory\[.+\]$/.test(line))
     .join(EOL);
 }
 
@@ -101,14 +103,14 @@ async function syntaxTreeTransforms(
   file: VFile,
   unit: Unit,
   ctx: Context,
-  targetPdf?: boolean
+  targetPdf?: boolean,
 ) {
   const mdast = await combinedMdastPhase(_mdast, ctx, file, targetPdf);
   const hast = (await hastPhase(
     mdast,
     ctx,
     file,
-    targetPdf
+    targetPdf,
   )) as HastParent;
   const html = await htmlPhase(hast, mdast, file, unit, ctx, targetPdf);
   return { mdast, hast, html };

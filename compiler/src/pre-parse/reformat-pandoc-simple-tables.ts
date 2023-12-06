@@ -5,8 +5,8 @@ import { markdownTable } from 'markdown-table';
 export function reformatPandocSimpleTables(contents: string) {
   const lines = contents.split(EOL);
 
-  // operate on array backwards as length may change with transformation,
-  // preserving index in loop
+  // operate on array backwards preserving index in loop,
+  // as length may change with transformation
   for (var idx = lines.length - 1; idx >= 0; idx--) {
     if (isValidPandocSimpleTableSeparator(lines, idx)) {
       const { startIdx, count } = getTableBounds(lines, idx);

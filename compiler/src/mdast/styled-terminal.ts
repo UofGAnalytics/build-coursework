@@ -12,7 +12,7 @@ export function styledTerminal() {
         if (node.lang === 'bash') {
           wrapInStyledTerminal(node, index, parent);
         }
-      }
+      },
     );
   };
 }
@@ -26,8 +26,8 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
   if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode as Code;
     if (
-      response.lang === '{.bash-output}' ||
-      response.lang === '{.bash-error-output}'
+      response.lang === '{.knitr-output}' ||
+      response.lang === '{.knitr-error-output}'
     ) {
       const children = (response.data?.hChildren || []) as Node[];
       const responseWithColours = ansiToHast(children);

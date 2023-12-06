@@ -6,13 +6,13 @@ import { testProcessor } from '../../test-utils/test-processor';
 
 describe('python', () => {
   it('should run embedded python', async () => {
-    const { md } = await testProcessor(`
+    const { html } = await testProcessor(`
       \`\`\`{python}
       print(2**200)
       \`\`\`
     `);
-    expect(md).toContain(
-      '1606938044258990275541962092341162602522202993782792835301376'
+    expect(html).toContain(
+      '1606938044258990275541962092341162602522202993782792835301376',
     );
   }, 60000);
 });

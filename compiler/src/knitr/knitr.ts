@@ -53,7 +53,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
     // can have relative paths to the .Rmd document.
     // used in embed-asset-url mdast transform
     const fileDir = path.parse(filePath).dir;
-    const directive = `:directory[${fileDir}]`;
+    const directive = `::directory[${fileDir}]`;
 
     // child document
     // convert all file paths to forward slash (windows anaconda/knitr bug)
@@ -113,7 +113,7 @@ function getUniqueId(md: string) {
 function createKnitrCommand(
   ctx: Context,
   uniqueId: string,
-  unitPath: string
+  unitPath: string,
 ) {
   const rFileDir = getKnitrFileDir();
   const rFile = path.join(rFileDir, 'knitr.R');
@@ -211,7 +211,6 @@ async function formatResponse(response: string) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
   md = removePythonWarningMessage(md);
-  md = addCodeBlockClasses(md);
   md = addErrorCodeBlock(md);
   md = removeHashSigns(md);
   md = removeEmptyLog(md);
@@ -225,21 +224,6 @@ function removeCustomPythonBinNotice(md: string) {
 
 function removePythonWarningMessage(md: string) {
   return md.replace(/^WARNING - .+?[\r\n]+/m, '');
-}
-
-function addCodeBlockClasses(md: string) {
-  return md
-    .split('\n')
-    .reduce((acc: string[], line) => {
-      if (line.startsWith('```{.knitr-output}')) {
-        const lang = findLanguageForOutput(acc);
-        acc.push(`\`\`\`{.${lang}-output}`);
-      } else {
-        acc.push(line);
-      }
-      return acc;
-    }, [])
-    .join('\n');
 }
 
 function removeHashSigns(md: string) {
@@ -272,8 +256,7 @@ function addErrorCodeBlock(md: string) {
     .reduce((acc: string[], line, idx) => {
       if (idx > 0 && acc[idx - 1].startsWith('```')) {
         if (line.startsWith('## Error') || line.startsWith('## fatal')) {
-          const lang = findLanguageForOutput(acc.slice(0, -1));
-          acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
+          acc[acc.length - 1] = `\`\`\`{.error-output}`;
         }
       }
       acc.push(line);
@@ -294,22 +277,6 @@ function addNewLineAfterKable(md: string) {
       return acc;
     }, [])
     .join('\n');
-}
-
-function findLanguageForOutput(prev: string[]) {
-  const pattern = /```(\w*)/;
-  const reversed = prev.slice().reverse();
-  const prevClosingIdx = reversed.findIndex((s) => s.startsWith('```'));
-  const prevOpening = reversed
-    .slice(prevClosingIdx + 1)
-    .find((s) => pattern.test(s)) as string;
-
-  if (!prevOpening) {
-    return 'r';
-  }
-
-  const match = prevOpening.match(pattern) as RegExpMatchArray;
-  return match[1];
 }
 
 // experimental streaming output

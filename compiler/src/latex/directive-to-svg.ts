@@ -7,7 +7,7 @@ import { Context } from '../context';
 import { rehypeParser } from '../utils/utils';
 import { mmlToSpeech, mmlToSvg } from './mathjax-tex';
 
-export function aliasDirectiveToSvg(ctx: Context) {
+export function aliasDirectiveToLatexSvg(ctx: Context) {
   return (tree: Root) => {
     visit(tree, 'textDirective', (node) => {
       if (!ctx.mmlStore || ctx.options.noTexSvg) {

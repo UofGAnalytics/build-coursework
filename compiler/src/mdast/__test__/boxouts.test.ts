@@ -144,7 +144,7 @@ describe('proposition', () => {
 });
 
 describe('optional task', () => {
-  it('should render an optional tast boxout', async () => {
+  it('should render an optional task boxout', async () => {
     const { html } = await testProcessor(`
       ###[task, optional]
       An optional task of *this*!
@@ -278,21 +278,16 @@ describe('weblink', () => {
 
     expect(ignoreWhitespace(md)).toBe(
       ignoreWhitespace(`
-        \`\`\`r
-        a <- c(1, 4, 2)
-        a
-        \`\`\`
+        ::codeBlock[0]
 
-        \`\`\`{.r-output}
-        [1] 1 4 2
-        \`\`\`
+        ::codeBlock[1]
 
         ## A title
         A paragraph
 
         ### A subtitle
         A paragraph
-      `)
+      `),
     );
   });
 });

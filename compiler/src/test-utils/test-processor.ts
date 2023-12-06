@@ -37,7 +37,7 @@ export async function testProcessor(md: string, options: Options = {}) {
       unit.html = result.html.html;
     } else {
       console.log(
-        '[test processor]: no html object returned from buildUnit'
+        '[test processor]: no html object returned from buildUnit',
       );
     }
   } catch (err) {
