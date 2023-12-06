@@ -6,7 +6,6 @@
 
 setHtmlFontSize();
 window.addEventListener('resize', setHtmlFontSize, false);
-
 function setHtmlFontSize() {
   const min = 14;
   const max = 30;
@@ -24,12 +23,10 @@ function setHtmlFontSize() {
 document.querySelectorAll('.answer-trigger').forEach(elem => {
   elem.addEventListener('click', toggleAnswer);
 });
-
 function toggleAnswer(e) {
   const target = e.target;
   const id = `answer-${target.dataset.answerId}`;
   const $answer = document.getElementById(id);
-
   if ($answer.classList.contains('show')) {
     $answer.classList.remove('show');
     target.innerHTML = 'Show answer';
@@ -46,12 +43,10 @@ function toggleAnswer(e) {
 
 document.querySelector('#root > .hamburger-icon')?.addEventListener('click', openSidebar);
 document.querySelector('.logo > .hamburger-icon')?.addEventListener('click', closeSidebar);
-
 function openSidebar() {
   const root = document.getElementById('root');
   root.classList.remove('hide-sidebar');
 }
-
 function closeSidebar() {
   const root = document.getElementById('root');
   root.classList.add('hide-sidebar');
@@ -66,7 +61,6 @@ function closeSidebar() {
 const button = document.getElementById('view-options-toggle');
 button.addEventListener('click', toggleOpen);
 let viewOptionsOpen = false;
-
 function toggleOpen() {
   if (viewOptionsOpen) {
     document.documentElement.classList.remove('view-options-open');
@@ -123,12 +117,11 @@ function saveState(name, state) {
 }
 function getSavedState(name, defaultState) {
   const saved = localStorage.getItem(name);
-
   if (saved === null) {
-    return { ...defaultState
+    return {
+      ...defaultState
     };
   }
-
   const savedState = JSON.parse(saved);
   return Object.entries(defaultState).reduce((acc, tuple) => {
     const key = tuple[0];
@@ -157,7 +150,6 @@ document.querySelector(`#themes .${current}`)?.classList.add('selected');
 document.querySelectorAll('#themes li').forEach(elem => {
   elem.addEventListener('click', setTheme);
 });
-
 function setTheme(e) {
   const target = e.target;
   const name = `theme-${target.classList[0]}`;
@@ -179,7 +171,6 @@ document.querySelector(`#fonts .${font_current}`)?.classList.add('selected');
 document.querySelectorAll('#fonts li').forEach(elem => {
   elem.addEventListener('click', setFont);
 });
-
 function setFont(e) {
   const target = e.target;
   const name = `font-${target.classList[0]}`;
@@ -212,19 +203,15 @@ document.querySelectorAll('#readability .btn.reset').forEach(elem => {
     currentValue,
     defaultValue
   } = getProps(elem);
-
   if (currentValue === Number(defaultValue)) {
     elem.classList.add('disabled');
   }
 });
-
 function handleMinus(e) {
   const target = e.target;
-
   if (target.classList.contains('disabled')) {
     return;
   }
-
   const props = getProps(target);
   const newValue = Math.max(props.min, props.currentValue - props.increment);
   setDisabledClasses(newValue, props);
@@ -233,14 +220,11 @@ function handleMinus(e) {
   state[props.name] = strValue;
   saveState('view-options', state);
 }
-
 function handlePlus(e) {
   const target = e.target;
-
   if (target.classList.contains('disabled')) {
     return;
   }
-
   const props = getProps(target);
   const newValue = Math.min(props.max, props.currentValue + props.increment);
   setDisabledClasses(newValue, props);
@@ -249,14 +233,11 @@ function handlePlus(e) {
   state[props.name] = strValue;
   saveState('view-options', state);
 }
-
 function handleReset(e) {
   const target = e.target;
-
   if (target.classList.contains('disabled')) {
     return;
   }
-
   const props = getProps(target);
   setDisabledClasses(Number(props.defaultValue), props);
   target.classList.add('disabled');
@@ -264,29 +245,24 @@ function handleReset(e) {
   state[props.name] = props.defaultValue;
   saveState('view-options', state);
 }
-
 function setDisabledClasses(newValue, props) {
   const tolerance = 0.01;
-
   if (Math.abs(newValue - props.min) < tolerance) {
     props.minus.classList.add('disabled');
   } else {
     props.minus.classList.remove('disabled');
   }
-
   if (Math.abs(props.max - newValue) < tolerance) {
     props.plus.classList.add('disabled');
   } else {
     props.plus.classList.remove('disabled');
   }
-
   if (Math.abs(Number(props.defaultValue) - newValue) < tolerance) {
     props.reset.classList.add('disabled');
   } else {
     props.reset.classList.remove('disabled');
   }
 }
-
 function getProps(elem) {
   const li = elem.closest('li');
   const name = li.classList[0];
@@ -325,26 +301,21 @@ document.documentElement.classList.add(`program-${state_state.program}`);
 document.querySelectorAll('.program-switcher > ul > li').forEach(elem => {
   const element = elem;
   console.log(element.dataset.program, state_state.program);
-
   if (element.dataset.program === state_state.program) {
     element.classList.add('active');
   }
-
   element.addEventListener('click', setProgram);
 });
 document.querySelectorAll('.program-switcher > .program').forEach(elem => {
   const element = elem;
-
   if (element.dataset.program === state_state.program) {
     element.classList.add('show');
   }
 });
-
 function setProgram(e) {
   const target = e.currentTarget;
   const program = target.dataset.program;
   const newClass = `program-${program}`;
-
   if (!document.documentElement.classList.contains(newClass)) {
     const oldClass = `program-${state_state.program}`;
     document.documentElement.classList.replace(oldClass, newClass);

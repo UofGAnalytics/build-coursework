@@ -5,7 +5,7 @@ import {
 
 describe('footnotes', () => {
   it('should render a footnote', async () => {
-    const { md, html } = await testProcessor(`
+    const { html } = await testProcessor(`
       Bla bla [^1].
 
       [^1]: Bla

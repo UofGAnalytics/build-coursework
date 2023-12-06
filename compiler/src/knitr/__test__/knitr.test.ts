@@ -251,7 +251,7 @@ describe('knitr', () => {
   });
 
   it('should display r code correctly', async () => {
-    const { md, html } = await testProcessor(
+    const { html } = await testProcessor(
       `
       \`\`\`r
       beetles$propkilled <- beetles$killed / beetles$number

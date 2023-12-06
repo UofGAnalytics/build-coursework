@@ -39,7 +39,7 @@ export function boxouts(refStore: Context['refStore']) {
 function createAttributes(
   node: ContainerDirective,
   count: number,
-  refStore: Context['refStore']
+  refStore: Context['refStore'],
 ) {
   const name = node.name as string;
   const id = `${name}-${count}`;
@@ -50,7 +50,10 @@ function createAttributes(
     className.push(`${attributes.icon}-icon`);
   }
 
-  if (node.attributes?.label !== undefined) {
+  if (
+    node.attributes?.label !== undefined &&
+    node.attributes?.label !== null
+  ) {
     refStore[node.attributes.label] = id;
   }
 
@@ -59,7 +62,7 @@ function createAttributes(
 
 export function createBoxout(
   node: ContainerDirective,
-  count: number
+  count: number,
 ): Node[] {
   const typeTitle = createBoxoutType(node, count);
   const titles = [typeTitle];
@@ -80,7 +83,7 @@ export function createBoxout(
 
   if (node.name === 'task') {
     const answer = children.find(
-      (o) => o.type === 'containerDirective' && o.name === 'answer'
+      (o) => o.type === 'containerDirective' && o.name === 'answer',
     );
     if (answer) {
       const answerHast = createAnswer(answer, count);
@@ -129,7 +132,7 @@ function createAnswer(node: ContainerDirective, count: number) {
 
 function createBoxoutType(
   node: ContainerDirective,
-  count: number
+  count: number,
 ): Element {
   const name = node.name as string;
   const label = startCase(name);

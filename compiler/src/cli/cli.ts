@@ -3,93 +3,97 @@
 import chalk from 'chalk';
 import figures from 'figures';
 import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 import { Options } from '../context';
 import { reportHasFatalErrors } from '../linter/report';
 import { rMarkdown } from '..';
 
-const { argv } = yargs(process.argv.slice(2))
-  .option('week', {
+const args = {
+  week: {
     type: 'number',
     description: 'Build specific week (1-based index)',
-  })
-  .option('watch', {
+  },
+  watch: {
     type: 'boolean',
     description: 'Watch coursework for changes',
-  })
-  .option('noDoc', {
+  },
+  noDoc: {
     type: 'boolean',
     description: 'Only compile content HTML',
-  })
-  .option('noHtml', {
+  },
+  noHtml: {
     type: 'boolean',
     description: "Don't create HTML file",
-  })
-  .option('noPdf', {
+  },
+  noPdf: {
     type: 'boolean',
     description: "Don't create PDF file",
-  })
-  .option('noSyntaxHighlight', {
+  },
+  noSyntaxHighlight: {
     type: 'boolean',
     description: 'No syntax highlighting',
-  })
-  .option('noReport', {
+  },
+  noReport: {
     type: 'boolean',
     description: 'Bypass linter',
-  })
-  .option('noEmbedAssets', {
+  },
+  noEmbedAssets: {
     type: 'boolean',
     description: "Don't embed assets",
-  })
-  .option('noEmbedAssetUrl', {
+  },
+  noEmbedAssetUrl: {
     type: 'boolean',
     description: "Don't complete asset Url",
-  })
-  .option('noCache', {
+  },
+  noCache: {
     type: 'boolean',
     description: 'No cache',
-  })
-  .option('noTexSvg', {
+  },
+  noTexSvg: {
     type: 'boolean',
     description: 'No Tex Svg',
-  })
-  .option('noHexagons', {
+  },
+  noHexagons: {
     type: 'boolean',
     description: 'No cover hexagons',
-  })
-  .option('spelling', {
+  },
+  spelling: {
     type: 'boolean',
     description: 'Check spelling',
-  })
-  .option('pythonBin', {
+  },
+  pythonBin: {
     type: 'string',
     description: 'Custom path to python binary',
-  })
-  .option('force', {
+  },
+  force: {
     type: 'boolean',
     description: 'Compile even with fatal errors',
-  })
-  .option('verbose', {
+  },
+  verbose: {
     type: 'boolean',
     description: 'Show error stack',
-  })
-  .option('envPlatform', {
+  },
+  envPlatform: {
     type: 'string',
     description: 'Specify which environment platform to display',
-  })
-  .option('envProgram', {
+  },
+  envProgram: {
     type: 'string',
     description: 'Specify which environment program to display',
-  })
-  .option('fileName', {
+  },
+  fileName: {
     type: 'string',
     description: 'Specify name of output file',
-  })
-  .option('output', {
+  },
+  output: {
     type: 'string',
     description: 'output to stdout',
     choices: ['md', 'html'],
-  });
+  },
+} as const;
+
+const argv = yargs(hideBin(process.argv)).options(args).parseSync();
 
 const dirPath = String(argv._[0] || '.');
 

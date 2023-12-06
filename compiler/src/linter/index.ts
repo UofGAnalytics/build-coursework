@@ -1,4 +1,3 @@
-// @ts-expect-error
 import lintAltText from '@double-great/remark-lint-alt-text';
 // @ts-expect-error
 import lintLinkText from '@mapbox/remark-lint-link-text';
@@ -47,7 +46,7 @@ export function reportErrors(files: VFile[], ctx: Context) {
 export async function createReport(
   file: VFile,
   mdast: Node,
-  ctx: Context
+  ctx: Context,
 ) {
   const processor = unified()
     .use(assertAssetExists)

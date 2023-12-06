@@ -3,7 +3,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 8802:
+/***/ 1342:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -13,18 +13,20 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2037);
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3675);
-/* harmony import */ var _html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2199);
-/* harmony import */ var _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1650);
-/* harmony import */ var _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9156);
-/* harmony import */ var _linter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8633);
-/* harmony import */ var _linter_assert_no_image_attributes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8102);
-/* harmony import */ var _mdast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8287);
-/* harmony import */ var _mdast_combined__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8176);
-/* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(9005);
-/* harmony import */ var _pre_parse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(6590);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__]);
-([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4760);
+/* harmony import */ var _html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2930);
+/* harmony import */ var _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3432);
+/* harmony import */ var _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7633);
+/* harmony import */ var _linter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1399);
+/* harmony import */ var _linter_assert_no_image_attributes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9051);
+/* harmony import */ var _mdast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9057);
+/* harmony import */ var _mdast_combined__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1316);
+/* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(495);
+/* harmony import */ var _pre_parse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8534);
+/* harmony import */ var _code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6217);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__, _code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__]);
+([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__, _code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -38,7 +40,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_has
 
 async function buildUnit(unit, ctx) {
   const unifiedFile = await (0,_knitr_knitr__WEBPACK_IMPORTED_MODULE_3__/* .knitr */ .M)(unit, ctx);
-  const mdast = await inSituTransforms(unifiedFile, ctx); // console.log(mdast);
+  const mdast = await inSituTransforms(unifiedFile, ctx);
+  // console.log(mdast);
 
   await (0,_linter__WEBPACK_IMPORTED_MODULE_5__/* .createReport */ .Z)(unifiedFile, mdast, ctx);
   const result = {
@@ -46,40 +49,34 @@ async function buildUnit(unit, ctx) {
     md: combineMdFiles(unifiedFile),
     files: [unifiedFile]
   };
-
   if (!ctx.options.noHtml) {
     result.html = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx);
   }
-
   if (!ctx.options.noPdf) {
     const transformed = await syntaxTreeTransforms(mdast, unifiedFile, unit, ctx, true);
-    result.pdf = { ...transformed,
+    result.pdf = {
+      ...transformed,
       pdf: await (0,_pdf__WEBPACK_IMPORTED_MODULE_9__/* .convertToPdf */ .A)(transformed.html)
     };
   }
-
   if (!ctx.options.noReport) {
     (0,_linter__WEBPACK_IMPORTED_MODULE_5__/* .reportErrors */ .E)(result.files, ctx);
   }
-
   return result;
 }
-
 async function inSituTransforms(file, ctx) {
   (0,_linter_assert_no_image_attributes__WEBPACK_IMPORTED_MODULE_6__/* .assertNoImageAttributes */ .F)(file);
   (0,_pre_parse__WEBPACK_IMPORTED_MODULE_10__/* .preParsePhase */ .Z)(file);
+  await (0,_code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__/* .codeToAliasDirective */ .S)(file, ctx);
   (0,_latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__/* .texToAliasDirective */ .T)(file, ctx);
   return (0,_mdast__WEBPACK_IMPORTED_MODULE_7__/* .mdastPhase */ .c)(file, ctx);
 }
-
 function combineMdFiles(file) {
   return removeDirectoryLines(file.value);
 }
-
 function removeDirectoryLines(md) {
-  return md.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL).filter(line => !/^:directory\[.+\]$/.test(line)).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
+  return md.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL).filter(line => !/^::directory\[.+\]$/.test(line)).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
-
 async function syntaxTreeTransforms(_mdast, file, unit, ctx, targetPdf) {
   const mdast = await (0,_mdast_combined__WEBPACK_IMPORTED_MODULE_8__/* .combinedMdastPhase */ .P)(_mdast, ctx, file, targetPdf);
   const hast = await (0,_hast__WEBPACK_IMPORTED_MODULE_1__/* .hastPhase */ .s)(mdast, ctx, file, targetPdf);
@@ -95,7 +92,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9877:
+/***/ 606:
 /***/ ((module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -103,79 +100,101 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7564);
 /* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3952);
 /* harmony import */ var yargs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2699);
-/* harmony import */ var _linter_report__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8987);
-/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7329);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, _linter_report__WEBPACK_IMPORTED_MODULE_3__, ___WEBPACK_IMPORTED_MODULE_4__]);
-([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, _linter_report__WEBPACK_IMPORTED_MODULE_3__, ___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var yargs_helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1091);
+/* harmony import */ var _linter_report__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1110);
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9474);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, yargs_helpers__WEBPACK_IMPORTED_MODULE_3__, _linter_report__WEBPACK_IMPORTED_MODULE_4__, ___WEBPACK_IMPORTED_MODULE_5__]);
+([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__, yargs__WEBPACK_IMPORTED_MODULE_2__, yargs_helpers__WEBPACK_IMPORTED_MODULE_3__, _linter_report__WEBPACK_IMPORTED_MODULE_4__, ___WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
 
 
-const {
-  argv
-} = (0,yargs__WEBPACK_IMPORTED_MODULE_2__["default"])(process.argv.slice(2)).option('week', {
-  type: 'number',
-  description: 'Build specific week (1-based index)'
-}).option('watch', {
-  type: 'boolean',
-  description: 'Watch coursework for changes'
-}).option('noDoc', {
-  type: 'boolean',
-  description: 'Only compile content HTML'
-}).option('noHtml', {
-  type: 'boolean',
-  description: "Don't create HTML file"
-}).option('noPdf', {
-  type: 'boolean',
-  description: "Don't create PDF file"
-}).option('noSyntaxHighlight', {
-  type: 'boolean',
-  description: 'No syntax highlighting'
-}).option('noReport', {
-  type: 'boolean',
-  description: 'Bypass linter'
-}).option('noEmbedAssets', {
-  type: 'boolean',
-  description: "Don't embed assets"
-}).option('noEmbedAssetUrl', {
-  type: 'boolean',
-  description: "Don't complete asset Url"
-}).option('noCache', {
-  type: 'boolean',
-  description: 'No cache'
-}).option('noTexSvg', {
-  type: 'boolean',
-  description: 'No Tex Svg'
-}).option('noHexagons', {
-  type: 'boolean',
-  description: 'No cover hexagons'
-}).option('spelling', {
-  type: 'boolean',
-  description: 'Check spelling'
-}).option('pythonBin', {
-  type: 'string',
-  description: 'Custom path to python binary'
-}).option('force', {
-  type: 'boolean',
-  description: 'Compile even with fatal errors'
-}).option('verbose', {
-  type: 'boolean',
-  description: 'Show error stack'
-}).option('envPlatform', {
-  type: 'string',
-  description: 'Specify which environment platform to display'
-}).option('envProgram', {
-  type: 'string',
-  description: 'Specify which environment program to display'
-}).option('fileName', {
-  type: 'string',
-  description: 'Specify name of output file'
-}).option('output', {
-  type: 'string',
-  description: 'output to stdout',
-  choices: ['md', 'html']
-});
+
+const args = {
+  week: {
+    type: 'number',
+    description: 'Build specific week (1-based index)'
+  },
+  watch: {
+    type: 'boolean',
+    description: 'Watch coursework for changes'
+  },
+  noDoc: {
+    type: 'boolean',
+    description: 'Only compile content HTML'
+  },
+  noHtml: {
+    type: 'boolean',
+    description: "Don't create HTML file"
+  },
+  noPdf: {
+    type: 'boolean',
+    description: "Don't create PDF file"
+  },
+  noSyntaxHighlight: {
+    type: 'boolean',
+    description: 'No syntax highlighting'
+  },
+  noReport: {
+    type: 'boolean',
+    description: 'Bypass linter'
+  },
+  noEmbedAssets: {
+    type: 'boolean',
+    description: "Don't embed assets"
+  },
+  noEmbedAssetUrl: {
+    type: 'boolean',
+    description: "Don't complete asset Url"
+  },
+  noCache: {
+    type: 'boolean',
+    description: 'No cache'
+  },
+  noTexSvg: {
+    type: 'boolean',
+    description: 'No Tex Svg'
+  },
+  noHexagons: {
+    type: 'boolean',
+    description: 'No cover hexagons'
+  },
+  spelling: {
+    type: 'boolean',
+    description: 'Check spelling'
+  },
+  pythonBin: {
+    type: 'string',
+    description: 'Custom path to python binary'
+  },
+  force: {
+    type: 'boolean',
+    description: 'Compile even with fatal errors'
+  },
+  verbose: {
+    type: 'boolean',
+    description: 'Show error stack'
+  },
+  envPlatform: {
+    type: 'string',
+    description: 'Specify which environment platform to display'
+  },
+  envProgram: {
+    type: 'string',
+    description: 'Specify which environment program to display'
+  },
+  fileName: {
+    type: 'string',
+    description: 'Specify name of output file'
+  },
+  output: {
+    type: 'string',
+    description: 'output to stdout',
+    choices: ['md', 'html']
+  }
+};
+const argv = (0,yargs__WEBPACK_IMPORTED_MODULE_2__["default"])((0,yargs_helpers__WEBPACK_IMPORTED_MODULE_3__.hideBin)(process.argv)).options(args).parseSync();
 const dirPath = String(argv._[0] || '.');
 const options = {
   week: argv.week,
@@ -199,45 +218,147 @@ const options = {
   fileName: argv.fileName,
   output: argv.output
 };
-
 async function run() {
   try {
-    const weeks = await (0,___WEBPACK_IMPORTED_MODULE_4__/* .rMarkdown */ .C)(dirPath, options);
-
+    const weeks = await (0,___WEBPACK_IMPORTED_MODULE_5__/* .rMarkdown */ .C)(dirPath, options);
     for (const week of weeks) {
       if (options.output === 'html') {
         console.log((week.html?.html || '').trim());
       }
-
       if (options.output === 'md') {
         console.log(week.md.trim());
       }
-    } // correct exit code even when using --force
+    }
 
-
+    // correct exit code even when using --force
     for (const week of weeks) {
-      if ((0,_linter_report__WEBPACK_IMPORTED_MODULE_3__/* .reportHasFatalErrors */ .wC)(week.files)) {
+      if ((0,_linter_report__WEBPACK_IMPORTED_MODULE_4__/* .reportHasFatalErrors */ .wC)(week.files)) {
         process.exit(1);
       }
     }
   } catch (err) {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_0__["default"].red(figures__WEBPACK_IMPORTED_MODULE_1__["default"].cross + ' ' + err.message));
-
     if (options.verbose) {
       console.error(err);
     }
-
     process.exit(1);
   }
 }
-
 run();
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
-/***/ 4975:
+/***/ 3021:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   f: () => (/* binding */ aliasDirectiveToCode)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
+unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+function aliasDirectiveToCode(ctx) {
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, node => {
+      if (node.type === 'leafDirective' && node.name === 'codeBlock') {
+        const idx = getStoreIdx(node);
+        if (ctx.codeStore === undefined) {
+          return;
+        }
+        const stored = ctx.codeStore[idx];
+        if (!ctx.codeStore[idx]) {
+          return;
+        }
+        Object.assign(node, {
+          type: 'code',
+          name: undefined,
+          lang: stored.lang,
+          meta: stored.meta,
+          value: stored.value,
+          children: []
+        });
+      }
+    });
+  };
+}
+function getStoreIdx(node) {
+  const firstChild = node.children[0];
+  return Number(firstChild.value || 0);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 6217:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   S: () => (/* binding */ codeToAliasDirective)
+/* harmony export */ });
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
+/* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6688);
+/* harmony import */ var remark_directive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7785);
+/* harmony import */ var remark_stringify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7778);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_parse__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_stringify__WEBPACK_IMPORTED_MODULE_2__, unist_util_visit__WEBPACK_IMPORTED_MODULE_3__]);
+([remark_parse__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_stringify__WEBPACK_IMPORTED_MODULE_2__, unist_util_visit__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+
+
+
+// The reason for replacing all fenced code blocks with aliases
+// temporarily is because of MathJax.  MathJax is designed to look
+// for TeX code inside HTML files, and in our case we need to make it
+// look inside a Markdown file. This leads to MathJax looking for TeX
+// inside code blocks, which can causes problems (especially with SAS
+// code syntax).  So this function replaces code blocks with an alias,
+// allows MathJax to do it's thing, then adds it back in with
+// `aliasDirectiveToCode`.
+
+async function codeToAliasDirective(file, ctx) {
+  const store = [];
+  const processed = await (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(remark_parse__WEBPACK_IMPORTED_MODULE_0__["default"]).use(remark_stringify__WEBPACK_IMPORTED_MODULE_2__["default"]).use(codeBlocks, store).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).process(file);
+  file.value = String(processed);
+  ctx.codeStore = store;
+  return file;
+}
+function codeBlocks(store) {
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_3__.visit)(tree, 'code', node => {
+      store.push({
+        lang: String(node.lang),
+        meta: String(node.meta),
+        value: node.value
+      });
+      Object.assign(node, {
+        type: 'leafDirective',
+        name: 'codeBlock',
+        lang: undefined,
+        meta: undefined,
+        value: undefined,
+        children: [{
+          type: 'text',
+          value: String(store.length - 1)
+        }]
+      });
+    });
+  };
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 7404:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -245,8 +366,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   k: () => (/* binding */ createContext)
 /* harmony export */ });
-/* harmony import */ var _course__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3942);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8061);
+/* harmony import */ var _course__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(432);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_course__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__]);
 ([_course__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -267,7 +388,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 3942:
+/***/ 432:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -280,9 +401,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3908);
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1252);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8061);
-/* harmony import */ var _load_course__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8292);
-/* harmony import */ var _load_unit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1358);
+/* harmony import */ var _load_course__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4897);
+/* harmony import */ var _load_unit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2705);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__, _load_course__WEBPACK_IMPORTED_MODULE_4__, _load_unit__WEBPACK_IMPORTED_MODULE_5__]);
 ([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_1__, to_vfile__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__, _load_course__WEBPACK_IMPORTED_MODULE_4__, _load_unit__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -295,12 +416,12 @@ async function collectCoursework(dirPath) {
   const course = await (0,_load_course__WEBPACK_IMPORTED_MODULE_4__/* .loadCourseYaml */ .n)(dirPath);
   const coursePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), dirPath);
   const units = await Promise.all(course.units.map(unit => collectUnit(unit, course, dirPath)));
-  return { ...course,
+  return {
+    ...course,
     coursePath,
     units
   };
 }
-
 async function collectUnit(unit, course, dirPath) {
   const {
     content,
@@ -309,11 +430,9 @@ async function collectUnit(unit, course, dirPath) {
   const unitPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), dirPath, unit.src);
   const files = await Promise.all(content.map(async c => {
     const filePath = path__WEBPACK_IMPORTED_MODULE_0___default().resolve(dirPath, unit.src, '..', c.src);
-
     if (!(await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_3__/* .checkLocalFileExists */ .qd)(filePath))) {
       throw new Error(`No Rmd file exists at ${filePath}`);
     }
-
     return to_vfile__WEBPACK_IMPORTED_MODULE_2__.toVFile.read(filePath, 'utf-8');
   }));
   const titles = getUnitTitles({
@@ -321,14 +440,14 @@ async function collectUnit(unit, course, dirPath) {
     unitName: yaml.name,
     unitTitle: yaml.title
   });
-  return { ...yaml,
+  return {
+    ...yaml,
     unitPath,
     parts: content,
     files,
     titles
   };
 }
-
 function getUnitTitles({
   courseTitle,
   unitName,
@@ -347,7 +466,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8292:
+/***/ 4897:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -359,7 +478,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(626);
 /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4962);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8061);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__]);
 ([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -381,6 +500,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_y
 //   'STATS5094',
 //   'STATS5083',
 // ];
+
 const courseSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
   title: yup__WEBPACK_IMPORTED_MODULE_2__.string().required(),
   units: yup__WEBPACK_IMPORTED_MODULE_2__.array().of(yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
@@ -392,11 +512,9 @@ const courseSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
 });
 async function loadCourseYaml(dirPath) {
   const courseYamlPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(dirPath, 'course.yaml');
-
   if (!(await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_3__/* .checkLocalFileExists */ .qd)(courseYamlPath))) {
     throw Error(`No course.yaml file exists in ${path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), dirPath)}`);
   }
-
   const fileContents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_3__/* .readFile */ .pJ)(courseYamlPath);
   const course = js_yaml__WEBPACK_IMPORTED_MODULE_1__["default"].load(fileContents);
   return courseSchema.validateSync(course);
@@ -406,7 +524,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2:
+/***/ 2705:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -418,7 +536,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var js_yaml__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(626);
 /* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4962);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8061);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__]);
 ([js_yaml__WEBPACK_IMPORTED_MODULE_1__, yup__WEBPACK_IMPORTED_MODULE_2__, _utils_utils__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -434,11 +552,9 @@ const unitSchema = yup__WEBPACK_IMPORTED_MODULE_2__.object().shape({
 });
 async function loadUnitYaml(dirPath, src) {
   const contentsPath = path__WEBPACK_IMPORTED_MODULE_0___default().join(dirPath, src);
-
   if (!(await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_3__/* .checkLocalFileExists */ .qd)(contentsPath))) {
     throw Error(`No yaml file exists at ${path__WEBPACK_IMPORTED_MODULE_0___default().join(process.cwd(), contentsPath)}`);
   }
-
   const fileContents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_3__/* .readFile */ .pJ)(contentsPath);
   const unit = js_yaml__WEBPACK_IMPORTED_MODULE_1__["default"].load(fileContents);
   return unitSchema.validateSync(unit);
@@ -448,7 +564,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 3675:
+/***/ 4760:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -458,9 +574,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var rehype_raw__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1871);
 /* harmony import */ var remark_rehype__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2509);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(117);
-/* harmony import */ var _inline_files__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1675);
-/* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3517);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
+/* harmony import */ var _inline_files__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1085);
+/* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5947);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _inline_files__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__]);
 ([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _inline_files__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -472,11 +588,9 @@ async function hastPhase(mdast, ctx, file, targetPdf) {
   const processor = (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(remark_rehype__WEBPACK_IMPORTED_MODULE_1__["default"], {
     allowDangerousHtml: true
   }).use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_3__/* .responsiveTables */ .l);
-
   if (!ctx.options.noEmbedAssets) {
     processor.use(_inline_files__WEBPACK_IMPORTED_MODULE_2__/* .inlineRelativeAssets */ .d, ctx);
   }
-
   return processor.run(mdast, file);
 }
 __webpack_async_result__();
@@ -484,7 +598,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 1675:
+/***/ 1085:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -500,10 +614,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6544);
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1252);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6016);
-/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2303);
-/* harmony import */ var _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8530);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(153);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8061);
+/* harmony import */ var _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5397);
+/* harmony import */ var _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8093);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(343);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
 ([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -511,7 +625,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base
 
 
 
- // import { optimize } from 'svgo';
+
+// import { optimize } from 'svgo';
 
 
 // import { pdfToSvg } from '../pdf/pdf-to-svg';
@@ -527,7 +642,6 @@ function inlineRelativeAssets(ctx) {
       if (node.tagName === 'img') {
         transformations.push(embedFile(node, file, ctx));
       }
-
       if (node.tagName === 'script' && node.properties?.src) {
         transformations.push(embedScript(node, index, parent, loadedScripts));
       }
@@ -535,11 +649,9 @@ function inlineRelativeAssets(ctx) {
     await Promise.all(transformations);
   };
 }
-
 async function embedFile(node, file, ctx) {
   const src = getImageSrc(node);
   const parsed = path__WEBPACK_IMPORTED_MODULE_0___default().parse(src);
-
   try {
     switch (parsed.ext) {
       case '.png':
@@ -547,17 +659,13 @@ async function embedFile(node, file, ctx) {
       case '.jpeg':
       case '.gif':
         return await embedImage(node, ctx, file);
-
       case '.svg':
         return await embedSvg(node, ctx);
-
       case '.pdf':
         // return await embedPdfSvg(node);
         throw new Error(`Unhandled file extension: .pdf (convert to .svg)`);
-
       case '.html':
         return await embedHtml(node);
-
       default:
         throw new Error(`Unhandled file extension: ${parsed.ext}`);
     }
@@ -567,17 +675,16 @@ async function embedFile(node, file, ctx) {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_9__/* .failMessage */ .Ob)(file, err?.message || '', node.position);
   }
 }
-
 async function embedImage(node, ctx, file) {
   const src = getImageSrc(node);
   const mime = mime_lite_js__WEBPACK_IMPORTED_MODULE_3__["default"].getType(path__WEBPACK_IMPORTED_MODULE_0___default().extname(src));
-
   try {
     const image = await getImage(src, ctx);
     const {
       width
     } = (0,image_size__WEBPACK_IMPORTED_MODULE_2__["default"])(Buffer.from(image, 'base64'));
-    node.properties = { ...node.properties,
+    node.properties = {
+      ...node.properties,
       src: `data:${mime};base64,${image}`,
       style: [`max-width: ${width}px`]
     };
@@ -586,21 +693,23 @@ async function embedImage(node, ctx, file) {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_9__/* .failMessage */ .Ob)(file, `Image not found: ${src}`);
   }
 }
-
 async function embedSvg(imgNode, ctx) {
   const src = getImageSrc(imgNode);
   const contents = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src);
   const idx = contents.indexOf('<svg');
-  const svg = idx === -1 ? contents : contents.slice(idx); // const optimised = optimize(svg, { multipass: true }).data;
+  const svg = idx === -1 ? contents : contents.slice(idx);
+  // const optimised = optimize(svg, { multipass: true }).data;
   // const svgNode = getAssetHast(svg) as Element;
 
   const svgNode = (0,_utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__/* .getSvgHast */ .v)(svg);
-  const svgProperties = svgNode.properties || {}; // helps to ensure the svg is responsive
+  const svgProperties = svgNode.properties || {};
 
+  // helps to ensure the svg is responsive
   delete svgProperties.width;
   delete svgProperties.height;
   const className = 'knitr-svg';
-  const properties = { ...imgNode.properties,
+  const properties = {
+    ...imgNode.properties,
     ...svgProperties,
     className: [className, ...getNodeClassNames(imgNode, className), ...getNodeClassNames(svgNode, className)]
   };
@@ -609,31 +718,23 @@ async function embedSvg(imgNode, ctx) {
     properties
   });
 }
-
 function getNodeClassNames(node, removeClass) {
   const classes = node.properties?.className;
-
   if (typeof classes === 'string' && classes !== removeClass) {
     return [classes];
   }
-
   if (Array.isArray(classes)) {
     return classes.map(x => String(x)).filter(s => s !== removeClass);
   }
-
   return [];
 }
-
 function getImageSrc(node) {
   const properties = node.properties || {};
-
   if (!properties.src) {
     throw new Error('Image has no src');
   }
-
   return properties.src;
 }
-
 async function getImage(src, ctx) {
   if (src.startsWith('http')) {
     return (0,_utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__/* .cacheToFile */ .G)({
@@ -643,27 +744,29 @@ async function getImage(src, ctx) {
       execFn: getImageDataFromWeb
     });
   }
-
   return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src, 'base64');
 }
-
 async function getImageDataFromWeb(src) {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_4__["default"])(src);
   const buffer = await response.arrayBuffer();
   return (0,base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__.encode)(buffer);
-} // async function embedPdfSvg(imgNode: Element) {
+}
+
+// async function embedPdfSvg(imgNode: Element) {
 //   const src = getImageSrc(imgNode);
 //   const svgNode = (await pdfToSvg(src)) as Element;
 //   console.log('hey!');
 //   console.log(svgNode);
+
 //   const properties = {
 //     ...imgNode.properties,
 //     ...svgNode.properties,
 //   } as Properties;
+
 //   delete properties.src;
+
 //   Object.assign(imgNode, svgNode, { properties });
 // }
-
 
 async function embedHtml(imgNode) {
   const src = getImageSrc(imgNode);
@@ -680,21 +783,17 @@ async function embedHtml(imgNode) {
     children: parsed.children
   });
 }
-
 async function embedScript(node, index, parent, loadedScripts) {
   if (!node.properties?.src) {
     return;
   }
-
   const src = node.properties.src;
-
   if (loadedScripts.includes(src)) {
     // script already inlined, remove tag
     const parentChildren = parent?.children || [];
     parentChildren.splice(index || 0, 1);
     return;
   }
-
   loadedScripts.push(src);
   delete node.properties.src;
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_4__["default"])(src);
@@ -709,7 +808,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 3517:
+/***/ 5947:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -729,11 +828,9 @@ function responsiveTables() {
       if (node.tagName !== 'table') {
         return;
       }
-
       const parent = _parent;
       const properties = parent?.properties || {};
       const className = properties.className || [];
-
       if (!className.includes('table-wrapper')) {
         Object.assign(node, {
           tagName: 'div',
@@ -751,7 +848,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2199:
+/***/ 2930:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -765,10 +862,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var rehype_document__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6271);
 /* harmony import */ var rehype_format__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2920);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5390);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(117);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8061);
-/* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7538);
-/* harmony import */ var _wrapper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1162);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1807);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1358);
+/* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1270);
+/* harmony import */ var _wrapper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1591);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__]);
 ([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -784,19 +881,16 @@ async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
   const processor = (0,unified__WEBPACK_IMPORTED_MODULE_8__/* .unified */ .l)().use(rehype_stringify__WEBPACK_IMPORTED_MODULE_4__["default"], {
     allowDangerousHtml: true
   });
-
   if (ctx.options.format) {
     // hangs in some scenarios so off by default, useful in tests
     processor.use(rehype_format__WEBPACK_IMPORTED_MODULE_3__["default"]);
   }
-
   if (!ctx.options.noDoc) {
     const cssPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getTemplateDir */ .Ur)(), 'template.css');
     const docOptions = {
       title: unit.titles.docTitle,
       style: `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .readFile */ .pJ)(cssPath)}\n`
     };
-
     if (!targetPdf) {
       const jsPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getTemplateDir */ .Ur)(), 'template.js2');
       docOptions.script = `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .readFile */ .pJ)(jsPath)}\n`;
@@ -804,21 +898,17 @@ async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
     } else {
       processor.use(_pdf__WEBPACK_IMPORTED_MODULE_6__/* .pdfWrapper */ .g, unit, ctx);
     }
-
     processor.use(rehype_document__WEBPACK_IMPORTED_MODULE_2__["default"], docOptions);
   }
-
   const transformed = await processor.run(hast, file);
   const result = processor.stringify(transformed, file);
   return postTransforms(result, ctx);
 }
-
 function postTransforms(html, ctx) {
   let result = '';
   result = referenceTransform(html, ctx.refStore);
   return result;
 }
-
 function referenceTransform(html, refStore) {
   return html.replace(/ref:\/\/(\w+)/gms, (...match) => {
     const key = match[1];
@@ -832,7 +922,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 7538:
+/***/ 1270:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -840,8 +930,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   g: () => (/* binding */ pdfWrapper)
 /* harmony export */ });
-/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3889);
-/* harmony import */ var _wrapper_main__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9060);
+/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1879);
+/* harmony import */ var _wrapper_main__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2258);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _wrapper_main__WEBPACK_IMPORTED_MODULE_1__]);
 ([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _wrapper_main__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // import { UnitTitles } from '../course/types';
@@ -870,7 +960,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 1162:
+/***/ 1591:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -878,9 +968,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   B: () => (/* binding */ htmlWrapper)
 /* harmony export */ });
-/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3889);
-/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9060);
-/* harmony import */ var _sidebar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6725);
+/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1879);
+/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2258);
+/* harmony import */ var _sidebar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3335);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _main__WEBPACK_IMPORTED_MODULE_1__, _sidebar__WEBPACK_IMPORTED_MODULE_2__]);
 ([_utils_icons__WEBPACK_IMPORTED_MODULE_0__, _main__WEBPACK_IMPORTED_MODULE_1__, _sidebar__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -911,7 +1001,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9060:
+/***/ 2258:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -922,7 +1012,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _assets_dag_logo_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7407);
 /* harmony import */ var _assets_hexagons_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(934);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2430);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3609);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__]);
 ([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -931,13 +1021,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 
 async function createMain(titles, ctx, content) {
   const children = [];
-
   if (ctx.options.noHexagons) {
     children.push(createH1(titles));
   } else {
     children.push(createCover(titles, ctx.course));
   }
-
   children.push(...content);
   return {
     type: 'element',
@@ -952,7 +1040,6 @@ async function createMain(titles, ctx, content) {
     }]
   };
 }
-
 function createCover(titles, course) {
   return {
     type: 'element',
@@ -970,7 +1057,6 @@ function createCover(titles, course) {
     }]
   };
 }
-
 function createH1(titles) {
   return {
     type: 'element',
@@ -991,27 +1077,22 @@ function createH1(titles) {
     }]
   };
 }
-
 function createCoverHexagons(catalog) {
   const hexagons = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_hexagons_svg__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z);
-
   if (catalog !== '') {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(hexagons, 'element', node => {
       if (node.tagName === 'g') {
         const properties = node.properties || {};
         const [className] = properties.className || [];
-
         if (catalog === className) {
           properties.className = ['active'];
         } else {
           properties.className = [];
         }
-
         node.properties = properties;
       }
     });
   }
-
   return hexagons;
 }
 __webpack_async_result__();
@@ -1019,7 +1100,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6725:
+/***/ 3335:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1031,9 +1112,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6864);
 /* harmony import */ var _assets_crest_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9114);
 /* harmony import */ var _assets_uofg_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8328);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2430);
-/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3889);
-/* harmony import */ var _view_options__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4048);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3609);
+/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1879);
+/* harmony import */ var _view_options__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8263);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, _utils_icons__WEBPACK_IMPORTED_MODULE_2__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__]);
 ([mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, _utils_icons__WEBPACK_IMPORTED_MODULE_2__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -1070,7 +1151,6 @@ async function createSidebar(mdast) {
     }]
   };
 }
-
 async function createLogo() {
   const crest = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_crest_svg__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z);
   const uofg = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_uofg_svg__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z);
@@ -1091,8 +1171,8 @@ async function createLogo() {
     }, hamburgerIcon]
   };
 }
-
-function printTableOfContents(toc) {// toc?.children.forEach((a) => {
+function printTableOfContents(toc) {
+  // toc?.children.forEach((a) => {
   //   a.children.forEach((b) => {
   //     if (b.type === 'paragraph') {
   //       // @ts-ignore
@@ -1116,7 +1196,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 4048:
+/***/ 8263:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1163,7 +1243,6 @@ function createReadabilityList() {
     children: options.map(createOption)
   };
 }
-
 function createOption(item) {
   return {
     type: 'element',
@@ -1254,7 +1333,6 @@ function createThemeList() {
     children: themes.map(createThemeButton)
   };
 }
-
 function createThemeButton(theme) {
   return {
     type: 'element',
@@ -1286,11 +1364,11 @@ function createViewOptionsButton() {
   };
 }
 function createViewOptions() {
-  return [createTitle('Theme'), createThemeList(), // createTitle('Font'),
+  return [createTitle('Theme'), createThemeList(),
+  // createTitle('Font'),
   // createFontList(),
   createTitle('Readability'), createReadabilityList()];
 }
-
 function createTitle(value) {
   return {
     type: 'element',
@@ -1304,7 +1382,7 @@ function createTitle(value) {
 
 /***/ }),
 
-/***/ 7329:
+/***/ 9474:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1315,11 +1393,11 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7564);
-/* harmony import */ var _build_unit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8802);
-/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4975);
-/* harmony import */ var _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2240);
-/* harmony import */ var _utils_timer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2364);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8061);
+/* harmony import */ var _build_unit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1342);
+/* harmony import */ var _context__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7404);
+/* harmony import */ var _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2192);
+/* harmony import */ var _utils_timer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1642);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_1__, _build_unit__WEBPACK_IMPORTED_MODULE_2__, _context__WEBPACK_IMPORTED_MODULE_3__, _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__]);
 ([chalk__WEBPACK_IMPORTED_MODULE_1__, _build_unit__WEBPACK_IMPORTED_MODULE_2__, _context__WEBPACK_IMPORTED_MODULE_3__, _utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -1333,21 +1411,17 @@ async function rMarkdown(dirPath, options = {}) {
   if (!options.output) {
     await (0,_utils_check_for_latest_version__WEBPACK_IMPORTED_MODULE_4__/* .checkForLatestVersion */ .m)();
   }
-
   const timer = (0,_utils_timer__WEBPACK_IMPORTED_MODULE_6__/* .createTimer */ .e)();
   const ctx = await (0,_context__WEBPACK_IMPORTED_MODULE_3__/* .createContext */ .k)(dirPath, options);
   const result = [];
-
   if (ctx.options.week) {
     // write single week
     const idx = ctx.options.week - 1;
     const input = ctx.course.units[idx];
-
     if (input === undefined) {
       const courseYaml = path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.dirPath, 'course.yaml');
       throw new Error(`Week ${ctx.options.week} not found in ${courseYaml}`);
     }
-
     const built = await (0,_build_unit__WEBPACK_IMPORTED_MODULE_2__/* .buildUnit */ ._)(input, ctx);
     await writeUnit(built, ctx, timer);
     result.push(built);
@@ -1359,30 +1433,26 @@ async function rMarkdown(dirPath, options = {}) {
       result.push(built);
     }
   }
-
   return result;
 }
-
 async function writeUnit(built, ctx, timer) {
   if (ctx.options.noWrite) {
     return;
   }
-
   await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .mkdir */ .i$)(ctx.buildDir);
   const fileName = ctx.options.fileName ? ctx.options.fileName : built.unit.titles.fileName;
   const filePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.buildDir, fileName);
-
   if (built.html) {
     await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .writeFile */ .NC)(filePath + '.html', built.html.html);
-
     if (!ctx.options.output) {
       const status = chalk__WEBPACK_IMPORTED_MODULE_1__["default"].green.bold(`Complete in ${timer.seconds()}s`);
       console.log(`✨ ${status} ${filePath}.html`);
     }
   }
-
   if (built.pdf) {
-    await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .writeFile */ .NC)(filePath + '.pdf', built.pdf.pdf); // debug
+    await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .writeFile */ .NC)(filePath + '.pdf', built.pdf.pdf);
+
+    // debug
     // await writeFile(filePath + '.pdf.html', built.pdf.html);
 
     if (!ctx.options.output) {
@@ -1396,7 +1466,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 1650:
+/***/ 3432:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1414,9 +1484,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var url__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(url__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7564);
 /* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2386);
-/* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(6811);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(153);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8061);
+/* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(4372);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(343);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__]);
 ([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -1427,7 +1497,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 
 
 
- // bypass knitr for debugging
+
+
+// bypass knitr for debugging
 // export async function knitr(unit: Unit, ctx: Context) {
 //   const file = new VFile();
 //   file.value = unit.files.reduce((acc, o) => {
@@ -1437,44 +1509,49 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 // }
 
 async function knitr(unit, ctx) {
-  const parentFile = await createParentFile(unit, ctx); // console.log(parentFile.value);
+  const parentFile = await createParentFile(unit, ctx);
+  // console.log(parentFile.value);
 
-  const result = await execKnitr(parentFile, ctx, unit.unitPath); // console.log(result);
-
+  const result = await execKnitr(parentFile, ctx, unit.unitPath);
+  // console.log(result);
   parentFile.value = result;
   return parentFile;
-} // creating a temporary file which includes all child files allows
+}
+
+// creating a temporary file which includes all child files allows
 // R/Python state to be shared across multiple .Rmd files
 // https://yihui.org/knitr/options/#child-documents
-
 async function createParentFile(unit, ctx) {
   const file = new vfile__WEBPACK_IMPORTED_MODULE_8__/* .VFile */ .k();
-  let value = ''; // pass path to custom python binary to reticulate
-  // https://rstudio.github.io/reticulate/articles/r_markdown.html
+  let value = '';
 
+  // pass path to custom python binary to reticulate
+  // https://rstudio.github.io/reticulate/articles/r_markdown.html
   if (ctx.options.pythonBin) {
     const reticulate = `reticulate::use_python("${ctx.options.pythonBin}")`;
     value += `\`\`\`{r, echo=FALSE}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}${reticulate}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\`${os__WEBPACK_IMPORTED_MODULE_1__.EOL}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}`;
   }
-
   value += unit.files.reduce((acc, o) => {
-    const [filePath] = o.history; // directory directive is used to ensure external assets
+    const [filePath] = o.history;
+
+    // directory directive is used to ensure external assets
     // can have relative paths to the .Rmd document.
     // used in embed-asset-url mdast transform
-
     const fileDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(filePath).dir;
-    const directive = `:directory[${fileDir}]`; // child document
-    // convert all file paths to forward slash (windows anaconda/knitr bug)
+    const directive = `::directory[${fileDir}]`;
 
+    // child document
+    // convert all file paths to forward slash (windows anaconda/knitr bug)
     const formattedPath = path__WEBPACK_IMPORTED_MODULE_2___default().relative(ctx.cacheDir, filePath).replace(/\\/g, '/');
     const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\``;
     return acc + directive + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL + childCodeBlock + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL;
-  }, ''); // console.log(value);
+  }, '');
+
+  // console.log(value);
 
   file.value = value;
   return file;
 }
-
 async function execKnitr(file, ctx, unitPath) {
   const md = file.value;
   const uniqueId = getUniqueId(md);
@@ -1489,12 +1566,10 @@ async function execKnitr(file, ctx, unitPath) {
         if (!ctx.options.output) {
           console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
         }
-
         if (isFailingStdErr(stdErr)) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .failMessage */ .Ob)(file, stdErr);
         }
       }
-
       if (err) {
         console.error('ERROR', err);
         reject(err);
@@ -1502,53 +1577,49 @@ async function execKnitr(file, ctx, unitPath) {
         reportErrors(response, file, ctx);
         resolve(formatResponse(response));
       }
-
       await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .rmFile */ .gr)(cachedFile);
     });
   });
 }
-
 function getUniqueId(md) {
   const hash = (0,hash_sum__WEBPACK_IMPORTED_MODULE_5__["default"])(md);
   const ts = new Date().getTime().toString();
   return `knitr-${hash}-${ts}`;
 }
-
 function createKnitrCommand(ctx, uniqueId, unitPath) {
   const rFileDir = getKnitrFileDir();
   const rFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(rFileDir, 'knitr.R');
   const baseDir = path__WEBPACK_IMPORTED_MODULE_2___default().parse(unitPath).dir;
   const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
-  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId); // spawn args
+  const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
+
+  // spawn args
   // return [rFile, cachedFile, baseDir, cacheDir];
 
   return `Rscript "${rFile}" "${cachedFile}" "${baseDir}" "${cacheDir}"`;
 }
-
 function getKnitrFileDir() {
   // temporary hack until this PR is merged
   // https://github.com/webpack/webpack/pull/15246
   if (true) {
     return __dirname;
   }
-
   return path__WEBPACK_IMPORTED_MODULE_2___default().dirname((0,url__WEBPACK_IMPORTED_MODULE_3__.fileURLToPath)("file:///Users/staff/Work/build-coursework/compiler/src/knitr/knitr.ts"));
 }
-
 function isFailingStdErr(stdErr) {
   // console.log({ stdErr });
   return /status 1\d*$/.test(stdErr.trim());
 }
-
 function reportErrors(response, file, ctx) {
   const lines = response.split(os__WEBPACK_IMPORTED_MODULE_1__.EOL).filter(s => !s.startsWith(':directory'));
-  const trimmed = lines.join(os__WEBPACK_IMPORTED_MODULE_1__.EOL).trim(); // Warning at the start of a document
+  const trimmed = lines.join(os__WEBPACK_IMPORTED_MODULE_1__.EOL).trim();
 
+  // Warning at the start of a document
   if (trimmed.startsWith('WARNING -')) {
-    const match = trimmed.match(/^WARNING - (.+?)[\r\n]{2,}/ms); // Check the original file doesn't start with WARNING
+    const match = trimmed.match(/^WARNING - (.+?)[\r\n]{2,}/ms);
 
+    // Check the original file doesn't start with WARNING
     const original = String(ctx.course.units[0].files[0].value).split(os__WEBPACK_IMPORTED_MODULE_1__.EOL).filter(s => !s.startsWith(':directory')).join(os__WEBPACK_IMPORTED_MODULE_1__.EOL).trim();
-
     if (match !== null && !original.startsWith('WARNING -')) {
       (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, match[1], {
         start: {
@@ -1560,11 +1631,11 @@ function reportErrors(response, file, ctx) {
           column: lines[0].length
         }
       });
-    } // Python binary path
+    }
 
+    // Python binary path
   } else if (trimmed.startsWith('$python [1]')) {
     const match = trimmed.match(/^\$python\s\[1\]\s("\S+")/);
-
     if (match !== null) {
       (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .infoMessage */ .ei)(file, match[1], {
         start: {
@@ -1577,12 +1648,11 @@ function reportErrors(response, file, ctx) {
         }
       });
     }
-  } // Errors throughout document
+  }
 
-
+  // Errors throughout document
   lines.forEach((line, idx) => {
     const trimmedLine = line.trim();
-
     if (trimmedLine.startsWith('## Error')) {
       (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, trimmedLine.replace('## ', ''), {
         start: {
@@ -1597,40 +1667,22 @@ function reportErrors(response, file, ctx) {
     }
   });
 }
-
 async function formatResponse(response) {
   let md = response;
   md = removeCustomPythonBinNotice(md);
   md = removePythonWarningMessage(md);
-  md = addCodeBlockClasses(md);
   md = addErrorCodeBlock(md);
   md = removeHashSigns(md);
   md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
   return md;
 }
-
 function removeCustomPythonBinNotice(md) {
   return md.replace(/^\$python\s\[1\]\s"\S+"/, '');
 }
-
 function removePythonWarningMessage(md) {
   return md.replace(/^WARNING - .+?[\r\n]+/m, '');
 }
-
-function addCodeBlockClasses(md) {
-  return md.split('\n').reduce((acc, line) => {
-    if (line.startsWith('```{.knitr-output}')) {
-      const lang = findLanguageForOutput(acc);
-      acc.push(`\`\`\`{.${lang}-output}`);
-    } else {
-      acc.push(line);
-    }
-
-    return acc;
-  }, []).join('\n');
-}
-
 function removeHashSigns(md) {
   let insideCodeResponse = false;
   let openingLine = '';
@@ -1639,35 +1691,28 @@ function removeHashSigns(md) {
       insideCodeResponse = !insideCodeResponse;
       openingLine = insideCodeResponse ? line : '';
     }
-
     if (insideCodeResponse && openingLine.endsWith('-output}')) {
       acc.push(line.replace(/^##\s+/, ''));
     } else {
       acc.push(line);
     }
-
     return acc;
   }, []).join('\n');
 }
-
 function removeEmptyLog(md) {
   return md.replace(/\[1\]\s""$/gm, '').trim();
 }
-
 function addErrorCodeBlock(md) {
   return md.split('\n').reduce((acc, line, idx) => {
     if (idx > 0 && acc[idx - 1].startsWith('```')) {
       if (line.startsWith('## Error') || line.startsWith('## fatal')) {
-        const lang = findLanguageForOutput(acc.slice(0, -1));
-        acc[acc.length - 1] = `\`\`\`{.${lang}-error-output}`;
+        acc[acc.length - 1] = `\`\`\`{.error-output}`;
       }
     }
-
     acc.push(line);
     return acc;
   }, []).join('\n');
 }
-
 function addNewLineAfterKable(md) {
   return md.split('\n').reduce((acc, line, idx) => {
     if (acc[idx - 1]?.startsWith('|') && !line.startsWith('|')) {
@@ -1675,24 +1720,11 @@ function addNewLineAfterKable(md) {
     } else {
       acc.push(line);
     }
-
     return acc;
   }, []).join('\n');
 }
 
-function findLanguageForOutput(prev) {
-  const pattern = /```(\w*)/;
-  const reversed = prev.slice().reverse();
-  const prevClosingIdx = reversed.findIndex(s => s.startsWith('```'));
-  const prevOpening = reversed.slice(prevClosingIdx + 1).find(s => pattern.test(s));
-
-  if (!prevOpening) {
-    return 'r';
-  }
-
-  const match = prevOpening.match(pattern);
-  return match[1];
-} // experimental streaming output
+// experimental streaming output
 // async function spawnKnitr(file: VFile, ctx: Context, unitPath: string) {
 //   const md = file.value as string;
 //   const uniqueId = getUniqueId(md);
@@ -1700,15 +1732,18 @@ function findLanguageForOutput(prev) {
 //   const cacheDir = path.join(ctx.cacheDir, uniqueId);
 //   await mkdir(cacheDir);
 //   await writeFile(cachedFile, md);
+
 //   return new Promise<string>((resolve, reject) => {
 //     const args = createKnitrCommand(ctx, uniqueId, unitPath);
 //     const knitr = spawn('Rscript', args);
 //     const result: string[] = [];
+
 //     knitr.stdout.on('data', (data) => {
 //       const str = data.toString();
 //       console.log(str);
 //       result.push(str);
 //     });
+
 //     knitr.stdout.on('end', () => {
 //       console.log('STDOUT END');
 //       const end = result.join('');
@@ -1716,10 +1751,12 @@ function findLanguageForOutput(prev) {
 //       reportErrors(end, file);
 //       resolve(formatResponse(end));
 //     });
+
 //     knitr.stdout.on('error', (err) => {
 //       console.log('STDOUT ERROR', err, err.toString());
 //       reject();
 //     });
+
 //     knitr.stderr.on('data', (data) => {
 //       const str = data.toString();
 //       console.log('STDERR ERROR', str);
@@ -1734,29 +1771,28 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 529:
+/***/ 4686:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   F: () => (/* binding */ aliasDirectiveToSvg)
+/* harmony export */   a: () => (/* binding */ aliasDirectiveToLatexSvg)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8061);
-/* harmony import */ var _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1246);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1358);
+/* harmony import */ var _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(689);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__, _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__]);
 ([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__, _mathjax_tex__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
-function aliasDirectiveToSvg(ctx) {
+function aliasDirectiveToLatexSvg(ctx) {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'textDirective', node => {
       if (!ctx.mmlStore || ctx.options.noTexSvg) {
         return;
       }
-
       switch (node.name) {
         case 'inlineMath':
         case 'blockMath':
@@ -1764,7 +1800,8 @@ function aliasDirectiveToSvg(ctx) {
             const idx = getTexIdx(node);
             const mml = ctx.mmlStore[idx];
             const svg = renderSvg(mml);
-            const properties = { ...svg.properties,
+            const properties = {
+              ...svg.properties,
               className: node.name === 'inlineMath' ? 'inline-math' : 'block-math',
               id: getRefId(mml)
             };
@@ -1778,28 +1815,22 @@ function aliasDirectiveToSvg(ctx) {
     });
   };
 }
-
 function getTexIdx(node) {
   const firstChild = node.children[0];
   return Number(firstChild.value || 0);
 }
-
 function getRefId(mml) {
   const match = mml.match(/<mtd.+?id="(.*?)"/);
-
   if (match === null) {
     return undefined;
   }
-
   return match[1];
 }
-
 function renderSvg(mml) {
   const label = (0,_mathjax_tex__WEBPACK_IMPORTED_MODULE_2__/* .mmlToSpeech */ .yN)(mml);
   const svg = (0,_mathjax_tex__WEBPACK_IMPORTED_MODULE_2__/* .mmlToSvg */ .g3)(mml);
   return createAccessibleSvg(svg, label);
 }
-
 function createAccessibleSvg(mathjaxSvg, label = '') {
   const tree = _utils_utils__WEBPACK_IMPORTED_MODULE_1__/* .rehypeParser */ .G5.parse(mathjaxSvg);
   const parent = tree.children[0];
@@ -1811,7 +1842,6 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
     viewBox: properties.viewBox,
     role: 'img'
   };
-
   if (label !== '') {
     const uniqueId = `math-${Math.random().toString(16).slice(2)}`;
     newProperties['aria-labelledby'] = uniqueId;
@@ -1827,7 +1857,6 @@ function createAccessibleSvg(mathjaxSvg, label = '') {
       }]
     });
   }
-
   svg.properties = newProperties;
   return svg;
 }
@@ -1836,7 +1865,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 1246:
+/***/ 689:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1868,12 +1897,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([math
 
 
 
- // @ts-expect-error
 
+// @ts-expect-error
 
 function texToMml(tex = '') {
-  const adaptor = liteAdaptor(); //  Busproofs requires an output jax, which we aren't using
-
+  const adaptor = liteAdaptor();
+  //  Busproofs requires an output jax, which we aren't using
   const packages = AllPackages.filter(name => name !== 'bussproofs');
   const input = new TeX({
     packages
@@ -1911,7 +1940,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9156:
+/***/ 7633:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1926,8 +1955,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7771);
 /* harmony import */ var mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2547);
 /* harmony import */ var mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2338);
-/* harmony import */ var _linter_assert_no_tex_tabular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(5187);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(153);
+/* harmony import */ var _linter_assert_no_tex_tabular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2658);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__]);
 ([mathjax_full_js_adaptors_liteAdaptor_js__WEBPACK_IMPORTED_MODULE_0__, mathjax_full_js_core_MathItem_js__WEBPACK_IMPORTED_MODULE_1__, mathjax_full_js_core_MmlTree_SerializedMmlVisitor_js__WEBPACK_IMPORTED_MODULE_2__, mathjax_full_js_handlers_html_js__WEBPACK_IMPORTED_MODULE_3__, mathjax_full_js_input_tex_js__WEBPACK_IMPORTED_MODULE_4__, mathjax_full_js_input_tex_AllPackages_js__WEBPACK_IMPORTED_MODULE_5__, mathjax_full_js_mathjax_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -1938,18 +1967,23 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([math
 
 
 
- // This custom MathJax implementation has had to diverge from the provided demos found
+
+
+// This custom MathJax implementation has had to diverge from the provided demos found
 // here: https://github.com/mathjax/MathJax-demos-node, because they are all focused on
 // either converting LaTeX on its own or (referencing "page" demos) LaTeX embedded in
 // HTML, whereas at this stage in the processor we're dealing with LaTeX embedded in
 // Markdown. Due to TeX/LaTeX making heavy use of the backslash (\) character, we need
 // to deal with it early as it conflicts with other libraries used later.
+
 // I use the MathJax "page" process as it will pick up LaTeX even without delimiters
 // and stores context required for numbered references (based on direct/tex2mml-page).
 // However this has a naive HTML handler which will munge HTML (and Python) in some
 // cases so I am careful to only mutate TeX and leave the rest of the Markdown alone.
+
 // I replace the TeX with a placeholder formatted as a Markdown directive, for example
 // :inlineMath[21] or :blockMath[42].
+
 // I convert the TeX to MathML and store it memory for use later (in directive-to-svg.ts).
 
 function texToAliasDirective(file, ctx) {
@@ -1977,98 +2011,94 @@ function texToAliasDirective(file, ctx) {
         math
       }) => {
         for (const item of Array.from(math)) {
-          let newMarkdown = ''; // convert to MathML
+          let newMarkdown = '';
 
+          // convert to MathML
           const mml = visitor.visitTree(item.root);
-          assertNoMmlError(mml, file); // escaped dollar sign...
+          assertNoMmlError(mml, file);
 
+          // escaped dollar sign...
           if (item.math === '$') {
             newMarkdown = '$';
-          } // double backslash...
+          }
+
+          // double backslash...
           else if (item.math === '\\') {
             newMarkdown = '\\\\';
-          } // reference link...
+          }
+
+          // reference link...
           else if (isReferenceLink(item.math)) {
             const refNum = extractRefNumFromMml(mml, item.math, file);
             const anchor = extractAnchorLinkFromMml(mml, item.math, file);
             newMarkdown = `[${refNum}](${anchor})`;
-          } // normal use case (math notation)...
+          }
+
+          // normal use case (math notation)...
           else {
             store.push(mml);
             const type = item.display ? 'blockMath' : 'inlineMath';
             newMarkdown = `:${type}[${store.length - 1}]`;
           }
-
           const tree = adaptor.parse(newMarkdown, 'text/html');
           item.typesetRoot = adaptor.firstChild(adaptor.body(tree));
         }
       }]
     }
-  }); // add store to ctx
+  });
 
+  // add store to ctx
   ctx.mmlStore = store;
-  doc.render(); // replace md in VFile
+  doc.render();
 
+  // replace md in VFile
   const result = adaptor.innerHTML(adaptor.body(doc.document));
   file.value = postParse(result);
   return file;
 }
-
 function assertNoMmlError(mml, file) {
   const match = mml.match(/<merror.*?title="(.+?)"/);
-
   if (match !== null) {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_8__/* .failMessage */ .Ob)(file, `LaTeX error: "${match[1]}".`);
   }
 }
-
 function isReferenceLink(tex) {
   return /^\\ref\{(.+)\}$/.test(tex);
 }
-
 function extractRefNumFromMml(mml, tex, file) {
   const match = mml.match(/<mtext>(.+)<\/mtext>/);
-
   if (match === null) {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_8__/* .failMessage */ .Ob)(file, `Invalid reference: ${tex}`);
     return;
   }
-
   if (match[1] === '???') {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_8__/* .failMessage */ .Ob)(file, `Invalid reference: ${tex}. You may only reference numbered sections.`);
   }
-
   return match[1];
 }
-
 function extractAnchorLinkFromMml(mml, tex, file) {
   const match = mml.match(/<mrow href="(.+)" class="MathJax_ref">/);
-
   if (match === null) {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_8__/* .failMessage */ .Ob)(file, `Reference has no anchor link: ${tex}`);
     return;
   }
-
   return decodeURIComponent(match[1] || '');
 }
-
 function postParse(html) {
   let result = html.trim();
   result = unprotectHtml(result);
   result = removeUnresolvedLabels(result);
   result = removeHTMLClosingTags(result);
   return result;
-} // https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
+}
 
-
+// https://github.com/mathjax/MathJax-src/blob/41565a97529c8de57cb170e6a67baf311e61de13/ts/adaptors/lite/Parser.ts#L399-L403
 function unprotectHtml(html) {
   return html.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
-
 function removeUnresolvedLabels(html) {
   return html.replace(/\\label{def:.*?}/gm, '');
 }
-
 function removeHTMLClosingTags(html) {
   return html.replace(/(<\/\S+>)+$/, '');
 }
@@ -2077,7 +2107,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2816:
+/***/ 5362:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2086,8 +2116,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   c: () => (/* binding */ assertAssetExists)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8061);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_2__]);
 ([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -2096,20 +2126,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 function assertAssetExists() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
-
     if (!file.dirname) {
       throw new Error('VFile dirname undefined');
     }
-
     if (!url.startsWith('http')) {
       const exists = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(url);
-
       if (!exists) {
         (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `No asset found at ${url}`, node.position);
       }
     }
   }
-
   return async (tree, file) => {
     const transformations = [];
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'image', node => {
@@ -2123,7 +2149,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6935:
+/***/ 9386:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2132,7 +2158,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   C: () => (/* binding */ assertColumnStructure)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2143,15 +2169,12 @@ function assertColumnStructure() {
       if (node.name === 'columns') {
         const children = node.children;
         const columns = children.filter(o => o.name === 'column');
-
         if (columns.length < 2) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Columns must contain at least 2 columns', node.position);
         }
       }
-
       if (node.name === 'column') {
         const parent = _parent;
-
         if (!parent || parent.name !== 'columns') {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Column must be nested inside columns', node.position);
         }
@@ -2164,7 +2187,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 1276:
+/***/ 2364:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2173,7 +2196,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   N: () => (/* binding */ assertNoH1)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2193,20 +2216,19 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8102:
+/***/ 9051:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   F: () => (/* binding */ assertNoImageAttributes)
 /* harmony export */ });
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(343);
 
 function assertNoImageAttributes(file) {
   const md = file.value;
   md.split('\n').forEach((line, idx) => {
     const match = line.match(/!\[.*\]\(.*\)({.+})/);
-
     if (match !== null) {
       (0,_utils_message__WEBPACK_IMPORTED_MODULE_0__/* .warnMessage */ .KU)(file, `image attributes are not supported: ${match[1]}`, {
         start: {
@@ -2224,15 +2246,17 @@ function assertNoImageAttributes(file) {
 
 /***/ }),
 
-/***/ 5187:
+/***/ 2658:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   d: () => (/* binding */ assertNoTexTabular)
 /* harmony export */ });
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(153);
- // TODO: could possibly try converting to array here
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(343);
+
+
+// TODO: could possibly try converting to array here
 // https://stackoverflow.com/questions/51803244
 
 function assertNoTexTabular(file) {
@@ -2255,7 +2279,7 @@ function assertNoTexTabular(file) {
 
 /***/ }),
 
-/***/ 5705:
+/***/ 9941:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2264,7 +2288,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   F: () => (/* binding */ assertProgramSwitcherStructure)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2277,19 +2301,15 @@ function assertProgramSwitcherStructure() {
         count++;
         const children = node.children;
         const answers = children.filter(o => o.name === 'answer');
-
         if (answers.length < 1) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `Task ${count} has no answer`, node.position);
         }
-
         if (answers.length > 1) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Task has multiple answers', node.position);
         }
       }
-
       if (node.name === 'answer') {
         const parent = _parent;
-
         if (!parent || parent.name !== 'task') {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Answer must be nested inside task', node.position);
         }
@@ -2302,7 +2322,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 4475:
+/***/ 3339:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2311,7 +2331,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   A: () => (/* binding */ assertTaskAnswerStructure)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2324,19 +2344,15 @@ function assertTaskAnswerStructure() {
         count++;
         const children = node.children;
         const answers = children.filter(o => o.name === 'answer');
-
         if (answers.length < 1) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `Task ${count} has no answer`, node.position);
         }
-
         if (answers.length > 1) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Task has multiple answers', node.position);
         }
       }
-
       if (node.name === 'answer') {
         const parent = _parent;
-
         if (!parent || parent.name !== 'task') {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Answer must be nested inside task', node.position);
         }
@@ -2349,7 +2365,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2712:
+/***/ 7977:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2358,7 +2374,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   c: () => (/* binding */ assertVideoAttributes)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2370,13 +2386,10 @@ function assertVideoAttributes() {
         if (!node.attributes?.id) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'id attribute is required', node.position);
         }
-
         if (!node.attributes?.duration) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'duration attribute is required', node.position);
         }
-
         const title = getTitle(node);
-
         if (!title) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'title is required', node.position);
         }
@@ -2384,7 +2397,6 @@ function assertVideoAttributes() {
     });
   };
 }
-
 function getTitle(node) {
   const children = node.children;
   const firstChild = children[0];
@@ -2395,7 +2407,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 3980:
+/***/ 7767:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2404,7 +2416,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   F: () => (/* binding */ assertWeblinkTarget)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2425,7 +2437,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8633:
+/***/ 1399:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2440,21 +2452,20 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var remark_retext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4540);
 /* harmony import */ var retext_english__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5414);
 /* harmony import */ var retext_spell__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(862);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(117);
-/* harmony import */ var _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2816);
-/* harmony import */ var _assert_columns__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(6935);
-/* harmony import */ var _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1276);
-/* harmony import */ var _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5705);
-/* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4475);
-/* harmony import */ var _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(2712);
-/* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(3980);
-/* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6737);
-/* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(8987);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(1807);
+/* harmony import */ var _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5362);
+/* harmony import */ var _assert_columns__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9386);
+/* harmony import */ var _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2364);
+/* harmony import */ var _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(9941);
+/* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(3339);
+/* harmony import */ var _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7977);
+/* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7767);
+/* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(1622);
+/* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(1110);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__, _lint_latex__WEBPACK_IMPORTED_MODULE_13__, _report__WEBPACK_IMPORTED_MODULE_14__]);
 ([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__, _lint_latex__WEBPACK_IMPORTED_MODULE_13__, _report__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-// @ts-expect-error
- // @ts-expect-error
 
+// @ts-expect-error
 
 
 
@@ -2474,18 +2485,17 @@ function reportErrors(files, ctx) {
   if (!ctx.options.noReport) {
     (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, ctx);
   }
-
   if ((0,_report__WEBPACK_IMPORTED_MODULE_14__/* .reportHasFatalErrors */ .wC)(files)) {
     if (ctx.options.noReport) {
-      (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, { ...ctx,
-        options: { ...ctx.options,
+      (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, {
+        ...ctx,
+        options: {
+          ...ctx.options,
           reportOnlyErrors: true
         }
       });
     }
-
     console.log('Report has fatal errors');
-
     if (ctx.options.force) {
       console.log('Compiling using force option...');
     } else {
@@ -2495,7 +2505,6 @@ function reportErrors(files, ctx) {
 }
 async function createReport(file, mdast, ctx) {
   const processor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)().use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_10__/* .assertTaskAnswerStructure */ .A).use(_assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__/* .assertProgramSwitcherStructure */ .F).use(_assert_columns__WEBPACK_IMPORTED_MODULE_7__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_8__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_13__/* .lintLatex */ .I).use(_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__["default"]);
-
   if (ctx.options.spelling) {
     const retextProcessor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)().use(retext_english__WEBPACK_IMPORTED_MODULE_4__["default"]).use(retext_spell__WEBPACK_IMPORTED_MODULE_5__["default"], {
       dictionary: dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -2503,7 +2512,6 @@ async function createReport(file, mdast, ctx) {
     });
     processor.use(remark_retext__WEBPACK_IMPORTED_MODULE_3__["default"], retextProcessor);
   }
-
   await processor.run(mdast, file);
 }
 __webpack_async_result__();
@@ -2511,7 +2519,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6737:
+/***/ 1622:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2536,7 +2544,6 @@ function lintLatex() {
     return tree;
   };
 }
-
 async function chktex(node, file) {
   return new Promise((resolve, reject) => {
     (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(`chktex -q <<< "${node.value}"`, (err, response) => {
@@ -2560,22 +2567,18 @@ async function chktex(node, file) {
     });
   });
 }
-
 function formatResponse(response) {
   if (response.trim() === '') {
     return [];
   }
-
   function formatMessage(message) {
     return message.replace(/'/g, '').replace(/`/g, '');
   }
-
   return response.split(/Warning \d+ in stdin line /).filter(Boolean).reduce((acc, s) => {
     const [key, value] = s.split(':');
     const line = Number(key);
     const trimmed = value.trim();
     const match = trimmed.match(/(.*)\n(.*)\n(\s*)\^/m);
-
     if (Array.isArray(match)) {
       const message = formatMessage(match[1]);
       acc.push({
@@ -2590,7 +2593,6 @@ function formatResponse(response) {
         message: formatMessage(trimmed)
       });
     }
-
     return acc;
   }, []);
 }
@@ -2599,7 +2601,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8987:
+/***/ 1110:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2611,7 +2613,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* unused harmony export reportHasWarnings */
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7564);
 /* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3952);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__]);
 ([chalk__WEBPACK_IMPORTED_MODULE_0__, figures__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -2622,15 +2624,12 @@ function printReport(files, ctx) {
     reportOnlyErrors,
     shouldFail
   } = ctx.options;
-
   if (reportOnlyErrors && shouldFail) {
     return;
   }
-
   for (const file of files) {
     // console.log(file.messages);
     const messages = reportOnlyErrors ? failingMessages(file.messages) : file.messages;
-
     if (messages.length !== 0) {
       // if (file.path !== undefined) {
       //   console.log(`\n${getFilePath(file.path)}`);
@@ -2653,39 +2652,35 @@ function reportHasWarnings(files) {
     return messages.some(message => message.status === MessageStatus.warning);
   });
 }
-
 function failingMessages(_messages) {
   const messages = _messages;
   return messages.filter(o => o.status === _utils_message__WEBPACK_IMPORTED_MODULE_2__/* .MessageStatus */ .rJ.fail);
 }
-
 function printMessage(_message) {
-  const message = _message; // console.log(message);
-
+  const message = _message;
+  // console.log(message);
   const status = message.status;
   const position = chalk__WEBPACK_IMPORTED_MODULE_0__["default"].grey(`${message.line}:${message.column}`);
   const reason = formatReason(message.reason, status);
   console.log(`${formatStatus(status)}  ${position}  ${reason}`);
-} // function getFilePath(filePath: string) {
+}
+
+// function getFilePath(filePath: string) {
 //   return path.isAbsolute(filePath)
 //     ? filePath
 //     : path.join(process.cwd(), filePath);
 // }
 
-
 function formatStatus(status) {
   const statusColour = getStatusColour(status);
-
   switch (status) {
     case _utils_message__WEBPACK_IMPORTED_MODULE_2__/* .MessageStatus */ .rJ.fail:
       return statusColour(figures__WEBPACK_IMPORTED_MODULE_1__["default"].cross);
-
     default:
       return statusColour(figures__WEBPACK_IMPORTED_MODULE_1__["default"].warning);
     // TODO: fail on unsupported status?
   }
 }
-
 function formatReason(reason, status) {
   const statusColour = getStatusColour(status);
   const [first, ...rest] = reason.split('\n');
@@ -2693,12 +2688,10 @@ function formatReason(reason, status) {
   const formattedRest = rest.map(line => chalk__WEBPACK_IMPORTED_MODULE_0__["default"].grey(line));
   return [formattedFirst, ...formattedRest].join('\n');
 }
-
 function getStatusColour(status) {
   switch (status) {
     case _utils_message__WEBPACK_IMPORTED_MODULE_2__/* .MessageStatus */ .rJ.fail:
       return chalk__WEBPACK_IMPORTED_MODULE_0__["default"].red;
-
     default:
       return chalk__WEBPACK_IMPORTED_MODULE_0__["default"].yellow;
   }
@@ -2708,7 +2701,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 478:
+/***/ 6112:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2720,7 +2713,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9659);
 /* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3286);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-/* harmony import */ var _utils_counter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6639);
+/* harmony import */ var _utils_counter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2098);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__]);
 ([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -2754,54 +2747,43 @@ function boxouts(refStore) {
     });
   };
 }
-
 function createAttributes(node, count, refStore) {
   const name = node.name;
   const id = `${name}-${count}`;
   const attributes = node.attributes;
   const className = ['boxout', name];
-
   if (attributes.icon) {
     className.push(`${attributes.icon}-icon`);
   }
-
-  if (node.attributes?.label !== undefined) {
+  if (node.attributes?.label !== undefined && node.attributes?.label !== null) {
     refStore[node.attributes.label] = id;
   }
-
   return {
     className,
     id
   };
 }
-
 function createBoxout(node, count) {
   const typeTitle = createBoxoutType(node, count);
   const titles = [typeTitle];
   const titleValue = getTitleValue(node);
-
   if (titleValue.length > 0) {
     const title = createTitle(node);
     titles.push(title);
   }
-
   const children = node.children;
   const content = children.filter(o => !o.data?.directiveLabel).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__/* .toHast */ .Q)(o, {
     allowDangerousHtml: true
   })).filter(Boolean);
-
   if (node.name === 'task') {
     const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');
-
     if (answer) {
       const answerHast = createAnswer(answer, count);
       content.push(answerHast);
     }
   }
-
   return [...titles, ...content];
 }
-
 function createAnswer(node, count) {
   const {
     children
@@ -2834,16 +2816,13 @@ function createAnswer(node, count) {
     }]
   };
 }
-
 function createBoxoutType(node, count) {
   const name = node.name;
   const label = (0,lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(name);
   let value = `${label} ${count}`;
-
   if (node.attributes?.optional !== undefined) {
     value += ` (Optional)`;
   }
-
   return {
     type: 'element',
     tagName: 'span',
@@ -2856,7 +2835,6 @@ function createBoxoutType(node, count) {
     }]
   };
 }
-
 function createTitle(node) {
   return {
     type: 'element',
@@ -2864,7 +2842,6 @@ function createTitle(node) {
     children: createTitleValue(node)
   };
 }
-
 function createTitleValue(node) {
   const name = node.name;
   const newRoot = {
@@ -2874,11 +2851,9 @@ function createTitleValue(node) {
   const {
     children = []
   } = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__/* .toHast */ .Q)(newRoot);
-
   if (name !== 'weblink') {
     return children;
   }
-
   const {
     target
   } = node.attributes;
@@ -2893,11 +2868,9 @@ function createTitleValue(node) {
     children
   }];
 }
-
 function getTitleValue(node) {
   const children = node.children || [];
   const parent = children[0] || {};
-
   if (!parent.data?.directiveLabel) {
     if (node.name === 'weblink') {
       const attributes = node.attributes;
@@ -2906,10 +2879,8 @@ function getTitleValue(node) {
         value: attributes.target
       }];
     }
-
     return [];
   }
-
   return parent.children || [];
 }
 __webpack_async_result__();
@@ -2917,7 +2888,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8164:
+/***/ 719:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2926,7 +2897,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   T: () => (/* binding */ browserWindow)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -2940,7 +2911,6 @@ function browserWindow() {
     });
   };
 }
-
 function template(node, file) {
   const url = node.attributes?.url || '';
   const alt = node.attributes?.alt || '';
@@ -2958,7 +2928,6 @@ function template(node, file) {
     }
   });
 }
-
 function createBrowserWindow(imagePath, url, alt) {
   return {
     type: 'element',
@@ -3000,7 +2969,6 @@ function createBrowserWindow(imagePath, url, alt) {
     }]
   };
 }
-
 function createBrowserHeader(url) {
   return {
     type: 'element',
@@ -3021,12 +2989,10 @@ function createBrowserHeader(url) {
     }]
   };
 }
-
 function createCaption(alt) {
   if (alt.trim() === '') {
     return null;
   }
-
   return {
     type: 'element',
     tagName: 'figcaption',
@@ -3040,16 +3006,13 @@ function createCaption(alt) {
     }]
   };
 }
-
 function getImagePath(node, file) {
   const children = node.children;
   const firstChild = children[0];
   const title = firstChild?.value || '';
-
   if (title.trim() === '') {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Video has no title', node.position);
   }
-
   return title;
 }
 __webpack_async_result__();
@@ -3057,7 +3020,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 1982:
+/***/ 8997:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3073,26 +3036,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([refr
 
 function codeBlocks(ctx) {
   return async (tree, file) => {
-    // replace \\n with \n in code samples
-    // visit<InlineCode>(tree, 'inlineCode', (node) => {
-    //   const old = node.value;
-    //   const transformed = old.replace(/\\\\n/g, '\\n');
-    //   // console.log({ old, transformed, same: old === transformed });
-    //   node.value = transformed;
-    // });
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'code', node => {
       customCode(node, ctx, file);
     });
   };
 }
-
 function customCode(node, ctx, file) {
   const language = parseLanguage(node);
   const klass = parseClass(node);
   const codeProps = {};
   const children = [];
   const trimmed = node.value.trim();
-
   if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
       type: 'text',
@@ -3102,7 +3056,6 @@ function customCode(node, ctx, file) {
     const highlighted = refractor_lib_all_js__WEBPACK_IMPORTED_MODULE_0__.refractor.highlight(trimmed, language);
     children.push(...highlighted.children);
   }
-
   Object.assign(node, {
     type: 'custom-code',
     data: {
@@ -3123,7 +3076,6 @@ function customCode(node, ctx, file) {
     }
   });
 }
-
 function addConsoleHeading(klass) {
   if (klass === 'r-output' || klass === 'r-error-output') {
     return {
@@ -3138,7 +3090,6 @@ function addConsoleHeading(klass) {
       }]
     };
   }
-
   if (klass === 'python-output' || klass === 'python-error-output') {
     return {
       type: 'element',
@@ -3152,39 +3103,31 @@ function addConsoleHeading(klass) {
       }]
     };
   }
-
   return null;
 }
-
 function parseLanguage(node) {
   const lang = node.lang || '';
-
   if (lang === 'plaintext') {
     return '';
   }
-
   if (lang.startsWith('{')) {
     const match = lang.match(/.lang-(\w+)/);
-
     if (match === null) {
       return '';
     }
-
     return match[1].toLowerCase();
   }
-
   return lang.toLowerCase();
 }
-
-function parseClass(node) {
-  const lang = node.lang || '';
-  const meta = node.meta || '';
-  const combined = `${lang} ${meta}`.trim();
-
+function parseClass({
+  lang,
+  meta
+}) {
+  const m = meta === '' || meta === 'null' ? '' : meta;
+  const combined = `${lang || ''} ${m}`.trim();
   if (!combined.startsWith('{.')) {
     return '';
   }
-
   return combined.slice(1, -1).replace(/\./g, '');
 }
 __webpack_async_result__();
@@ -3192,7 +3135,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 7859:
+/***/ 8943:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3219,7 +3162,6 @@ function columns() {
             className: 'column'
           }
         };
-
         if (node.attributes?.imgsrc) {
           const altText = getAltText(node);
           const img = {
@@ -3227,7 +3169,6 @@ function columns() {
             url: node.attributes.imgsrc,
             alt: altText
           };
-
           if (altText) {
             Object.assign(node.children[0], img);
           } else {
@@ -3238,26 +3179,19 @@ function columns() {
     });
   };
 }
-
 function getAltText(column) {
   const firstChild = column.children[0];
-
   if (!firstChild) {
     return false;
   }
-
   const firstChildChildren = firstChild.children;
-
   if (!Array.isArray(firstChildChildren)) {
     return false;
   }
-
   const firstChildFirstChild = firstChildChildren[0];
-
   if (!firstChildFirstChild) {
     return false;
   }
-
   return firstChildFirstChild.value;
 }
 __webpack_async_result__();
@@ -3265,7 +3199,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8176:
+/***/ 1316:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3273,10 +3207,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   P: () => (/* binding */ combinedMdastPhase)
 /* harmony export */ });
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(117);
-/* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(478);
-/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6285);
-/* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2486);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1807);
+/* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6112);
+/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3069);
+/* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3324);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _program_switcher__WEBPACK_IMPORTED_MODULE_2__]);
 ([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _program_switcher__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -3285,11 +3219,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_box
 
 async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
   const processor = (0,unified__WEBPACK_IMPORTED_MODULE_3__/* .unified */ .l)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_2__/* .programSwitcher */ .D, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_0__/* .boxouts */ .q, ctx.refStore);
-
   if (targetPdf) {
     processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__/* .moveAnswersToEnd */ .w);
   }
-
   return processor.run(mdast, file);
 }
 __webpack_async_result__();
@@ -3297,7 +3229,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 5783:
+/***/ 5660:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3314,32 +3246,31 @@ unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.
 
 function embedAssetUrl(ctx) {
   return async tree => {
-    let activeDir = ''; // nodes need to be visited in the correct order
-    // to derive the document directory
+    let activeDir = '';
 
+    // nodes need to be visited in the correct order
+    // to derive the document directory
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, (node, index, parent) => {
       // to ensure relative paths to assets across multiple .Rmd files
-      if (node.type === 'textDirective' && node.name === 'directory') {
+      if (node.type === 'leafDirective' && node.name === 'directory') {
         const firstChild = node.children[0];
         activeDir = firstChild.value || '';
         const parentChildren = parent?.children || [];
         parentChildren.splice(index || 0, 1);
       }
-
       if (node.type === 'image') {
         node.url = getPath(node.url, activeDir, ctx);
-      } // also fix for browser template
+      }
 
-
+      // also fix for browser template
       if (node.type === 'leafDirective' && node.name === 'browser') {
         const firstChild = node.children[0];
         firstChild.value = getPath(firstChild.value, activeDir, ctx);
-      } // also fix for raw html nodes sometimes output by knitr
+      }
 
-
+      // also fix for raw html nodes sometimes output by knitr
       if (node.type === 'html') {
         const props = getProps(node.value);
-
         if (props !== null && props.src) {
           const {
             src,
@@ -3356,49 +3287,38 @@ function embedAssetUrl(ctx) {
     });
   };
 }
-
 function getPath(url, dirname, ctx) {
   if (ctx.options.noEmbedAssetUrl) {
     return url;
   }
-
   if (path__WEBPACK_IMPORTED_MODULE_0___default().isAbsolute(url) || url.startsWith('http')) {
     return url;
-  } // pythons matplotlib appears to assign plot images a path
+  }
+  // pythons matplotlib appears to assign plot images a path
   // relative to the project root, whereas all other libraries use
   // an absolute path.
-
-
   if (url.startsWith('cache')) {
     return path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.cacheDir, url.replace('cache', ''));
   }
-
   return path__WEBPACK_IMPORTED_MODULE_0___default().join(dirname, url);
 }
-
 function getProps(value) {
   const matchImg = value.match(/^<img.*?src="(.+?)".*?>$/);
-
   if (matchImg !== null) {
     return propsToObject(value.slice(5, -1));
   }
-
   const matchPdf = value.match(/^<embed.*?src="(.+?)".*?>$/);
-
   if (matchPdf !== null) {
     return propsToObject(value.slice(7, -1));
   }
-
   return null;
 }
-
 function propsToObject(str) {
   return str.split(/(\w+)="(.*?)"/).filter(s => s.trim() !== '').reduce((acc, value, idx, arr) => {
     if (idx % 2 === 1) {
       const key = arr[idx - 1];
       acc[key] = value;
     }
-
     return acc;
   }, {});
 }
@@ -3407,7 +3327,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9724:
+/***/ 6945:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3429,7 +3349,6 @@ function gitGraph() {
     });
   };
 }
-
 function createGitGraph(node, counter) {
   const id = `gitgraph-${counter}`;
   const options = createDefaultOptions();
@@ -3452,7 +3371,8 @@ function createGitGraph(node, counter) {
       }, {
         type: 'text',
         value: '\n'
-      }, // this will need to be "singleton" inlined
+      },
+      // this will need to be "singleton" inlined
       {
         type: 'element',
         tagName: 'script',
@@ -3468,7 +3388,8 @@ function createGitGraph(node, counter) {
         tagName: 'script',
         children: [{
           type: 'text',
-          value: ['', // The global template js (template/src/index.ts) emits a custom event
+          value: ['',
+          // The global template js (template/src/index.ts) emits a custom event
           // 'template-ready' when initialised.  This is handy as the document
           // gets serveral <html> element classes added to it which causes re-renders.
           // Here, we wait for this custom event before rendering the gitgraphs,
@@ -3482,7 +3403,6 @@ function createGitGraph(node, counter) {
     }
   });
 }
-
 function createDefaultOptions() {
   return JSON.stringify({
     // orientation: 'vertical-reverse',
@@ -3499,7 +3419,8 @@ function createDefaultOptions() {
           borderRadius: 10
         }
       },
-      arrow: {// size: 10,
+      arrow: {
+        // size: 10,
         // color: '#ccc',
         // offset: -1.5
       },
@@ -3530,7 +3451,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 4457:
+/***/ 6365:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3540,7 +3461,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3908);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2430);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3609);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__]);
 ([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -3550,11 +3471,11 @@ function images(ctx) {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'image', node => {
       templateFromImage(node, ++ctx.figureCounter);
-    }); // knitr can output HTML for plots instead of Markdown now
+    });
 
+    // knitr can output HTML for plots instead of Markdown now
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'html', node => {
       const value = String(node.value);
-
       if (value.startsWith('<div class="figure">')) {
         const hast = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(value);
         templateFromHTML(node, hast, ++ctx.figureCounter);
@@ -3562,13 +3483,11 @@ function images(ctx) {
     });
   };
 }
-
 function templateFromImage(node, count) {
   const alt = getAltText(node.alt || '');
   const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
   createFigure(node, slug, node.url, alt, node.data?.width, count);
 }
-
 function templateFromHTML(node, hast, count) {
   const children = hast.children;
   const img = children.find(o => o.tagName === 'img');
@@ -3579,7 +3498,6 @@ function templateFromHTML(node, hast, count) {
   const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
   createFigure(node, slug, src, alt, width, count);
 }
-
 function createFigure(node, slug, src, alt, width, count) {
   Object.assign(node, {
     type: 'custom-image',
@@ -3593,7 +3511,6 @@ function createFigure(node, slug, src, alt, width, count) {
     }
   });
 }
-
 function createImage(src, alt, width) {
   const image = {
     type: 'element',
@@ -3611,16 +3528,14 @@ function createImage(src, alt, width) {
       children: []
     }]
   };
-
   if (width && /^\d+px/.test(String(width))) {
-    image.properties = { ...image.properties,
+    image.properties = {
+      ...image.properties,
       style: `width: ${width};`
     };
   }
-
   return image;
 }
-
 function createCaption(alt, slug, count) {
   return {
     type: 'element',
@@ -3635,7 +3550,6 @@ function createCaption(alt, slug, count) {
     }]
   };
 }
-
 function createLabel(alt, count) {
   const label = [{
     type: 'element',
@@ -3648,7 +3562,6 @@ function createLabel(alt, count) {
       value: `Figure ${count}`
     }]
   }];
-
   if (alt) {
     const elem = label[0];
     const content = elem.children[0];
@@ -3658,15 +3571,12 @@ function createLabel(alt, count) {
       value: ` ${alt}`
     });
   }
-
   return label;
 }
-
 function getAltText(altText) {
   if (altText.includes('unnamed-chunk')) {
     return '';
   }
-
   return altText;
 }
 __webpack_async_result__();
@@ -3674,7 +3584,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8287:
+/***/ 9057:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3684,27 +3594,27 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3982);
 /* harmony import */ var remark_directive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7785);
-/* harmony import */ var remark_footnotes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1083);
-/* harmony import */ var remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(222);
-/* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6809);
-/* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6688);
-/* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(117);
-/* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(529);
-/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3889);
-/* harmony import */ var _browser_window__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8164);
-/* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1982);
-/* harmony import */ var _columns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7859);
-/* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(5783);
-/* harmony import */ var _gitgraph__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9724);
-/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(4457);
-/* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(6264);
-/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(7664);
-/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(5239);
-/* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(8482);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(5871);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _browser_window__WEBPACK_IMPORTED_MODULE_9__, _code_blocks__WEBPACK_IMPORTED_MODULE_10__, _columns__WEBPACK_IMPORTED_MODULE_11__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__, _gitgraph__WEBPACK_IMPORTED_MODULE_13__, _images__WEBPACK_IMPORTED_MODULE_14__, _pagebreaks__WEBPACK_IMPORTED_MODULE_15__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__, _styled_terminal__WEBPACK_IMPORTED_MODULE_17__, _text_file__WEBPACK_IMPORTED_MODULE_18__, _youtube_videos__WEBPACK_IMPORTED_MODULE_19__]);
-([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_footnotes__WEBPACK_IMPORTED_MODULE_2__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__, remark_gfm__WEBPACK_IMPORTED_MODULE_4__, remark_parse__WEBPACK_IMPORTED_MODULE_5__, remark_slug__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _browser_window__WEBPACK_IMPORTED_MODULE_9__, _code_blocks__WEBPACK_IMPORTED_MODULE_10__, _columns__WEBPACK_IMPORTED_MODULE_11__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__, _gitgraph__WEBPACK_IMPORTED_MODULE_13__, _images__WEBPACK_IMPORTED_MODULE_14__, _pagebreaks__WEBPACK_IMPORTED_MODULE_15__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__, _styled_terminal__WEBPACK_IMPORTED_MODULE_17__, _text_file__WEBPACK_IMPORTED_MODULE_18__, _youtube_videos__WEBPACK_IMPORTED_MODULE_19__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(222);
+/* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6809);
+/* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6688);
+/* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9071);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(1807);
+/* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4686);
+/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1879);
+/* harmony import */ var _browser_window__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(719);
+/* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8997);
+/* harmony import */ var _columns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8943);
+/* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(5660);
+/* harmony import */ var _gitgraph__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(6945);
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6365);
+/* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(6129);
+/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(6254);
+/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(7156);
+/* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(1863);
+/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(7048);
+/* harmony import */ var _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(3021);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__, remark_gfm__WEBPACK_IMPORTED_MODULE_3__, remark_parse__WEBPACK_IMPORTED_MODULE_4__, remark_slug__WEBPACK_IMPORTED_MODULE_5__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__, _utils_icons__WEBPACK_IMPORTED_MODULE_7__, _browser_window__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _text_file__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__]);
+([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__, remark_gfm__WEBPACK_IMPORTED_MODULE_3__, remark_parse__WEBPACK_IMPORTED_MODULE_4__, remark_slug__WEBPACK_IMPORTED_MODULE_5__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__, _utils_icons__WEBPACK_IMPORTED_MODULE_7__, _browser_window__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _text_file__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3713,7 +3623,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rema
 
 
 
- // import { aliasDirectiveToTex } from '../latex/directive-to-tex';
+// import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 
 
 
@@ -3731,18 +3641,22 @@ async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_20__/* .unified */ .l)() // third-party plugins:
-  .use(remark_parse__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_3__["default"]).use(remark_footnotes__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    inlineNotes: true
-  }).use(remark_gfm__WEBPACK_IMPORTED_MODULE_4__["default"]) // .use(sectionize)
-  .use(remark_slug__WEBPACK_IMPORTED_MODULE_6__["default"]).use(remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__["default"], {
-    content: (0,_utils_icons__WEBPACK_IMPORTED_MODULE_8__/* .createSvg */ .W)('link-icon'),
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_20__/* .unified */ .l)()
+  // third-party plugins:
+  .use(remark_parse__WEBPACK_IMPORTED_MODULE_4__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__["default"])
+  // .use(footnotes, { inlineNotes: true })
+  .use(remark_gfm__WEBPACK_IMPORTED_MODULE_3__["default"])
+  // .use(sectionize)
+  .use(remark_slug__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__["default"], {
+    content: (0,_utils_icons__WEBPACK_IMPORTED_MODULE_7__/* .createSvg */ .W)('link-icon'),
     linkProperties: {
       className: 'link'
     }
-  }) // custom plugins:
-  .use(_columns__WEBPACK_IMPORTED_MODULE_11__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_12__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_19__/* .youtubeVideos */ .b).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToSvg */ .F, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__/* .removeEmptyParagraphs */ .j) // .use(aliasDirectiveToTex, ctx)
-  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_13__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_18__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_9__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_10__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_17__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_14__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_15__/* .pagebreaks */ .m);
+  })
+  // custom plugins:
+  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_18__/* .youtubeVideos */ .b).use(_code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__/* .aliasDirectiveToCode */ .f, ctx).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__/* .aliasDirectiveToLatexSvg */ .a, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__/* .removeEmptyParagraphs */ .j)
+  // .use(aliasDirectiveToTex, ctx)
+  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_12__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_17__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_8__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_16__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_13__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_14__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -3751,7 +3665,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6285:
+/***/ 3069:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3767,26 +3681,28 @@ function moveAnswersToEnd() {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', (node, _index, _parent) => {
       const index = _index;
-      const parent = _parent; // remove answer from task rehype
+      const parent = _parent;
 
+      // remove answer from task rehype
       if (node.name === 'task' && node.data) {
         const children = node.data.hChildren || [];
         node.data.hChildren = children.filter(o => o.name !== 'answer');
       }
-
       if (node.name === 'answer') {
         // these nodes have already been moved to the end
         if (node.attributes?.movedToEnd === 'yes') {
           return;
-        } // remove answer block from task node
+        }
 
-
+        // remove answer block from task node
         const parentChildren = parent?.children || [];
-        parentChildren.splice(index || 0, 1); // add to root node
+        parentChildren.splice(index || 0, 1);
 
+        // add to root node
         const treeParent = tree;
         const treeChildren = treeParent.children || [];
-        node.attributes = { ...(node.attributes || {}),
+        node.attributes = {
+          ...(node.attributes || {}),
           movedToEnd: 'yes'
         };
         treeChildren.push(node);
@@ -3799,7 +3715,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6264:
+/***/ 6129:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3830,7 +3746,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2486:
+/***/ 3324:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3848,11 +3764,9 @@ const programs = ['github-desktop', 'command-line'];
 const titleCase = ['GitHub Desktop', 'Command-line'];
 function programSwitcher(ctx) {
   const programFlag = ctx.options.envProgram;
-
   if (programFlag !== undefined && !programs.includes(programFlag)) {
     throw new Error(`[environment]: envProgram ${programFlag} should be one of ${programs}`);
   }
-
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', node => {
       if (node.name === 'program-switcher') {
@@ -3868,14 +3782,11 @@ function programSwitcher(ctx) {
     });
   };
 }
-
 function processMenu(parent, programFlag) {
   const children = parent.children;
-
   if (programFlag !== undefined) {
     return null;
   }
-
   return {
     type: 'element',
     tagName: 'ul',
@@ -3895,11 +3806,9 @@ function processMenu(parent, programFlag) {
     })
   };
 }
-
 function processChildren(parent, programFlag) {
   const children = parent.children.map(node => {
     const parent = node;
-
     if (programs.includes(parent.name)) {
       node.data = {
         hProperties: {
@@ -3908,18 +3817,15 @@ function processChildren(parent, programFlag) {
         }
       };
     }
-
     return node;
   });
   let filtered = children;
-
   if (programFlag !== undefined) {
     filtered = filtered.filter(node => {
       const parent = node;
       return programFlag === parent.name;
     });
   }
-
   const parentHast = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__/* .toHast */ .Q)({
     type: 'root',
     children: filtered
@@ -3931,7 +3837,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 7664:
+/***/ 6254:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3948,7 +3854,6 @@ function removeEmptyParagraphs() {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'paragraph', (node, _index, _parent) => {
       const index = _index;
       const parent = _parent;
-
       if (node.children.length === 0) {
         const parentChildren = parent?.children || [];
         parentChildren.splice(index || 0, 1);
@@ -3961,7 +3866,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 5239:
+/***/ 7156:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -3984,25 +3889,22 @@ function styledTerminal() {
     });
   };
 }
-
 function wrapInStyledTerminal(code, index, parent) {
   const codeChildren = code.data?.hChildren || [];
   const responseChildren = [];
   const nextIdx = index + 1;
   const nextNode = parent.children[nextIdx];
-
   if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode;
-
-    if (response.lang === '{.bash-output}' || response.lang === '{.bash-error-output}') {
+    if (response.lang === '{.knitr-output}' || response.lang === '{.knitr-error-output}') {
       const children = response.data?.hChildren || [];
       const responseWithColours = ansiToHast(children);
-      responseChildren.push(...responseWithColours); // remove response element
+      responseChildren.push(...responseWithColours);
 
+      // remove response element
       parent.children.splice(nextIdx, 1);
     }
   }
-
   code.data = {
     hProperties: {
       className: 'terminal'
@@ -4010,7 +3912,6 @@ function wrapInStyledTerminal(code, index, parent) {
     hChildren: [...codeChildren, ...responseChildren]
   };
 }
-
 function ansiToHast(children) {
   const pre = children[1];
   const code = pre.children[0];
@@ -4021,7 +3922,6 @@ function ansiToHast(children) {
       type: 'text',
       value: o.text
     };
-
     if (!o.color) {
       return text;
     } else {
@@ -4043,7 +3943,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8482:
+/***/ 1863:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4064,7 +3964,6 @@ function textFile() {
     });
   };
 }
-
 function createTextFile(node) {
   Object.assign(node, {
     type: 'text-file',
@@ -4118,7 +4017,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 5871:
+/***/ 7048:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4127,7 +4026,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   b: () => (/* binding */ youtubeVideos)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(153);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -4211,34 +4110,26 @@ function youtubeVideos() {
     });
   };
 }
-
 function getTitle(node, file) {
   const children = node.children;
   const firstChild = children[0];
   const title = firstChild?.value || '';
-
   if (title.trim() === '') {
     (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'Video has no title', node.position);
   }
-
   return title;
 }
-
 function getYoutubeUrl(id) {
   return `https://youtu.be/${id}`;
 }
-
 function getYoutubeThumbnailUrl(id) {
   return `http://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
-
 function formatDuration(duration = '') {
   const match = duration.match(/^(\d+)m(\d+)s$/);
-
   if (match === null) {
     return '';
   }
-
   return `${match[1]}:${match[2].padStart(2, '0')}`;
 }
 __webpack_async_result__();
@@ -4246,7 +4137,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9005:
+/***/ 495:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4257,7 +4148,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var puppeteer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5462);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([puppeteer__WEBPACK_IMPORTED_MODULE_0__]);
 puppeteer__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
- // const footerTemplate = `
+
+
+// const footerTemplate = `
 //   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
 //     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
 //   </div>
@@ -4266,7 +4159,8 @@ puppeteer__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? 
 async function convertToPdf(html) {
   const browser = await puppeteer__WEBPACK_IMPORTED_MODULE_0__["default"].launch({
     headless: true,
-    args: [// attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
+    args: [
+    // attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
     '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote']
   });
   const page = await browser.newPage();
@@ -4293,7 +4187,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9188:
+/***/ 8275:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4303,18 +4197,16 @@ __webpack_async_result__();
 function allowNoWhitespaceBeforeHeading(contents) {
   return contents.split('\n').map(line => {
     const match = line.match(/^(#+)(\w)(.*?)$/);
-
     if (match !== null) {
       return `${match[1]} ${match[2]}${match[3]}`;
     }
-
     return line;
   }).join('\n');
 }
 
 /***/ }),
 
-/***/ 4474:
+/***/ 6773:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4331,14 +4223,13 @@ function convertEmptyMBoxToDirective(contents) {
     if (line.includes('\\mbox') && line.replace('{', '').replace('}', '').trim() === '\\mbox') {
       return '::pagebreak';
     }
-
     return line;
   }).join('\n');
 }
 
 /***/ }),
 
-/***/ 2159:
+/***/ 8938:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4357,7 +4248,7 @@ function convertUrlToMd(contents) {
 
 /***/ }),
 
-/***/ 9386:
+/***/ 4120:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4367,22 +4258,17 @@ function convertUrlToMd(contents) {
 function convertMacroToDirective(contents) {
   return contents.split('\n').map(line => {
     const container = parseCustomContainer(line);
-
     if (container !== null) {
       return renderContainerDirective(container);
     }
-
     return line;
   }).join('\n');
 }
-
 function parseCustomContainer(line) {
   const match = line.match(/^#{1,6}\s*\[(\D.+)](.*)/);
-
   if (!Array.isArray(match)) {
     return null;
   }
-
   const [, attributeStr = '', extra = ''] = match;
   const [name, ...attributesArr] = attributeStr.split(',').map(s => s.trim());
   const title = extra.trim();
@@ -4393,52 +4279,43 @@ function parseCustomContainer(line) {
     attributes
   };
 }
-
 function renderContainerDirective({
   name,
   title,
   attributes
 }) {
   const colons = getColons(name);
-
   if (name.startsWith('/')) {
     return colons;
   }
-
   const newTitle = title ? `[${title}]` : '';
   const newAttributes = attributes ? `{${attributes}}` : '';
   return colons + name + newTitle + newAttributes;
 }
-
 function getColons(name) {
   switch (name.replace('/', '')) {
     case 'task':
     case 'columns':
       return '::::';
-
     case 'video':
       return '::';
-
     default:
       return ':::';
   }
 }
-
 function transformAttributes(containerName, attributesArr) {
   return attributesArr.map(attribute => {
     const [key, value] = attribute.split('=').map(s => s.trim());
-
     if (containerName === 'video' && key === 'videoid') {
       return `id=${value}`;
     }
-
     return attribute;
   }).join(' ');
 }
 
 /***/ }),
 
-/***/ 6590:
+/***/ 8534:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4446,18 +4323,20 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (/* binding */ preParsePhase)
 /* harmony export */ });
-/* harmony import */ var _allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9188);
-/* harmony import */ var _convert_block_tex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4474);
-/* harmony import */ var _convert_inline_tex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2159);
-/* harmony import */ var _convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9386);
-/* harmony import */ var _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7660);
+/* harmony import */ var _allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8275);
+/* harmony import */ var _convert_block_tex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6773);
+/* harmony import */ var _convert_inline_tex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8938);
+/* harmony import */ var _convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4120);
+/* harmony import */ var _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9543);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__]);
 _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
 
 
- // Some of the original coursework syntax can't easily be parsed by
+
+
+// Some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
 // I transform some syntax using regex so it can be parsed.
 // A successful generic approach I found is to convert problem syntax to a
@@ -4466,7 +4345,7 @@ _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_d
 function preParsePhase(file) {
   let result = file.value;
   result = removeCommentedSections(result);
-  result = escapeDollarsInCodeBlocks(result);
+  // result = escapeDollarsInCodeBlocks(result);
   result = (0,_allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_1__/* .allowNoWhitespaceBeforeHeading */ .Q)(result);
   result = (0,_convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_2__/* .convertMacroToDirective */ .W)(result);
   result = (0,_convert_inline_tex__WEBPACK_IMPORTED_MODULE_3__/* .convertTextBfToMd */ ._)(result);
@@ -4477,22 +4356,21 @@ function preParsePhase(file) {
   file.value = result;
   return file;
 }
-
 function removeCommentedSections(md) {
   return md.replace(/<!--[^-][\s\S]*?-->/g, '').replace(/<!---/g, '<!--');
 }
 
-function escapeDollarsInCodeBlocks(md) {
-  return md.replace(/(```.+?```)/gms, match => {
-    return '\n' + match.replace(/\$/g, '\\$') + '\n';
-  });
-}
+// function escapeDollarsInCodeBlocks(md: string) {
+//   return md.replace(/(```.+?```)/gms, (match) => {
+//     return '\n' + match.replace(/\$/g, '\\$') + '\n';
+//   });
+// }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
-/***/ 7660:
+/***/ 9543:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4508,9 +4386,10 @@ markdown_table__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.th
 
 
 function reformatPandocSimpleTables(contents) {
-  const lines = contents.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL); // operate on array backwards as length may change with transformation,
-  // preserving index in loop
+  const lines = contents.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 
+  // operate on array backwards preserving index in loop,
+  // as length may change with transformation
   for (var idx = lines.length - 1; idx >= 0; idx--) {
     if (isValidPandocSimpleTableSeparator(lines, idx)) {
       const {
@@ -4522,32 +4401,24 @@ function reformatPandocSimpleTables(contents) {
       lines.splice(startIdx, count + 1, ...newLines, '');
     }
   }
-
   return lines.join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
-
 function isValidPandocSimpleTableSeparator(lines, idx, isEnd) {
   const line = lines[idx] || '';
-
   if (idx === 0 || !/-{2,}/g.test(line) || !/^[\s|-]+$/.test(line)) {
     return false;
   }
-
   if (getColumnIndexes(line).length <= 1) {
     return false;
   }
-
   if (!isEnd) {
     const nextLine = lines[idx + 1] || '';
-
     if (nextLine.trim() === '') {
       return false;
     }
   }
-
   return true;
 }
-
 function getTableBounds(arr, idx) {
   const startIdx = idx - 1;
   const endIdx = arr.slice(startIdx).findIndex(l => l.trim() === '');
@@ -4557,7 +4428,6 @@ function getTableBounds(arr, idx) {
     count
   };
 }
-
 function convertLines(lines) {
   const table = parseTable(lines);
   const align = getColumnAlignment(table[0]);
@@ -4566,22 +4436,18 @@ function convertLines(lines) {
   });
   return result.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
-
 function parseTable(lines) {
   const [titles, separator, ...body] = lines;
   const columnIndexes = getColumnIndexes(separator);
   const titleCells = parseTitleRow(titles, columnIndexes);
   const rows = body.map(line => parseBodyRow(line, columnIndexes));
   const endSeparatorIdx = getEndSeparatorIdx(body);
-
   if (endSeparatorIdx !== -1) {
     return [titleCells, ...rows.slice(0, endSeparatorIdx)];
   }
-
   const multilineRows = rows.reduce(multilineReducer, []);
   return [titleCells, ...multilineRows];
 }
-
 function getColumnIndexes(line) {
   return line.split('').reduce((acc, str, idx) => {
     if (str === '-' && (idx === 0 || line[idx - 1] === ' ')) {
@@ -4589,40 +4455,32 @@ function getColumnIndexes(line) {
     } else if (idx !== line.length - 1 && str === ' ' && line[idx - 1] === '-') {
       acc[acc.length - 1].push(idx);
     }
-
     return acc;
   }, []);
 }
-
 function getColumnAlignment(titleCells) {
   return titleCells.map(title => {
     if (title[0] === ' ') {
       if (title[title.length - 1] === ' ') {
         return 'center';
       }
-
       return 'right';
     }
-
     return 'left';
   });
 }
-
 function parseTitleRow(line, columnIndexes) {
   return columnIndexes.map(tuple => line.slice(...tuple));
 }
-
 function parseBodyRow(line, columnIndexes) {
   return columnIndexes.map(tuple => {
     const end = tuple[1] === undefined ? tuple[1] : tuple[1] + 1;
     return line.slice(tuple[0], end).trim();
   });
 }
-
 function getEndSeparatorIdx(lines) {
   for (let idx = lines.length - 1; idx > 0; idx--) {
     const line = lines[idx];
-
     if (line.trim() !== '') {
       if (isValidPandocSimpleTableSeparator(lines, idx, true)) {
         return idx;
@@ -4631,16 +4489,13 @@ function getEndSeparatorIdx(lines) {
       }
     }
   }
-
   return -1;
 }
-
 function multilineReducer(acc, row) {
   if (row.some(cell => cell.trim() === '')) {
     const prevIdx = acc.length - 1;
     acc[prevIdx].forEach((cell, i) => {
       const trimmed = row[i].trim();
-
       if (trimmed !== '') {
         acc[prevIdx][i] = cell + ' ' + trimmed;
       }
@@ -4648,7 +4503,6 @@ function multilineReducer(acc, row) {
   } else {
     acc.push(row.slice());
   }
-
   return acc;
 }
 __webpack_async_result__();
@@ -4656,7 +4510,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2303:
+/***/ 5397:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4668,7 +4522,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2386);
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8061);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_1__, _utils__WEBPACK_IMPORTED_MODULE_2__]);
 ([hash_sum__WEBPACK_IMPORTED_MODULE_1__, _utils__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -4682,18 +4536,16 @@ async function cacheToFile(options) {
     execFn,
     json
   } = options;
-
   if (ctx.options.noCache === true) {
     return execFn(key);
   }
-
   const filePath = `${prefix}-${(0,hash_sum__WEBPACK_IMPORTED_MODULE_1__["default"])(key)}.txt`;
   const cachedFilePath = path__WEBPACK_IMPORTED_MODULE_0___default().join(ctx.cacheDir, filePath);
   const exists = await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(cachedFilePath);
-
   if (exists) {
-    const str = await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .readFile */ .pJ)(cachedFilePath); // ignore cache if json is corrupt
+    const str = await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .readFile */ .pJ)(cachedFilePath);
 
+    // ignore cache if json is corrupt
     if (json) {
       try {
         return JSON.parse(str);
@@ -4701,18 +4553,16 @@ async function cacheToFile(options) {
         return execAndCache(options, cachedFilePath);
       }
     }
-
     return str;
   }
-
   return execAndCache(options, cachedFilePath);
 }
 async function cacheJsonToFile(options) {
-  return cacheToFile({ ...options,
+  return cacheToFile({
+    ...options,
     json: true
   });
 }
-
 async function execAndCache({
   ctx,
   key,
@@ -4730,7 +4580,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 2240:
+/***/ 2192:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4750,13 +4600,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-
-  const currentVersion = "1.1.66";
-
+  const currentVersion = "1.1.67";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
-
     if (latestTag !== currentVersion) {
       console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow.bold('New version available'));
       console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Current version: ${currentVersion}`));
@@ -4764,7 +4611,8 @@ async function checkForLatestVersion() {
       console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Run the following command to update:`));
       console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`npm install -g ${repo}`));
       console.log('');
-    } else {// console.log(chalk.yellow(`Up to date :)`));
+    } else {
+      // console.log(chalk.yellow(`Up to date :)`));
     }
   } catch (err) {
     const message = `Can't read latest version from Github`;
@@ -4772,8 +4620,9 @@ async function checkForLatestVersion() {
     console.log(chalk__WEBPACK_IMPORTED_MODULE_1__["default"].yellow(`Current version: ${currentVersion}`));
     console.log('');
   }
-} // https://stackoverflow.com/questions/10649814#12704727
+}
 
+// https://stackoverflow.com/questions/10649814#12704727
 async function listRemoteGitTags() {
   return new Promise((resolve, reject) => {
     const cmd = `git -c "versionsort.suffix=-" ls-remote --tags --sort="v:refname" "git@github.com:${repo}.git"`;
@@ -4786,18 +4635,15 @@ async function listRemoteGitTags() {
     });
   });
 }
-
 function parseLatestTag(tags) {
   const lines = tags.trim().split('\n');
   const lastLine = lines[lines.length - 1];
   const match = lastLine.match(/tags\/v(\d+.\d+.\d+)/);
-
   if (match === null) {
     const message = `can't extract version from line: "${lastLine}"`;
     console.error('[get-latest-version]:', message);
     throw new Error(message);
   }
-
   return match[1];
 }
 __webpack_async_result__();
@@ -4805,7 +4651,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6639:
+/***/ 2098:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4820,13 +4666,12 @@ function createCounter() {
       store[key] = value;
       return value;
     }
-
   };
 }
 
 /***/ }),
 
-/***/ 2430:
+/***/ 3609:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4835,11 +4680,13 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */   j: () => (/* binding */ getAssetHast)
 /* harmony export */ });
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1252);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8061);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1358);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([to_vfile__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__]);
 ([to_vfile__WEBPACK_IMPORTED_MODULE_0__, _utils_utils__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
- // export async function getAssetHast(name: string) {
+
+
+// export async function getAssetHast(name: string) {
 //   const contents = await getAsset(name);
 //   const vfile = toVFile({ contents }) as VFile;
 //   const parsed = rehypeParser().parse(vfile) as Parent;
@@ -4858,7 +4705,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 8530:
+/***/ 8093:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4868,13 +4715,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2386);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-/* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2430);
+/* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3609);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([hash_sum__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__]);
 ([hash_sum__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _get_asset_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
- // ensure SVG ids will not collide when inlined
 
+
+// ensure SVG ids will not collide when inlined
 function getSvgHast(svg) {
   const svgNode = (0,_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(svg);
   const hash = (0,hash_sum__WEBPACK_IMPORTED_MODULE_0__["default"])(svg);
@@ -4882,14 +4730,11 @@ function getSvgHast(svg) {
     if (!node.properties) {
       return;
     }
-
     if (node.properties.id) {
       node.properties.id = `${node.properties.id}-${hash}`;
     }
-
     for (const [key, value] of Object.entries(node.properties)) {
       const valueStr = String(value);
-
       if (isIdRef(valueStr)) {
         node.properties[key] = `${value}-${hash}`;
       } else if (isUrlIdRef(valueStr)) {
@@ -4899,19 +4744,15 @@ function getSvgHast(svg) {
   });
   return svgNode;
 }
-
 function isIdRef(value) {
   return !isHexColour(value) && /^#[\w\d\-_]+$/.test(value);
 }
-
 function isHexColour(value) {
   return /^#([0-9a-f]{3}){1,2}$/i.test(value);
 }
-
 function isUrlIdRef(value) {
   return /^url\(#[\w\d-_]+\)$/.test(value);
 }
-
 function extractUrlIdRef(value) {
   const match = value.match(/^url\((#[\w\d-_]+)\)$/);
   return match && match[1];
@@ -4921,7 +4762,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 3889:
+/***/ 1879:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4932,7 +4773,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var _assets_hamburger_icon_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(757);
 /* harmony import */ var _assets_link_icon_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2439);
-/* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2430);
+/* harmony import */ var _get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3609);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_get_asset_hast__WEBPACK_IMPORTED_MODULE_0__]);
 _get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -4975,7 +4816,6 @@ function createDefs() {
     }]
   };
 }
-
 function createStoredSvg(id, svg) {
   const hast = (0,_get_asset_hast__WEBPACK_IMPORTED_MODULE_0__/* .getAssetHast */ .j)(svg);
   const children = hast.children;
@@ -4987,17 +4827,13 @@ function createStoredSvg(id, svg) {
     children
   };
 }
-
 function getSvg(id) {
   const stored = svgs.find(o => o.id === id);
-
   if (stored === undefined) {
     throw new Error(`svg icon not found: ${id}`);
   }
-
   return stored;
 }
-
 function createGroup({
   id,
   children
@@ -5016,7 +4852,7 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 153:
+/***/ 343:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5026,14 +4862,12 @@ __webpack_async_result__();
 /* harmony export */   ei: () => (/* binding */ infoMessage),
 /* harmony export */   rJ: () => (/* binding */ MessageStatus)
 /* harmony export */ });
-let MessageStatus;
-
-(function (MessageStatus) {
+let MessageStatus = /*#__PURE__*/function (MessageStatus) {
   MessageStatus["fail"] = "fail";
   MessageStatus["warning"] = "warning";
   MessageStatus["info"] = "info";
-})(MessageStatus || (MessageStatus = {}));
-
+  return MessageStatus;
+}({});
 function failMessage(file, message, position) {
   const status = MessageStatus.fail;
   return messageWithStatus(file, message, position, status);
@@ -5046,7 +4880,6 @@ function infoMessage(file, message, position) {
   const status = MessageStatus.info;
   return messageWithStatus(file, message, position, status);
 }
-
 function messageWithStatus(file, message, position, status) {
   // console.log(message);
   const msg = file.message(message, position);
@@ -5056,7 +4889,7 @@ function messageWithStatus(file, message, position, status) {
 
 /***/ }),
 
-/***/ 2364:
+/***/ 1642:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5070,13 +4903,12 @@ function createTimer() {
       const hrtime = process.hrtime(start);
       return (hrtime[0] + hrtime[1] / 1e9).toFixed(3);
     }
-
   };
 }
 
 /***/ }),
 
-/***/ 8061:
+/***/ 1358:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5099,7 +4931,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var rehype_parse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1345);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5390);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(117);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__]);
 ([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
@@ -5108,6 +4940,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehy
 
 
 // import { visit } from 'unist-util-visit';
+
 const rehypeParser = (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(rehype_parse__WEBPACK_IMPORTED_MODULE_2__["default"], {
   fragment: true
 }).use(rehype_stringify__WEBPACK_IMPORTED_MODULE_3__["default"]);
@@ -5148,7 +4981,6 @@ function getTemplateDir() {
   if (true) {
     return __dirname;
   }
-
   return path__WEBPACK_IMPORTED_MODULE_1___default().join(process.cwd(), 'template', 'build');
 }
 function combineMdastTrees(mdasts) {
@@ -5160,12 +4992,12 @@ function combineMdastTrees(mdasts) {
 }
 function inspect() {
   return tree => {
-    console.log(JSON.stringify(tree, null, 2)); // console.dir(tree, { depth: null });
+    console.log(JSON.stringify(tree, null, 2));
+    // console.dir(tree, { depth: null });
     // visit(tree, 'leafDirective', (node) => {
     //   console.log('---------------------');
     //   console.dir(node, { depth: null });
     // });
-
     return tree;
   };
 }
@@ -5313,112 +5145,6 @@ module.exports = function isBuffer (obj) {
   return obj != null && obj.constructor != null &&
     typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
-
-
-/***/ }),
-
-/***/ 4651:
-/***/ ((module) => {
-
-"use strict";
-
-
-
-
-var encodeCache = {};
-
-
-// Create a lookup array where anything but characters in `chars` string
-// and alphanumeric chars is percent-encoded.
-//
-function getEncodeCache(exclude) {
-  var i, ch, cache = encodeCache[exclude];
-  if (cache) { return cache; }
-
-  cache = encodeCache[exclude] = [];
-
-  for (i = 0; i < 128; i++) {
-    ch = String.fromCharCode(i);
-
-    if (/^[0-9a-z]$/i.test(ch)) {
-      // always allow unencoded alphanumeric characters
-      cache.push(ch);
-    } else {
-      cache.push('%' + ('0' + i.toString(16).toUpperCase()).slice(-2));
-    }
-  }
-
-  for (i = 0; i < exclude.length; i++) {
-    cache[exclude.charCodeAt(i)] = exclude[i];
-  }
-
-  return cache;
-}
-
-
-// Encode unsafe characters with percent-encoding, skipping already
-// encoded sequences.
-//
-//  - string       - string to encode
-//  - exclude      - list of characters to ignore (in addition to a-zA-Z0-9)
-//  - keepEscaped  - don't encode '%' in a correct escape sequence (default: true)
-//
-function encode(string, exclude, keepEscaped) {
-  var i, l, code, nextCode, cache,
-      result = '';
-
-  if (typeof exclude !== 'string') {
-    // encode(string, keepEscaped)
-    keepEscaped  = exclude;
-    exclude = encode.defaultChars;
-  }
-
-  if (typeof keepEscaped === 'undefined') {
-    keepEscaped = true;
-  }
-
-  cache = getEncodeCache(exclude);
-
-  for (i = 0, l = string.length; i < l; i++) {
-    code = string.charCodeAt(i);
-
-    if (keepEscaped && code === 0x25 /* % */ && i + 2 < l) {
-      if (/^[0-9a-f]{2}$/i.test(string.slice(i + 1, i + 3))) {
-        result += string.slice(i, i + 3);
-        i += 2;
-        continue;
-      }
-    }
-
-    if (code < 128) {
-      result += cache[code];
-      continue;
-    }
-
-    if (code >= 0xD800 && code <= 0xDFFF) {
-      if (code >= 0xD800 && code <= 0xDBFF && i + 1 < l) {
-        nextCode = string.charCodeAt(i + 1);
-        if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
-          result += encodeURIComponent(string[i] + string[i + 1]);
-          i++;
-          continue;
-        }
-      }
-      result += '%EF%BF%BD';
-      continue;
-    }
-
-    result += encodeURIComponent(string[i]);
-  }
-
-  return result;
-}
-
-encode.defaultChars   = ";/?:@&=+$,-_.!~*'()#";
-encode.componentChars = "-_.!~*'()";
-
-
-module.exports = encode;
 
 
 /***/ }),
@@ -5777,14 +5503,6 @@ module.exports = import("remark-directive");;
 
 /***/ }),
 
-/***/ 1083:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("remark-footnotes");;
-
-/***/ }),
-
 /***/ 222:
 /***/ ((module) => {
 
@@ -5830,6 +5548,14 @@ module.exports = import("remark-retext");;
 
 "use strict";
 module.exports = import("remark-slug");;
+
+/***/ }),
+
+/***/ 7778:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("remark-stringify");;
 
 /***/ }),
 
@@ -5881,6 +5607,14 @@ module.exports = import("yargs");;
 
 /***/ }),
 
+/***/ 1091:
+/***/ ((module) => {
+
+"use strict";
+module.exports = import("yargs/helpers");;
+
+/***/ }),
+
 /***/ 4962:
 /***/ ((module) => {
 
@@ -5929,7 +5663,7 @@ module.exports = require("url");
 
 /***/ }),
 
-/***/ 9162:
+/***/ 9731:
 /***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5941,9 +5675,20 @@ __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 /**
- * @typedef {import('mdast').Root|import('mdast').Content} Node
+ * @typedef {import('mdast').Root} Root
+ * @typedef {import('mdast').Content} Content
  * @typedef {import('mdast').Definition} Definition
- * @typedef {import('unist-util-visit').Visitor<Definition>} DefinitionVisitor
+ */
+
+/**
+ * @typedef {Root | Content} Node
+ *
+ * @callback GetDefinition
+ *   Get a definition by identifier.
+ * @param {string | null | undefined} [identifier]
+ *   Identifier of definition.
+ * @returns {Definition | null}
+ *   Definition corresponding to `identifier` or `null`.
  */
 
 
@@ -5951,43 +5696,43 @@ unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.
 const own = {}.hasOwnProperty
 
 /**
+ * Find definitions in `tree`.
  *
- * @param {Node} node
+ * Uses CommonMark precedence, which means that earlier definitions are
+ * preferred over duplicate later definitions.
+ *
+ * @param {Node} tree
+ *   Tree to check.
+ * @returns {GetDefinition}
+ *   Getter.
  */
-function definitions(node) {
-  /** @type {Object.<string, Definition>} */
+function definitions(tree) {
+  /** @type {Record<string, Definition>} */
   const cache = Object.create(null)
 
-  if (!node || !node.type) {
+  if (!tree || !tree.type) {
     throw new Error('mdast-util-definitions expected node')
   }
 
-  (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(node, 'definition', ondefinition)
-
-  return getDefinition
-
-  /** @type {DefinitionVisitor} */
-  function ondefinition(definition) {
+  (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'definition', (definition) => {
     const id = clean(definition.identifier)
     if (id && !own.call(cache, id)) {
       cache[id] = definition
     }
-  }
+  })
 
-  /**
-   * Get a node from the bound definition-cache.
-   *
-   * @param {string} identifier
-   * @returns {Definition|null}
-   */
-  function getDefinition(identifier) {
+  return definition
+
+  /** @type {GetDefinition} */
+  function definition(identifier) {
     const id = clean(identifier)
+    // To do: next major: return `undefined` when not found.
     return id && own.call(cache, id) ? cache[id] : null
   }
 }
 
 /**
- * @param {string} [value]
+ * @param {string | null | undefined} [value]
  * @returns {string}
  */
 function clean(value) {
@@ -6006,46 +5751,44 @@ __webpack_async_result__();
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   M: () => (/* binding */ footer)
 /* harmony export */ });
-/* harmony import */ var micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2002);
-/* harmony import */ var unist_builder__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8881);
-/* harmony import */ var _traverse_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2319);
-/* harmony import */ var _wrap_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1195);
+/* harmony import */ var micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1510);
 /**
- * @typedef {import('mdast').BlockContent} BlockContent
- * @typedef {import('mdast').FootnoteDefinition} FootnoteDefinition
  * @typedef {import('hast').Element} Element
  * @typedef {import('hast').ElementContent} ElementContent
- * @typedef {import('./index.js').H} H
+ *
+ * @typedef {import('./state.js').State} State
  */
-
-
-
 
 
 
 /**
- * @param {H} h
+ * Generate a hast footer for called footnote definitions.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @returns {Element | undefined}
+ *   `section` element or `undefined`.
  */
-function footer(h) {
-  let index = -1
+function footer(state) {
   /** @type {Array<ElementContent>} */
   const listItems = []
+  let index = -1
 
-  while (++index < h.footnoteOrder.length) {
-    const def = h.footnoteById[h.footnoteOrder[index].toUpperCase()]
+  while (++index < state.footnoteOrder.length) {
+    const def = state.footnoteById[state.footnoteOrder[index]]
 
     if (!def) {
       continue
     }
 
-    const content = (0,_traverse_js__WEBPACK_IMPORTED_MODULE_0__/* .all */ .$)(h, def)
-    const id = String(def.identifier)
-    const safeId = (0,micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_1__/* .sanitizeUri */ .K)(id.toLowerCase())
+    const content = state.all(def)
+    const id = String(def.identifier).toUpperCase()
+    const safeId = (0,micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_0__/* .normalizeUri */ .F)(id.toLowerCase())
     let referenceIndex = 0
     /** @type {Array<ElementContent>} */
     const backReferences = []
 
-    while (++referenceIndex <= h.footnoteCounts[id]) {
+    while (++referenceIndex <= state.footnoteCounts[id]) {
       /** @type {Element} */
       const backReference = {
         type: 'element',
@@ -6053,13 +5796,13 @@ function footer(h) {
         properties: {
           href:
             '#' +
-            h.clobberPrefix +
+            state.clobberPrefix +
             'fnref-' +
             safeId +
             (referenceIndex > 1 ? '-' + referenceIndex : ''),
           dataFootnoteBackref: true,
           className: ['data-footnote-backref'],
-          ariaLabel: h.footnoteBackLabel
+          ariaLabel: state.footnoteBackLabel
         },
         children: [{type: 'text', value: '↩'}]
       }
@@ -6098,19 +5841,17 @@ function footer(h) {
     const listItem = {
       type: 'element',
       tagName: 'li',
-      properties: {id: h.clobberPrefix + 'fn-' + safeId},
-      children: (0,_wrap_js__WEBPACK_IMPORTED_MODULE_2__/* .wrap */ .r)(content, true)
+      properties: {id: state.clobberPrefix + 'fn-' + safeId},
+      children: state.wrap(content, true)
     }
 
-    if (def.position) {
-      listItem.position = def.position
-    }
+    state.patch(def, listItem)
 
     listItems.push(listItem)
   }
 
   if (listItems.length === 0) {
-    return null
+    return
   }
 
   return {
@@ -6120,16 +5861,20 @@ function footer(h) {
     children: [
       {
         type: 'element',
-        tagName: 'h2',
-        properties: {id: 'footnote-label', className: ['sr-only']},
-        children: [(0,unist_builder__WEBPACK_IMPORTED_MODULE_3__.u)('text', h.footnoteLabel)]
+        tagName: state.footnoteLabelTagName,
+        properties: {
+          // To do: use structured clone.
+          ...JSON.parse(JSON.stringify(state.footnoteLabelProperties)),
+          id: 'footnote-label'
+        },
+        children: [{type: 'text', value: state.footnoteLabel}]
       },
       {type: 'text', value: '\n'},
       {
         type: 'element',
         tagName: 'ol',
         properties: {},
-        children: (0,_wrap_js__WEBPACK_IMPORTED_MODULE_2__/* .wrap */ .r)(listItems, true)
+        children: state.wrap(listItems, true)
       },
       {type: 'text', value: '\n'}
     ]
@@ -6139,7 +5884,7 @@ function footer(h) {
 
 /***/ }),
 
-/***/ 7354:
+/***/ 4224:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -6149,188 +5894,267 @@ __webpack_require__.d(__webpack_exports__, {
   q: () => (/* binding */ handlers)
 });
 
-// EXTERNAL MODULE: ../node_modules/mdast-util-to-hast/lib/wrap.js
-var wrap = __webpack_require__(1195);
-// EXTERNAL MODULE: ../node_modules/mdast-util-to-hast/lib/traverse.js
-var traverse = __webpack_require__(2319);
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/blockquote.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Blockquote} Blockquote
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `blockquote` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Blockquote} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function blockquote(h, node) {
-  return h(node, 'blockquote', (0,wrap/* wrap */.r)((0,traverse/* all */.$)(h, node), true))
+function blockquote(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'blockquote',
+    properties: {},
+    children: state.wrap(state.all(node), true)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
-// EXTERNAL MODULE: ../node_modules/unist-builder/index.js
-var unist_builder = __webpack_require__(8881);
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/break.js
 /**
  * @typedef {import('hast').Element} Element
  * @typedef {import('hast').Text} Text
  * @typedef {import('mdast').Break} Break
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `break` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Break} node
- * @returns {Array<Element|Text>}
+ *   mdast node.
+ * @returns {Array<Element | Text>}
+ *   hast element content.
  */
-function hardBreak(h, node) {
-  return [h(node, 'br'), (0,unist_builder.u)('text', '\n')]
+function hardBreak(state, node) {
+  /** @type {Element} */
+  const result = {type: 'element', tagName: 'br', properties: {}, children: []}
+  state.patch(node, result)
+  return [state.applyData(node, result), {type: 'text', value: '\n'}]
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/code.js
 /**
- * @typedef {import('mdast').Code} Code
  * @typedef {import('hast').Element} Element
  * @typedef {import('hast').Properties} Properties
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').Code} Code
+ * @typedef {import('../state.js').State} State
+
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `code` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Code} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function code(h, node) {
+function code(state, node) {
   const value = node.value ? node.value + '\n' : ''
   // To do: next major, use `node.lang` w/o regex, the splitting’s been going
   // on for years in remark now.
-  const lang = node.lang && node.lang.match(/^[^ \t]+(?=[ \t]|$)/)
+  const lang = node.lang ? node.lang.match(/^[^ \t]+(?=[ \t]|$)/) : null
   /** @type {Properties} */
-  const props = {}
+  const properties = {}
 
   if (lang) {
-    props.className = ['language-' + lang]
+    properties.className = ['language-' + lang]
   }
 
-  const code = h(node, 'code', props, [(0,unist_builder.u)('text', value)])
+  // Create `<code>`.
+  /** @type {Element} */
+  let result = {
+    type: 'element',
+    tagName: 'code',
+    properties,
+    children: [{type: 'text', value}]
+  }
 
   if (node.meta) {
-    code.data = {meta: node.meta}
+    result.data = {meta: node.meta}
   }
 
-  return h(node.position, 'pre', [code])
+  state.patch(node, result)
+  result = state.applyData(node, result)
+
+  // Create `<pre>`.
+  result = {type: 'element', tagName: 'pre', properties: {}, children: [result]}
+  state.patch(node, result)
+  return result
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/delete.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Delete} Delete
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
+
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `delete` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Delete} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function strikethrough(h, node) {
-  return h(node, 'del', (0,traverse/* all */.$)(h, node))
+function strikethrough(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'del',
+    properties: {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/emphasis.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Emphasis} Emphasis
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `emphasis` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Emphasis} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function emphasis(h, node) {
-  return h(node, 'em', (0,traverse/* all */.$)(h, node))
+function emphasis(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'em',
+    properties: {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
-// EXTERNAL MODULE: ../node_modules/micromark-util-sanitize-uri/index.js + 3 modules
-var micromark_util_sanitize_uri = __webpack_require__(2002);
+// EXTERNAL MODULE: ../node_modules/micromark-util-sanitize-uri/index.js + 2 modules
+var micromark_util_sanitize_uri = __webpack_require__(1510);
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/footnote-reference.js
 /**
  * @typedef {import('mdast').FootnoteReference} FootnoteReference
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('../state.js').State} State
  */
-
 
 
 
 /**
- * @type {Handler}
+ * Turn an mdast `footnoteReference` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {FootnoteReference} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function footnoteReference(h, node) {
-  const id = String(node.identifier)
-  const safeId = (0,micromark_util_sanitize_uri/* sanitizeUri */.K)(id.toLowerCase())
-  const index = h.footnoteOrder.indexOf(id)
+function footnoteReference(state, node) {
+  const id = String(node.identifier).toUpperCase()
+  const safeId = (0,micromark_util_sanitize_uri/* normalizeUri */.F)(id.toLowerCase())
+  const index = state.footnoteOrder.indexOf(id)
   /** @type {number} */
   let counter
 
   if (index === -1) {
-    h.footnoteOrder.push(id)
-    h.footnoteCounts[id] = 1
-    counter = h.footnoteOrder.length
+    state.footnoteOrder.push(id)
+    state.footnoteCounts[id] = 1
+    counter = state.footnoteOrder.length
   } else {
-    h.footnoteCounts[id]++
+    state.footnoteCounts[id]++
     counter = index + 1
   }
 
-  const reuseCounter = h.footnoteCounts[id]
+  const reuseCounter = state.footnoteCounts[id]
 
-  return h(node, 'sup', [
-    h(
-      node.position,
-      'a',
-      {
-        href: '#' + h.clobberPrefix + 'fn-' + safeId,
-        id:
-          h.clobberPrefix +
-          'fnref-' +
-          safeId +
-          (reuseCounter > 1 ? '-' + reuseCounter : ''),
-        dataFootnoteRef: true,
-        ariaDescribedBy: 'footnote-label'
-      },
-      [(0,unist_builder.u)('text', String(counter))]
-    )
-  ])
+  /** @type {Element} */
+  const link = {
+    type: 'element',
+    tagName: 'a',
+    properties: {
+      href: '#' + state.clobberPrefix + 'fn-' + safeId,
+      id:
+        state.clobberPrefix +
+        'fnref-' +
+        safeId +
+        (reuseCounter > 1 ? '-' + reuseCounter : ''),
+      dataFootnoteRef: true,
+      ariaDescribedBy: ['footnote-label']
+    },
+    children: [{type: 'text', value: String(counter)}]
+  }
+  state.patch(node, link)
+
+  /** @type {Element} */
+  const sup = {
+    type: 'element',
+    tagName: 'sup',
+    properties: {},
+    children: [link]
+  }
+  state.patch(node, sup)
+  return state.applyData(node, sup)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/footnote.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Footnote} Footnote
- * @typedef {import('../index.js').Handler} Handler
- *
- * @todo
- *   `footnote` (or “inline note”) are a pandoc footnotes feature (`^[a note]`)
- *   that does not exist in GFM.
- *   We still have support for it, so that things remain working with
- *   `micromark-extension-footnote` and `mdast-util-footnote`, but in the future
- *   we might be able to remove it?
+ * @typedef {import('../state.js').State} State
  */
 
 
+
+// To do: when both:
+// * <https://github.com/micromark/micromark-extension-footnote>
+// * <https://github.com/syntax-tree/mdast-util-footnote>
+// …are archived, remove this (also from mdast).
+// These inline notes are not used in GFM.
 
 /**
- * @type {Handler}
+ * Turn an mdast `footnote` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Footnote} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function footnote(h, node) {
-  const footnoteById = h.footnoteById
+function footnote(state, node) {
+  const footnoteById = state.footnoteById
   let no = 1
 
   while (no in footnoteById) no++
@@ -6344,7 +6168,7 @@ function footnote(h, node) {
     position: node.position
   }
 
-  return footnoteReference(h, {
+  return footnoteReference(state, {
     type: 'footnoteReference',
     identifier,
     position: node.position
@@ -6353,59 +6177,93 @@ function footnote(h, node) {
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/heading.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Heading} Heading
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `heading` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Heading} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function heading(h, node) {
-  return h(node, 'h' + node.depth, (0,traverse/* all */.$)(h, node))
+function heading(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'h' + node.depth,
+    properties: {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/html.js
 /**
- * @typedef {import('mdast').HTML} HTML
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('mdast').HTML} Html
+ * @typedef {import('../state.js').State} State
+ * @typedef {import('../../index.js').Raw} Raw
  */
-
-
 
 /**
- * Return either a `raw` node in dangerous mode, otherwise nothing.
+ * Turn an mdast `html` node into hast (`raw` node in dangerous mode, otherwise
+ * nothing).
  *
- * @type {Handler}
- * @param {HTML} node
+ * @param {State} state
+ *   Info passed around.
+ * @param {Html} node
+ *   mdast node.
+ * @returns {Raw | Element | null}
+ *   hast node.
  */
-function html(h, node) {
-  return h.dangerous ? h.augment(node, (0,unist_builder.u)('raw', node.value)) : null
+function html(state, node) {
+  if (state.dangerous) {
+    /** @type {Raw} */
+    const result = {type: 'raw', value: node.value}
+    state.patch(node, result)
+    return state.applyData(node, result)
+  }
+
+  // To do: next major: return `undefined`.
+  return null
 }
 
-// EXTERNAL MODULE: ../node_modules/mdurl/encode.js
-var encode = __webpack_require__(4651);
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/revert.js
 /**
- * @typedef {import('mdast').LinkReference} LinkReference
- * @typedef {import('mdast').ImageReference} ImageReference
- * @typedef {import('./index.js').Handler} Handler
- * @typedef {import('./index.js').Content} Content
+ * @typedef {import('hast').ElementContent} ElementContent
+ *
+ * @typedef {import('mdast').Content} Content
+ * @typedef {import('mdast').Reference} Reference
+ * @typedef {import('mdast').Root} Root
+ *
+ * @typedef {import('./state.js').State} State
  */
 
+/**
+ * @typedef {Root | Content} Nodes
+ * @typedef {Extract<Nodes, Reference>} References
+ */
 
-
+// To do: next major: always return array.
 
 /**
  * Return the content of a reference without definition as plain text.
  *
- * @type {Handler}
- * @param {ImageReference|LinkReference} node
- * @returns {Content|Array<Content>}
+ * @param {State} state
+ *   Info passed around.
+ * @param {References} node
+ *   Reference node (image, link).
+ * @returns {ElementContent | Array<ElementContent>}
+ *   hast content.
  */
-function revert(h, node) {
+function revert(state, node) {
   const subtype = node.referenceType
   let suffix = ']'
 
@@ -6416,16 +6274,16 @@ function revert(h, node) {
   }
 
   if (node.type === 'imageReference') {
-    return (0,unist_builder.u)('text', '![' + node.alt + suffix)
+    return {type: 'text', value: '![' + node.alt + suffix}
   }
 
-  const contents = (0,traverse/* all */.$)(h, node)
+  const contents = state.all(node)
   const head = contents[0]
 
   if (head && head.type === 'text') {
     head.value = '[' + head.value
   } else {
-    contents.unshift((0,unist_builder.u)('text', '['))
+    contents.unshift({type: 'text', value: '['})
   }
 
   const tail = contents[contents.length - 1]
@@ -6433,7 +6291,7 @@ function revert(h, node) {
   if (tail && tail.type === 'text') {
     tail.value += suffix
   } else {
-    contents.push((0,unist_builder.u)('text', suffix))
+    contents.push({type: 'text', value: suffix})
   }
 
   return contents
@@ -6441,194 +6299,273 @@ function revert(h, node) {
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/image-reference.js
 /**
- * @typedef {import('mdast').ImageReference} ImageReference
+ * @typedef {import('hast').ElementContent} ElementContent
+ * @typedef {import('hast').Element} Element
  * @typedef {import('hast').Properties} Properties
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').ImageReference} ImageReference
+ * @typedef {import('../state.js').State} State
  */
 
 
 
 
 /**
- * @type {Handler}
+ * Turn an mdast `imageReference` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {ImageReference} node
+ *   mdast node.
+ * @returns {ElementContent | Array<ElementContent>}
+ *   hast node.
  */
-function imageReference(h, node) {
-  const def = h.definition(node.identifier)
+function imageReference(state, node) {
+  const def = state.definition(node.identifier)
 
   if (!def) {
-    return revert(h, node)
+    return revert(state, node)
   }
 
   /** @type {Properties} */
-  const props = {src: encode(def.url || ''), alt: node.alt}
+  const properties = {src: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(def.url || ''), alt: node.alt}
 
   if (def.title !== null && def.title !== undefined) {
-    props.title = def.title
+    properties.title = def.title
   }
 
-  return h(node, 'img', props)
+  /** @type {Element} */
+  const result = {type: 'element', tagName: 'img', properties, children: []}
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/image.js
 /**
- * @typedef {import('mdast').Image} Image
+ * @typedef {import('hast').Element} Element
  * @typedef {import('hast').Properties} Properties
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').Image} Image
+ * @typedef {import('../state.js').State} State
  */
 
 
 
 /**
- * @type {Handler}
+ * Turn an mdast `image` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Image} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function image_image(h, node) {
+function image_image(state, node) {
   /** @type {Properties} */
-  const props = {src: encode(node.url), alt: node.alt}
+  const properties = {src: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(node.url)}
 
-  if (node.title !== null && node.title !== undefined) {
-    props.title = node.title
+  if (node.alt !== null && node.alt !== undefined) {
+    properties.alt = node.alt
   }
 
-  return h(node, 'img', props)
+  if (node.title !== null && node.title !== undefined) {
+    properties.title = node.title
+  }
+
+  /** @type {Element} */
+  const result = {type: 'element', tagName: 'img', properties, children: []}
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/inline-code.js
 /**
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('hast').Text} Text
  * @typedef {import('mdast').InlineCode} InlineCode
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `inlineCode` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {InlineCode} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function inlineCode(h, node) {
-  return h(node, 'code', [(0,unist_builder.u)('text', node.value.replace(/\r?\n|\r/g, ' '))])
+function inlineCode(state, node) {
+  /** @type {Text} */
+  const text = {type: 'text', value: node.value.replace(/\r?\n|\r/g, ' ')}
+  state.patch(node, text)
+
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'code',
+    properties: {},
+    children: [text]
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/link-reference.js
 /**
- * @typedef {import('mdast').LinkReference} LinkReference
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('hast').ElementContent} ElementContent
  * @typedef {import('hast').Properties} Properties
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').LinkReference} LinkReference
+ * @typedef {import('../state.js').State} State
  */
-
 
 
 
 
 /**
- * @type {Handler}
+ * Turn an mdast `linkReference` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {LinkReference} node
+ *   mdast node.
+ * @returns {ElementContent | Array<ElementContent>}
+ *   hast node.
  */
-function linkReference(h, node) {
-  const def = h.definition(node.identifier)
+function linkReference(state, node) {
+  const def = state.definition(node.identifier)
 
   if (!def) {
-    return revert(h, node)
+    return revert(state, node)
   }
 
   /** @type {Properties} */
-  const props = {href: encode(def.url || '')}
+  const properties = {href: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(def.url || '')}
 
   if (def.title !== null && def.title !== undefined) {
-    props.title = def.title
+    properties.title = def.title
   }
 
-  return h(node, 'a', props, (0,traverse/* all */.$)(h, node))
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'a',
+    properties,
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/link.js
 /**
- * @typedef {import('mdast').Link} Link
+ * @typedef {import('hast').Element} Element
  * @typedef {import('hast').Properties} Properties
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').Link} Link
+ * @typedef {import('../state.js').State} State
  */
-
 
 
 
 /**
- * @type {Handler}
+ * Turn an mdast `link` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Link} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function link_link(h, node) {
+function link_link(state, node) {
   /** @type {Properties} */
-  const props = {href: encode(node.url)}
+  const properties = {href: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(node.url)}
 
   if (node.title !== null && node.title !== undefined) {
-    props.title = node.title
+    properties.title = node.title
   }
 
-  return h(node, 'a', props, (0,traverse/* all */.$)(h, node))
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'a',
+    properties,
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/list-item.js
 /**
- * @typedef {import('mdast').ListItem} ListItem
- * @typedef {import('mdast').List} List
- * @typedef {import('hast').Properties} Properties
  * @typedef {import('hast').Element} Element
- * @typedef {import('../index.js').Handler} Handler
- * @typedef {import('../index.js').Content} Content
+ * @typedef {import('hast').ElementContent} ElementContent
+ * @typedef {import('hast').Properties} Properties
+ * @typedef {import('mdast').Content} Content
+ * @typedef {import('mdast').ListItem} ListItem
+ * @typedef {import('mdast').Parent} Parent
+ * @typedef {import('mdast').Root} Root
+ * @typedef {import('../state.js').State} State
  */
-
-
-
 
 /**
- * @type {Handler}
- * @param {ListItem} node
- * @param {List} parent
+ * @typedef {Root | Content} Nodes
+ * @typedef {Extract<Nodes, Parent>} Parents
  */
-function listItem(h, node, parent) {
-  const result = (0,traverse/* all */.$)(h, node)
+
+/**
+ * Turn an mdast `listItem` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {ListItem} node
+ *   mdast node.
+ * @param {Parents | null | undefined} parent
+ *   Parent of `node`.
+ * @returns {Element}
+ *   hast node.
+ */
+function listItem(state, node, parent) {
+  const results = state.all(node)
   const loose = parent ? listLoose(parent) : listItemLoose(node)
   /** @type {Properties} */
-  const props = {}
-  /** @type {Array<Content>} */
-  const wrapped = []
+  const properties = {}
+  /** @type {Array<ElementContent>} */
+  const children = []
 
   if (typeof node.checked === 'boolean') {
+    const head = results[0]
     /** @type {Element} */
     let paragraph
 
-    if (
-      result[0] &&
-      result[0].type === 'element' &&
-      result[0].tagName === 'p'
-    ) {
-      paragraph = result[0]
+    if (head && head.type === 'element' && head.tagName === 'p') {
+      paragraph = head
     } else {
-      paragraph = h(null, 'p', [])
-      result.unshift(paragraph)
+      paragraph = {type: 'element', tagName: 'p', properties: {}, children: []}
+      results.unshift(paragraph)
     }
 
     if (paragraph.children.length > 0) {
-      paragraph.children.unshift((0,unist_builder.u)('text', ' '))
+      paragraph.children.unshift({type: 'text', value: ' '})
     }
 
-    paragraph.children.unshift(
-      h(null, 'input', {
-        type: 'checkbox',
-        checked: node.checked,
-        disabled: true
-      })
-    )
+    paragraph.children.unshift({
+      type: 'element',
+      tagName: 'input',
+      properties: {type: 'checkbox', checked: node.checked, disabled: true},
+      children: []
+    })
 
     // According to github-markdown-css, this class hides bullet.
     // See: <https://github.com/sindresorhus/github-markdown-css>.
-    props.className = ['task-list-item']
+    properties.className = ['task-list-item']
   }
 
   let index = -1
 
-  while (++index < result.length) {
-    const child = result[index]
+  while (++index < results.length) {
+    const child = results[index]
 
     // Add eols before nodes, except if this is a loose, first paragraph.
     if (
@@ -6637,40 +6574,46 @@ function listItem(h, node, parent) {
       child.type !== 'element' ||
       child.tagName !== 'p'
     ) {
-      wrapped.push((0,unist_builder.u)('text', '\n'))
+      children.push({type: 'text', value: '\n'})
     }
 
     if (child.type === 'element' && child.tagName === 'p' && !loose) {
-      wrapped.push(...child.children)
+      children.push(...child.children)
     } else {
-      wrapped.push(child)
+      children.push(child)
     }
   }
 
-  const tail = result[result.length - 1]
+  const tail = results[results.length - 1]
 
   // Add a final eol.
-  if (tail && (loose || !('tagName' in tail) || tail.tagName !== 'p')) {
-    wrapped.push((0,unist_builder.u)('text', '\n'))
+  if (tail && (loose || tail.type !== 'element' || tail.tagName !== 'p')) {
+    children.push({type: 'text', value: '\n'})
   }
 
-  return h(node, 'li', props, wrapped)
+  /** @type {Element} */
+  const result = {type: 'element', tagName: 'li', properties, children}
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 /**
- * @param {List} node
+ * @param {Parents} node
  * @return {Boolean}
  */
 function listLoose(node) {
-  let loose = node.spread
-  const children = node.children
-  let index = -1
+  let loose = false
+  if (node.type === 'list') {
+    loose = node.spread || false
+    const children = node.children
+    let index = -1
 
-  while (!loose && ++index < children.length) {
-    loose = listItemLoose(children[index])
+    while (!loose && ++index < children.length) {
+      loose = listItemLoose(children[index])
+    }
   }
 
-  return Boolean(loose)
+  return loose
 }
 
 /**
@@ -6687,199 +6630,437 @@ function listItemLoose(node) {
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/list.js
 /**
- * @typedef {import('mdast').List} List
  * @typedef {import('hast').Element} Element
  * @typedef {import('hast').Properties} Properties
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').List} List
+ * @typedef {import('../state.js').State} State
  */
-
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `list` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {List} node
+ *   mdast node.
  * @returns {Element}
+ *   hast node.
  */
-function list(h, node) {
+function list(state, node) {
   /** @type {Properties} */
-  const props = {}
-  const name = node.ordered ? 'ol' : 'ul'
-  const items = (0,traverse/* all */.$)(h, node)
+  const properties = {}
+  const results = state.all(node)
   let index = -1
 
   if (typeof node.start === 'number' && node.start !== 1) {
-    props.start = node.start
+    properties.start = node.start
   }
 
   // Like GitHub, add a class for custom styling.
-  while (++index < items.length) {
-    const item = items[index]
+  while (++index < results.length) {
+    const child = results[index]
 
     if (
-      item.type === 'element' &&
-      item.tagName === 'li' &&
-      item.properties &&
-      Array.isArray(item.properties.className) &&
-      item.properties.className.includes('task-list-item')
+      child.type === 'element' &&
+      child.tagName === 'li' &&
+      child.properties &&
+      Array.isArray(child.properties.className) &&
+      child.properties.className.includes('task-list-item')
     ) {
-      props.className = ['contains-task-list']
+      properties.className = ['contains-task-list']
       break
     }
   }
 
-  return h(node, name, props, (0,wrap/* wrap */.r)(items, true))
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: node.ordered ? 'ol' : 'ul',
+    properties,
+    children: state.wrap(results, true)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/paragraph.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Paragraph} Paragraph
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `paragraph` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Paragraph} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function paragraph(h, node) {
-  return h(node, 'p', (0,traverse/* all */.$)(h, node))
+function paragraph(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'p',
+    properties: {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/root.js
 /**
- * @typedef {import('mdast').Root} Root
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('hast').Root} HastRoot
+ * @typedef {import('hast').Element} HastElement
+ * @typedef {import('mdast').Root} MdastRoot
+ * @typedef {import('../state.js').State} State
  */
-
-
-
-
 
 /**
- * @type {Handler}
- * @param {Root} node
+ * Turn an mdast `root` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {MdastRoot} node
+ *   mdast node.
+ * @returns {HastRoot | HastElement}
+ *   hast node.
  */
-function root(h, node) {
-  // @ts-expect-error `root`s are also fine.
-  return h.augment(node, (0,unist_builder.u)('root', (0,wrap/* wrap */.r)((0,traverse/* all */.$)(h, node))))
+function root(state, node) {
+  /** @type {HastRoot} */
+  const result = {type: 'root', children: state.wrap(state.all(node))}
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/strong.js
 /**
+ * @typedef {import('hast').Element} Element
  * @typedef {import('mdast').Strong} Strong
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 /**
- * @type {Handler}
+ * Turn an mdast `strong` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Strong} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function strong(h, node) {
-  return h(node, 'strong', (0,traverse/* all */.$)(h, node))
+function strong(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'strong',
+    properties: {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
-// EXTERNAL MODULE: ../node_modules/unist-util-position/index.js
-var unist_util_position = __webpack_require__(2831);
+// EXTERNAL MODULE: ../node_modules/unist-util-position/lib/index.js
+var lib = __webpack_require__(4129);
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/table.js
 /**
- * @typedef {import('mdast').Table} Table
- * @typedef {import('mdast').TableCell} TableCell
  * @typedef {import('hast').Element} Element
- * @typedef {import('../index.js').Handler} Handler
- * @typedef {import('../index.js').Content} Content
+ * @typedef {import('mdast').Table} Table
+ * @typedef {import('../state.js').State} State
  */
-
-
 
 
 
 /**
- * @type {Handler}
+ * Turn an mdast `table` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
  * @param {Table} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
  */
-function table(h, node) {
-  const rows = node.children
-  let index = -1
-  const align = node.align || []
+function table(state, node) {
+  const rows = state.all(node)
+  const firstRow = rows.shift()
   /** @type {Array<Element>} */
-  const result = []
+  const tableContent = []
 
-  while (++index < rows.length) {
-    const row = rows[index].children
-    const name = index === 0 ? 'th' : 'td'
-    /** @type {Array<Content>} */
-    const out = []
-    let cellIndex = -1
-    const length = node.align ? align.length : row.length
-
-    while (++cellIndex < length) {
-      const cell = row[cellIndex]
-      out.push(
-        h(cell, name, {align: align[cellIndex]}, cell ? (0,traverse/* all */.$)(h, cell) : [])
-      )
+  if (firstRow) {
+    /** @type {Element} */
+    const head = {
+      type: 'element',
+      tagName: 'thead',
+      properties: {},
+      children: state.wrap([firstRow], true)
     }
-
-    result[index] = h(rows[index], 'tr', (0,wrap/* wrap */.r)(out, true))
+    state.patch(node.children[0], head)
+    tableContent.push(head)
   }
 
-  return h(
-    node,
-    'table',
-    (0,wrap/* wrap */.r)(
-      [h(result[0].position, 'thead', (0,wrap/* wrap */.r)([result[0]], true))].concat(
-        result[1]
-          ? h(
-              {
-                start: (0,unist_util_position/* pointStart */.Pk)(result[1]),
-                end: (0,unist_util_position/* pointEnd */.rb)(result[result.length - 1])
-              },
-              'tbody',
-              (0,wrap/* wrap */.r)(result.slice(1), true)
-            )
-          : []
-      ),
-      true
+  if (rows.length > 0) {
+    /** @type {Element} */
+    const body = {
+      type: 'element',
+      tagName: 'tbody',
+      properties: {},
+      children: state.wrap(rows, true)
+    }
+
+    const start = (0,lib/* pointStart */.Pk)(node.children[1])
+    const end = (0,lib/* pointEnd */.rb)(node.children[node.children.length - 1])
+    if (start.line && end.line) body.position = {start, end}
+    tableContent.push(body)
+  }
+
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'table',
+    properties: {},
+    children: state.wrap(tableContent, true)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
+}
+
+;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/table-row.js
+/**
+ * @typedef {import('hast').Properties} Properties
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('hast').ElementContent} ElementContent
+ * @typedef {import('mdast').Content} Content
+ * @typedef {import('mdast').Parent} Parent
+ * @typedef {import('mdast').Root} Root
+ * @typedef {import('mdast').TableRow} TableRow
+ * @typedef {import('../state.js').State} State
+ */
+
+/**
+ * @typedef {Root | Content} Nodes
+ * @typedef {Extract<Nodes, Parent>} Parents
+ */
+
+/**
+ * Turn an mdast `tableRow` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {TableRow} node
+ *   mdast node.
+ * @param {Parents | null | undefined} parent
+ *   Parent of `node`.
+ * @returns {Element}
+ *   hast node.
+ */
+function tableRow(state, node, parent) {
+  const siblings = parent ? parent.children : undefined
+  // Generate a body row when without parent.
+  const rowIndex = siblings ? siblings.indexOf(node) : 1
+  const tagName = rowIndex === 0 ? 'th' : 'td'
+  const align = parent && parent.type === 'table' ? parent.align : undefined
+  const length = align ? align.length : node.children.length
+  let cellIndex = -1
+  /** @type {Array<ElementContent>} */
+  const cells = []
+
+  while (++cellIndex < length) {
+    // Note: can also be undefined.
+    const cell = node.children[cellIndex]
+    /** @type {Properties} */
+    const properties = {}
+    const alignValue = align ? align[cellIndex] : undefined
+
+    if (alignValue) {
+      properties.align = alignValue
+    }
+
+    /** @type {Element} */
+    let result = {type: 'element', tagName, properties, children: []}
+
+    if (cell) {
+      result.children = state.all(cell)
+      state.patch(cell, result)
+      result = state.applyData(node, result)
+    }
+
+    cells.push(result)
+  }
+
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'tr',
+    properties: {},
+    children: state.wrap(cells, true)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
+}
+
+;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/table-cell.js
+/**
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('mdast').TableCell} TableCell
+ * @typedef {import('../state.js').State} State
+ */
+
+/**
+ * Turn an mdast `tableCell` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {TableCell} node
+ *   mdast node.
+ * @returns {Element}
+ *   hast node.
+ */
+function tableCell(state, node) {
+  // Note: this function is normally not called: see `table-row` for how rows
+  // and their cells are compiled.
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'td', // Assume body cell.
+    properties: {},
+    children: state.all(node)
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
+}
+
+;// CONCATENATED MODULE: ../node_modules/trim-lines/index.js
+const tab = 9 /* `\t` */
+const space = 32 /* ` ` */
+
+/**
+ * Remove initial and final spaces and tabs at the line breaks in `value`.
+ * Does not trim initial and final spaces and tabs of the value itself.
+ *
+ * @param {string} value
+ *   Value to trim.
+ * @returns {string}
+ *   Trimmed value.
+ */
+function trimLines(value) {
+  const source = String(value)
+  const search = /\r?\n|\r/g
+  let match = search.exec(source)
+  let last = 0
+  /** @type {Array<string>} */
+  const lines = []
+
+  while (match) {
+    lines.push(
+      trimLine(source.slice(last, match.index), last > 0, true),
+      match[0]
     )
-  )
+
+    last = match.index + match[0].length
+    match = search.exec(source)
+  }
+
+  lines.push(trimLine(source.slice(last), last > 0, false))
+
+  return lines.join('')
+}
+
+/**
+ * @param {string} value
+ *   Line to trim.
+ * @param {boolean} start
+ *   Whether to trim the start of the line.
+ * @param {boolean} end
+ *   Whether to trim the end of the line.
+ * @returns {string}
+ *   Trimmed line.
+ */
+function trimLine(value, start, end) {
+  let startIndex = 0
+  let endIndex = value.length
+
+  if (start) {
+    let code = value.codePointAt(startIndex)
+
+    while (code === tab || code === space) {
+      startIndex++
+      code = value.codePointAt(startIndex)
+    }
+  }
+
+  if (end) {
+    let code = value.codePointAt(endIndex - 1)
+
+    while (code === tab || code === space) {
+      endIndex--
+      code = value.codePointAt(endIndex - 1)
+    }
+  }
+
+  return endIndex > startIndex ? value.slice(startIndex, endIndex) : ''
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/text.js
 /**
- * @typedef {import('mdast').Text} Text
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('hast').Element} HastElement
+ * @typedef {import('hast').Text} HastText
+ * @typedef {import('mdast').Text} MdastText
+ * @typedef {import('../state.js').State} State
  */
 
 
 
 /**
- * @type {Handler}
- * @param {Text} node
+ * Turn an mdast `text` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {MdastText} node
+ *   mdast node.
+ * @returns {HastText | HastElement}
+ *   hast node.
  */
-function text_text(h, node) {
-  return h.augment(
-    node,
-    (0,unist_builder.u)('text', String(node.value).replace(/[ \t]*(\r?\n|\r)[ \t]*/g, '$1'))
-  )
+function text_text(state, node) {
+  /** @type {HastText} */
+  const result = {type: 'text', value: trimLines(String(node.value))}
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/thematic-break.js
 /**
- * @typedef {import('mdast').ThematicBreak} ThematicBreak
  * @typedef {import('hast').Element} Element
- * @typedef {import('../index.js').Handler} Handler
+ * @typedef {import('mdast').ThematicBreak} ThematicBreak
+ * @typedef {import('../state.js').State} State
  */
 
 /**
- * @type {Handler}
- * @param {ThematicBreak} [node]
+ * Turn an mdast `thematicBreak` node into hast.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {ThematicBreak} node
+ *   mdast node.
  * @returns {Element}
+ *   hast node.
  */
-function thematicBreak(h, node) {
-  return h(node, 'hr')
+function thematicBreak(state, node) {
+  /** @type {Element} */
+  const result = {
+    type: 'element',
+    tagName: 'hr',
+    properties: {},
+    children: []
+  }
+  state.patch(node, result)
+  return state.applyData(node, result)
 }
 
 ;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/index.js
@@ -6906,6 +7087,11 @@ function thematicBreak(h, node) {
 
 
 
+
+
+/**
+ * Default handlers for nodes.
+ */
 const handlers = {
   blockquote: blockquote,
   break: hardBreak,
@@ -6927,6 +7113,8 @@ const handlers = {
   root: root,
   strong: strong,
   table: table,
+  tableCell: tableCell,
+  tableRow: tableRow,
   text: text_text,
   thematicBreak: thematicBreak,
   toml: ignore,
@@ -6937,6 +7125,7 @@ const handlers = {
 
 // Return nothing for nodes that are ignored.
 function ignore() {
+  // To do: next major: return `undefined`.
   return null
 }
 
@@ -6951,110 +7140,303 @@ __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Q: () => (/* binding */ toHast)
 /* harmony export */ });
-/* harmony import */ var unist_builder__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8881);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var unist_util_position__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2831);
-/* harmony import */ var unist_util_generated__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9050);
-/* harmony import */ var mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9162);
-/* harmony import */ var _traverse_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2319);
-/* harmony import */ var _footer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7191);
-/* harmony import */ var _handlers_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7354);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__]);
-([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _footer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7191);
+/* harmony import */ var _state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5355);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_state_js__WEBPACK_IMPORTED_MODULE_0__]);
+_state_js__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 /**
- * @typedef {import('mdast').Root|import('mdast').Parent['children'][number]} MdastNode
- * @typedef {import('hast').Root|import('hast').Parent['children'][number]} HastNode
- * @typedef {import('mdast').Parent} Parent
- * @typedef {import('mdast').Definition} Definition
- * @typedef {import('mdast').FootnoteDefinition} FootnoteDefinition
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('hast').Text} Text
- * @typedef {import('hast').Comment} Comment
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Root} Root
- * @typedef {import('hast').ElementContent} Content
- * @typedef {import('unist-util-position').PositionLike} PositionLike
+ * @typedef {import('hast').Content} HastContent
+ * @typedef {import('hast').Root} HastRoot
  *
- * @typedef EmbeddedHastFields
- * @property {string} [hName] Defines the tag name of an element
- * @property {Properties} [hProperties] Defines the properties of an element
- * @property {Array<Content>} [hChildren] Defines the (hast) children of an element
+ * @typedef {import('mdast').Content} MdastContent
+ * @typedef {import('mdast').Root} MdastRoot
  *
- * @typedef {Record<string, unknown> & EmbeddedHastFields} Data unist data with embedded hast fields
- *
- * @typedef {MdastNode & {data?: Data}} NodeWithData unist node with embedded hast data
- *
- * @callback Handler
- * @param {H} h Handle context
- * @param {any} node mdast node to handle
- * @param {Parent|null} parent Parent of `node`
- * @returns {Content|Array<Content>|null|undefined} hast node
- *
- * @callback HFunctionProps
- * @param {MdastNode|PositionLike|null|undefined} node mdast node or unist position
- * @param {string} tagName HTML tag name
- * @param {Properties} props Properties
- * @param {Array<Content>?} [children] hast content
- * @returns {Element}
- *
- * @callback HFunctionNoProps
- * @param {MdastNode|PositionLike|null|undefined} node mdast node or unist position
- * @param {string} tagName HTML tag name
- * @param {Array<Content>?} [children] hast content
- * @returns {Element}
- *
- * @typedef HFields
- * @property {boolean} dangerous Whether HTML is allowed
- * @property {string} clobberPrefix Prefix to use to prevent DOM clobbering
- * @property {string} footnoteLabel Label to use to introduce the footnote section
- * @property {string} footnoteBackLabel Label to use to go back to a footnote call from the footnote section
- * @property {(identifier: string) => Definition|null} definition Definition cache
- * @property {Record<string, FootnoteDefinition>} footnoteById Footnote cache
- * @property {Array<string>} footnoteOrder Order in which footnotes occur
- * @property {Record<string, number>} footnoteCounts Counts the same footnote was used
- * @property {Handlers} handlers Applied handlers
- * @property {Handler} unknownHandler Handler for any none not in `passThrough` or otherwise handled
- * @property {(left: NodeWithData|PositionLike|null|undefined, right: Content) => Content} augment Like `h` but lower-level and usable on non-elements.
- * @property {Array<string>} passThrough List of node types to pass through untouched (except for their children).
- *
- * @typedef Options
- * @property {boolean} [allowDangerousHtml=false]
- *   Whether to allow `html` nodes and inject them as `raw` HTML
- * @property {string} [clobberPrefix='user-content-']
- *   Prefix to use before the `id` attribute to prevent it from *clobbering*.
- *   attributes.
- *   DOM clobbering is this:
- *
- *   ```html
- *   <p id=x></p>
- *   <script>alert(x)</script>
- *   ```
- *
- *   Elements by their ID are made available in browsers on the `window` object.
- *   Using a prefix prevents this from being a problem.
- * @property {string} [footnoteLabel='Footnotes']
- *   Label to use for the footnotes section.
- *   Affects screen reader users.
- *   Change it if you’re authoring in a different language.
- * @property {string} [footnoteBackLabel='Back to content']
- *   Label to use from backreferences back to their footnote call.
- *   Affects screen reader users.
- *   Change it if you’re authoring in a different language.
- * @property {Handlers} [handlers]
- *   Object mapping mdast nodes to functions handling them
- * @property {Array<string>} [passThrough]
- *   List of custom mdast node types to pass through (keep) in hast
- * @property {Handler} [unknownHandler]
- *   Handler for all unknown nodes.
- *
- * @typedef {Record<string, Handler>} Handlers
- *   Map of node types to handlers
- * @typedef {HFunctionProps & HFunctionNoProps & HFields} H
- *   Handle context
+ * @typedef {import('./state.js').Options} Options
+ */
+
+/**
+ * @typedef {HastRoot | HastContent} HastNodes
+ * @typedef {MdastRoot | MdastContent} MdastNodes
  */
 
 
 
+
+/**
+ * Transform mdast to hast.
+ *
+ * ##### Notes
+ *
+ * ###### HTML
+ *
+ * Raw HTML is available in mdast as `html` nodes and can be embedded in hast
+ * as semistandard `raw` nodes.
+ * Most utilities ignore `raw` nodes but two notable ones don’t:
+ *
+ * *   `hast-util-to-html` also has an option `allowDangerousHtml` which will
+ *     output the raw HTML.
+ *     This is typically discouraged as noted by the option name but is useful
+ *     if you completely trust authors
+ * *   `hast-util-raw` can handle the raw embedded HTML strings by parsing them
+ *     into standard hast nodes (`element`, `text`, etc).
+ *     This is a heavy task as it needs a full HTML parser, but it is the only
+ *     way to support untrusted content
+ *
+ * ###### Footnotes
+ *
+ * Many options supported here relate to footnotes.
+ * Footnotes are not specified by CommonMark, which we follow by default.
+ * They are supported by GitHub, so footnotes can be enabled in markdown with
+ * `mdast-util-gfm`.
+ *
+ * The options `footnoteBackLabel` and `footnoteLabel` define natural language
+ * that explains footnotes, which is hidden for sighted users but shown to
+ * assistive technology.
+ * When your page is not in English, you must define translated values.
+ *
+ * Back references use ARIA attributes, but the section label itself uses a
+ * heading that is hidden with an `sr-only` class.
+ * To show it to sighted users, define different attributes in
+ * `footnoteLabelProperties`.
+ *
+ * ###### Clobbering
+ *
+ * Footnotes introduces a problem, as it links footnote calls to footnote
+ * definitions on the page through `id` attributes generated from user content,
+ * which results in DOM clobbering.
+ *
+ * DOM clobbering is this:
+ *
+ * ```html
+ * <p id=x></p>
+ * <script>alert(x) // `x` now refers to the DOM `p#x` element</script>
+ * ```
+ *
+ * Elements by their ID are made available by browsers on the `window` object,
+ * which is a security risk.
+ * Using a prefix solves this problem.
+ *
+ * More information on how to handle clobbering and the prefix is explained in
+ * Example: headings (DOM clobbering) in `rehype-sanitize`.
+ *
+ * ###### Unknown nodes
+ *
+ * Unknown nodes are nodes with a type that isn’t in `handlers` or `passThrough`.
+ * The default behavior for unknown nodes is:
+ *
+ * *   when the node has a `value` (and doesn’t have `data.hName`,
+ *     `data.hProperties`, or `data.hChildren`, see later), create a hast `text`
+ *     node
+ * *   otherwise, create a `<div>` element (which could be changed with
+ *     `data.hName`), with its children mapped from mdast to hast as well
+ *
+ * This behavior can be changed by passing an `unknownHandler`.
+ *
+ * @param {MdastNodes} tree
+ *   mdast tree.
+ * @param {Options | null | undefined} [options]
+ *   Configuration.
+ * @returns {HastNodes | null | undefined}
+ *   hast tree.
+ */
+// To do: next major: always return a single `root`.
+function toHast(tree, options) {
+  const state = (0,_state_js__WEBPACK_IMPORTED_MODULE_0__/* .createState */ .eK)(tree, options)
+  const node = state.one(tree, null)
+  const foot = (0,_footer_js__WEBPACK_IMPORTED_MODULE_1__/* .footer */ .M)(state)
+
+  if (foot) {
+    // @ts-expect-error If there’s a footer, there were definitions, meaning block
+    // content.
+    // So assume `node` is a parent node.
+    node.children.push({type: 'text', value: '\n'}, foot)
+  }
+
+  // To do: next major: always return root?
+  return Array.isArray(node) ? {type: 'root', children: node} : node
+}
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 5355:
+/***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   eK: () => (/* binding */ createState)
+/* harmony export */ });
+/* unused harmony exports one, all, wrap */
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+/* harmony import */ var unist_util_position__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4129);
+/* harmony import */ var unist_util_generated__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5194);
+/* harmony import */ var mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9731);
+/* harmony import */ var _handlers_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4224);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__]);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/**
+ * @typedef {import('hast').Content} HastContent
+ * @typedef {import('hast').Element} HastElement
+ * @typedef {import('hast').ElementContent} HastElementContent
+ * @typedef {import('hast').Properties} HastProperties
+ * @typedef {import('hast').Root} HastRoot
+ * @typedef {import('hast').Text} HastText
+ *
+ * @typedef {import('mdast').Content} MdastContent
+ * @typedef {import('mdast').Definition} MdastDefinition
+ * @typedef {import('mdast').FootnoteDefinition} MdastFootnoteDefinition
+ * @typedef {import('mdast').Parent} MdastParent
+ * @typedef {import('mdast').Root} MdastRoot
+ */
+
+/**
+ * @typedef {HastRoot | HastContent} HastNodes
+ * @typedef {MdastRoot | MdastContent} MdastNodes
+ * @typedef {Extract<MdastNodes, MdastParent>} MdastParents
+ *
+ * @typedef EmbeddedHastFields
+ *   hast fields.
+ * @property {string | null | undefined} [hName]
+ *   Generate a specific element with this tag name instead.
+ * @property {HastProperties | null | undefined} [hProperties]
+ *   Generate an element with these properties instead.
+ * @property {Array<HastElementContent> | null | undefined} [hChildren]
+ *   Generate an element with this content instead.
+ *
+ * @typedef {Record<string, unknown> & EmbeddedHastFields} MdastData
+ *   mdast data with embedded hast fields.
+ *
+ * @typedef {MdastNodes & {data?: MdastData | null | undefined}} MdastNodeWithData
+ *   mdast node with embedded hast data.
+ *
+ * @typedef PointLike
+ *   Point-like value.
+ * @property {number | null | undefined} [line]
+ *   Line.
+ * @property {number | null | undefined} [column]
+ *   Column.
+ * @property {number | null | undefined} [offset]
+ *   Offset.
+ *
+ * @typedef PositionLike
+ *   Position-like value.
+ * @property {PointLike | null | undefined} [start]
+ *   Point-like value.
+ * @property {PointLike | null | undefined} [end]
+ *   Point-like value.
+ *
+ * @callback Handler
+ *   Handle a node.
+ * @param {State} state
+ *   Info passed around.
+ * @param {any} node
+ *   mdast node to handle.
+ * @param {MdastParents | null | undefined} parent
+ *   Parent of `node`.
+ * @returns {HastElementContent | Array<HastElementContent> | null | undefined}
+ *   hast node.
+ *
+ * @callback HFunctionProps
+ *   Signature of `state` for when props are passed.
+ * @param {MdastNodes | PositionLike | null | undefined} node
+ *   mdast node or unist position.
+ * @param {string} tagName
+ *   HTML tag name.
+ * @param {HastProperties} props
+ *   Properties.
+ * @param {Array<HastElementContent> | null | undefined} [children]
+ *   hast content.
+ * @returns {HastElement}
+ *   Compiled element.
+ *
+ * @callback HFunctionNoProps
+ *   Signature of `state` for when no props are passed.
+ * @param {MdastNodes | PositionLike | null | undefined} node
+ *   mdast node or unist position.
+ * @param {string} tagName
+ *   HTML tag name.
+ * @param {Array<HastElementContent> | null | undefined} [children]
+ *   hast content.
+ * @returns {HastElement}
+ *   Compiled element.
+ *
+ * @typedef HFields
+ *   Info on `state`.
+ * @property {boolean} dangerous
+ *   Whether HTML is allowed.
+ * @property {string} clobberPrefix
+ *   Prefix to use to prevent DOM clobbering.
+ * @property {string} footnoteLabel
+ *   Label to use to introduce the footnote section.
+ * @property {string} footnoteLabelTagName
+ *   HTML used for the footnote label.
+ * @property {HastProperties} footnoteLabelProperties
+ *   Properties on the HTML tag used for the footnote label.
+ * @property {string} footnoteBackLabel
+ *   Label to use from backreferences back to their footnote call.
+ * @property {(identifier: string) => MdastDefinition | null} definition
+ *   Definition cache.
+ * @property {Record<string, MdastFootnoteDefinition>} footnoteById
+ *   Footnote definitions by their identifier.
+ * @property {Array<string>} footnoteOrder
+ *   Identifiers of order when footnote calls first appear in tree order.
+ * @property {Record<string, number>} footnoteCounts
+ *   Counts for how often the same footnote was called.
+ * @property {Handlers} handlers
+ *   Applied handlers.
+ * @property {Handler} unknownHandler
+ *   Handler for any none not in `passThrough` or otherwise handled.
+ * @property {(from: MdastNodes, node: HastNodes) => void} patch
+ *   Copy a node’s positional info.
+ * @property {<Type extends HastNodes>(from: MdastNodes, to: Type) => Type | HastElement} applyData
+ *   Honor the `data` of `from`, and generate an element instead of `node`.
+ * @property {(node: MdastNodes, parent: MdastParents | null | undefined) => HastElementContent | Array<HastElementContent> | null | undefined} one
+ *   Transform an mdast node to hast.
+ * @property {(node: MdastNodes) => Array<HastElementContent>} all
+ *   Transform the children of an mdast parent to hast.
+ * @property {<Type extends HastContent>(nodes: Array<Type>, loose?: boolean | null | undefined) => Array<Type | HastText>} wrap
+ *   Wrap `nodes` with line endings between each node, adds initial/final line endings when `loose`.
+ * @property {(left: MdastNodeWithData | PositionLike | null | undefined, right: HastElementContent) => HastElementContent} augment
+ *   Like `state` but lower-level and usable on non-elements.
+ *   Deprecated: use `patch` and `applyData`.
+ * @property {Array<string>} passThrough
+ *   List of node types to pass through untouched (except for their children).
+ *
+ * @typedef Options
+ *   Configuration (optional).
+ * @property {boolean | null | undefined} [allowDangerousHtml=false]
+ *   Whether to persist raw HTML in markdown in the hast tree.
+ * @property {string | null | undefined} [clobberPrefix='user-content-']
+ *   Prefix to use before the `id` attribute on footnotes to prevent it from
+ *   *clobbering*.
+ * @property {string | null | undefined} [footnoteBackLabel='Back to content']
+ *   Label to use from backreferences back to their footnote call (affects
+ *   screen readers).
+ * @property {string | null | undefined} [footnoteLabel='Footnotes']
+ *   Label to use for the footnotes section (affects screen readers).
+ * @property {HastProperties | null | undefined} [footnoteLabelProperties={className: ['sr-only']}]
+ *   Properties to use on the footnote label (note that `id: 'footnote-label'`
+ *   is always added as footnote calls use it with `aria-describedby` to
+ *   provide an accessible label).
+ * @property {string | null | undefined} [footnoteLabelTagName='h2']
+ *   Tag name to use for the footnote label.
+ * @property {Handlers | null | undefined} [handlers]
+ *   Extra handlers for nodes.
+ * @property {Array<string> | null | undefined} [passThrough]
+ *   List of custom mdast node types to pass through (keep) in hast (note that
+ *   the node itself is passed, but eventual children are transformed).
+ * @property {Handler | null | undefined} [unknownHandler]
+ *   Handler for all unknown nodes.
+ *
+ * @typedef {Record<string, Handler>} Handlers
+ *   Handle nodes.
+ *
+ * @typedef {HFunctionProps & HFunctionNoProps & HFields} State
+ *   Info passed around.
+ */
 
 
 
@@ -7065,34 +7447,66 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 const own = {}.hasOwnProperty
 
 /**
- * Factory to transform.
- * @param {MdastNode} tree mdast node
- * @param {Options} [options] Configuration
- * @returns {H} `h` function
+ * Create `state` from an mdast tree.
+ *
+ * @param {MdastNodes} tree
+ *   mdast node to transform.
+ * @param {Options | null | undefined} [options]
+ *   Configuration.
+ * @returns {State}
+ *   `state` function.
  */
-function factory(tree, options) {
+function createState(tree, options) {
   const settings = options || {}
   const dangerous = settings.allowDangerousHtml || false
-  /** @type {Record<string, FootnoteDefinition>} */
+  /** @type {Record<string, MdastFootnoteDefinition>} */
   const footnoteById = {}
 
-  h.dangerous = dangerous
-  h.clobberPrefix =
+  // To do: next major: add `options` to state, remove:
+  // `dangerous`, `clobberPrefix`, `footnoteLabel`, `footnoteLabelTagName`,
+  // `footnoteLabelProperties`, `footnoteBackLabel`, `passThrough`,
+  // `unknownHandler`.
+
+  // To do: next major: move to `state.options.allowDangerousHtml`.
+  state.dangerous = dangerous
+  // To do: next major: move to `state.options`.
+  state.clobberPrefix =
     settings.clobberPrefix === undefined || settings.clobberPrefix === null
       ? 'user-content-'
       : settings.clobberPrefix
-  h.footnoteLabel = settings.footnoteLabel || 'Footnotes'
-  h.footnoteBackLabel = settings.footnoteBackLabel || 'Back to content'
-  h.definition = (0,mdast_util_definitions__WEBPACK_IMPORTED_MODULE_1__/* .definitions */ .C)(tree)
-  h.footnoteById = footnoteById
+  // To do: next major: move to `state.options`.
+  state.footnoteLabel = settings.footnoteLabel || 'Footnotes'
+  // To do: next major: move to `state.options`.
+  state.footnoteLabelTagName = settings.footnoteLabelTagName || 'h2'
+  // To do: next major: move to `state.options`.
+  state.footnoteLabelProperties = settings.footnoteLabelProperties || {
+    className: ['sr-only']
+  }
+  // To do: next major: move to `state.options`.
+  state.footnoteBackLabel = settings.footnoteBackLabel || 'Back to content'
+  // To do: next major: move to `state.options`.
+  state.unknownHandler = settings.unknownHandler
+  // To do: next major: move to `state.options`.
+  state.passThrough = settings.passThrough
+
+  state.handlers = {..._handlers_index_js__WEBPACK_IMPORTED_MODULE_1__/* .handlers */ .q, ...settings.handlers}
+
+  // To do: next major: replace utility with `definitionById` object, so we
+  // only walk once (as we need footnotes too).
+  state.definition = (0,mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__/* .definitions */ .C)(tree)
+  state.footnoteById = footnoteById
   /** @type {Array<string>} */
-  h.footnoteOrder = []
+  state.footnoteOrder = []
   /** @type {Record<string, number>} */
-  h.footnoteCounts = {}
-  h.augment = augment
-  h.handlers = {..._handlers_index_js__WEBPACK_IMPORTED_MODULE_2__/* .handlers */ .q, ...settings.handlers}
-  h.unknownHandler = settings.unknownHandler
-  h.passThrough = settings.passThrough
+  state.footnoteCounts = {}
+
+  state.patch = patch
+  state.applyData = applyData
+  state.one = oneBound
+  state.all = allBound
+  state.wrap = wrap
+  // To do: next major: remove `augment`.
+  state.augment = augment
 
   ;(0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'footnoteDefinition', (definition) => {
     const id = String(definition.identifier).toUpperCase()
@@ -7105,18 +7519,21 @@ function factory(tree, options) {
   })
 
   // @ts-expect-error Hush, it’s fine!
-  return h
+  return state
 
   /**
    * Finalise the created `right`, a hast node, from `left`, an mdast node.
-   * @param {(NodeWithData|PositionLike)?} left
-   * @param {Content} right
-   * @returns {Content}
+   *
+   * @param {MdastNodeWithData | PositionLike | null | undefined} left
+   * @param {HastElementContent} right
+   * @returns {HastElementContent}
    */
+  /* c8 ignore start */
+  // To do: next major: remove.
   function augment(left, right) {
     // Handle `data.hName`, `data.hProperties, `data.hChildren`.
     if (left && 'data' in left && left.data) {
-      /** @type {Data} */
+      /** @type {MdastData} */
       const data = left.data
 
       if (data.hName) {
@@ -7145,19 +7562,23 @@ function factory(tree, options) {
       const ctx = 'type' in left ? left : {position: left}
 
       if (!(0,unist_util_generated__WEBPACK_IMPORTED_MODULE_3__/* .generated */ .o)(ctx)) {
+        // @ts-expect-error: fine.
         right.position = {start: (0,unist_util_position__WEBPACK_IMPORTED_MODULE_4__/* .pointStart */ .Pk)(ctx), end: (0,unist_util_position__WEBPACK_IMPORTED_MODULE_4__/* .pointEnd */ .rb)(ctx)}
       }
     }
 
     return right
   }
+  /* c8 ignore stop */
 
   /**
    * Create an element for `node`.
    *
    * @type {HFunctionProps}
    */
-  function h(node, tagName, props, children) {
+  /* c8 ignore start */
+  // To do: next major: remove.
+  function state(node, tagName, props, children) {
     if (Array.isArray(props)) {
       children = props
       props = {}
@@ -7171,128 +7592,181 @@ function factory(tree, options) {
       children: children || []
     })
   }
+  /* c8 ignore stop */
+
+  /**
+   * Transform an mdast node into a hast node.
+   *
+   * @param {MdastNodes} node
+   *   mdast node.
+   * @param {MdastParents | null | undefined} [parent]
+   *   Parent of `node`.
+   * @returns {HastElementContent | Array<HastElementContent> | null | undefined}
+   *   Resulting hast node.
+   */
+  function oneBound(node, parent) {
+    // @ts-expect-error: that’s a state :)
+    return one(state, node, parent)
+  }
+
+  /**
+   * Transform the children of an mdast node into hast nodes.
+   *
+   * @param {MdastNodes} parent
+   *   mdast node to compile
+   * @returns {Array<HastElementContent>}
+   *   Resulting hast nodes.
+   */
+  function allBound(parent) {
+    // @ts-expect-error: that’s a state :)
+    return all(state, parent)
+  }
 }
 
 /**
- * Transform `tree` (an mdast node) to a hast node.
+ * Copy a node’s positional info.
  *
- * @param {MdastNode} tree mdast node
- * @param {Options} [options] Configuration
- * @returns {HastNode|null|undefined} hast node
+ * @param {MdastNodes} from
+ *   mdast node to copy from.
+ * @param {HastNodes} to
+ *   hast node to copy into.
+ * @returns {void}
+ *   Nothing.
  */
-function toHast(tree, options) {
-  const h = factory(tree, options)
-  const node = (0,_traverse_js__WEBPACK_IMPORTED_MODULE_5__/* .one */ .J)(h, tree, null)
-  const foot = (0,_footer_js__WEBPACK_IMPORTED_MODULE_6__/* .footer */ .M)(h)
-
-  if (foot) {
-    // @ts-expect-error If there’s a footer, there were definitions, meaning block
-    // content.
-    // So assume `node` is a parent node.
-    node.children.push((0,unist_builder__WEBPACK_IMPORTED_MODULE_7__.u)('text', '\n'), foot)
-  }
-
-  return Array.isArray(node) ? {type: 'root', children: node} : node
-}
-
-
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 2319:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   $: () => (/* binding */ all),
-/* harmony export */   J: () => (/* binding */ one)
-/* harmony export */ });
-/* harmony import */ var unist_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8881);
-/**
- * @typedef {import('mdast').Root|import('mdast').Parent['children'][number]} MdastNode
- * @typedef {import('./index.js').H} H
- * @typedef {import('./index.js').Handler} Handler
- * @typedef {import('./index.js').Content} Content
- */
-
-
-
-const own = {}.hasOwnProperty
-
-/**
- * Transform an unknown node.
- * @type {Handler}
- * @param {MdastNode} node
- */
-function unknown(h, node) {
-  const data = node.data || {}
-
-  if (
-    'value' in node &&
-    !(
-      own.call(data, 'hName') ||
-      own.call(data, 'hProperties') ||
-      own.call(data, 'hChildren')
-    )
-  ) {
-    return h.augment(node, (0,unist_builder__WEBPACK_IMPORTED_MODULE_0__.u)('text', node.value))
-  }
-
-  return h(node, 'div', all(h, node))
+function patch(from, to) {
+  if (from.position) to.position = (0,unist_util_position__WEBPACK_IMPORTED_MODULE_4__/* .position */ .FK)(from)
 }
 
 /**
- * @type {Handler}
- * @param {MdastNode} node
+ * Honor the `data` of `from` and maybe generate an element instead of `to`.
+ *
+ * @template {HastNodes} Type
+ *   Node type.
+ * @param {MdastNodes} from
+ *   mdast node to use data from.
+ * @param {Type} to
+ *   hast node to change.
+ * @returns {Type | HastElement}
+ *   Nothing.
  */
-function one(h, node, parent) {
+function applyData(from, to) {
+  /** @type {Type | HastElement} */
+  let result = to
+
+  // Handle `data.hName`, `data.hProperties, `data.hChildren`.
+  if (from && from.data) {
+    const hName = from.data.hName
+    const hChildren = from.data.hChildren
+    const hProperties = from.data.hProperties
+
+    if (typeof hName === 'string') {
+      // Transforming the node resulted in an element with a different name
+      // than wanted:
+      if (result.type === 'element') {
+        result.tagName = hName
+      }
+      // Transforming the node resulted in a non-element, which happens for
+      // raw, text, and root nodes (unless custom handlers are passed).
+      // The intent is likely to keep the content around (otherwise: pass
+      // `hChildren`).
+      else {
+        result = {
+          type: 'element',
+          tagName: hName,
+          properties: {},
+          children: []
+        }
+
+        // To do: next major: take the children from the `root`, or inject the
+        // raw/text/comment or so into the element?
+        // if ('children' in node) {
+        //   // @ts-expect-error: assume `children` are allowed in elements.
+        //   result.children = node.children
+        // } else {
+        //   // @ts-expect-error: assume `node` is allowed in elements.
+        //   result.children.push(node)
+        // }
+      }
+    }
+
+    if (result.type === 'element' && hProperties) {
+      result.properties = {...result.properties, ...hProperties}
+    }
+
+    if (
+      'children' in result &&
+      result.children &&
+      hChildren !== null &&
+      hChildren !== undefined
+    ) {
+      // @ts-expect-error: assume valid children are defined.
+      result.children = hChildren
+    }
+  }
+
+  return result
+}
+
+/**
+ * Transform an mdast node into a hast node.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {MdastNodes} node
+ *   mdast node.
+ * @param {MdastParents | null | undefined} [parent]
+ *   Parent of `node`.
+ * @returns {HastElementContent | Array<HastElementContent> | null | undefined}
+ *   Resulting hast node.
+ */
+// To do: next major: do not expose, keep bound.
+function one(state, node, parent) {
   const type = node && node.type
-  /** @type {Handler} */
-  let fn
 
   // Fail on non-nodes.
   if (!type) {
     throw new Error('Expected node, got `' + node + '`')
   }
 
-  if (own.call(h.handlers, type)) {
-    fn = h.handlers[type]
-  } else if (h.passThrough && h.passThrough.includes(type)) {
-    fn = returnNode
-  } else {
-    fn = h.unknownHandler
+  if (own.call(state.handlers, type)) {
+    return state.handlers[type](state, node, parent)
   }
 
-  return (typeof fn === 'function' ? fn : unknown)(h, node, parent)
+  if (state.passThrough && state.passThrough.includes(type)) {
+    // To do: next major: deep clone.
+    // @ts-expect-error: types of passed through nodes are expected to be added manually.
+    return 'children' in node ? {...node, children: all(state, node)} : node
+  }
+
+  if (state.unknownHandler) {
+    return state.unknownHandler(state, node, parent)
+  }
+
+  return defaultUnknownHandler(state, node)
 }
 
 /**
- * @type {Handler}
- * @param {MdastNode} node
+ * Transform the children of an mdast node into hast nodes.
+ *
+ * @param {State} state
+ *   Info passed around.
+ * @param {MdastNodes} parent
+ *   mdast node to compile
+ * @returns {Array<HastElementContent>}
+ *   Resulting hast nodes.
  */
-function returnNode(h, node) {
-  // @ts-expect-error: Pass through custom node.
-  return 'children' in node ? {...node, children: all(h, node)} : node
-}
-
-/**
- * @param {H} h
- * @param {MdastNode} parent
- */
-function all(h, parent) {
-  /** @type {Array<Content>} */
+// To do: next major: do not expose, keep bound.
+function all(state, parent) {
+  /** @type {Array<HastElementContent>} */
   const values = []
 
   if ('children' in parent) {
     const nodes = parent.children
     let index = -1
-
     while (++index < nodes.length) {
-      const result = one(h, nodes[index], parent)
+      const result = one(state, nodes[index], parent)
 
+      // To do: see if we van clean this? Can we merge texts?
       if (result) {
         if (index && nodes[index - 1].type === 'break') {
           if (!Array.isArray(result) && result.type === 'text') {
@@ -7320,64 +7794,83 @@ function all(h, parent) {
   return values
 }
 
-
-/***/ }),
-
-/***/ 1195:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   r: () => (/* binding */ wrap)
-/* harmony export */ });
-/* harmony import */ var unist_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8881);
 /**
- * @typedef {import('./index.js').Content} Content
- */
-
-
-
-/**
- * Wrap `nodes` with line feeds between each entry.
- * Optionally adds line feeds at the start and end.
+ * Transform an unknown node.
  *
- * @param {Array<Content>} nodes
- * @param {boolean} [loose=false]
- * @returns {Array<Content>}
+ * @param {State} state
+ *   Info passed around.
+ * @param {MdastNodes} node
+ *   Unknown mdast node.
+ * @returns {HastText | HastElement}
+ *   Resulting hast node.
+ */
+function defaultUnknownHandler(state, node) {
+  const data = node.data || {}
+  /** @type {HastText | HastElement} */
+  const result =
+    'value' in node &&
+    !(own.call(data, 'hProperties') || own.call(data, 'hChildren'))
+      ? {type: 'text', value: node.value}
+      : {
+          type: 'element',
+          tagName: 'div',
+          properties: {},
+          children: all(state, node)
+        }
+
+  state.patch(node, result)
+  return state.applyData(node, result)
+}
+
+/**
+ * Wrap `nodes` with line endings between each node.
+ *
+ * @template {HastContent} Type
+ *   Node type.
+ * @param {Array<Type>} nodes
+ *   List of nodes to wrap.
+ * @param {boolean | null | undefined} [loose=false]
+ *   Whether to add line endings at start and end.
+ * @returns {Array<Type | HastText>}
+ *   Wrapped nodes.
  */
 function wrap(nodes, loose) {
-  /** @type {Array<Content>} */
+  /** @type {Array<Type | HastText>} */
   const result = []
   let index = -1
 
   if (loose) {
-    result.push((0,unist_builder__WEBPACK_IMPORTED_MODULE_0__.u)('text', '\n'))
+    result.push({type: 'text', value: '\n'})
   }
 
   while (++index < nodes.length) {
-    if (index) result.push((0,unist_builder__WEBPACK_IMPORTED_MODULE_0__.u)('text', '\n'))
+    if (index) result.push({type: 'text', value: '\n'})
     result.push(nodes[index])
   }
 
   if (loose && nodes.length > 0) {
-    result.push((0,unist_builder__WEBPACK_IMPORTED_MODULE_0__.u)('text', '\n'))
+    result.push({type: 'text', value: '\n'})
   }
 
   return result
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
-/***/ 2002:
+/***/ 1510:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  K: () => (/* binding */ sanitizeUri)
+  F: () => (/* binding */ normalizeUri)
 });
+
+// UNUSED EXPORTS: sanitizeUri
 
 ;// CONCATENATED MODULE: ../node_modules/micromark-util-character/lib/unicode-punctuation-regex.js
 // This module is generated by `script/`.
@@ -7386,13 +7879,19 @@ __webpack_require__.d(__webpack_exports__, {
 // before or after them.
 // One such difference is if those characters are Unicode punctuation.
 // This script is generated from the Unicode data.
+
+/**
+ * Regular expression that matches a unicode punctuation character.
+ */
 const unicodePunctuationRegex =
-  /[!-/:-@[-`{-~\u00A1\u00A7\u00AB\u00B6\u00B7\u00BB\u00BF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u09FD\u0A76\u0AF0\u0C77\u0C84\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E4F\u2E52\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]/
+  /[!-\/:-@\[-`\{-~\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061D-\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u09FD\u0A76\u0AF0\u0C77\u0C84\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1B7D\u1B7E\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E4F\u2E52-\u2E5D\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]/
 
 ;// CONCATENATED MODULE: ../node_modules/micromark-util-character/index.js
 /**
  * @typedef {import('micromark-util-types').Code} Code
  */
+
+
 
 /**
  * Check whether the character code represents an ASCII alpha (`a` through `z`,
@@ -7405,51 +7904,28 @@ const unicodePunctuationRegex =
  *
  * An **ASCII lower alpha** is a character in the inclusive range U+0061 (`a`)
  * to U+007A (`z`).
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
  */
-
 const asciiAlpha = regexCheck(/[A-Za-z]/)
-/**
- * Check whether the character code represents an ASCII digit (`0` through `9`).
- *
- * An **ASCII digit** is a character in the inclusive range U+0030 (`0`) to
- * U+0039 (`9`).
- */
 
-const asciiDigit = regexCheck(/\d/)
-/**
- * Check whether the character code represents an ASCII hex digit (`a` through
- * `f`, case insensitive, or `0` through `9`).
- *
- * An **ASCII hex digit** is an ASCII digit (see `asciiDigit`), ASCII upper hex
- * digit, or an ASCII lower hex digit.
- *
- * An **ASCII upper hex digit** is a character in the inclusive range U+0041
- * (`A`) to U+0046 (`F`).
- *
- * An **ASCII lower hex digit** is a character in the inclusive range U+0061
- * (`a`) to U+0066 (`f`).
- */
-
-const asciiHexDigit = regexCheck(/[\dA-Fa-f]/)
 /**
  * Check whether the character code represents an ASCII alphanumeric (`a`
  * through `z`, case insensitive, or `0` through `9`).
  *
  * An **ASCII alphanumeric** is an ASCII digit (see `asciiDigit`) or ASCII alpha
  * (see `asciiAlpha`).
- */
-
-const asciiAlphanumeric = regexCheck(/[\dA-Za-z]/)
-/**
- * Check whether the character code represents ASCII punctuation.
  *
- * An **ASCII punctuation** is a character in the inclusive ranges U+0021
- * EXCLAMATION MARK (`!`) to U+002F SLASH (`/`), U+003A COLON (`:`) to U+0040 AT
- * SIGN (`@`), U+005B LEFT SQUARE BRACKET (`[`) to U+0060 GRAVE ACCENT
- * (`` ` ``), or U+007B LEFT CURLY BRACE (`{`) to U+007E TILDE (`~`).
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
  */
+const asciiAlphanumeric = regexCheck(/[\dA-Za-z]/)
 
-const asciiPunctuation = regexCheck(/[!-/:-@[-`{-~]/)
 /**
  * Check whether the character code represents an ASCII atext.
  *
@@ -7465,9 +7941,14 @@ const asciiPunctuation = regexCheck(/[!-/:-@[-`{-~]/)
  * [Internet Message Format](https://tools.ietf.org/html/rfc5322).
  * P. Resnick.
  * IETF.
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
  */
-
 const asciiAtext = regexCheck(/[#-'*+\--9=?A-Z^-~]/)
+
 /**
  * Check whether a character code is an ASCII control character.
  *
@@ -7475,9 +7956,10 @@ const asciiAtext = regexCheck(/[#-'*+\--9=?A-Z^-~]/)
  * to U+001F (US), or U+007F (DEL).
  *
  * @param {Code} code
- * @returns {code is number}
+ *   Code.
+ * @returns {boolean}
+ *   Whether it matches.
  */
-
 function asciiControl(code) {
   return (
     // Special whitespace codes (which have negative values), C0 and Control
@@ -7485,17 +7967,55 @@ function asciiControl(code) {
     code !== null && (code < 32 || code === 127)
   )
 }
-/**
- * Check whether a character code is a markdown line ending (see
- * `markdownLineEnding`) or markdown space (see `markdownSpace`).
- *
- * @param {Code} code
- * @returns {code is number}
- */
 
-function markdownLineEndingOrSpace(code) {
-  return code !== null && (code < 0 || code === 32)
-}
+/**
+ * Check whether the character code represents an ASCII digit (`0` through `9`).
+ *
+ * An **ASCII digit** is a character in the inclusive range U+0030 (`0`) to
+ * U+0039 (`9`).
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
+ */
+const asciiDigit = regexCheck(/\d/)
+
+/**
+ * Check whether the character code represents an ASCII hex digit (`a` through
+ * `f`, case insensitive, or `0` through `9`).
+ *
+ * An **ASCII hex digit** is an ASCII digit (see `asciiDigit`), ASCII upper hex
+ * digit, or an ASCII lower hex digit.
+ *
+ * An **ASCII upper hex digit** is a character in the inclusive range U+0041
+ * (`A`) to U+0046 (`F`).
+ *
+ * An **ASCII lower hex digit** is a character in the inclusive range U+0061
+ * (`a`) to U+0066 (`f`).
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
+ */
+const asciiHexDigit = regexCheck(/[\dA-Fa-f]/)
+
+/**
+ * Check whether the character code represents ASCII punctuation.
+ *
+ * An **ASCII punctuation** is a character in the inclusive ranges U+0021
+ * EXCLAMATION MARK (`!`) to U+002F SLASH (`/`), U+003A COLON (`:`) to U+0040 AT
+ * SIGN (`@`), U+005B LEFT SQUARE BRACKET (`[`) to U+0060 GRAVE ACCENT
+ * (`` ` ``), or U+007B LEFT CURLY BRACE (`{`) to U+007E TILDE (`~`).
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
+ */
+const asciiPunctuation = regexCheck(/[!-/:-@[-`{-~]/)
+
 /**
  * Check whether a character code is a markdown line ending.
  *
@@ -7507,12 +8027,27 @@ function markdownLineEndingOrSpace(code) {
  * they occurred together.
  *
  * @param {Code} code
- * @returns {code is number}
+ *   Code.
+ * @returns {boolean}
+ *   Whether it matches.
  */
-
 function markdownLineEnding(code) {
   return code !== null && code < -2
 }
+
+/**
+ * Check whether a character code is a markdown line ending (see
+ * `markdownLineEnding`) or markdown space (see `markdownSpace`).
+ *
+ * @param {Code} code
+ *   Code.
+ * @returns {boolean}
+ *   Whether it matches.
+ */
+function markdownLineEndingOrSpace(code) {
+  return code !== null && (code < 0 || code === 32)
+}
+
 /**
  * Check whether a character code is a markdown space.
  *
@@ -7524,12 +8059,37 @@ function markdownLineEnding(code) {
  * SPACE (VS) characters, depending on the column at which the tab occurred.
  *
  * @param {Code} code
- * @returns {code is number}
+ *   Code.
+ * @returns {boolean}
+ *   Whether it matches.
  */
-
 function markdownSpace(code) {
   return code === -2 || code === -1 || code === 32
 }
+
+// Size note: removing ASCII from the regex and using `asciiPunctuation` here
+// In fact adds to the bundle size.
+/**
+ * Check whether the character code represents Unicode punctuation.
+ *
+ * A **Unicode punctuation** is a character in the Unicode `Pc` (Punctuation,
+ * Connector), `Pd` (Punctuation, Dash), `Pe` (Punctuation, Close), `Pf`
+ * (Punctuation, Final quote), `Pi` (Punctuation, Initial quote), `Po`
+ * (Punctuation, Other), or `Ps` (Punctuation, Open) categories, or an ASCII
+ * punctuation (see `asciiPunctuation`).
+ *
+ * See:
+ * **\[UNICODE]**:
+ * [The Unicode Standard](https://www.unicode.org/versions/).
+ * Unicode Consortium.
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
+ */
+const unicodePunctuation = regexCheck(unicodePunctuationRegex)
+
 /**
  * Check whether the character code represents Unicode whitespace.
  *
@@ -7544,191 +8104,156 @@ function markdownSpace(code) {
  * **\[UNICODE]**:
  * [The Unicode Standard](https://www.unicode.org/versions/).
  * Unicode Consortium.
+ *
+ * @param code
+ *   Code.
+ * @returns
+ *   Whether it matches.
  */
-
 const unicodeWhitespace = regexCheck(/\s/)
-/**
- * Check whether the character code represents Unicode punctuation.
- *
- * A **Unicode punctuation** is a character in the Unicode `Pc` (Punctuation,
- * Connector), `Pd` (Punctuation, Dash), `Pe` (Punctuation, Close), `Pf`
- * (Punctuation, Final quote), `Pi` (Punctuation, Initial quote), `Po`
- * (Punctuation, Other), or `Ps` (Punctuation, Open) categories, or an ASCII
- * punctuation (see `asciiPunctuation`).
- *
- * See:
- * **\[UNICODE]**:
- * [The Unicode Standard](https://www.unicode.org/versions/).
- * Unicode Consortium.
- */
-// Size note: removing ASCII from the regex and using `asciiPunctuation` here
-// In fact adds to the bundle size.
 
-const unicodePunctuation = regexCheck(unicodePunctuationRegex)
 /**
  * Create a code check from a regex.
  *
  * @param {RegExp} regex
- * @returns {(code: Code) => code is number}
+ * @returns {(code: Code) => boolean}
  */
-
 function regexCheck(regex) {
   return check
+
   /**
    * Check whether a code matches the bound regex.
    *
-   * @param {Code} code Character code
-   * @returns {code is number} Whether the character code matches the bound regex
+   * @param {Code} code
+   *   Character code.
+   * @returns {boolean}
+   *   Whether the character code matches the bound regex.
    */
-
   function check(code) {
     return code !== null && regex.test(String.fromCharCode(code))
-  }
-}
-
-;// CONCATENATED MODULE: ../node_modules/micromark-util-encode/index.js
-const characterReferences = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt'}
-
-/**
- * Encode only the dangerous HTML characters.
- *
- * This ensures that certain characters which have special meaning in HTML are
- * dealt with.
- * Technically, we can skip `>` and `"` in many cases, but CM includes them.
- *
- * @param {string} value
- * @returns {string}
- */
-function encode(value) {
-  return value.replace(/["&<>]/g, replace)
-
-  /**
-   * @param {string} value
-   * @returns {string}
-   */
-  function replace(value) {
-    // @ts-expect-error Hush, it’s fine.
-    return '&' + characterReferences[value] + ';'
   }
 }
 
 ;// CONCATENATED MODULE: ../node_modules/micromark-util-sanitize-uri/index.js
 
 
-
 /**
  * Make a value safe for injection as a URL.
  *
  * This encodes unsafe characters with percent-encoding and skips already
- * encoded sequences (see `normalizeUri` below).
+ * encoded sequences (see `normalizeUri`).
  * Further unsafe characters are encoded as character references (see
  * `micromark-util-encode`).
  *
- * Then, a regex of allowed protocols can be given, in which case the URL is
+ * A regex of allowed protocols can be given, in which case the URL is
  * sanitized.
- * For example, `/^(https?|ircs?|mailto|xmpp)$/i` can be used for `a[href]`,
- * or `/^https?$/i` for `img[src]`.
+ * For example, `/^(https?|ircs?|mailto|xmpp)$/i` can be used for `a[href]`, or
+ * `/^https?$/i` for `img[src]` (this is what `github.com` allows).
  * If the URL includes an unknown protocol (one not matched by `protocol`, such
  * as a dangerous example, `javascript:`), the value is ignored.
  *
- * @param {string|undefined} url
- * @param {RegExp} [protocol]
+ * @param {string | undefined} url
+ *   URI to sanitize.
+ * @param {RegExp | null | undefined} [protocol]
+ *   Allowed protocols.
  * @returns {string}
+ *   Sanitized URI.
  */
 function sanitizeUri(url, protocol) {
   const value = encode(normalizeUri(url || ''))
-
   if (!protocol) {
     return value
   }
-
   const colon = value.indexOf(':')
   const questionMark = value.indexOf('?')
   const numberSign = value.indexOf('#')
   const slash = value.indexOf('/')
-
   if (
     // If there is no protocol, it’s relative.
-    colon < 0 || // If the first colon is after a `?`, `#`, or `/`, it’s not a protocol.
+    colon < 0 ||
+    // If the first colon is after a `?`, `#`, or `/`, it’s not a protocol.
     (slash > -1 && colon > slash) ||
     (questionMark > -1 && colon > questionMark) ||
-    (numberSign > -1 && colon > numberSign) || // It is a protocol, it should be allowed.
+    (numberSign > -1 && colon > numberSign) ||
+    // It is a protocol, it should be allowed.
     protocol.test(value.slice(0, colon))
   ) {
     return value
   }
-
   return ''
 }
+
 /**
- * Normalize a URL (such as used in definitions).
+ * Normalize a URL.
  *
  * Encode unsafe characters with percent-encoding, skipping already encoded
  * sequences.
  *
  * @param {string} value
+ *   URI to normalize.
  * @returns {string}
+ *   Normalized URI.
  */
-
 function normalizeUri(value) {
-  /** @type {string[]} */
+  /** @type {Array<string>} */
   const result = []
   let index = -1
   let start = 0
   let skip = 0
-
   while (++index < value.length) {
     const code = value.charCodeAt(index)
     /** @type {string} */
+    let replace = ''
 
-    let replace = '' // A correct percent encoded value.
-
+    // A correct percent encoded value.
     if (
       code === 37 &&
       asciiAlphanumeric(value.charCodeAt(index + 1)) &&
       asciiAlphanumeric(value.charCodeAt(index + 2))
     ) {
       skip = 2
-    } // ASCII.
+    }
+    // ASCII.
     else if (code < 128) {
       if (!/[!#$&-;=?-Z_a-z~]/.test(String.fromCharCode(code))) {
         replace = String.fromCharCode(code)
       }
-    } // Astral.
+    }
+    // Astral.
     else if (code > 55295 && code < 57344) {
-      const next = value.charCodeAt(index + 1) // A correct surrogate pair.
+      const next = value.charCodeAt(index + 1)
 
+      // A correct surrogate pair.
       if (code < 56320 && next > 56319 && next < 57344) {
         replace = String.fromCharCode(code, next)
         skip = 1
-      } // Lone surrogate.
+      }
+      // Lone surrogate.
       else {
         replace = '\uFFFD'
       }
-    } // Unicode.
+    }
+    // Unicode.
     else {
       replace = String.fromCharCode(code)
     }
-
     if (replace) {
       result.push(value.slice(start, index), encodeURIComponent(replace))
       start = index + skip + 1
       replace = ''
     }
-
     if (skip) {
       index += skip
       skip = 0
     }
   }
-
   return result.join('') + value.slice(start)
 }
 
 
 /***/ }),
 
-/***/ 117:
+/***/ 1807:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -7756,14 +8281,14 @@ function bail(error) {
 var is_buffer = __webpack_require__(8809);
 // EXTERNAL MODULE: ../node_modules/extend/index.js
 var extend = __webpack_require__(229);
-;// CONCATENATED MODULE: ../node_modules/unified/node_modules/is-plain-obj/index.js
+;// CONCATENATED MODULE: ../node_modules/is-plain-obj/index.js
 function isPlainObject(value) {
-	if (Object.prototype.toString.call(value) !== '[object Object]') {
+	if (typeof value !== 'object' || value === null) {
 		return false;
 	}
 
 	const prototype = Object.getPrototypeOf(value);
-	return prototype === null || prototype === Object.prototype;
+	return (prototype === null || prototype === Object.prototype || Object.getPrototypeOf(prototype) === null) && !(Symbol.toStringTag in value) && !(Symbol.iterator in value);
 }
 
 ;// CONCATENATED MODULE: ../node_modules/trough/index.js
@@ -7929,7 +8454,7 @@ function wrap(middleware, callback) {
 }
 
 // EXTERNAL MODULE: ../node_modules/vfile/lib/index.js + 4 modules
-var lib = __webpack_require__(6811);
+var lib = __webpack_require__(4372);
 ;// CONCATENATED MODULE: ../node_modules/unified/lib/index.js
 /**
  * @typedef {import('unist').Node} Node
@@ -8534,64 +9059,7 @@ function looksLikeAVFileValue(value) {
 
 /***/ }),
 
-/***/ 8881:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   u: () => (/* binding */ u)
-/* harmony export */ });
-/**
- * @typedef {import('unist').Node} Node
- * @typedef {import('unist').Parent} Parent
- * @typedef {import('unist').Literal} Literal
- * @typedef {Object.<string, unknown>} Props
- * @typedef {Array.<Node>|string} ChildrenOrValue
- *
- * @typedef {(<T extends string, P extends Record<string, unknown>, C extends Node[]>(type: T, props: P, children: C) => {type: T, children: C} & P)} BuildParentWithProps
- * @typedef {(<T extends string, P extends Record<string, unknown>>(type: T, props: P, value: string) => {type: T, value: string} & P)} BuildLiteralWithProps
- * @typedef {(<T extends string, P extends Record<string, unknown>>(type: T, props: P) => {type: T} & P)} BuildVoidWithProps
- * @typedef {(<T extends string, C extends Node[]>(type: T, children: C) => {type: T, children: C})} BuildParent
- * @typedef {(<T extends string>(type: T, value: string) => {type: T, value: string})} BuildLiteral
- * @typedef {(<T extends string>(type: T) => {type: T})} BuildVoid
- */
-
-var u = /**
- * @type {BuildVoid & BuildVoidWithProps & BuildLiteral & BuildLiteralWithProps & BuildParent & BuildParentWithProps}
- */ (
-  /**
-   * @param {string} type Type of node
-   * @param {Props|ChildrenOrValue} [props] Additional properties for node (or `children` or `value`)
-   * @param {ChildrenOrValue} [value] `children` or `value` of node
-   * @returns {Node}
-   */
-  function (type, props, value) {
-    /** @type {Node} */
-    var node = {type: String(type)}
-
-    if (
-      (value === undefined || value === null) &&
-      (typeof props === 'string' || Array.isArray(props))
-    ) {
-      value = props
-    } else {
-      Object.assign(node, props)
-    }
-
-    if (Array.isArray(value)) {
-      node.children = value
-    } else if (value !== undefined && value !== null) {
-      node.value = String(value)
-    }
-
-    return node
-  }
-)
-
-
-/***/ }),
-
-/***/ 9050:
+/***/ 5194:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -8599,24 +9067,26 @@ var u = /**
 /* harmony export */   o: () => (/* binding */ generated)
 /* harmony export */ });
 /**
- * @typedef {Object} PointLike
- * @property {number} [line]
- * @property {number} [column]
- * @property {number} [offset]
+ * @typedef PointLike
+ * @property {number | null | undefined} [line]
+ * @property {number | null | undefined} [column]
+ * @property {number | null | undefined} [offset]
  *
- * @typedef {Object} PositionLike
- * @property {PointLike} [start]
- * @property {PointLike} [end]
+ * @typedef PositionLike
+ * @property {PointLike | null | undefined} [start]
+ * @property {PointLike | null | undefined} [end]
  *
- * @typedef {Object} NodeLike
- * @property {PositionLike} [position]
+ * @typedef NodeLike
+ * @property {PositionLike | null | undefined} [position]
  */
 
 /**
- * Check if `node` is *generated*.
+ * Check if `node` is generated.
  *
- * @param {NodeLike} [node]
+ * @param {NodeLike | null | undefined} [node]
+ *   Node to check.
  * @returns {boolean}
+ *   Whether `node` is generated (does not have positional info).
  */
 function generated(node) {
   return (
@@ -8634,36 +9104,63 @@ function generated(node) {
 
 /***/ }),
 
-/***/ 2831:
+/***/ 4129:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FK: () => (/* binding */ position),
 /* harmony export */   Pk: () => (/* binding */ pointStart),
 /* harmony export */   rb: () => (/* binding */ pointEnd)
 /* harmony export */ });
-/* unused harmony export position */
 /**
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Node} Node
- * @typedef {Record<string, unknown> & {type: string, position?: PositionLike|undefined}} NodeLike
  * @typedef {import('unist').Point} Point
- *
- * @typedef {Partial<Point>} PointLike
- *
- * @typedef PositionLike
- * @property {PointLike} [start]
- * @property {PointLike} [end]
  */
 
+/**
+ * @typedef NodeLike
+ * @property {string} type
+ * @property {PositionLike | null | undefined} [position]
+ *
+ * @typedef PositionLike
+ * @property {PointLike | null | undefined} [start]
+ * @property {PointLike | null | undefined} [end]
+ *
+ * @typedef PointLike
+ * @property {number | null | undefined} [line]
+ * @property {number | null | undefined} [column]
+ * @property {number | null | undefined} [offset]
+ */
+
+/**
+ * Get the starting point of `node`.
+ *
+ * @param node
+ *   Node.
+ * @returns
+ *   Point.
+ */
 const pointStart = point('start')
+
+/**
+ * Get the ending point of `node`.
+ *
+ * @param node
+ *   Node.
+ * @returns
+ *   Point.
+ */
 const pointEnd = point('end')
 
 /**
  * Get the positional info of `node`.
  *
- * @param {NodeLike|Node} [node]
+ * @param {NodeLike | Node | null | undefined} [node]
+ *   Node.
  * @returns {Position}
+ *   Position.
  */
 function position(node) {
   return {start: pointStart(node), end: pointEnd(node)}
@@ -8672,23 +9169,30 @@ function position(node) {
 /**
  * Get the positional info of `node`.
  *
- * @param {'start'|'end'} type
+ * @param {'start' | 'end'} type
+ *   Side.
+ * @returns
+ *   Getter.
  */
 function point(type) {
   return point
 
   /**
-   * Get the positional info of `node`.
+   * Get the point info of `node` at a bound side.
    *
-   * @param {NodeLike|Node} [node]
+   * @param {NodeLike | Node | null | undefined} [node]
    * @returns {Point}
    */
   function point(node) {
     const point = (node && node.position && node.position[type]) || {}
 
+    // To do: next major: don’t return points when invalid.
     return {
+      // @ts-expect-error: in practice, null is allowed.
       line: point.line || null,
+      // @ts-expect-error: in practice, null is allowed.
       column: point.column || null,
+      // @ts-expect-error: in practice, null is allowed.
       offset: point.offset > -1 ? point.offset : null
     }
   }
@@ -8697,7 +9201,7 @@ function point(type) {
 
 /***/ }),
 
-/***/ 6811:
+/***/ 4372:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -8709,20 +9213,42 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ../node_modules/is-buffer/index.js
 var is_buffer = __webpack_require__(8809);
-;// CONCATENATED MODULE: ../node_modules/unist-util-stringify-position/index.js
+;// CONCATENATED MODULE: ../node_modules/unist-util-stringify-position/lib/index.js
 /**
- * @typedef {import('unist').Point} Point
  * @typedef {import('unist').Node} Node
+ * @typedef {import('unist').Point} Point
  * @typedef {import('unist').Position} Position
- * @typedef {object & {type: string, position?: Position|undefined}} NodeLike
  */
 
 /**
- * Stringify one point, a position (start and end points), or a node’s
- * positional information.
+ * @typedef NodeLike
+ * @property {string} type
+ * @property {PositionLike | null | undefined} [position]
  *
- * @param {Node|NodeLike|Position|Point|null} [value]
+ * @typedef PositionLike
+ * @property {PointLike | null | undefined} [start]
+ * @property {PointLike | null | undefined} [end]
+ *
+ * @typedef PointLike
+ * @property {number | null | undefined} [line]
+ * @property {number | null | undefined} [column]
+ * @property {number | null | undefined} [offset]
+ */
+
+/**
+ * Serialize the positional info of a point, position (start and end points),
+ * or node.
+ *
+ * @param {Node | NodeLike | Position | PositionLike | Point | PointLike | null | undefined} [value]
+ *   Node, position, or point.
  * @returns {string}
+ *   Pretty printed positional info of a node (`string`).
+ *
+ *   In the format of a range `ls:cs-le:ce` (when given `node` or `position`)
+ *   or a point `l:c` (when given `point`), where `l` stands for line, `c` for
+ *   column, `s` for `start`, and `e` for end.
+ *   An empty string (`''`) is returned if the given value is neither `node`,
+ *   `position`, nor `point`.
  */
 function stringifyPosition(value) {
   // Nothing.
@@ -8750,7 +9276,7 @@ function stringifyPosition(value) {
 }
 
 /**
- * @param {Point|undefined} point
+ * @param {Point | PointLike | null | undefined} point
  * @returns {string}
  */
 function point(point) {
@@ -8758,7 +9284,7 @@ function point(point) {
 }
 
 /**
- * @param {Position|undefined} pos
+ * @param {Position | PositionLike | null | undefined} pos
  * @returns {string}
  */
 function position(pos) {
@@ -8766,34 +9292,47 @@ function position(pos) {
 }
 
 /**
- * @param {number|undefined} value
+ * @param {number | null | undefined} value
  * @returns {number}
  */
 function index(value) {
   return value && typeof value === 'number' ? value : 1
 }
 
-;// CONCATENATED MODULE: ../node_modules/vfile-message/index.js
+;// CONCATENATED MODULE: ../node_modules/vfile/node_modules/vfile-message/lib/index.js
 /**
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Point} Point
- * @typedef {object & {type: string, position?: Position|undefined}} NodeLike
+ * @typedef {object & {type: string, position?: Position | undefined}} NodeLike
  */
 
 
 
+/**
+ * Message.
+ */
 class VFileMessage extends Error {
   /**
-   * Constructor of a message for `reason` at `place` from `origin`.
-   * When an error is passed in as `reason`, copies the `stack`.
+   * Create a message for `reason` at `place` from `origin`.
    *
-   * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
-   * @param {string} [origin] Place in code the message originates from (`string`, optional).
+   * When an error is passed in as `reason`, the `stack` is copied.
+   *
+   * @param {string | Error | VFileMessage} reason
+   *   Reason for message, uses the stack and message of the error if given.
+   *
+   *   > 👉 **Note**: you should use markdown.
+   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
+   *   Place in file where the message occurred.
+   * @param {string | null | undefined} [origin]
+   *   Place in code where the message originates (example:
+   *   `'my-package:my-rule'` or `'my-rule'`).
+   * @returns
+   *   Instance of `VFileMessage`.
    */
+  // To do: next major: expose `undefined` everywhere instead of `null`.
   constructor(reason, place, origin) {
-    /** @type {[string|null, string|null]} */
+    /** @type {[string | null, string | null]} */
     const parts = [null, null]
     /** @type {Position} */
     let position = {
@@ -8825,92 +9364,150 @@ class VFileMessage extends Error {
       // Node.
       if ('type' in place || 'position' in place) {
         if (place.position) {
+          // To do: next major: deep clone.
+          // @ts-expect-error: looks like a position.
           position = place.position
         }
       }
       // Position.
       else if ('start' in place || 'end' in place) {
+        // @ts-expect-error: looks like a position.
+        // To do: next major: deep clone.
         position = place
       }
       // Point.
       else if ('line' in place || 'column' in place) {
+        // To do: next major: deep clone.
         position.start = place
       }
     }
 
-    // Fields from `Error`
+    // Fields from `Error`.
+    /**
+     * Serialized positional info of error.
+     *
+     * On normal errors, this would be something like `ParseError`, buit in
+     * `VFile` messages we use this space to show where an error happened.
+     */
     this.name = stringifyPosition(place) || '1:1'
-    this.message = typeof reason === 'object' ? reason.message : reason
-    this.stack = typeof reason === 'object' ? reason.stack : ''
 
     /**
      * Reason for message.
+     *
+     * @type {string}
+     */
+    this.message = typeof reason === 'object' ? reason.message : reason
+
+    /**
+     * Stack of message.
+     *
+     * This is used by normal errors to show where something happened in
+     * programming code, irrelevant for `VFile` messages,
+     *
+     * @type {string}
+     */
+    this.stack = ''
+
+    if (typeof reason === 'object' && reason.stack) {
+      this.stack = reason.stack
+    }
+
+    /**
+     * Reason for message.
+     *
+     * > 👉 **Note**: you should use markdown.
+     *
      * @type {string}
      */
     this.reason = this.message
+
+    /* eslint-disable no-unused-expressions */
     /**
-     * If true, marks associated file as no longer processable.
-     * @type {boolean?}
+     * State of problem.
+     *
+     * * `true` — marks associated file as no longer processable (error)
+     * * `false` — necessitates a (potential) change (warning)
+     * * `null | undefined` — for things that might not need changing (info)
+     *
+     * @type {boolean | null | undefined}
      */
-    // eslint-disable-next-line no-unused-expressions
     this.fatal
+
     /**
      * Starting line of error.
-     * @type {number?}
+     *
+     * @type {number | null}
      */
     this.line = position.start.line
+
     /**
      * Starting column of error.
-     * @type {number?}
+     *
+     * @type {number | null}
      */
     this.column = position.start.column
+
     /**
-     * Namespace of warning.
-     * @type {string?}
-     */
-    this.source = parts[0]
-    /**
-     * Category of message.
-     * @type {string?}
-     */
-    this.ruleId = parts[1]
-    /**
-     * Full range information, when available.
-     * Has start and end properties, both set to an object with line and column, set to number?.
-     * @type {Position?}
+     * Full unist position.
+     *
+     * @type {Position | null}
      */
     this.position = position
+
+    /**
+     * Namespace of message (example: `'my-package'`).
+     *
+     * @type {string | null}
+     */
+    this.source = parts[0]
+
+    /**
+     * Category of message (example: `'my-rule'`).
+     *
+     * @type {string | null}
+     */
+    this.ruleId = parts[1]
+
+    /**
+     * Path of a file (used throughout the `VFile` ecosystem).
+     *
+     * @type {string | null}
+     */
+    this.file
 
     // The following fields are “well known”.
     // Not standard.
     // Feel free to add other non-standard fields to your messages.
 
-    /* eslint-disable no-unused-expressions */
     /**
-     * You can use this to specify the source value that’s being reported, which
-     * is deemed incorrect.
-     * @type {string?}
+     * Specify the source value that’s being reported, which is deemed
+     * incorrect.
+     *
+     * @type {string | null}
      */
     this.actual
+
     /**
-     * You can use this to suggest values that should be used instead of
-     * `actual`, one or more values that are deemed as acceptable.
-     * @type {Array<string>?}
+     * Suggest acceptable values that can be used instead of `actual`.
+     *
+     * @type {Array<string> | null}
      */
     this.expected
+
     /**
-     * You may add a file property with a path of a file (used throughout the VFile ecosystem).
-     * @type {string?}
-     */
-    this.file
-    /**
-     * You may add a url property with a link to documentation for the message.
-     * @type {string?}
+     * Link to docs for the message.
+     *
+     * > 👉 **Note**: this must be an absolute URL that can be passed as `x`
+     * > to `new URL(x)`.
+     *
+     * @type {string | null}
      */
     this.url
+
     /**
-     * You may add a note property with a long form description of the message (supported by vfile-reporter).
-     * @type {string?}
+     * Long form description of the message (you should use markdown).
+     *
+     * @type {string | null}
      */
     this.note
     /* eslint-enable no-unused-expressions */
@@ -8953,18 +9550,22 @@ const external_process_namespaceObject = require("process");
  */
 
 /**
- * @param {unknown} fileURLOrPath
- * @returns {fileURLOrPath is URL}
+ * Check if `fileUrlOrPath` looks like a URL.
+ *
+ * @param {unknown} fileUrlOrPath
+ *   File path or URL.
+ * @returns {fileUrlOrPath is URL}
+ *   Whether it’s a URL.
  */
 // From: <https://github.com/nodejs/node/blob/fcf8ba4/lib/internal/url.js#L1501>
-function isUrl(fileURLOrPath) {
+function isUrl(fileUrlOrPath) {
   return (
-    fileURLOrPath !== null &&
-    typeof fileURLOrPath === 'object' &&
+    fileUrlOrPath !== null &&
+    typeof fileUrlOrPath === 'object' &&
     // @ts-expect-error: indexable.
-    fileURLOrPath.href &&
+    fileUrlOrPath.href &&
     // @ts-expect-error: indexable.
-    fileURLOrPath.origin
+    fileUrlOrPath.origin
   )
 }
 
@@ -8975,48 +9576,85 @@ var external_url_ = __webpack_require__(7310);
  * @typedef {import('unist').Node} Node
  * @typedef {import('unist').Position} Position
  * @typedef {import('unist').Point} Point
- * @typedef {Record<string, unknown> & {type: string, position?: Position|undefined}} NodeLike
  * @typedef {import('./minurl.shared.js').URL} URL
- * @typedef {import('..').VFileData} VFileData
- * @typedef {import('..').VFileValue} VFileValue
+ * @typedef {import('../index.js').Data} Data
+ * @typedef {import('../index.js').Value} Value
+ */
+
+/**
+ * @typedef {Record<string, unknown> & {type: string, position?: Position | undefined}} NodeLike
  *
- * @typedef {'ascii'|'utf8'|'utf-8'|'utf16le'|'ucs2'|'ucs-2'|'base64'|'base64url'|'latin1'|'binary'|'hex'} BufferEncoding
+ * @typedef {'ascii' | 'utf8' | 'utf-8' | 'utf16le' | 'ucs2' | 'ucs-2' | 'base64' | 'base64url' | 'latin1' | 'binary' | 'hex'} BufferEncoding
  *   Encodings supported by the buffer class.
- *   This is a copy of the typing from Node, copied to prevent Node globals from
+ *
+ *   This is a copy of the types from Node, copied to prevent Node globals from
  *   being needed.
  *   Copied from: <https://github.com/DefinitelyTyped/DefinitelyTyped/blob/90a4ec8/types/node/buffer.d.ts#L170>
  *
- * @typedef {VFileValue|VFileOptions|VFile|URL} VFileCompatible
+ * @typedef {Options | URL | Value | VFile} Compatible
  *   Things that can be passed to the constructor.
  *
  * @typedef VFileCoreOptions
- * @property {VFileValue} [value]
- * @property {string} [cwd]
- * @property {Array<string>} [history]
- * @property {string|URL} [path]
- * @property {string} [basename]
- * @property {string} [stem]
- * @property {string} [extname]
- * @property {string} [dirname]
- * @property {VFileData} [data]
+ *   Set multiple values.
+ * @property {Value | null | undefined} [value]
+ *   Set `value`.
+ * @property {string | null | undefined} [cwd]
+ *   Set `cwd`.
+ * @property {Array<string> | null | undefined} [history]
+ *   Set `history`.
+ * @property {URL | string | null | undefined} [path]
+ *   Set `path`.
+ * @property {string | null | undefined} [basename]
+ *   Set `basename`.
+ * @property {string | null | undefined} [stem]
+ *   Set `stem`.
+ * @property {string | null | undefined} [extname]
+ *   Set `extname`.
+ * @property {string | null | undefined} [dirname]
+ *   Set `dirname`.
+ * @property {Data | null | undefined} [data]
+ *   Set `data`.
  *
  * @typedef Map
- *   Raw source map, see:
+ *   Raw source map.
+ *
+ *   See:
  *   <https://github.com/mozilla/source-map/blob/58819f0/source-map.d.ts#L15-L23>.
  * @property {number} version
+ *   Which version of the source map spec this map is following.
  * @property {Array<string>} sources
+ *   An array of URLs to the original source files.
  * @property {Array<string>} names
- * @property {string|undefined} [sourceRoot]
- * @property {Array<string>|undefined} [sourcesContent]
+ *   An array of identifiers which can be referenced by individual mappings.
+ * @property {string | undefined} [sourceRoot]
+ *   The URL root from which all sources are relative.
+ * @property {Array<string> | undefined} [sourcesContent]
+ *   An array of contents of the original source files.
  * @property {string} mappings
+ *   A string of base64 VLQs which contain the actual mappings.
  * @property {string} file
+ *   The generated file this source map is associated with.
  *
- * @typedef {{[key: string]: unknown} & VFileCoreOptions} VFileOptions
- *   Configuration: a bunch of keys that will be shallow copied over to the new
- *   file.
+ * @typedef {{[key: string]: unknown} & VFileCoreOptions} Options
+ *   Configuration.
  *
- * @typedef {Record<string, unknown>} VFileReporterSettings
- * @typedef {<T = VFileReporterSettings>(files: Array<VFile>, options: T) => string} VFileReporter
+ *   A bunch of keys that will be shallow copied over to the new file.
+ *
+ * @typedef {Record<string, unknown>} ReporterSettings
+ *   Configuration for reporters.
+ */
+
+/**
+ * @template {ReporterSettings} Settings
+ *   Options type.
+ * @callback Reporter
+ *   Type for a reporter.
+ * @param {Array<VFile>} files
+ *   Files to report.
+ * @param {Settings} options
+ *   Configuration.
+ * @returns {string}
+ *   Report.
  */
 
 
@@ -9025,67 +9663,81 @@ var external_url_ = __webpack_require__(7310);
 
 
 
-// Order of setting (least specific to most), we need this because otherwise
-// `{stem: 'a', path: '~/b.js'}` would throw, as a path is needed before a
-// stem can be set.
+/**
+ * Order of setting (least specific to most), we need this because otherwise
+ * `{stem: 'a', path: '~/b.js'}` would throw, as a path is needed before a
+ * stem can be set.
+ *
+ * @type {Array<'basename' | 'dirname' | 'extname' | 'history' | 'path' | 'stem'>}
+ */
 const order = ['history', 'path', 'basename', 'stem', 'extname', 'dirname']
 
 class VFile {
   /**
    * Create a new virtual file.
    *
-   * If `options` is `string` or `Buffer`, treats it as `{value: options}`.
-   * If `options` is a `VFile`, shallow copies its data over to the new file.
-   * All other given fields are set on the newly created `VFile`.
+   * `options` is treated as:
    *
-   * Path related properties are set in the following order (least specific to
+   * *   `string` or `Buffer` — `{value: options}`
+   * *   `URL` — `{path: options}`
+   * *   `VFile` — shallow copies its data over to the new file
+   * *   `object` — all fields are shallow copied over to the new file
+   *
+   * Path related fields are set in the following order (least specific to
    * most specific): `history`, `path`, `basename`, `stem`, `extname`,
    * `dirname`.
    *
-   * It’s not possible to set either `dirname` or `extname` without setting
-   * either `history`, `path`, `basename`, or `stem` as well.
+   * You cannot set `dirname` or `extname` without setting either `history`,
+   * `path`, `basename`, or `stem` too.
    *
-   * @param {VFileCompatible} [value]
+   * @param {Compatible | null | undefined} [value]
+   *   File value.
+   * @returns
+   *   New instance.
    */
   constructor(value) {
-    /** @type {VFileOptions} */
+    /** @type {Options | VFile} */
     let options
 
     if (!value) {
       options = {}
-    } else if (typeof value === 'string' || is_buffer(value)) {
-      // @ts-expect-error Looks like a buffer.
+    } else if (typeof value === 'string' || buffer(value)) {
       options = {value}
     } else if (isUrl(value)) {
       options = {path: value}
     } else {
-      // @ts-expect-error Looks like file or options.
       options = value
     }
 
     /**
-     * Place to store custom information.
-     * It’s OK to store custom data directly on the file, moving it to `data`
-     * gives a little more privacy.
-     * @type {VFileData}
+     * Place to store custom information (default: `{}`).
+     *
+     * It’s OK to store custom data directly on the file but moving it to
+     * `data` is recommended.
+     *
+     * @type {Data}
      */
     this.data = {}
 
     /**
      * List of messages associated with the file.
+     *
      * @type {Array<VFileMessage>}
      */
     this.messages = []
 
     /**
-     * List of file paths the file moved between.
+     * List of filepaths the file moved between.
+     *
+     * The first is the original path and the last is the current path.
+     *
      * @type {Array<string>}
      */
     this.history = []
 
     /**
-     * Base of `path`.
-     * Defaults to `process.cwd()` (`/` in browsers).
+     * Base of `path` (default: `process.cwd()` or `'/'` in browsers).
+     *
      * @type {string}
      */
     this.cwd = external_process_namespaceObject.cwd()
@@ -9093,7 +9745,8 @@ class VFile {
     /* eslint-disable no-unused-expressions */
     /**
      * Raw value.
-     * @type {VFileValue}
+     *
+     * @type {Value}
      */
     this.value
 
@@ -9102,25 +9755,30 @@ class VFile {
 
     /**
      * Whether a file was saved to disk.
+     *
      * This is used by vfile reporters.
+     *
      * @type {boolean}
      */
     this.stored
 
     /**
-     * Sometimes files have a non-string representation.
-     * This can be stored in the `result` field.
-     * One example is when turning markdown into React nodes.
+     * Custom, non-string, compiled, representation.
+     *
      * This is used by unified to store non-string results.
+     * One example is when turning markdown into React nodes.
+     *
      * @type {unknown}
      */
     this.result
 
     /**
-     * Sometimes files have a source map associated with them.
-     * This can be stored in the `map` field.
-     * This should be a `RawSourceMap` type from the `source-map` module.
-     * @type {Map|undefined}
+     * Source map.
+     *
+     * This type is equivalent to the `RawSourceMap` type from the `source-map`
+     * module.
+     *
+     * @type {Map | null | undefined}
      */
     this.map
     /* eslint-enable no-unused-expressions */
@@ -9133,8 +9791,12 @@ class VFile {
 
       // Note: we specifically use `in` instead of `hasOwnProperty` to accept
       // `vfile`s too.
-      if (prop in options && options[prop] !== undefined) {
-        // @ts-expect-error: TS is confused by the different types for `history`.
+      if (
+        prop in options &&
+        options[prop] !== undefined &&
+        options[prop] !== null
+      ) {
+        // @ts-expect-error: TS doesn’t understand basic reality.
         this[prop] = prop === 'history' ? [...options[prop]] : options[prop]
       }
     }
@@ -9145,12 +9807,15 @@ class VFile {
     // Set non-path related properties.
     for (prop in options) {
       // @ts-expect-error: fine to set other things.
-      if (!order.includes(prop)) this[prop] = options[prop]
+      if (!order.includes(prop)) {
+        // @ts-expect-error: fine to set other things.
+        this[prop] = options[prop]
+      }
     }
   }
 
   /**
-   * Access full path (`~/index.min.js`).
+   * Get the full path (example: `'~/index.min.js'`).
    *
    * @returns {string}
    */
@@ -9159,10 +9824,13 @@ class VFile {
   }
 
   /**
-   * Set full path (`~/index.min.js`).
-   * Cannot be nullified.
+   * Set the full path (example: `'~/index.min.js'`).
    *
-   * @param {string|URL} path
+   * Cannot be nullified.
+   * You can set a file URL (a `URL` object with a `file:` protocol) which will
+   * be turned into a path with `url.fileURLToPath`.
+   *
+   * @param {string | URL} path
    */
   set path(path) {
     if (isUrl(path)) {
@@ -9177,15 +9845,16 @@ class VFile {
   }
 
   /**
-   * Access parent path (`~`).
+   * Get the parent path (example: `'~'`).
    */
   get dirname() {
     return typeof this.path === 'string' ? external_path_.dirname(this.path) : undefined
   }
 
   /**
-   * Set parent path (`~`).
-   * Cannot be set if there's no `path` yet.
+   * Set the parent path (example: `'~'`).
+   *
+   * Cannot be set if there’s no `path` yet.
    */
   set dirname(dirname) {
     assertPath(this.basename, 'dirname')
@@ -9193,16 +9862,18 @@ class VFile {
   }
 
   /**
-   * Access basename (including extname) (`index.min.js`).
+   * Get the basename (including extname) (example: `'index.min.js'`).
    */
   get basename() {
     return typeof this.path === 'string' ? external_path_.basename(this.path) : undefined
   }
 
   /**
-   * Set basename (`index.min.js`).
-   * Cannot contain path separators.
-   * Cannot be nullified either (use `file.path = file.dirname` instead).
+   * Set basename (including extname) (`'index.min.js'`).
+   *
+   * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
+   * on windows).
+   * Cannot be nullified (use `file.path = file.dirname` instead).
    */
   set basename(basename) {
     assertNonEmpty(basename, 'basename')
@@ -9211,15 +9882,18 @@ class VFile {
   }
 
   /**
-   * Access extname (including dot) (`.js`).
+   * Get the extname (including dot) (example: `'.js'`).
    */
   get extname() {
     return typeof this.path === 'string' ? external_path_.extname(this.path) : undefined
   }
 
   /**
-   * Set extname (including dot) (`.js`).
-   * Cannot be set if there's no `path` yet and cannot contain path separators.
+   * Set the extname (including dot) (example: `'.js'`).
+   *
+   * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
+   * on windows).
+   * Cannot be set if there’s no `path` yet.
    */
   set extname(extname) {
     assertPart(extname, 'extname')
@@ -9239,7 +9913,7 @@ class VFile {
   }
 
   /**
-   * Access stem (w/o extname) (`index.min`).
+   * Get the stem (basename w/o extname) (example: `'index.min'`).
    */
   get stem() {
     return typeof this.path === 'string'
@@ -9248,8 +9922,11 @@ class VFile {
   }
 
   /**
-   * Set stem (w/o extname) (`index.min`).
-   * Cannot be nullified, and cannot contain path separators.
+   * Set the stem (basename w/o extname) (example: `'index.min'`).
+   *
+   * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
+   * on windows).
+   * Cannot be nullified (use `file.path = file.dirname` instead).
    */
   set stem(stem) {
     assertNonEmpty(stem, 'stem')
@@ -9260,20 +9937,31 @@ class VFile {
   /**
    * Serialize the file.
    *
-   * @param {BufferEncoding} [encoding='utf8'] If `file.value` is a buffer, `encoding` is used to serialize buffers.
+   * @param {BufferEncoding | null | undefined} [encoding='utf8']
+   *   Character encoding to understand `value` as when it’s a `Buffer`
+   *   (default: `'utf8'`).
    * @returns {string}
+   *   Serialized file.
    */
   toString(encoding) {
-    return (this.value || '').toString(encoding)
+    return (this.value || '').toString(encoding || undefined)
   }
 
   /**
-   * Create a message and associates it w/ the file.
+   * Create a warning message associated with the file.
    *
-   * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
-   * @param {string} [origin] Place in code the message originates from (`string`, optional).
+   * Its `fatal` is set to `false` and `file` is set to the current file path.
+   * Its added to `file.messages`.
+   *
+   * @param {string | Error | VFileMessage} reason
+   *   Reason for message, uses the stack and message of the error if given.
+   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
+   *   Place in file where the message occurred.
+   * @param {string | null | undefined} [origin]
+   *   Place in code where the message originates (example:
+   *   `'my-package:my-rule'` or `'my-rule'`).
    * @returns {VFileMessage}
+   *   Message.
    */
   message(reason, place, origin) {
     const message = new VFileMessage(reason, place, origin)
@@ -9291,14 +9979,20 @@ class VFile {
   }
 
   /**
-   * Info: create a message, associate it with the file, and mark the fatality
-   * as `null`.
-   * Calls `message()` internally.
+   * Create an info message associated with the file.
    *
-   * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
-   * @param {string} [origin] Place in code the message originates from (`string`, optional).
+   * Its `fatal` is set to `null` and `file` is set to the current file path.
+   * Its added to `file.messages`.
+   *
+   * @param {string | Error | VFileMessage} reason
+   *   Reason for message, uses the stack and message of the error if given.
+   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
+   *   Place in file where the message occurred.
+   * @param {string | null | undefined} [origin]
+   *   Place in code where the message originates (example:
+   *   `'my-package:my-rule'` or `'my-rule'`).
    * @returns {VFileMessage}
+   *   Message.
    */
   info(reason, place, origin) {
     const message = this.message(reason, place, origin)
@@ -9309,15 +10003,24 @@ class VFile {
   }
 
   /**
-   * Fail: create a message, associate it with the file, mark the fatality as
-   * `true`.
-   * Note: fatal errors mean a file is no longer processable.
-   * Calls `message()` internally.
+   * Create a fatal error associated with the file.
    *
-   * @param {string|Error} reason Reason for message (`string` or `Error`). Uses the stack and message of the error if given.
-   * @param {Node|NodeLike|Position|Point} [place] Place at which the message occurred in a file (`Node`, `Position`, or `Point`, optional).
-   * @param {string} [origin] Place in code the message originates from (`string`, optional).
+   * Its `fatal` is set to `true` and `file` is set to the current file path.
+   * Its added to `file.messages`.
+   *
+   * > 👉 **Note**: a fatal error means that a file is no longer processable.
+   *
+   * @param {string | Error | VFileMessage} reason
+   *   Reason for message, uses the stack and message of the error if given.
+   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
+   *   Place in file where the message occurred.
+   * @param {string | null | undefined} [origin]
+   *   Place in code where the message originates (example:
+   *   `'my-package:my-rule'` or `'my-rule'`).
    * @returns {never}
+   *   Message.
+   * @throws {VFileMessage}
+   *   Message.
    */
   fail(reason, place, origin) {
     const message = this.message(reason, place, origin)
@@ -9331,9 +10034,12 @@ class VFile {
 /**
  * Assert that `part` is not a path (as in, does not contain `path.sep`).
  *
- * @param {string|undefined} part
+ * @param {string | null | undefined} part
+ *   File path part.
  * @param {string} name
+ *   Part name.
  * @returns {void}
+ *   Nothing.
  */
 function assertPart(part, name) {
   if (part && part.includes(external_path_.sep)) {
@@ -9346,9 +10052,12 @@ function assertPart(part, name) {
 /**
  * Assert that `part` is not empty.
  *
- * @param {string|undefined} part
+ * @param {string | undefined} part
+ *   Thing.
  * @param {string} name
+ *   Part name.
  * @returns {asserts part is string}
+ *   Nothing.
  */
 function assertNonEmpty(part, name) {
   if (!part) {
@@ -9359,14 +10068,29 @@ function assertNonEmpty(part, name) {
 /**
  * Assert `path` exists.
  *
- * @param {string|undefined} path
+ * @param {string | undefined} path
+ *   Path.
  * @param {string} name
+ *   Dependency name.
  * @returns {asserts path is string}
+ *   Nothing.
  */
 function assertPath(path, name) {
   if (!path) {
     throw new Error('Setting `' + name + '` requires `path` to be set too')
   }
+}
+
+/**
+ * Assert `value` is a buffer.
+ *
+ * @param {unknown} value
+ *   thing.
+ * @returns {value is Buffer}
+ *   Whether `value` is a Node.js buffer.
+ */
+function buffer(value) {
+  return is_buffer(value)
 }
 
 
@@ -9502,7 +10226,7 @@ function assertPath(path, name) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__(9877);
+/******/ 	var __webpack_exports__ = __webpack_require__(606);
 /******/ 	
 /******/ })()
 ;
