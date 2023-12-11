@@ -64,6 +64,7 @@ export function youtubeVideos() {
                     {
                       type: 'element',
                       tagName: 'strong',
+                      properties: {},
                       children: [
                         {
                           type: 'text',

@@ -2,8 +2,10 @@ import path from 'path';
 
 import { Literal, Root } from 'mdast';
 import { visit } from 'unist-util-visit';
+import { remove } from 'unist-util-remove';
 
 import { Context } from '../context';
+import { LeafDirective } from 'mdast-util-directive';
 
 export function embedAssetUrl(ctx: Context) {
   return async (tree: Root) => {
@@ -16,12 +18,11 @@ export function embedAssetUrl(ctx: Context) {
       if (node.type === 'leafDirective' && node.name === 'directory') {
         const firstChild = node.children[0] as Literal;
         activeDir = firstChild.value || '';
-        const parentChildren = parent?.children || [];
-        parentChildren.splice(index || 0, 1);
       }
 
       if (node.type === 'image') {
-        node.url = getPath(node.url, activeDir, ctx);
+        const url = getPath(node.url, activeDir, ctx);
+        node.url = url;
       }
 
       // also fix for browser template
@@ -43,6 +44,15 @@ export function embedAssetUrl(ctx: Context) {
           });
         }
       }
+    });
+
+    // remove the directory leafDirective node from the tree
+    remove(tree, (node) => {
+      if (node.type === 'leafDirective') {
+        const directive = node as LeafDirective;
+        return directive.name === 'directory';
+      }
+      return false;
     });
   };
 }

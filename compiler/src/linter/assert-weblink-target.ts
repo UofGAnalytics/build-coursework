@@ -13,7 +13,7 @@ export function assertWeblinkTarget() {
           failMessage(
             file,
             'Weblink has no target attribute',
-            node.position
+            node.position,
           );
         }
       }

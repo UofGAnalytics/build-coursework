@@ -17,7 +17,7 @@ describe('footnotes', () => {
         <h2 class="sr-only" id="footnote-label">Footnotes</h2>
         <ol>
           <li id="user-content-fn-1">
-            <p>Bla <a href="#user-content-fnref-1" data-footnote-backref="" class="data-footnote-backref" aria-label="Back to content">↩</a></p>
+            <p>Bla <a href="#user-content-fnref-1" data-footnote-backref="" aria-label="Back to reference 1" class="data-footnote-backref">↩</a></p>
           </li>
         </ol>
       </section>

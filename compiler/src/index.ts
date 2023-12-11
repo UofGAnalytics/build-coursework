@@ -26,7 +26,7 @@ export async function rMarkdown(dirPath: string, options: Options = {}) {
     if (input === undefined) {
       const courseYaml = path.join(ctx.dirPath, 'course.yaml');
       throw new Error(
-        `Week ${ctx.options.week} not found in ${courseYaml}`
+        `Week ${ctx.options.week} not found in ${courseYaml}`,
       );
     }
 
@@ -41,7 +41,6 @@ export async function rMarkdown(dirPath: string, options: Options = {}) {
       result.push(built);
     }
   }
-
   return result;
 }
 

@@ -18,7 +18,7 @@ export function assertColumnStructure() {
             failMessage(
               file,
               'Columns must contain at least 2 columns',
-              node.position
+              node.position,
             );
           }
         }
@@ -28,11 +28,11 @@ export function assertColumnStructure() {
             failMessage(
               file,
               'Column must be nested inside columns',
-              node.position
+              node.position,
             );
           }
         }
-      }
+      },
     );
   };
 }

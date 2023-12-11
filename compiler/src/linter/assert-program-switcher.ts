@@ -26,7 +26,7 @@ export function assertProgramSwitcherStructure() {
           failMessage(
             file,
             'Answer must be nested inside task',
-            node.position
+            node.position,
           );
         }
       }

@@ -3,7 +3,7 @@ import path from 'path';
 
 import { Parent as HastParent } from 'hast';
 import { Parent as MDastParent } from 'mdast';
-import { toVFile } from 'to-vfile';
+import { read as vFileRead } from 'to-vfile';
 import { VFile } from 'vfile';
 
 import { buildUnit } from '../build-unit';
@@ -110,8 +110,7 @@ async function createTestFile(md: string, cacheDir: string) {
   const fileName = Math.random().toString(36).substr(2, 5);
   const filePath = path.join(cacheDir, fileName + '.Rmd');
   await writeFile(filePath, unindentString(md));
-  const file = await toVFile.read(filePath, 'utf-8');
-  return file as VFile;
+  return vFileRead(filePath, 'utf-8');
 }
 
 export function unindentString(str: string) {

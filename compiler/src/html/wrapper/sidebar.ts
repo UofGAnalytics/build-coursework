@@ -1,4 +1,4 @@
-import { List, Parent, Root } from 'mdast';
+import { List, Nodes, Parent } from 'mdast';
 import { toHast } from 'mdast-util-to-hast';
 import { toc as getToc } from 'mdast-util-toc';
 
@@ -13,8 +13,8 @@ import {
 
 export async function createSidebar(mdast: Parent) {
   const logo = await createLogo();
-  const toc = getToc(mdast as Root, { maxDepth: 3 }).map;
-  const tocChildren = toc === null ? [] : [toHast(toc)];
+  const toc = getToc(mdast as Nodes, { maxDepth: 3 }).map;
+  const tocChildren = toc === undefined ? [] : [toHast(toc)];
 
   printTableOfContents(toc);
 
@@ -68,7 +68,7 @@ async function createLogo() {
   };
 }
 
-function printTableOfContents(toc: List | null) {
+function printTableOfContents(toc: List | undefined) {
   // toc?.children.forEach((a) => {
   //   a.children.forEach((b) => {
   //     if (b.type === 'paragraph') {

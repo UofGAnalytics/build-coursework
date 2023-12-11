@@ -1,43 +1,119 @@
 import {
   ignoreWhitespace,
   testProcessor,
+  unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
-it('should NOT try to transform SAS code', async () => {
-  const { md, html } = await testProcessor(`
-    Let's look at a simple example.
+describe('code regex', () => {
+  it('should replace fenced code blocks with alias', async () => {
+    const { md, html } = await testProcessor(`
+      ## a
 
-    \`\`\`sas
-    %macro sortid(dsn);
-      proc sort data = &dsn;
-        by employee_id;
-      run;
-    %mend;
-    \`\`\`
-  `);
+      bbb
 
-  const expectedMd = ignoreWhitespace(`
-    Let's look at a simple example.
+      \`\`\`sas
+      %macro sortid(dsn);
+        proc sort data = &dsn;
+          by employee_id;
+        run;
+      %mend;
+      \`\`\`
 
-    ::codeBlock[0]
-  `);
+      ccc
+    `);
 
-  expect(ignoreWhitespace(md)).toBe(expectedMd);
+    const expectedMd = unindentStringAndTrim(`
+      ## a
 
-  const expectedHtml = ignoreWhitespace(`
-    <p>Let's look at a simple example.</p>
-    <div class="code-wrapper">
-      <pre>
-        <code>
-          %macro sortid(dsn);
-          proc sort data = &#x26;dsn;
-            by employee_id;
-          run;
-          %mend;
-        </code>
-      </pre>
-    </div>
-  `);
+      bbb
 
-  expect(ignoreWhitespace(html)).toBe(expectedHtml);
+      ::codeBlock[0]
+
+      ccc
+    `);
+
+    expect(unindentStringAndTrim(md)).toBe(expectedMd);
+
+    const expectedHtml = unindentStringAndTrim(`
+      <h2>a</h2>
+      <p>bbb</p>
+      <div class="code-wrapper">
+        <pre><code>%macro sortid(dsn);
+        proc sort data = &#x26;dsn;
+          by employee_id;
+        run;
+      %mend;</code></pre>
+      </div>
+      <p>ccc</p>
+    `);
+
+    expect(unindentStringAndTrim(html)).toBe(expectedHtml);
+  });
+
+  it('should replace inline code blocks with alias', async () => {
+    const { md, html } = await testProcessor(`
+      ## a
+
+      bbb \`e = mc2\` ccc
+    `);
+
+    const expectedMd = unindentStringAndTrim(`
+      ## a
+
+      bbb :codeBlock[0] ccc
+    `);
+
+    expect(unindentStringAndTrim(md)).toBe(expectedMd);
+
+    const expectedHtml = unindentStringAndTrim(`
+      <h2>a</h2>
+      <p>bbb <code>e = mc2</code> ccc</p>
+    `);
+
+    expect(unindentStringAndTrim(html)).toBe(expectedHtml);
+  });
+
+  it('should NOT try to transform SAS code', async () => {
+    const { md, html } = await testProcessor(`
+      Let's look at a simple example.
+
+      \`\`\`sas
+      %macro sortid(dsn);
+        proc sort data = &dsn;
+          by employee_id;
+        run;
+      %mend;
+      \`\`\`
+
+      You can see this on the "proc sort" statement line (\`data = &dsn;\`)
+    `);
+
+    const expectedMd = ignoreWhitespace(`
+      Let's look at a simple example.
+
+      ::codeBlock[0]
+
+      You can see this on the "proc sort" statement line (:codeBlock[1])
+    `);
+
+    expect(ignoreWhitespace(md)).toBe(expectedMd);
+
+    const expectedHtml = ignoreWhitespace(`
+      <p>Let's look at a simple example.</p>
+      <div class="code-wrapper">
+        <pre>
+          <code>
+            %macro sortid(dsn);
+            proc sort data = &#x26;dsn;
+              by employee_id;
+            run;
+            %mend;
+          </code>
+        </pre>
+      </div>
+      <p>You can see this on the "proc sort" statement line (<code>data = &#x26;dsn;</code>)</p>
+    `);
+
+    expect(ignoreWhitespace(html)).toBe(expectedHtml);
+  });
 });

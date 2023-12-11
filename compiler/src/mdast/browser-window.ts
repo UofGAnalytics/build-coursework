@@ -40,7 +40,7 @@ function template(node: LeafDirective, file: VFile) {
 function createBrowserWindow(
   imagePath: string,
   url: string,
-  alt: string
+  alt: string,
 ): Element {
   return {
     type: 'element',
@@ -125,10 +125,12 @@ function createCaption(alt: string): Element | null {
   return {
     type: 'element',
     tagName: 'figcaption',
+    properties: {},
     children: [
       {
         type: 'element',
         tagName: 'a',
+        properties: {},
         children: [
           {
             type: 'text',

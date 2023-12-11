@@ -110,7 +110,7 @@ function parseLanguage(node: Code) {
 }
 
 function parseClass({ lang, meta }: Code) {
-  const m = meta === '' || meta === 'null' ? '' : meta;
+  const m = !meta || meta === 'null' ? '' : meta;
   const combined = `${lang || ''} ${m}`.trim();
   if (!combined.startsWith('{.')) {
     return '';

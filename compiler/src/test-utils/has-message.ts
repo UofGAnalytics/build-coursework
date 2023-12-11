@@ -11,12 +11,11 @@ import { MessageStatus } from '../utils/message';
 
 export function createHasFailingMessage(ctx: Context, files: VFile[]) {
   return function hasFailingMessage(reason: string) {
-    const fileMessages = files.reduce(
-      (acc: VFileMessage[], o) => [...acc, ...o.messages],
-      []
-    );
+    const fileMessages = files.reduce((acc: VFileMessage[], o) => {
+      return [...acc, ...o.messages];
+    }, []);
     const errors = fileMessages.filter((o) =>
-      o.reason.includes(reason)
+      o.reason.includes(reason),
     ) as unknown as ReportMessage[];
     if (errors.length === 0) {
       console.log('Message not found in these messages:');
@@ -36,10 +35,10 @@ export function createHasWarningMessage(ctx: Context, files: VFile[]) {
   return function hasWarningMessage(reason: string) {
     const fileMessages = files.reduce(
       (acc: VFileMessage[], o) => [...acc, ...o.messages],
-      []
+      [],
     );
     const errors = fileMessages.filter((o) =>
-      o.reason.includes(reason)
+      o.reason.includes(reason),
     ) as unknown as ReportMessage[];
     if (errors.length === 0) {
       console.log('Message not found in these messages:');

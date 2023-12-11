@@ -84,7 +84,7 @@ export function texToAliasDirective(file: VFile, ctx: Context) {
               const anchor = extractAnchorLinkFromMml(
                 mml,
                 item.math,
-                file
+                file,
               );
               newMarkdown = `[${refNum}](${anchor})`;
             }
@@ -136,7 +136,7 @@ function extractRefNumFromMml(mml: string, tex: string, file: VFile) {
   if (match[1] === '???') {
     failMessage(
       file,
-      `Invalid reference: ${tex}. You may only reference numbered sections.`
+      `Invalid reference: ${tex}. You may only reference numbered sections.`,
     );
   }
   return match[1] as string;

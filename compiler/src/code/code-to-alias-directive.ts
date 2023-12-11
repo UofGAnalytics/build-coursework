@@ -1,13 +1,6 @@
 import { VFile } from 'vfile';
-import { unified } from 'unified';
-import { Code } from 'mdast';
-import { Node } from 'unist';
-import markdown from 'remark-parse';
-import directive from 'remark-directive';
-import stringify from 'remark-stringify';
-import { visit } from 'unist-util-visit';
-
 import { Context, CodeBlock } from '../context';
+import { EOL } from 'os';
 
 // The reason for replacing all fenced code blocks with aliases
 // temporarily is because of MathJax.  MathJax is designed to look
@@ -20,40 +13,34 @@ import { Context, CodeBlock } from '../context';
 
 export async function codeToAliasDirective(file: VFile, ctx: Context) {
   const store: CodeBlock[] = [];
-
-  const processed = await unified()
-    .use(markdown)
-    .use(stringify)
-    .use(codeBlocks, store)
-    .use(directive)
-    .process(file);
-
-  file.value = String(processed);
+  file.value = codeBlocksToAlias(file.value as string, store);
+  file.value = inlineCodeToAlias(file.value as string, store);
   ctx.codeStore = store;
   return file;
 }
 
-function codeBlocks(store: CodeBlock[]) {
-  return (tree: Node) => {
-    visit(tree, 'code', (node: Code) => {
-      store.push({
-        lang: String(node.lang),
-        meta: String(node.meta),
-        value: node.value,
-      });
-      Object.assign(node, {
-        type: 'leafDirective',
-        name: 'codeBlock',
-        lang: undefined,
-        meta: undefined,
-        value: undefined,
-        children: [
-          {
-            type: 'text',
-            value: String(store.length - 1),
-          },
-        ],
-      });
+function codeBlocksToAlias(md: string, store: CodeBlock[]) {
+  const verbatimStore: string[] = [];
+  return md
+    .replace(/^(~~~.+?^~~~)$/gms, (_, match) => {
+      verbatimStore.push(match);
+      return `::verbatimStore[${verbatimStore.length - 1}]`;
+    })
+    .replace(/^```(.+?)^```$/gms, (_, match) => {
+      const lines = match.split(EOL);
+      const lang = lines[0];
+      const value = lines.slice(1).join(EOL);
+      store.push({ lang, value });
+      return `::codeBlock[${store.length - 1}]`;
+    })
+    .replace(/::verbatimStore\[(\d+)\]/g, (_, match) => {
+      return verbatimStore[Number(match)];
     });
-  };
+}
+
+function inlineCodeToAlias(md: string, store: CodeBlock[]) {
+  return md.replace(/`([^\n`]+?)`/g, (_, value) => {
+    store.push({ value });
+    return `:codeBlock[${store.length - 1}]`;
+  });
 }

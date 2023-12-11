@@ -1,7 +1,7 @@
-import { Element } from 'hast';
+import { Element, ElementContent } from 'hast';
 import { ContainerDirective } from 'mdast-util-directive';
 import { toHast } from 'mdast-util-to-hast';
-import { Node, Parent } from 'unist';
+import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
@@ -13,39 +13,38 @@ export function programSwitcher(ctx: Context) {
   const programFlag = ctx.options.envProgram;
   if (programFlag !== undefined && !programs.includes(programFlag)) {
     throw new Error(
-      `[environment]: envProgram ${programFlag} should be one of ${programs}`
+      `[environment]: envProgram ${programFlag} should be one of ${programs}`,
     );
   }
 
   return (tree: Node) => {
     visit(tree, 'containerDirective', (node: ContainerDirective) => {
       if (node.name === 'program-switcher') {
-        const nav = processMenu(node, programFlag);
-        const children = processChildren(node, programFlag);
+        const children = [];
+        if (programFlag === undefined) {
+          children.push(processMenu(node));
+        }
+        children.push(...processChildren(node, programFlag));
+
         node.data = {
           hProperties: {
             className: 'program-switcher',
           },
-          hChildren: [nav, ...children],
+          hChildren: children,
         };
       }
     });
   };
 }
 
-function processMenu(
-  parent: ContainerDirective,
-  programFlag: string | undefined
-) {
+function processMenu(parent: ContainerDirective): ElementContent {
   const children = parent.children as ContainerDirective[];
-  if (programFlag !== undefined) {
-    return null;
-  }
   return {
     type: 'element',
     tagName: 'ul',
+    properties: {},
     children: children.map((node) => {
-      const element: Element = {
+      const element: ElementContent = {
         type: 'element',
         tagName: 'li',
         properties: {
@@ -65,8 +64,8 @@ function processMenu(
 
 function processChildren(
   parent: ContainerDirective,
-  programFlag: string | undefined
-) {
+  programFlag: string | undefined,
+): ElementContent[] {
   const children = parent.children.map((node) => {
     const parent = node as ContainerDirective;
     if (programs.includes(parent.name)) {
@@ -94,7 +93,7 @@ function processChildren(
   const parentHast = toHast({
     type: 'root',
     children: filtered,
-  }) as Parent;
+  }) as Element;
 
   return parentHast.children;
 }

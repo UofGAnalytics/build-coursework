@@ -30,10 +30,10 @@ export type Options = {
 };
 
 export type CodeBlock = {
-  lang: string,
-  meta: string,
-  value: string
-}
+  lang?: string | null;
+  meta?: string | null;
+  value: string;
+};
 
 export type Context = {
   dirPath: string;
@@ -49,7 +49,7 @@ export type Context = {
 
 export async function createContext(
   dirPath: string,
-  options: Options = {}
+  options: Options = {},
 ): Promise<Context> {
   return {
     course: await collectCoursework(dirPath),

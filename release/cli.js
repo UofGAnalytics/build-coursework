@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 1342:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   _: () => (/* binding */ buildUnit)
@@ -19,13 +19,13 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7633);
 /* harmony import */ var _linter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1399);
 /* harmony import */ var _linter_assert_no_image_attributes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9051);
-/* harmony import */ var _mdast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9057);
+/* harmony import */ var _mdast__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1807);
 /* harmony import */ var _mdast_combined__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1316);
 /* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(495);
 /* harmony import */ var _pre_parse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8534);
 /* harmony import */ var _code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6217);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__, _code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__]);
-([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__, _code_code_to_alias_directive__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__]);
+([_hast__WEBPACK_IMPORTED_MODULE_1__, _html__WEBPACK_IMPORTED_MODULE_2__, _knitr_knitr__WEBPACK_IMPORTED_MODULE_3__, _latex_tex_to_directive__WEBPACK_IMPORTED_MODULE_4__, _linter__WEBPACK_IMPORTED_MODULE_5__, _mdast__WEBPACK_IMPORTED_MODULE_7__, _mdast_combined__WEBPACK_IMPORTED_MODULE_8__, _pdf__WEBPACK_IMPORTED_MODULE_9__, _pre_parse__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -95,7 +95,6 @@ __webpack_async_result__();
 /***/ 606:
 /***/ ((module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7564);
 /* harmony import */ var figures__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3952);
@@ -243,6 +242,7 @@ async function run() {
     }
     process.exit(1);
   }
+  process.exit(0);
 }
 run();
 __webpack_async_result__();
@@ -253,7 +253,6 @@ __webpack_async_result__();
 /***/ 3021:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   f: () => (/* binding */ aliasDirectiveToCode)
@@ -271,7 +270,7 @@ function aliasDirectiveToCode(ctx) {
           return;
         }
         const stored = ctx.codeStore[idx];
-        if (!ctx.codeStore[idx]) {
+        if (!stored) {
           return;
         }
         Object.assign(node, {
@@ -279,6 +278,22 @@ function aliasDirectiveToCode(ctx) {
           name: undefined,
           lang: stored.lang,
           meta: stored.meta,
+          value: stored.value,
+          children: []
+        });
+      }
+      if (node.type === 'textDirective' && node.name === 'codeBlock') {
+        const idx = getStoreIdx(node);
+        if (ctx.codeStore === undefined) {
+          return;
+        }
+        const stored = ctx.codeStore[idx];
+        if (!stored) {
+          return;
+        }
+        Object.assign(node, {
+          type: 'inlineCode',
+          name: undefined,
           value: stored.value,
           children: []
         });
@@ -296,23 +311,13 @@ __webpack_async_result__();
 /***/ }),
 
 /***/ 6217:
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   S: () => (/* binding */ codeToAliasDirective)
 /* harmony export */ });
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
-/* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6688);
-/* harmony import */ var remark_directive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7785);
-/* harmony import */ var remark_stringify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7778);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_parse__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_stringify__WEBPACK_IMPORTED_MODULE_2__, unist_util_visit__WEBPACK_IMPORTED_MODULE_3__]);
-([remark_parse__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_stringify__WEBPACK_IMPORTED_MODULE_2__, unist_util_visit__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-
-
-
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2037);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
 
 
 // The reason for replacing all fenced code blocks with aliases
@@ -326,42 +331,37 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rema
 
 async function codeToAliasDirective(file, ctx) {
   const store = [];
-  const processed = await (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(remark_parse__WEBPACK_IMPORTED_MODULE_0__["default"]).use(remark_stringify__WEBPACK_IMPORTED_MODULE_2__["default"]).use(codeBlocks, store).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).process(file);
-  file.value = String(processed);
+  file.value = codeBlocksToAlias(file.value, store);
+  file.value = inlineCodeToAlias(file.value, store);
   ctx.codeStore = store;
   return file;
 }
-function codeBlocks(store) {
-  return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_3__.visit)(tree, 'code', node => {
-      store.push({
-        lang: String(node.lang),
-        meta: String(node.meta),
-        value: node.value
-      });
-      Object.assign(node, {
-        type: 'leafDirective',
-        name: 'codeBlock',
-        lang: undefined,
-        meta: undefined,
-        value: undefined,
-        children: [{
-          type: 'text',
-          value: String(store.length - 1)
-        }]
-      });
+function codeBlocksToAlias(md, store) {
+  return md.replace(/```(.+?)```/gms, (_, match) => {
+    const lines = match.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
+    const lang = lines[0];
+    const value = lines.slice(1).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
+    store.push({
+      lang,
+      value
     });
-  };
+    return `::codeBlock[${store.length - 1}]`;
+  });
 }
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
+function inlineCodeToAlias(md, store) {
+  return md.replace(/`(.+?)`/g, (_, value) => {
+    store.push({
+      value
+    });
+    return `:codeBlock[${store.length - 1}]`;
+  });
+}
 
 /***/ }),
 
 /***/ 7404:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   k: () => (/* binding */ createContext)
@@ -391,7 +391,6 @@ __webpack_async_result__();
 /***/ 432:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   F: () => (/* binding */ collectCoursework)
@@ -433,7 +432,7 @@ async function collectUnit(unit, course, dirPath) {
     if (!(await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_3__/* .checkLocalFileExists */ .qd)(filePath))) {
       throw new Error(`No Rmd file exists at ${filePath}`);
     }
-    return to_vfile__WEBPACK_IMPORTED_MODULE_2__.toVFile.read(filePath, 'utf-8');
+    return (0,to_vfile__WEBPACK_IMPORTED_MODULE_2__.read)(filePath, 'utf-8');
   }));
   const titles = getUnitTitles({
     courseTitle: course.title,
@@ -469,7 +468,6 @@ __webpack_async_result__();
 /***/ 4897:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   n: () => (/* binding */ loadCourseYaml)
@@ -527,7 +525,6 @@ __webpack_async_result__();
 /***/ 2705:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   o: () => (/* binding */ loadUnitYaml)
@@ -567,29 +564,28 @@ __webpack_async_result__();
 /***/ 4760:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   s: () => (/* binding */ hastPhase)
 /* harmony export */ });
 /* harmony import */ var rehype_raw__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1871);
 /* harmony import */ var remark_rehype__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2509);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
-/* harmony import */ var _inline_files__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1085);
-/* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5947);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _inline_files__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__]);
-([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, _inline_files__WEBPACK_IMPORTED_MODULE_2__, _responsive_tables__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4390);
+/* harmony import */ var _inline_files__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1085);
+/* harmony import */ var _responsive_tables__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5947);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, unified__WEBPACK_IMPORTED_MODULE_2__, _inline_files__WEBPACK_IMPORTED_MODULE_3__, _responsive_tables__WEBPACK_IMPORTED_MODULE_4__]);
+([rehype_raw__WEBPACK_IMPORTED_MODULE_0__, remark_rehype__WEBPACK_IMPORTED_MODULE_1__, unified__WEBPACK_IMPORTED_MODULE_2__, _inline_files__WEBPACK_IMPORTED_MODULE_3__, _responsive_tables__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
 
 
 async function hastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(remark_rehype__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_2__.unified)().use(remark_rehype__WEBPACK_IMPORTED_MODULE_1__["default"], {
     allowDangerousHtml: true
-  }).use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_3__/* .responsiveTables */ .l);
+  }).use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_4__/* .responsiveTables */ .l);
   if (!ctx.options.noEmbedAssets) {
-    processor.use(_inline_files__WEBPACK_IMPORTED_MODULE_2__/* .inlineRelativeAssets */ .d, ctx);
+    processor.use(_inline_files__WEBPACK_IMPORTED_MODULE_3__/* .inlineRelativeAssets */ .d, ctx);
   }
   return processor.run(mdast, file);
 }
@@ -601,7 +597,6 @@ __webpack_async_result__();
 /***/ 1085:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   d: () => (/* binding */ inlineRelativeAssets)
@@ -610,7 +605,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2845);
 /* harmony import */ var image_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7632);
-/* harmony import */ var mime_lite_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(799);
+/* harmony import */ var mime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3586);
 /* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6544);
 /* harmony import */ var to_vfile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1252);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6016);
@@ -618,8 +613,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8093);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(343);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1358);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
-([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime_lite_js__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__]);
+([base64_arraybuffer__WEBPACK_IMPORTED_MODULE_1__, image_size__WEBPACK_IMPORTED_MODULE_2__, mime__WEBPACK_IMPORTED_MODULE_3__, node_fetch__WEBPACK_IMPORTED_MODULE_4__, to_vfile__WEBPACK_IMPORTED_MODULE_5__, unist_util_visit__WEBPACK_IMPORTED_MODULE_6__, _utils_cache_to_file__WEBPACK_IMPORTED_MODULE_7__, _utils_get_svg_hast__WEBPACK_IMPORTED_MODULE_8__, _utils_utils__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -677,7 +672,7 @@ async function embedFile(node, file, ctx) {
 }
 async function embedImage(node, ctx, file) {
   const src = getImageSrc(node);
-  const mime = mime_lite_js__WEBPACK_IMPORTED_MODULE_3__["default"].getType(path__WEBPACK_IMPORTED_MODULE_0___default().extname(src));
+  const mime = mime__WEBPACK_IMPORTED_MODULE_3__["default"].getType(path__WEBPACK_IMPORTED_MODULE_0___default().extname(src));
   try {
     const image = await getImage(src, ctx);
     const {
@@ -811,7 +806,6 @@ __webpack_async_result__();
 /***/ 5947:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   l: () => (/* binding */ responsiveTables)
@@ -823,7 +817,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([loda
 
 
 function responsiveTables() {
-  return async (tree, file) => {
+  return function (tree) {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'element', (node, idx, _parent) => {
       if (node.tagName !== 'table') {
         return;
@@ -851,7 +845,6 @@ __webpack_async_result__();
 /***/ 2930:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   D: () => (/* binding */ htmlPhase)
@@ -862,12 +855,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var rehype_document__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6271);
 /* harmony import */ var rehype_format__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2920);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5390);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1807);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1358);
-/* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1270);
-/* harmony import */ var _wrapper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1591);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__]);
-([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, _utils_utils__WEBPACK_IMPORTED_MODULE_5__, _pdf__WEBPACK_IMPORTED_MODULE_6__, _wrapper__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4390);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1358);
+/* harmony import */ var _pdf__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1270);
+/* harmony import */ var _wrapper__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1591);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, unified__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_6__, _pdf__WEBPACK_IMPORTED_MODULE_7__, _wrapper__WEBPACK_IMPORTED_MODULE_8__]);
+([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_1__, rehype_document__WEBPACK_IMPORTED_MODULE_2__, rehype_format__WEBPACK_IMPORTED_MODULE_3__, rehype_stringify__WEBPACK_IMPORTED_MODULE_4__, unified__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_6__, _pdf__WEBPACK_IMPORTED_MODULE_7__, _wrapper__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -878,7 +871,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([loda
 
 
 async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_8__/* .unified */ .l)().use(rehype_stringify__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_5__.unified)().use(rehype_stringify__WEBPACK_IMPORTED_MODULE_4__["default"], {
     allowDangerousHtml: true
   });
   if (ctx.options.format) {
@@ -886,17 +879,17 @@ async function htmlPhase(hast, mdast, file, unit, ctx, targetPdf) {
     processor.use(rehype_format__WEBPACK_IMPORTED_MODULE_3__["default"]);
   }
   if (!ctx.options.noDoc) {
-    const cssPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getTemplateDir */ .Ur)(), 'template.css');
+    const cssPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .getTemplateDir */ .Ur)(), 'template.css');
     const docOptions = {
       title: unit.titles.docTitle,
-      style: `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .readFile */ .pJ)(cssPath)}\n`
+      style: `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .readFile */ .pJ)(cssPath)}\n`
     };
     if (!targetPdf) {
-      const jsPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .getTemplateDir */ .Ur)(), 'template.js2');
-      docOptions.script = `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_5__/* .readFile */ .pJ)(jsPath)}\n`;
-      processor.use(_wrapper__WEBPACK_IMPORTED_MODULE_7__/* .htmlWrapper */ .B, unit, mdast, ctx);
+      const jsPath = path__WEBPACK_IMPORTED_MODULE_0___default().join((0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .getTemplateDir */ .Ur)(), 'template.js2');
+      docOptions.script = `\n${await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_6__/* .readFile */ .pJ)(jsPath)}\n`;
+      processor.use(_wrapper__WEBPACK_IMPORTED_MODULE_8__/* .htmlWrapper */ .B, unit, mdast, ctx);
     } else {
-      processor.use(_pdf__WEBPACK_IMPORTED_MODULE_6__/* .pdfWrapper */ .g, unit, ctx);
+      processor.use(_pdf__WEBPACK_IMPORTED_MODULE_7__/* .pdfWrapper */ .g, unit, ctx);
     }
     processor.use(rehype_document__WEBPACK_IMPORTED_MODULE_2__["default"], docOptions);
   }
@@ -925,7 +918,6 @@ __webpack_async_result__();
 /***/ 1270:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   g: () => (/* binding */ pdfWrapper)
@@ -963,7 +955,6 @@ __webpack_async_result__();
 /***/ 1591:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   B: () => (/* binding */ htmlWrapper)
@@ -1004,7 +995,6 @@ __webpack_async_result__();
 /***/ 2258:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   C: () => (/* binding */ createMain)
@@ -1103,20 +1093,19 @@ __webpack_async_result__();
 /***/ 3335:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   x: () => (/* binding */ createSidebar)
 /* harmony export */ });
-/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3286);
-/* harmony import */ var mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6864);
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1037);
+/* harmony import */ var mdast_util_toc__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6864);
 /* harmony import */ var _assets_crest_svg__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9114);
 /* harmony import */ var _assets_uofg_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8328);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3609);
-/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1879);
-/* harmony import */ var _view_options__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8263);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, _utils_icons__WEBPACK_IMPORTED_MODULE_2__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__]);
-([mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__, _utils_icons__WEBPACK_IMPORTED_MODULE_2__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3609);
+/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1879);
+/* harmony import */ var _view_options__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8263);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, mdast_util_toc__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__, _utils_icons__WEBPACK_IMPORTED_MODULE_3__]);
+([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, mdast_util_toc__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__, _utils_icons__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1126,15 +1115,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdas
 
 async function createSidebar(mdast) {
   const logo = await createLogo();
-  const toc = (0,mdast_util_toc__WEBPACK_IMPORTED_MODULE_0__.toc)(mdast, {
+  const toc = (0,mdast_util_toc__WEBPACK_IMPORTED_MODULE_1__.toc)(mdast, {
     maxDepth: 3
   }).map;
-  const tocChildren = toc === null ? [] : [(0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_4__/* .toHast */ .Q)(toc)];
+  const tocChildren = toc === undefined ? [] : [(0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__.toHast)(toc)];
   printTableOfContents(toc);
   return {
     type: 'element',
     tagName: 'aside',
-    children: [logo, (0,_view_options__WEBPACK_IMPORTED_MODULE_3__/* .createViewOptionsButton */ .t)(), {
+    children: [logo, (0,_view_options__WEBPACK_IMPORTED_MODULE_4__/* .createViewOptionsButton */ .t)(), {
       type: 'element',
       tagName: 'nav',
       properties: {
@@ -1147,14 +1136,14 @@ async function createSidebar(mdast) {
       properties: {
         id: 'view-options'
       },
-      children: (0,_view_options__WEBPACK_IMPORTED_MODULE_3__/* .createViewOptions */ .g)()
+      children: (0,_view_options__WEBPACK_IMPORTED_MODULE_4__/* .createViewOptions */ .g)()
     }]
   };
 }
 async function createLogo() {
-  const crest = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_crest_svg__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z);
-  const uofg = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_1__/* .getAssetHast */ .j)(_assets_uofg_svg__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z);
-  const hamburgerIcon = (0,_utils_icons__WEBPACK_IMPORTED_MODULE_2__/* .createSvg */ .W)('hamburger-icon');
+  const crest = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(_assets_crest_svg__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z);
+  const uofg = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(_assets_uofg_svg__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z);
+  const hamburgerIcon = (0,_utils_icons__WEBPACK_IMPORTED_MODULE_3__/* .createSvg */ .W)('hamburger-icon');
   return {
     type: 'element',
     tagName: 'div',
@@ -1199,7 +1188,6 @@ __webpack_async_result__();
 /***/ 8263:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -1385,7 +1373,6 @@ function createTitle(value) {
 /***/ 9474:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   C: () => (/* binding */ rMarkdown)
@@ -1469,7 +1456,6 @@ __webpack_async_result__();
 /***/ 3432:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   M: () => (/* binding */ knitr)
@@ -1484,11 +1470,11 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var url__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(url__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var chalk__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7564);
 /* harmony import */ var hash_sum__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2386);
-/* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(4372);
-/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(343);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1358);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__]);
-([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, _utils_utils__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var vfile__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6107);
+/* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(343);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1358);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, vfile__WEBPACK_IMPORTED_MODULE_6__, _utils_utils__WEBPACK_IMPORTED_MODULE_8__]);
+([chalk__WEBPACK_IMPORTED_MODULE_4__, hash_sum__WEBPACK_IMPORTED_MODULE_5__, vfile__WEBPACK_IMPORTED_MODULE_6__, _utils_utils__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -1522,7 +1508,7 @@ async function knitr(unit, ctx) {
 // R/Python state to be shared across multiple .Rmd files
 // https://yihui.org/knitr/options/#child-documents
 async function createParentFile(unit, ctx) {
-  const file = new vfile__WEBPACK_IMPORTED_MODULE_8__/* .VFile */ .k();
+  const file = new vfile__WEBPACK_IMPORTED_MODULE_6__.VFile();
   let value = '';
 
   // pass path to custom python binary to reticulate
@@ -1557,8 +1543,8 @@ async function execKnitr(file, ctx, unitPath) {
   const uniqueId = getUniqueId(md);
   const cachedFile = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, `${uniqueId}.Rmd`);
   const cacheDir = path__WEBPACK_IMPORTED_MODULE_2___default().join(ctx.cacheDir, uniqueId);
-  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .mkdir */ .i$)(cacheDir);
-  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .writeFile */ .NC)(cachedFile, md);
+  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_8__/* .mkdir */ .i$)(cacheDir);
+  await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_8__/* .writeFile */ .NC)(cachedFile, md);
   return new Promise((resolve, reject) => {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
     (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
@@ -1567,7 +1553,7 @@ async function execKnitr(file, ctx, unitPath) {
           console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
         }
         if (isFailingStdErr(stdErr)) {
-          (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .failMessage */ .Ob)(file, stdErr);
+          (0,_utils_message__WEBPACK_IMPORTED_MODULE_7__/* .failMessage */ .Ob)(file, stdErr);
         }
       }
       if (err) {
@@ -1577,7 +1563,7 @@ async function execKnitr(file, ctx, unitPath) {
         reportErrors(response, file, ctx);
         resolve(formatResponse(response));
       }
-      await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_7__/* .rmFile */ .gr)(cachedFile);
+      await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_8__/* .rmFile */ .gr)(cachedFile);
     });
   });
 }
@@ -1621,7 +1607,7 @@ function reportErrors(response, file, ctx) {
     // Check the original file doesn't start with WARNING
     const original = String(ctx.course.units[0].files[0].value).split(os__WEBPACK_IMPORTED_MODULE_1__.EOL).filter(s => !s.startsWith(':directory')).join(os__WEBPACK_IMPORTED_MODULE_1__.EOL).trim();
     if (match !== null && !original.startsWith('WARNING -')) {
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, match[1], {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_7__/* .warnMessage */ .KU)(file, match[1], {
         start: {
           line: 1,
           column: 0
@@ -1637,7 +1623,7 @@ function reportErrors(response, file, ctx) {
   } else if (trimmed.startsWith('$python [1]')) {
     const match = trimmed.match(/^\$python\s\[1\]\s("\S+")/);
     if (match !== null) {
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .infoMessage */ .ei)(file, match[1], {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_7__/* .infoMessage */ .ei)(file, match[1], {
         start: {
           line: 1,
           column: 0
@@ -1654,7 +1640,7 @@ function reportErrors(response, file, ctx) {
   lines.forEach((line, idx) => {
     const trimmedLine = line.trim();
     if (trimmedLine.startsWith('## Error')) {
-      (0,_utils_message__WEBPACK_IMPORTED_MODULE_6__/* .warnMessage */ .KU)(file, trimmedLine.replace('## ', ''), {
+      (0,_utils_message__WEBPACK_IMPORTED_MODULE_7__/* .warnMessage */ .KU)(file, trimmedLine.replace('## ', ''), {
         start: {
           line: idx + 1,
           column: 0
@@ -1774,7 +1760,6 @@ __webpack_async_result__();
 /***/ 4686:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   a: () => (/* binding */ aliasDirectiveToLatexSvg)
@@ -1833,6 +1818,7 @@ function renderSvg(mml) {
 }
 function createAccessibleSvg(mathjaxSvg, label = '') {
   const tree = _utils_utils__WEBPACK_IMPORTED_MODULE_1__/* .rehypeParser */ .G5.parse(mathjaxSvg);
+  // @ts-expect-error
   const parent = tree.children[0];
   const svg = parent.children[0];
   const properties = svg.properties;
@@ -1868,7 +1854,6 @@ __webpack_async_result__();
 /***/ 689:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   g3: () => (/* binding */ mmlToSvg),
@@ -1943,7 +1928,6 @@ __webpack_async_result__();
 /***/ 7633:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   T: () => (/* binding */ texToAliasDirective)
@@ -2110,7 +2094,6 @@ __webpack_async_result__();
 /***/ 5362:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   c: () => (/* binding */ assertAssetExists)
@@ -2152,7 +2135,6 @@ __webpack_async_result__();
 /***/ 9386:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   C: () => (/* binding */ assertColumnStructure)
@@ -2190,7 +2172,6 @@ __webpack_async_result__();
 /***/ 2364:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   N: () => (/* binding */ assertNoH1)
@@ -2219,7 +2200,6 @@ __webpack_async_result__();
 /***/ 9051:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   F: () => (/* binding */ assertNoImageAttributes)
 /* harmony export */ });
@@ -2249,7 +2229,6 @@ function assertNoImageAttributes(file) {
 /***/ 2658:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   d: () => (/* binding */ assertNoTexTabular)
 /* harmony export */ });
@@ -2282,7 +2261,6 @@ function assertNoTexTabular(file) {
 /***/ 9941:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   F: () => (/* binding */ assertProgramSwitcherStructure)
@@ -2325,7 +2303,6 @@ __webpack_async_result__();
 /***/ 3339:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   A: () => (/* binding */ assertTaskAnswerStructure)
@@ -2368,7 +2345,6 @@ __webpack_async_result__();
 /***/ 7977:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   c: () => (/* binding */ assertVideoAttributes)
@@ -2410,7 +2386,6 @@ __webpack_async_result__();
 /***/ 7767:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   F: () => (/* binding */ assertWeblinkTarget)
@@ -2440,7 +2415,6 @@ __webpack_async_result__();
 /***/ 1399:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   E: () => (/* binding */ reportErrors),
@@ -2448,29 +2422,25 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var _double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6433);
 /* harmony import */ var _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5921);
-/* harmony import */ var dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8826);
-/* harmony import */ var remark_retext__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4540);
-/* harmony import */ var retext_english__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5414);
-/* harmony import */ var retext_spell__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(862);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(1807);
-/* harmony import */ var _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5362);
-/* harmony import */ var _assert_columns__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9386);
-/* harmony import */ var _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(2364);
-/* harmony import */ var _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(9941);
-/* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(3339);
-/* harmony import */ var _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(7977);
-/* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7767);
-/* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(1622);
-/* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(1110);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__, _lint_latex__WEBPACK_IMPORTED_MODULE_13__, _report__WEBPACK_IMPORTED_MODULE_14__]);
-([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__, remark_retext__WEBPACK_IMPORTED_MODULE_3__, retext_english__WEBPACK_IMPORTED_MODULE_4__, retext_spell__WEBPACK_IMPORTED_MODULE_5__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__, _assert_columns__WEBPACK_IMPORTED_MODULE_7__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_8__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_10__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__, _lint_latex__WEBPACK_IMPORTED_MODULE_13__, _report__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4390);
+/* harmony import */ var _assert_asset_exists__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5362);
+/* harmony import */ var _assert_columns__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9386);
+/* harmony import */ var _assert_no_h1__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2364);
+/* harmony import */ var _assert_program_switcher__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9941);
+/* harmony import */ var _assert_task_answer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3339);
+/* harmony import */ var _assert_video_attributes__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7977);
+/* harmony import */ var _assert_weblink_target__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7767);
+/* harmony import */ var _lint_latex__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1622);
+/* harmony import */ var _report__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(1110);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, unified__WEBPACK_IMPORTED_MODULE_2__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_3__, _assert_columns__WEBPACK_IMPORTED_MODULE_4__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_5__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_6__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_7__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_8__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_9__, _lint_latex__WEBPACK_IMPORTED_MODULE_10__, _report__WEBPACK_IMPORTED_MODULE_11__]);
+([_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__, _mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__, unified__WEBPACK_IMPORTED_MODULE_2__, _assert_asset_exists__WEBPACK_IMPORTED_MODULE_3__, _assert_columns__WEBPACK_IMPORTED_MODULE_4__, _assert_no_h1__WEBPACK_IMPORTED_MODULE_5__, _assert_program_switcher__WEBPACK_IMPORTED_MODULE_6__, _assert_task_answer__WEBPACK_IMPORTED_MODULE_7__, _assert_video_attributes__WEBPACK_IMPORTED_MODULE_8__, _assert_weblink_target__WEBPACK_IMPORTED_MODULE_9__, _lint_latex__WEBPACK_IMPORTED_MODULE_10__, _report__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 // @ts-expect-error
 
-
-
-
-
+// import dictionary from 'dictionary-en-gb';
+// import remark2retext from 'remark-retext';
+// import english from 'retext-english';
+// import spell from 'retext-spell';
 
 
 
@@ -2483,11 +2453,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_dou
 
 function reportErrors(files, ctx) {
   if (!ctx.options.noReport) {
-    (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, ctx);
+    (0,_report__WEBPACK_IMPORTED_MODULE_11__/* .printReport */ .IC)(files, ctx);
   }
-  if ((0,_report__WEBPACK_IMPORTED_MODULE_14__/* .reportHasFatalErrors */ .wC)(files)) {
+  if ((0,_report__WEBPACK_IMPORTED_MODULE_11__/* .reportHasFatalErrors */ .wC)(files)) {
     if (ctx.options.noReport) {
-      (0,_report__WEBPACK_IMPORTED_MODULE_14__/* .printReport */ .IC)(files, {
+      (0,_report__WEBPACK_IMPORTED_MODULE_11__/* .printReport */ .IC)(files, {
         ...ctx,
         options: {
           ...ctx.options,
@@ -2504,15 +2474,18 @@ function reportErrors(files, ctx) {
   }
 }
 async function createReport(file, mdast, ctx) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)().use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_6__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_11__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_10__/* .assertTaskAnswerStructure */ .A).use(_assert_program_switcher__WEBPACK_IMPORTED_MODULE_9__/* .assertProgramSwitcherStructure */ .F).use(_assert_columns__WEBPACK_IMPORTED_MODULE_7__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_12__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_8__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_13__/* .lintLatex */ .I).use(_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__["default"]);
-  if (ctx.options.spelling) {
-    const retextProcessor = (0,unified__WEBPACK_IMPORTED_MODULE_15__/* .unified */ .l)().use(retext_english__WEBPACK_IMPORTED_MODULE_4__["default"]).use(retext_spell__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      dictionary: dictionary_en_gb__WEBPACK_IMPORTED_MODULE_2__["default"],
-      max: 1
-    });
-    processor.use(remark_retext__WEBPACK_IMPORTED_MODULE_3__["default"], retextProcessor);
-  }
-  await processor.run(mdast, file);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_2__.unified)().use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_3__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_8__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_7__/* .assertTaskAnswerStructure */ .A).use(_assert_program_switcher__WEBPACK_IMPORTED_MODULE_6__/* .assertProgramSwitcherStructure */ .F).use(_assert_columns__WEBPACK_IMPORTED_MODULE_4__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_9__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_5__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_10__/* .lintLatex */ .I)
+  // @ts-expect-error
+  .use(_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+  // if (ctx.options.spelling) {
+  //   const retextProcessor = unified()
+  //     .use(english)
+  //     .use(spell, { dictionary, max: 1 });
+  //   processor.use(remark2retext, retextProcessor);
+  // }
+
+  processor.run(mdast, file);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2522,7 +2495,6 @@ __webpack_async_result__();
 /***/ 1622:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   I: () => (/* binding */ lintLatex)
@@ -2604,7 +2576,6 @@ __webpack_async_result__();
 /***/ 1110:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   IC: () => (/* binding */ printReport),
@@ -2704,26 +2675,25 @@ __webpack_async_result__();
 /***/ 6112:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   q: () => (/* binding */ boxouts)
 /* harmony export */ });
 /* unused harmony export createBoxout */
 /* harmony import */ var lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9659);
-/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3286);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-/* harmony import */ var _utils_counter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2098);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__]);
-([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1037);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6016);
+/* harmony import */ var _utils_counter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2098);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__, unist_util_visit__WEBPACK_IMPORTED_MODULE_2__]);
+([lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__, unist_util_visit__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
 
 function boxouts(refStore) {
-  const counter = (0,_utils_counter__WEBPACK_IMPORTED_MODULE_2__/* .createCounter */ .G)();
+  const counter = (0,_utils_counter__WEBPACK_IMPORTED_MODULE_3__/* .createCounter */ .G)();
   return async tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', node => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_2__.visit)(tree, 'containerDirective', node => {
       switch (node.name) {
         case 'example':
         case 'error':
@@ -2772,7 +2742,9 @@ function createBoxout(node, count) {
     titles.push(title);
   }
   const children = node.children;
-  const content = children.filter(o => !o.data?.directiveLabel).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__/* .toHast */ .Q)(o, {
+  const content = children
+  // @ts-expect-error
+  .filter(o => !o.data?.directiveLabel).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__.toHast)(o, {
     allowDangerousHtml: true
   })).filter(Boolean);
   if (node.name === 'task') {
@@ -2787,7 +2759,7 @@ function createBoxout(node, count) {
 function createAnswer(node, count) {
   const {
     children
-  } = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__/* .toHast */ .Q)(node);
+  } = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__.toHast)(node);
   return {
     type: 'element',
     tagName: 'div',
@@ -2839,7 +2811,8 @@ function createTitle(node) {
   return {
     type: 'element',
     tagName: 'h3',
-    children: createTitleValue(node)
+    children: createTitleValue(node),
+    properties: {}
   };
 }
 function createTitleValue(node) {
@@ -2850,7 +2823,7 @@ function createTitleValue(node) {
   };
   const {
     children = []
-  } = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_3__/* .toHast */ .Q)(newRoot);
+  } = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__.toHast)(newRoot);
   if (name !== 'weblink') {
     return children;
   }
@@ -2871,6 +2844,8 @@ function createTitleValue(node) {
 function getTitleValue(node) {
   const children = node.children || [];
   const parent = children[0] || {};
+
+  // @ts-expect-error
   if (!parent.data?.directiveLabel) {
     if (node.name === 'weblink') {
       const attributes = node.attributes;
@@ -2891,7 +2866,6 @@ __webpack_async_result__();
 /***/ 719:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   T: () => (/* binding */ browserWindow)
@@ -2996,9 +2970,11 @@ function createCaption(alt) {
   return {
     type: 'element',
     tagName: 'figcaption',
+    properties: {},
     children: [{
       type: 'element',
       tagName: 'a',
+      properties: {},
       children: [{
         type: 'text',
         value: ` ${alt}`
@@ -3023,7 +2999,6 @@ __webpack_async_result__();
 /***/ 8997:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   r: () => (/* binding */ codeBlocks)
@@ -3123,7 +3098,7 @@ function parseClass({
   lang,
   meta
 }) {
-  const m = meta === '' || meta === 'null' ? '' : meta;
+  const m = !meta || meta === 'null' ? '' : meta;
   const combined = `${lang || ''} ${m}`.trim();
   if (!combined.startsWith('{.')) {
     return '';
@@ -3138,7 +3113,6 @@ __webpack_async_result__();
 /***/ 8943:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   z: () => (/* binding */ columns)
@@ -3202,25 +3176,24 @@ __webpack_async_result__();
 /***/ 1316:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   P: () => (/* binding */ combinedMdastPhase)
 /* harmony export */ });
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1807);
-/* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6112);
-/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3069);
-/* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3324);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _program_switcher__WEBPACK_IMPORTED_MODULE_2__]);
-([_boxouts__WEBPACK_IMPORTED_MODULE_0__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__, _program_switcher__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4390);
+/* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6112);
+/* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3069);
+/* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3324);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__]);
+([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
 
 async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_3__/* .unified */ .l)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_2__/* .programSwitcher */ .D, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_0__/* .boxouts */ .q, ctx.refStore);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_0__.unified)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_3__/* .programSwitcher */ .D, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_1__/* .boxouts */ .q, ctx.refStore);
   if (targetPdf) {
-    processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_1__/* .moveAnswersToEnd */ .w);
+    processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__/* .moveAnswersToEnd */ .w);
   }
   return processor.run(mdast, file);
 }
@@ -3232,7 +3205,6 @@ __webpack_async_result__();
 /***/ 5660:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (/* binding */ embedAssetUrl)
@@ -3240,8 +3212,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1017);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var unist_util_remove__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9365);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, unist_util_remove__WEBPACK_IMPORTED_MODULE_2__]);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, unist_util_remove__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 function embedAssetUrl(ctx) {
@@ -3255,11 +3229,10 @@ function embedAssetUrl(ctx) {
       if (node.type === 'leafDirective' && node.name === 'directory') {
         const firstChild = node.children[0];
         activeDir = firstChild.value || '';
-        const parentChildren = parent?.children || [];
-        parentChildren.splice(index || 0, 1);
       }
       if (node.type === 'image') {
-        node.url = getPath(node.url, activeDir, ctx);
+        const url = getPath(node.url, activeDir, ctx);
+        node.url = url;
       }
 
       // also fix for browser template
@@ -3284,6 +3257,15 @@ function embedAssetUrl(ctx) {
           });
         }
       }
+    });
+
+    // remove the directory leafDirective node from the tree
+    (0,unist_util_remove__WEBPACK_IMPORTED_MODULE_2__.remove)(tree, node => {
+      if (node.type === 'leafDirective') {
+        const directive = node;
+        return directive.name === 'directory';
+      }
+      return false;
     });
   };
 }
@@ -3330,7 +3312,6 @@ __webpack_async_result__();
 /***/ 6945:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   D: () => (/* binding */ gitGraph)
@@ -3454,7 +3435,6 @@ __webpack_async_result__();
 /***/ 6365:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   W: () => (/* binding */ images)
@@ -3486,6 +3466,7 @@ function images(ctx) {
 function templateFromImage(node, count) {
   const alt = getAltText(node.alt || '');
   const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
+  // @ts-expect-error
   createFigure(node, slug, node.url, alt, node.data?.width, count);
 }
 function templateFromHTML(node, hast, count) {
@@ -3584,37 +3565,36 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 9057:
+/***/ 1807:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   c: () => (/* binding */ mdastPhase)
 /* harmony export */ });
-/* harmony import */ var remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3982);
+/* harmony import */ var rehype_autolink_headings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9847);
 /* harmony import */ var remark_directive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7785);
 /* harmony import */ var remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(222);
 /* harmony import */ var remark_gfm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6809);
 /* harmony import */ var remark_parse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6688);
-/* harmony import */ var remark_slug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9071);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(1807);
-/* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4686);
-/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1879);
-/* harmony import */ var _browser_window__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(719);
-/* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8997);
-/* harmony import */ var _columns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8943);
-/* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(5660);
-/* harmony import */ var _gitgraph__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(6945);
-/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6365);
-/* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(6129);
-/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(6254);
-/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(7156);
-/* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(1863);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(7048);
-/* harmony import */ var _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(3021);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__, remark_gfm__WEBPACK_IMPORTED_MODULE_3__, remark_parse__WEBPACK_IMPORTED_MODULE_4__, remark_slug__WEBPACK_IMPORTED_MODULE_5__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__, _utils_icons__WEBPACK_IMPORTED_MODULE_7__, _browser_window__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _text_file__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__]);
-([remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__, remark_gfm__WEBPACK_IMPORTED_MODULE_3__, remark_parse__WEBPACK_IMPORTED_MODULE_4__, remark_slug__WEBPACK_IMPORTED_MODULE_5__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__, _utils_icons__WEBPACK_IMPORTED_MODULE_7__, _browser_window__WEBPACK_IMPORTED_MODULE_8__, _code_blocks__WEBPACK_IMPORTED_MODULE_9__, _columns__WEBPACK_IMPORTED_MODULE_10__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_11__, _gitgraph__WEBPACK_IMPORTED_MODULE_12__, _images__WEBPACK_IMPORTED_MODULE_13__, _pagebreaks__WEBPACK_IMPORTED_MODULE_14__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__, _styled_terminal__WEBPACK_IMPORTED_MODULE_16__, _text_file__WEBPACK_IMPORTED_MODULE_17__, _youtube_videos__WEBPACK_IMPORTED_MODULE_18__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var rehype_slug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7752);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4390);
+/* harmony import */ var _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4686);
+/* harmony import */ var _utils_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1879);
+/* harmony import */ var _browser_window__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(719);
+/* harmony import */ var _code_blocks__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8997);
+/* harmony import */ var _columns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(8943);
+/* harmony import */ var _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(5660);
+/* harmony import */ var _gitgraph__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6945);
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(6365);
+/* harmony import */ var _pagebreaks__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(6129);
+/* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(6254);
+/* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(7156);
+/* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(1863);
+/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(7048);
+/* harmony import */ var _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(3021);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__, remark_gfm__WEBPACK_IMPORTED_MODULE_3__, remark_parse__WEBPACK_IMPORTED_MODULE_4__, rehype_slug__WEBPACK_IMPORTED_MODULE_5__, unified__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _browser_window__WEBPACK_IMPORTED_MODULE_9__, _code_blocks__WEBPACK_IMPORTED_MODULE_10__, _columns__WEBPACK_IMPORTED_MODULE_11__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__, _gitgraph__WEBPACK_IMPORTED_MODULE_13__, _images__WEBPACK_IMPORTED_MODULE_14__, _pagebreaks__WEBPACK_IMPORTED_MODULE_15__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__, _styled_terminal__WEBPACK_IMPORTED_MODULE_17__, _text_file__WEBPACK_IMPORTED_MODULE_18__, _youtube_videos__WEBPACK_IMPORTED_MODULE_19__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_20__]);
+([rehype_autolink_headings__WEBPACK_IMPORTED_MODULE_0__, remark_directive__WEBPACK_IMPORTED_MODULE_1__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__, remark_gfm__WEBPACK_IMPORTED_MODULE_3__, remark_parse__WEBPACK_IMPORTED_MODULE_4__, rehype_slug__WEBPACK_IMPORTED_MODULE_5__, unified__WEBPACK_IMPORTED_MODULE_6__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__, _utils_icons__WEBPACK_IMPORTED_MODULE_8__, _browser_window__WEBPACK_IMPORTED_MODULE_9__, _code_blocks__WEBPACK_IMPORTED_MODULE_10__, _columns__WEBPACK_IMPORTED_MODULE_11__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_12__, _gitgraph__WEBPACK_IMPORTED_MODULE_13__, _images__WEBPACK_IMPORTED_MODULE_14__, _pagebreaks__WEBPACK_IMPORTED_MODULE_15__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__, _styled_terminal__WEBPACK_IMPORTED_MODULE_17__, _text_file__WEBPACK_IMPORTED_MODULE_18__, _youtube_videos__WEBPACK_IMPORTED_MODULE_19__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_20__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3623,7 +3603,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rema
 
 
 
-// import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 
 
 
@@ -3641,23 +3620,18 @@ async function mdastPhase(file, ctx) {
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_20__/* .unified */ .l)()
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_6__.unified)()
   // third-party plugins:
-  .use(remark_parse__WEBPACK_IMPORTED_MODULE_4__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__["default"])
-  // .use(footnotes, { inlineNotes: true })
-  .use(remark_gfm__WEBPACK_IMPORTED_MODULE_3__["default"])
-  // .use(sectionize)
-  .use(remark_slug__WEBPACK_IMPORTED_MODULE_5__["default"]).use(remark_autolink_headings__WEBPACK_IMPORTED_MODULE_0__["default"], {
-    content: (0,_utils_icons__WEBPACK_IMPORTED_MODULE_7__/* .createSvg */ .W)('link-icon'),
-    linkProperties: {
+  .use(remark_parse__WEBPACK_IMPORTED_MODULE_4__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_2__["default"]).use(remark_gfm__WEBPACK_IMPORTED_MODULE_3__["default"]).use(rehype_slug__WEBPACK_IMPORTED_MODULE_5__["default"]).use(rehype_autolink_headings__WEBPACK_IMPORTED_MODULE_0__["default"], {
+    content: (0,_utils_icons__WEBPACK_IMPORTED_MODULE_8__/* .createSvg */ .W)('link-icon'),
+    properties: {
       className: 'link'
     }
   })
   // custom plugins:
-  .use(_columns__WEBPACK_IMPORTED_MODULE_10__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_11__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_18__/* .youtubeVideos */ .b).use(_code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_19__/* .aliasDirectiveToCode */ .f, ctx).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_6__/* .aliasDirectiveToLatexSvg */ .a, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_15__/* .removeEmptyParagraphs */ .j)
-  // .use(aliasDirectiveToTex, ctx)
-  .use(_gitgraph__WEBPACK_IMPORTED_MODULE_12__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_17__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_8__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_9__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_16__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_13__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_14__/* .pagebreaks */ .m);
+  .use(() => tree => {}).use(_columns__WEBPACK_IMPORTED_MODULE_11__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_12__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_19__/* .youtubeVideos */ .b).use(_code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_20__/* .aliasDirectiveToCode */ .f, ctx).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_7__/* .aliasDirectiveToLatexSvg */ .a, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_16__/* .removeEmptyParagraphs */ .j).use(_gitgraph__WEBPACK_IMPORTED_MODULE_13__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_18__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_9__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_10__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_17__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_14__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_15__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
+  // @ts-expect-error
   return processor.run(parsed, file);
 }
 __webpack_async_result__();
@@ -3668,7 +3642,6 @@ __webpack_async_result__();
 /***/ 3069:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   w: () => (/* binding */ moveAnswersToEnd)
@@ -3686,7 +3659,11 @@ function moveAnswersToEnd() {
       // remove answer from task rehype
       if (node.name === 'task' && node.data) {
         const children = node.data.hChildren || [];
-        node.data.hChildren = children.filter(o => o.name !== 'answer');
+        const newChildren = children.filter(o => {
+          // @ts-expect-error
+          return o.name !== 'answer';
+        });
+        node.data.hChildren = newChildren;
       }
       if (node.name === 'answer') {
         // these nodes have already been moved to the end
@@ -3718,7 +3695,6 @@ __webpack_async_result__();
 /***/ 6129:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   m: () => (/* binding */ pagebreaks)
@@ -3749,15 +3725,14 @@ __webpack_async_result__();
 /***/ 3324:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   D: () => (/* binding */ programSwitcher)
 /* harmony export */ });
-/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3286);
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__]);
-([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1037);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
+([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 const programs = ['github-desktop', 'command-line'];
@@ -3768,28 +3743,29 @@ function programSwitcher(ctx) {
     throw new Error(`[environment]: envProgram ${programFlag} should be one of ${programs}`);
   }
   return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'containerDirective', node => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', node => {
       if (node.name === 'program-switcher') {
-        const nav = processMenu(node, programFlag);
-        const children = processChildren(node, programFlag);
+        const children = [];
+        if (programFlag === undefined) {
+          children.push(processMenu(node));
+        }
+        children.push(...processChildren(node, programFlag));
         node.data = {
           hProperties: {
             className: 'program-switcher'
           },
-          hChildren: [nav, ...children]
+          hChildren: children
         };
       }
     });
   };
 }
-function processMenu(parent, programFlag) {
+function processMenu(parent) {
   const children = parent.children;
-  if (programFlag !== undefined) {
-    return null;
-  }
   return {
     type: 'element',
     tagName: 'ul',
+    properties: {},
     children: children.map(node => {
       const element = {
         type: 'element',
@@ -3826,7 +3802,7 @@ function processChildren(parent, programFlag) {
       return programFlag === parent.name;
     });
   }
-  const parentHast = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__/* .toHast */ .Q)({
+  const parentHast = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__.toHast)({
     type: 'root',
     children: filtered
   });
@@ -3840,7 +3816,6 @@ __webpack_async_result__();
 /***/ 6254:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   j: () => (/* binding */ removeEmptyParagraphs)
@@ -3869,7 +3844,6 @@ __webpack_async_result__();
 /***/ 7156:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   h: () => (/* binding */ styledTerminal)
@@ -3946,7 +3920,6 @@ __webpack_async_result__();
 /***/ 1863:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   K: () => (/* binding */ textFile)
@@ -4020,7 +3993,6 @@ __webpack_async_result__();
 /***/ 7048:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   b: () => (/* binding */ youtubeVideos)
@@ -4080,6 +4052,7 @@ function youtubeVideos() {
               children: [{
                 type: 'element',
                 tagName: 'strong',
+                properties: {},
                 children: [{
                   type: 'text',
                   value: 'Duration'
@@ -4140,7 +4113,6 @@ __webpack_async_result__();
 /***/ 495:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   A: () => (/* binding */ convertToPdf)
@@ -4190,7 +4162,6 @@ __webpack_async_result__();
 /***/ 8275:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Q: () => (/* binding */ allowNoWhitespaceBeforeHeading)
 /* harmony export */ });
@@ -4209,7 +4180,6 @@ function allowNoWhitespaceBeforeHeading(contents) {
 /***/ 6773:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   c: () => (/* binding */ convertEmptyMBoxToDirective),
 /* harmony export */   u: () => (/* binding */ convertNewPageToDirective)
@@ -4232,7 +4202,6 @@ function convertEmptyMBoxToDirective(contents) {
 /***/ 8938:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   _: () => (/* binding */ convertTextBfToMd),
 /* harmony export */   c: () => (/* binding */ convertUrlToMd)
@@ -4251,7 +4220,6 @@ function convertUrlToMd(contents) {
 /***/ 4120:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   W: () => (/* binding */ convertMacroToDirective)
 /* harmony export */ });
@@ -4318,7 +4286,6 @@ function transformAttributes(containerName, attributesArr) {
 /***/ 8534:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (/* binding */ preParsePhase)
@@ -4373,7 +4340,6 @@ __webpack_async_result__();
 /***/ 9543:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   C: () => (/* binding */ reformatPandocSimpleTables)
@@ -4513,7 +4479,6 @@ __webpack_async_result__();
 /***/ 5397:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   G: () => (/* binding */ cacheToFile)
@@ -4583,7 +4548,6 @@ __webpack_async_result__();
 /***/ 2192:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   m: () => (/* binding */ checkForLatestVersion)
@@ -4654,7 +4618,6 @@ __webpack_async_result__();
 /***/ 2098:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   G: () => (/* binding */ createCounter)
 /* harmony export */ });
@@ -4674,7 +4637,6 @@ function createCounter() {
 /***/ 3609:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   j: () => (/* binding */ getAssetHast)
@@ -4708,7 +4670,6 @@ __webpack_async_result__();
 /***/ 8093:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   v: () => (/* binding */ getSvgHast)
@@ -4765,7 +4726,6 @@ __webpack_async_result__();
 /***/ 1879:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   B: () => (/* binding */ createDefs),
@@ -4779,7 +4739,9 @@ _get_asset_hast__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.t
 
 
 
-const svgs = [createStoredSvg('hamburger-icon', _assets_hamburger_icon_svg__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z), createStoredSvg('link-icon', _assets_link_icon_svg__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)];
+function getSvgs() {
+  return [createStoredSvg('hamburger-icon', _assets_hamburger_icon_svg__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z), createStoredSvg('link-icon', _assets_link_icon_svg__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)];
+}
 function createSvg(name) {
   const {
     id,
@@ -4812,7 +4774,7 @@ function createDefs() {
     children: [{
       type: 'element',
       tagName: 'defs',
-      children: svgs.map(createGroup)
+      children: getSvgs().map(createGroup)
     }]
   };
 }
@@ -4828,7 +4790,7 @@ function createStoredSvg(id, svg) {
   };
 }
 function getSvg(id) {
-  const stored = svgs.find(o => o.id === id);
+  const stored = getSvgs().find(o => o.id === id);
   if (stored === undefined) {
     throw new Error(`svg icon not found: ${id}`);
   }
@@ -4855,7 +4817,6 @@ __webpack_async_result__();
 /***/ 343:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   KU: () => (/* binding */ warnMessage),
 /* harmony export */   Ob: () => (/* binding */ failMessage),
@@ -4892,7 +4853,6 @@ function messageWithStatus(file, message, position, status) {
 /***/ 1642:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   e: () => (/* binding */ createTimer)
 /* harmony export */ });
@@ -4911,7 +4871,6 @@ function createTimer() {
 /***/ 1358:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   G5: () => (/* binding */ rehypeParser),
@@ -4931,9 +4890,9 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var rehype_parse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1345);
 /* harmony import */ var rehype_stringify__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5390);
-/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1807);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__]);
-([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var unified__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4390);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__]);
+([rehype_parse__WEBPACK_IMPORTED_MODULE_2__, rehype_stringify__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -4941,7 +4900,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehy
 
 // import { visit } from 'unist-util-visit';
 
-const rehypeParser = (0,unified__WEBPACK_IMPORTED_MODULE_4__/* .unified */ .l)().use(rehype_parse__WEBPACK_IMPORTED_MODULE_2__["default"], {
+const rehypeParser = (0,unified__WEBPACK_IMPORTED_MODULE_4__.unified)().use(rehype_parse__WEBPACK_IMPORTED_MODULE_2__["default"], {
   fragment: true
 }).use(rehype_stringify__WEBPACK_IMPORTED_MODULE_3__["default"]);
 function readFile(filePath, encoding = 'utf-8') {
@@ -5006,153 +4965,9 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 229:
-/***/ ((module) => {
-
-"use strict";
-
-
-var hasOwn = Object.prototype.hasOwnProperty;
-var toStr = Object.prototype.toString;
-var defineProperty = Object.defineProperty;
-var gOPD = Object.getOwnPropertyDescriptor;
-
-var isArray = function isArray(arr) {
-	if (typeof Array.isArray === 'function') {
-		return Array.isArray(arr);
-	}
-
-	return toStr.call(arr) === '[object Array]';
-};
-
-var isPlainObject = function isPlainObject(obj) {
-	if (!obj || toStr.call(obj) !== '[object Object]') {
-		return false;
-	}
-
-	var hasOwnConstructor = hasOwn.call(obj, 'constructor');
-	var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
-	// Not own constructor property must be Object
-	if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
-		return false;
-	}
-
-	// Own properties are enumerated firstly, so to speed up,
-	// if last one is own, then all properties are own.
-	var key;
-	for (key in obj) { /**/ }
-
-	return typeof key === 'undefined' || hasOwn.call(obj, key);
-};
-
-// If name is '__proto__', and Object.defineProperty is available, define __proto__ as an own property on target
-var setProperty = function setProperty(target, options) {
-	if (defineProperty && options.name === '__proto__') {
-		defineProperty(target, options.name, {
-			enumerable: true,
-			configurable: true,
-			value: options.newValue,
-			writable: true
-		});
-	} else {
-		target[options.name] = options.newValue;
-	}
-};
-
-// Return undefined instead of __proto__ if '__proto__' is not an own property
-var getProperty = function getProperty(obj, name) {
-	if (name === '__proto__') {
-		if (!hasOwn.call(obj, name)) {
-			return void 0;
-		} else if (gOPD) {
-			// In early versions of node, obj['__proto__'] is buggy when obj has
-			// __proto__ as an own property. Object.getOwnPropertyDescriptor() works.
-			return gOPD(obj, name).value;
-		}
-	}
-
-	return obj[name];
-};
-
-module.exports = function extend() {
-	var options, name, src, copy, copyIsArray, clone;
-	var target = arguments[0];
-	var i = 1;
-	var length = arguments.length;
-	var deep = false;
-
-	// Handle a deep copy situation
-	if (typeof target === 'boolean') {
-		deep = target;
-		target = arguments[1] || {};
-		// skip the boolean and the target
-		i = 2;
-	}
-	if (target == null || (typeof target !== 'object' && typeof target !== 'function')) {
-		target = {};
-	}
-
-	for (; i < length; ++i) {
-		options = arguments[i];
-		// Only deal with non-null/undefined values
-		if (options != null) {
-			// Extend the base object
-			for (name in options) {
-				src = getProperty(target, name);
-				copy = getProperty(options, name);
-
-				// Prevent never-ending loop
-				if (target !== copy) {
-					// Recurse if we're merging plain objects or arrays
-					if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
-						if (copyIsArray) {
-							copyIsArray = false;
-							clone = src && isArray(src) ? src : [];
-						} else {
-							clone = src && isPlainObject(src) ? src : {};
-						}
-
-						// Never move original objects, clone them
-						setProperty(target, { name: name, newValue: extend(deep, clone, copy) });
-
-					// Don't bring in undefined values
-					} else if (typeof copy !== 'undefined') {
-						setProperty(target, { name: name, newValue: copy });
-					}
-				}
-			}
-		}
-	}
-
-	// Return the modified object
-	return target;
-};
-
-
-/***/ }),
-
-/***/ 8809:
-/***/ ((module) => {
-
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-module.exports = function isBuffer (obj) {
-  return obj != null && obj.constructor != null &&
-    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-
-/***/ }),
-
 /***/ 9114:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -5163,7 +4978,6 @@ module.exports = function isBuffer (obj) {
 /***/ 7407:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -5174,7 +4988,6 @@ module.exports = function isBuffer (obj) {
 /***/ 757:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -5185,7 +4998,6 @@ module.exports = function isBuffer (obj) {
 /***/ 934:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -5196,7 +5008,6 @@ module.exports = function isBuffer (obj) {
 /***/ 2439:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -5207,7 +5018,6 @@ module.exports = function isBuffer (obj) {
 /***/ 8328:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -5218,7 +5028,6 @@ module.exports = function isBuffer (obj) {
 /***/ 6433:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("@double-great/remark-lint-alt-text");;
 
 /***/ }),
@@ -5226,7 +5035,6 @@ module.exports = import("@double-great/remark-lint-alt-text");;
 /***/ 5921:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("@mapbox/remark-lint-link-text");;
 
 /***/ }),
@@ -5234,7 +5042,6 @@ module.exports = import("@mapbox/remark-lint-link-text");;
 /***/ 9742:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("ansicolor");;
 
 /***/ }),
@@ -5242,7 +5049,6 @@ module.exports = import("ansicolor");;
 /***/ 2845:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("base64-arraybuffer");;
 
 /***/ }),
@@ -5250,23 +5056,13 @@ module.exports = import("base64-arraybuffer");;
 /***/ 7564:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("chalk");;
-
-/***/ }),
-
-/***/ 8826:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("dictionary-en-gb");;
 
 /***/ }),
 
 /***/ 3952:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("figures");;
 
 /***/ }),
@@ -5274,7 +5070,6 @@ module.exports = import("figures");;
 /***/ 2386:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("hash-sum");;
 
 /***/ }),
@@ -5282,7 +5077,6 @@ module.exports = import("hash-sum");;
 /***/ 7632:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("image-size");;
 
 /***/ }),
@@ -5290,7 +5084,6 @@ module.exports = import("image-size");;
 /***/ 626:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("js-yaml");;
 
 /***/ }),
@@ -5298,7 +5091,6 @@ module.exports = import("js-yaml");;
 /***/ 8971:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("lodash/cloneDeep.js");;
 
 /***/ }),
@@ -5306,7 +5098,6 @@ module.exports = import("lodash/cloneDeep.js");;
 /***/ 3908:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("lodash/kebabCase.js");;
 
 /***/ }),
@@ -5314,7 +5105,6 @@ module.exports = import("lodash/kebabCase.js");;
 /***/ 9659:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("lodash/startCase.js");;
 
 /***/ }),
@@ -5322,7 +5112,6 @@ module.exports = import("lodash/startCase.js");;
 /***/ 4922:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("markdown-table");;
 
 /***/ }),
@@ -5330,7 +5119,6 @@ module.exports = import("markdown-table");;
 /***/ 2424:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/adaptors/liteAdaptor.js");;
 
 /***/ }),
@@ -5338,7 +5126,6 @@ module.exports = import("mathjax-full/js/adaptors/liteAdaptor.js");;
 /***/ 4076:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/core/MathItem.js");;
 
 /***/ }),
@@ -5346,7 +5133,6 @@ module.exports = import("mathjax-full/js/core/MathItem.js");;
 /***/ 4559:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js");;
 
 /***/ }),
@@ -5354,7 +5140,6 @@ module.exports = import("mathjax-full/js/core/MmlTree/SerializedMmlVisitor.js");
 /***/ 5395:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/handlers/html.js");;
 
 /***/ }),
@@ -5362,7 +5147,6 @@ module.exports = import("mathjax-full/js/handlers/html.js");;
 /***/ 4124:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/handlers/html/HTMLDocument.js");;
 
 /***/ }),
@@ -5370,7 +5154,6 @@ module.exports = import("mathjax-full/js/handlers/html/HTMLDocument.js");;
 /***/ 1210:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/input/mathml.js");;
 
 /***/ }),
@@ -5378,7 +5161,6 @@ module.exports = import("mathjax-full/js/input/mathml.js");;
 /***/ 7771:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/input/tex.js");;
 
 /***/ }),
@@ -5386,7 +5168,6 @@ module.exports = import("mathjax-full/js/input/tex.js");;
 /***/ 2547:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/input/tex/AllPackages.js");;
 
 /***/ }),
@@ -5394,7 +5175,6 @@ module.exports = import("mathjax-full/js/input/tex/AllPackages.js");;
 /***/ 2338:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/mathjax.js");;
 
 /***/ }),
@@ -5402,31 +5182,34 @@ module.exports = import("mathjax-full/js/mathjax.js");;
 /***/ 1192:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mathjax-full/js/output/svg.js");;
+
+/***/ }),
+
+/***/ 1037:
+/***/ ((module) => {
+
+module.exports = import("mdast-util-to-hast");;
 
 /***/ }),
 
 /***/ 6864:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("mdast-util-toc");;
 
 /***/ }),
 
-/***/ 799:
+/***/ 3586:
 /***/ ((module) => {
 
-"use strict";
-module.exports = import("mime/lite.js");;
+module.exports = import("mime");;
 
 /***/ }),
 
 /***/ 6544:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("node-fetch");;
 
 /***/ }),
@@ -5434,7 +5217,6 @@ module.exports = import("node-fetch");;
 /***/ 5462:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("puppeteer");;
 
 /***/ }),
@@ -5442,15 +5224,20 @@ module.exports = import("puppeteer");;
 /***/ 1139:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("refractor/lib/all.js");;
+
+/***/ }),
+
+/***/ 9847:
+/***/ ((module) => {
+
+module.exports = import("rehype-autolink-headings");;
 
 /***/ }),
 
 /***/ 6271:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("rehype-document");;
 
 /***/ }),
@@ -5458,7 +5245,6 @@ module.exports = import("rehype-document");;
 /***/ 2920:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("rehype-format");;
 
 /***/ }),
@@ -5466,7 +5252,6 @@ module.exports = import("rehype-format");;
 /***/ 1345:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("rehype-parse");;
 
 /***/ }),
@@ -5474,31 +5259,27 @@ module.exports = import("rehype-parse");;
 /***/ 1871:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("rehype-raw");;
+
+/***/ }),
+
+/***/ 7752:
+/***/ ((module) => {
+
+module.exports = import("rehype-slug");;
 
 /***/ }),
 
 /***/ 5390:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("rehype-stringify");;
-
-/***/ }),
-
-/***/ 3982:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("remark-autolink-headings");;
 
 /***/ }),
 
 /***/ 7785:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("remark-directive");;
 
 /***/ }),
@@ -5506,7 +5287,6 @@ module.exports = import("remark-directive");;
 /***/ 222:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("remark-frontmatter");;
 
 /***/ }),
@@ -5514,7 +5294,6 @@ module.exports = import("remark-frontmatter");;
 /***/ 6809:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("remark-gfm");;
 
 /***/ }),
@@ -5522,7 +5301,6 @@ module.exports = import("remark-gfm");;
 /***/ 6688:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("remark-parse");;
 
 /***/ }),
@@ -5530,55 +5308,13 @@ module.exports = import("remark-parse");;
 /***/ 2509:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("remark-rehype");;
-
-/***/ }),
-
-/***/ 4540:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("remark-retext");;
-
-/***/ }),
-
-/***/ 9071:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("remark-slug");;
-
-/***/ }),
-
-/***/ 7778:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("remark-stringify");;
-
-/***/ }),
-
-/***/ 5414:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("retext-english");;
-
-/***/ }),
-
-/***/ 862:
-/***/ ((module) => {
-
-"use strict";
-module.exports = import("retext-spell");;
 
 /***/ }),
 
 /***/ 1150:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("speech-rule-engine");;
 
 /***/ }),
@@ -5586,23 +5322,41 @@ module.exports = import("speech-rule-engine");;
 /***/ 1252:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("to-vfile");;
+
+/***/ }),
+
+/***/ 4390:
+/***/ ((module) => {
+
+module.exports = import("unified");;
+
+/***/ }),
+
+/***/ 9365:
+/***/ ((module) => {
+
+module.exports = import("unist-util-remove");;
 
 /***/ }),
 
 /***/ 6016:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("unist-util-visit");;
+
+/***/ }),
+
+/***/ 6107:
+/***/ ((module) => {
+
+module.exports = import("vfile");;
 
 /***/ }),
 
 /***/ 2699:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("yargs");;
 
 /***/ }),
@@ -5610,7 +5364,6 @@ module.exports = import("yargs");;
 /***/ 1091:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("yargs/helpers");;
 
 /***/ }),
@@ -5618,7 +5371,6 @@ module.exports = import("yargs/helpers");;
 /***/ 4962:
 /***/ ((module) => {
 
-"use strict";
 module.exports = import("yup");;
 
 /***/ }),
@@ -5626,7 +5378,6 @@ module.exports = import("yup");;
 /***/ 2081:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("child_process");
 
 /***/ }),
@@ -5634,7 +5385,6 @@ module.exports = require("child_process");
 /***/ 7147:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("fs");
 
 /***/ }),
@@ -5642,7 +5392,6 @@ module.exports = require("fs");
 /***/ 2037:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("os");
 
 /***/ }),
@@ -5650,7 +5399,6 @@ module.exports = require("os");
 /***/ 1017:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("path");
 
 /***/ }),
@@ -5658,4441 +5406,7 @@ module.exports = require("path");
 /***/ 7310:
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("url");
-
-/***/ }),
-
-/***/ 9731:
-/***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   C: () => (/* binding */ definitions)
-/* harmony export */ });
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__]);
-unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
-/**
- * @typedef {import('mdast').Root} Root
- * @typedef {import('mdast').Content} Content
- * @typedef {import('mdast').Definition} Definition
- */
-
-/**
- * @typedef {Root | Content} Node
- *
- * @callback GetDefinition
- *   Get a definition by identifier.
- * @param {string | null | undefined} [identifier]
- *   Identifier of definition.
- * @returns {Definition | null}
- *   Definition corresponding to `identifier` or `null`.
- */
-
-
-
-const own = {}.hasOwnProperty
-
-/**
- * Find definitions in `tree`.
- *
- * Uses CommonMark precedence, which means that earlier definitions are
- * preferred over duplicate later definitions.
- *
- * @param {Node} tree
- *   Tree to check.
- * @returns {GetDefinition}
- *   Getter.
- */
-function definitions(tree) {
-  /** @type {Record<string, Definition>} */
-  const cache = Object.create(null)
-
-  if (!tree || !tree.type) {
-    throw new Error('mdast-util-definitions expected node')
-  }
-
-  (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'definition', (definition) => {
-    const id = clean(definition.identifier)
-    if (id && !own.call(cache, id)) {
-      cache[id] = definition
-    }
-  })
-
-  return definition
-
-  /** @type {GetDefinition} */
-  function definition(identifier) {
-    const id = clean(identifier)
-    // To do: next major: return `undefined` when not found.
-    return id && own.call(cache, id) ? cache[id] : null
-  }
-}
-
-/**
- * @param {string | null | undefined} [value]
- * @returns {string}
- */
-function clean(value) {
-  return String(value || '').toUpperCase()
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 7191:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   M: () => (/* binding */ footer)
-/* harmony export */ });
-/* harmony import */ var micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1510);
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').ElementContent} ElementContent
- *
- * @typedef {import('./state.js').State} State
- */
-
-
-
-/**
- * Generate a hast footer for called footnote definitions.
- *
- * @param {State} state
- *   Info passed around.
- * @returns {Element | undefined}
- *   `section` element or `undefined`.
- */
-function footer(state) {
-  /** @type {Array<ElementContent>} */
-  const listItems = []
-  let index = -1
-
-  while (++index < state.footnoteOrder.length) {
-    const def = state.footnoteById[state.footnoteOrder[index]]
-
-    if (!def) {
-      continue
-    }
-
-    const content = state.all(def)
-    const id = String(def.identifier).toUpperCase()
-    const safeId = (0,micromark_util_sanitize_uri__WEBPACK_IMPORTED_MODULE_0__/* .normalizeUri */ .F)(id.toLowerCase())
-    let referenceIndex = 0
-    /** @type {Array<ElementContent>} */
-    const backReferences = []
-
-    while (++referenceIndex <= state.footnoteCounts[id]) {
-      /** @type {Element} */
-      const backReference = {
-        type: 'element',
-        tagName: 'a',
-        properties: {
-          href:
-            '#' +
-            state.clobberPrefix +
-            'fnref-' +
-            safeId +
-            (referenceIndex > 1 ? '-' + referenceIndex : ''),
-          dataFootnoteBackref: true,
-          className: ['data-footnote-backref'],
-          ariaLabel: state.footnoteBackLabel
-        },
-        children: [{type: 'text', value: '↩'}]
-      }
-
-      if (referenceIndex > 1) {
-        backReference.children.push({
-          type: 'element',
-          tagName: 'sup',
-          children: [{type: 'text', value: String(referenceIndex)}]
-        })
-      }
-
-      if (backReferences.length > 0) {
-        backReferences.push({type: 'text', value: ' '})
-      }
-
-      backReferences.push(backReference)
-    }
-
-    const tail = content[content.length - 1]
-
-    if (tail && tail.type === 'element' && tail.tagName === 'p') {
-      const tailTail = tail.children[tail.children.length - 1]
-      if (tailTail && tailTail.type === 'text') {
-        tailTail.value += ' '
-      } else {
-        tail.children.push({type: 'text', value: ' '})
-      }
-
-      tail.children.push(...backReferences)
-    } else {
-      content.push(...backReferences)
-    }
-
-    /** @type {Element} */
-    const listItem = {
-      type: 'element',
-      tagName: 'li',
-      properties: {id: state.clobberPrefix + 'fn-' + safeId},
-      children: state.wrap(content, true)
-    }
-
-    state.patch(def, listItem)
-
-    listItems.push(listItem)
-  }
-
-  if (listItems.length === 0) {
-    return
-  }
-
-  return {
-    type: 'element',
-    tagName: 'section',
-    properties: {dataFootnotes: true, className: ['footnotes']},
-    children: [
-      {
-        type: 'element',
-        tagName: state.footnoteLabelTagName,
-        properties: {
-          // To do: use structured clone.
-          ...JSON.parse(JSON.stringify(state.footnoteLabelProperties)),
-          id: 'footnote-label'
-        },
-        children: [{type: 'text', value: state.footnoteLabel}]
-      },
-      {type: 'text', value: '\n'},
-      {
-        type: 'element',
-        tagName: 'ol',
-        properties: {},
-        children: state.wrap(listItems, true)
-      },
-      {type: 'text', value: '\n'}
-    ]
-  }
-}
-
-
-/***/ }),
-
-/***/ 4224:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  q: () => (/* binding */ handlers)
-});
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/blockquote.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Blockquote} Blockquote
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `blockquote` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Blockquote} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function blockquote(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'blockquote',
-    properties: {},
-    children: state.wrap(state.all(node), true)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/break.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Text} Text
- * @typedef {import('mdast').Break} Break
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `break` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Break} node
- *   mdast node.
- * @returns {Array<Element | Text>}
- *   hast element content.
- */
-function hardBreak(state, node) {
-  /** @type {Element} */
-  const result = {type: 'element', tagName: 'br', properties: {}, children: []}
-  state.patch(node, result)
-  return [state.applyData(node, result), {type: 'text', value: '\n'}]
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/code.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').Code} Code
- * @typedef {import('../state.js').State} State
-
- */
-
-/**
- * Turn an mdast `code` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Code} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function code(state, node) {
-  const value = node.value ? node.value + '\n' : ''
-  // To do: next major, use `node.lang` w/o regex, the splitting’s been going
-  // on for years in remark now.
-  const lang = node.lang ? node.lang.match(/^[^ \t]+(?=[ \t]|$)/) : null
-  /** @type {Properties} */
-  const properties = {}
-
-  if (lang) {
-    properties.className = ['language-' + lang]
-  }
-
-  // Create `<code>`.
-  /** @type {Element} */
-  let result = {
-    type: 'element',
-    tagName: 'code',
-    properties,
-    children: [{type: 'text', value}]
-  }
-
-  if (node.meta) {
-    result.data = {meta: node.meta}
-  }
-
-  state.patch(node, result)
-  result = state.applyData(node, result)
-
-  // Create `<pre>`.
-  result = {type: 'element', tagName: 'pre', properties: {}, children: [result]}
-  state.patch(node, result)
-  return result
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/delete.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Delete} Delete
- * @typedef {import('../state.js').State} State
-
- */
-
-/**
- * Turn an mdast `delete` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Delete} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function strikethrough(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'del',
-    properties: {},
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/emphasis.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Emphasis} Emphasis
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `emphasis` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Emphasis} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function emphasis(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'em',
-    properties: {},
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-// EXTERNAL MODULE: ../node_modules/micromark-util-sanitize-uri/index.js + 2 modules
-var micromark_util_sanitize_uri = __webpack_require__(1510);
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/footnote-reference.js
-/**
- * @typedef {import('mdast').FootnoteReference} FootnoteReference
- * @typedef {import('hast').Element} Element
- * @typedef {import('../state.js').State} State
- */
-
-
-
-/**
- * Turn an mdast `footnoteReference` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {FootnoteReference} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function footnoteReference(state, node) {
-  const id = String(node.identifier).toUpperCase()
-  const safeId = (0,micromark_util_sanitize_uri/* normalizeUri */.F)(id.toLowerCase())
-  const index = state.footnoteOrder.indexOf(id)
-  /** @type {number} */
-  let counter
-
-  if (index === -1) {
-    state.footnoteOrder.push(id)
-    state.footnoteCounts[id] = 1
-    counter = state.footnoteOrder.length
-  } else {
-    state.footnoteCounts[id]++
-    counter = index + 1
-  }
-
-  const reuseCounter = state.footnoteCounts[id]
-
-  /** @type {Element} */
-  const link = {
-    type: 'element',
-    tagName: 'a',
-    properties: {
-      href: '#' + state.clobberPrefix + 'fn-' + safeId,
-      id:
-        state.clobberPrefix +
-        'fnref-' +
-        safeId +
-        (reuseCounter > 1 ? '-' + reuseCounter : ''),
-      dataFootnoteRef: true,
-      ariaDescribedBy: ['footnote-label']
-    },
-    children: [{type: 'text', value: String(counter)}]
-  }
-  state.patch(node, link)
-
-  /** @type {Element} */
-  const sup = {
-    type: 'element',
-    tagName: 'sup',
-    properties: {},
-    children: [link]
-  }
-  state.patch(node, sup)
-  return state.applyData(node, sup)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/footnote.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Footnote} Footnote
- * @typedef {import('../state.js').State} State
- */
-
-
-
-// To do: when both:
-// * <https://github.com/micromark/micromark-extension-footnote>
-// * <https://github.com/syntax-tree/mdast-util-footnote>
-// …are archived, remove this (also from mdast).
-// These inline notes are not used in GFM.
-
-/**
- * Turn an mdast `footnote` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Footnote} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function footnote(state, node) {
-  const footnoteById = state.footnoteById
-  let no = 1
-
-  while (no in footnoteById) no++
-
-  const identifier = String(no)
-
-  footnoteById[identifier] = {
-    type: 'footnoteDefinition',
-    identifier,
-    children: [{type: 'paragraph', children: node.children}],
-    position: node.position
-  }
-
-  return footnoteReference(state, {
-    type: 'footnoteReference',
-    identifier,
-    position: node.position
-  })
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/heading.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Heading} Heading
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `heading` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Heading} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function heading(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'h' + node.depth,
-    properties: {},
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/html.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').HTML} Html
- * @typedef {import('../state.js').State} State
- * @typedef {import('../../index.js').Raw} Raw
- */
-
-/**
- * Turn an mdast `html` node into hast (`raw` node in dangerous mode, otherwise
- * nothing).
- *
- * @param {State} state
- *   Info passed around.
- * @param {Html} node
- *   mdast node.
- * @returns {Raw | Element | null}
- *   hast node.
- */
-function html(state, node) {
-  if (state.dangerous) {
-    /** @type {Raw} */
-    const result = {type: 'raw', value: node.value}
-    state.patch(node, result)
-    return state.applyData(node, result)
-  }
-
-  // To do: next major: return `undefined`.
-  return null
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/revert.js
-/**
- * @typedef {import('hast').ElementContent} ElementContent
- *
- * @typedef {import('mdast').Content} Content
- * @typedef {import('mdast').Reference} Reference
- * @typedef {import('mdast').Root} Root
- *
- * @typedef {import('./state.js').State} State
- */
-
-/**
- * @typedef {Root | Content} Nodes
- * @typedef {Extract<Nodes, Reference>} References
- */
-
-// To do: next major: always return array.
-
-/**
- * Return the content of a reference without definition as plain text.
- *
- * @param {State} state
- *   Info passed around.
- * @param {References} node
- *   Reference node (image, link).
- * @returns {ElementContent | Array<ElementContent>}
- *   hast content.
- */
-function revert(state, node) {
-  const subtype = node.referenceType
-  let suffix = ']'
-
-  if (subtype === 'collapsed') {
-    suffix += '[]'
-  } else if (subtype === 'full') {
-    suffix += '[' + (node.label || node.identifier) + ']'
-  }
-
-  if (node.type === 'imageReference') {
-    return {type: 'text', value: '![' + node.alt + suffix}
-  }
-
-  const contents = state.all(node)
-  const head = contents[0]
-
-  if (head && head.type === 'text') {
-    head.value = '[' + head.value
-  } else {
-    contents.unshift({type: 'text', value: '['})
-  }
-
-  const tail = contents[contents.length - 1]
-
-  if (tail && tail.type === 'text') {
-    tail.value += suffix
-  } else {
-    contents.push({type: 'text', value: suffix})
-  }
-
-  return contents
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/image-reference.js
-/**
- * @typedef {import('hast').ElementContent} ElementContent
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').ImageReference} ImageReference
- * @typedef {import('../state.js').State} State
- */
-
-
-
-
-/**
- * Turn an mdast `imageReference` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {ImageReference} node
- *   mdast node.
- * @returns {ElementContent | Array<ElementContent>}
- *   hast node.
- */
-function imageReference(state, node) {
-  const def = state.definition(node.identifier)
-
-  if (!def) {
-    return revert(state, node)
-  }
-
-  /** @type {Properties} */
-  const properties = {src: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(def.url || ''), alt: node.alt}
-
-  if (def.title !== null && def.title !== undefined) {
-    properties.title = def.title
-  }
-
-  /** @type {Element} */
-  const result = {type: 'element', tagName: 'img', properties, children: []}
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/image.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').Image} Image
- * @typedef {import('../state.js').State} State
- */
-
-
-
-/**
- * Turn an mdast `image` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Image} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function image_image(state, node) {
-  /** @type {Properties} */
-  const properties = {src: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(node.url)}
-
-  if (node.alt !== null && node.alt !== undefined) {
-    properties.alt = node.alt
-  }
-
-  if (node.title !== null && node.title !== undefined) {
-    properties.title = node.title
-  }
-
-  /** @type {Element} */
-  const result = {type: 'element', tagName: 'img', properties, children: []}
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/inline-code.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Text} Text
- * @typedef {import('mdast').InlineCode} InlineCode
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `inlineCode` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {InlineCode} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function inlineCode(state, node) {
-  /** @type {Text} */
-  const text = {type: 'text', value: node.value.replace(/\r?\n|\r/g, ' ')}
-  state.patch(node, text)
-
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'code',
-    properties: {},
-    children: [text]
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/link-reference.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').ElementContent} ElementContent
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').LinkReference} LinkReference
- * @typedef {import('../state.js').State} State
- */
-
-
-
-
-/**
- * Turn an mdast `linkReference` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {LinkReference} node
- *   mdast node.
- * @returns {ElementContent | Array<ElementContent>}
- *   hast node.
- */
-function linkReference(state, node) {
-  const def = state.definition(node.identifier)
-
-  if (!def) {
-    return revert(state, node)
-  }
-
-  /** @type {Properties} */
-  const properties = {href: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(def.url || '')}
-
-  if (def.title !== null && def.title !== undefined) {
-    properties.title = def.title
-  }
-
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'a',
-    properties,
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/link.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').Link} Link
- * @typedef {import('../state.js').State} State
- */
-
-
-
-/**
- * Turn an mdast `link` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Link} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function link_link(state, node) {
-  /** @type {Properties} */
-  const properties = {href: (0,micromark_util_sanitize_uri/* normalizeUri */.F)(node.url)}
-
-  if (node.title !== null && node.title !== undefined) {
-    properties.title = node.title
-  }
-
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'a',
-    properties,
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/list-item.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').ElementContent} ElementContent
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').Content} Content
- * @typedef {import('mdast').ListItem} ListItem
- * @typedef {import('mdast').Parent} Parent
- * @typedef {import('mdast').Root} Root
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * @typedef {Root | Content} Nodes
- * @typedef {Extract<Nodes, Parent>} Parents
- */
-
-/**
- * Turn an mdast `listItem` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {ListItem} node
- *   mdast node.
- * @param {Parents | null | undefined} parent
- *   Parent of `node`.
- * @returns {Element}
- *   hast node.
- */
-function listItem(state, node, parent) {
-  const results = state.all(node)
-  const loose = parent ? listLoose(parent) : listItemLoose(node)
-  /** @type {Properties} */
-  const properties = {}
-  /** @type {Array<ElementContent>} */
-  const children = []
-
-  if (typeof node.checked === 'boolean') {
-    const head = results[0]
-    /** @type {Element} */
-    let paragraph
-
-    if (head && head.type === 'element' && head.tagName === 'p') {
-      paragraph = head
-    } else {
-      paragraph = {type: 'element', tagName: 'p', properties: {}, children: []}
-      results.unshift(paragraph)
-    }
-
-    if (paragraph.children.length > 0) {
-      paragraph.children.unshift({type: 'text', value: ' '})
-    }
-
-    paragraph.children.unshift({
-      type: 'element',
-      tagName: 'input',
-      properties: {type: 'checkbox', checked: node.checked, disabled: true},
-      children: []
-    })
-
-    // According to github-markdown-css, this class hides bullet.
-    // See: <https://github.com/sindresorhus/github-markdown-css>.
-    properties.className = ['task-list-item']
-  }
-
-  let index = -1
-
-  while (++index < results.length) {
-    const child = results[index]
-
-    // Add eols before nodes, except if this is a loose, first paragraph.
-    if (
-      loose ||
-      index !== 0 ||
-      child.type !== 'element' ||
-      child.tagName !== 'p'
-    ) {
-      children.push({type: 'text', value: '\n'})
-    }
-
-    if (child.type === 'element' && child.tagName === 'p' && !loose) {
-      children.push(...child.children)
-    } else {
-      children.push(child)
-    }
-  }
-
-  const tail = results[results.length - 1]
-
-  // Add a final eol.
-  if (tail && (loose || tail.type !== 'element' || tail.tagName !== 'p')) {
-    children.push({type: 'text', value: '\n'})
-  }
-
-  /** @type {Element} */
-  const result = {type: 'element', tagName: 'li', properties, children}
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-/**
- * @param {Parents} node
- * @return {Boolean}
- */
-function listLoose(node) {
-  let loose = false
-  if (node.type === 'list') {
-    loose = node.spread || false
-    const children = node.children
-    let index = -1
-
-    while (!loose && ++index < children.length) {
-      loose = listItemLoose(children[index])
-    }
-  }
-
-  return loose
-}
-
-/**
- * @param {ListItem} node
- * @return {Boolean}
- */
-function listItemLoose(node) {
-  const spread = node.spread
-
-  return spread === undefined || spread === null
-    ? node.children.length > 1
-    : spread
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/list.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('mdast').List} List
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `list` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {List} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function list(state, node) {
-  /** @type {Properties} */
-  const properties = {}
-  const results = state.all(node)
-  let index = -1
-
-  if (typeof node.start === 'number' && node.start !== 1) {
-    properties.start = node.start
-  }
-
-  // Like GitHub, add a class for custom styling.
-  while (++index < results.length) {
-    const child = results[index]
-
-    if (
-      child.type === 'element' &&
-      child.tagName === 'li' &&
-      child.properties &&
-      Array.isArray(child.properties.className) &&
-      child.properties.className.includes('task-list-item')
-    ) {
-      properties.className = ['contains-task-list']
-      break
-    }
-  }
-
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: node.ordered ? 'ol' : 'ul',
-    properties,
-    children: state.wrap(results, true)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/paragraph.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Paragraph} Paragraph
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `paragraph` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Paragraph} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function paragraph(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'p',
-    properties: {},
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/root.js
-/**
- * @typedef {import('hast').Root} HastRoot
- * @typedef {import('hast').Element} HastElement
- * @typedef {import('mdast').Root} MdastRoot
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `root` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {MdastRoot} node
- *   mdast node.
- * @returns {HastRoot | HastElement}
- *   hast node.
- */
-function root(state, node) {
-  /** @type {HastRoot} */
-  const result = {type: 'root', children: state.wrap(state.all(node))}
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/strong.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Strong} Strong
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `strong` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Strong} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function strong(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'strong',
-    properties: {},
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-// EXTERNAL MODULE: ../node_modules/unist-util-position/lib/index.js
-var lib = __webpack_require__(4129);
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/table.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').Table} Table
- * @typedef {import('../state.js').State} State
- */
-
-
-
-/**
- * Turn an mdast `table` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {Table} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function table(state, node) {
-  const rows = state.all(node)
-  const firstRow = rows.shift()
-  /** @type {Array<Element>} */
-  const tableContent = []
-
-  if (firstRow) {
-    /** @type {Element} */
-    const head = {
-      type: 'element',
-      tagName: 'thead',
-      properties: {},
-      children: state.wrap([firstRow], true)
-    }
-    state.patch(node.children[0], head)
-    tableContent.push(head)
-  }
-
-  if (rows.length > 0) {
-    /** @type {Element} */
-    const body = {
-      type: 'element',
-      tagName: 'tbody',
-      properties: {},
-      children: state.wrap(rows, true)
-    }
-
-    const start = (0,lib/* pointStart */.Pk)(node.children[1])
-    const end = (0,lib/* pointEnd */.rb)(node.children[node.children.length - 1])
-    if (start.line && end.line) body.position = {start, end}
-    tableContent.push(body)
-  }
-
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'table',
-    properties: {},
-    children: state.wrap(tableContent, true)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/table-row.js
-/**
- * @typedef {import('hast').Properties} Properties
- * @typedef {import('hast').Element} Element
- * @typedef {import('hast').ElementContent} ElementContent
- * @typedef {import('mdast').Content} Content
- * @typedef {import('mdast').Parent} Parent
- * @typedef {import('mdast').Root} Root
- * @typedef {import('mdast').TableRow} TableRow
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * @typedef {Root | Content} Nodes
- * @typedef {Extract<Nodes, Parent>} Parents
- */
-
-/**
- * Turn an mdast `tableRow` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {TableRow} node
- *   mdast node.
- * @param {Parents | null | undefined} parent
- *   Parent of `node`.
- * @returns {Element}
- *   hast node.
- */
-function tableRow(state, node, parent) {
-  const siblings = parent ? parent.children : undefined
-  // Generate a body row when without parent.
-  const rowIndex = siblings ? siblings.indexOf(node) : 1
-  const tagName = rowIndex === 0 ? 'th' : 'td'
-  const align = parent && parent.type === 'table' ? parent.align : undefined
-  const length = align ? align.length : node.children.length
-  let cellIndex = -1
-  /** @type {Array<ElementContent>} */
-  const cells = []
-
-  while (++cellIndex < length) {
-    // Note: can also be undefined.
-    const cell = node.children[cellIndex]
-    /** @type {Properties} */
-    const properties = {}
-    const alignValue = align ? align[cellIndex] : undefined
-
-    if (alignValue) {
-      properties.align = alignValue
-    }
-
-    /** @type {Element} */
-    let result = {type: 'element', tagName, properties, children: []}
-
-    if (cell) {
-      result.children = state.all(cell)
-      state.patch(cell, result)
-      result = state.applyData(node, result)
-    }
-
-    cells.push(result)
-  }
-
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'tr',
-    properties: {},
-    children: state.wrap(cells, true)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/table-cell.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').TableCell} TableCell
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `tableCell` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {TableCell} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function tableCell(state, node) {
-  // Note: this function is normally not called: see `table-row` for how rows
-  // and their cells are compiled.
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'td', // Assume body cell.
-    properties: {},
-    children: state.all(node)
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/trim-lines/index.js
-const tab = 9 /* `\t` */
-const space = 32 /* ` ` */
-
-/**
- * Remove initial and final spaces and tabs at the line breaks in `value`.
- * Does not trim initial and final spaces and tabs of the value itself.
- *
- * @param {string} value
- *   Value to trim.
- * @returns {string}
- *   Trimmed value.
- */
-function trimLines(value) {
-  const source = String(value)
-  const search = /\r?\n|\r/g
-  let match = search.exec(source)
-  let last = 0
-  /** @type {Array<string>} */
-  const lines = []
-
-  while (match) {
-    lines.push(
-      trimLine(source.slice(last, match.index), last > 0, true),
-      match[0]
-    )
-
-    last = match.index + match[0].length
-    match = search.exec(source)
-  }
-
-  lines.push(trimLine(source.slice(last), last > 0, false))
-
-  return lines.join('')
-}
-
-/**
- * @param {string} value
- *   Line to trim.
- * @param {boolean} start
- *   Whether to trim the start of the line.
- * @param {boolean} end
- *   Whether to trim the end of the line.
- * @returns {string}
- *   Trimmed line.
- */
-function trimLine(value, start, end) {
-  let startIndex = 0
-  let endIndex = value.length
-
-  if (start) {
-    let code = value.codePointAt(startIndex)
-
-    while (code === tab || code === space) {
-      startIndex++
-      code = value.codePointAt(startIndex)
-    }
-  }
-
-  if (end) {
-    let code = value.codePointAt(endIndex - 1)
-
-    while (code === tab || code === space) {
-      endIndex--
-      code = value.codePointAt(endIndex - 1)
-    }
-  }
-
-  return endIndex > startIndex ? value.slice(startIndex, endIndex) : ''
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/text.js
-/**
- * @typedef {import('hast').Element} HastElement
- * @typedef {import('hast').Text} HastText
- * @typedef {import('mdast').Text} MdastText
- * @typedef {import('../state.js').State} State
- */
-
-
-
-/**
- * Turn an mdast `text` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {MdastText} node
- *   mdast node.
- * @returns {HastText | HastElement}
- *   hast node.
- */
-function text_text(state, node) {
-  /** @type {HastText} */
-  const result = {type: 'text', value: trimLines(String(node.value))}
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/thematic-break.js
-/**
- * @typedef {import('hast').Element} Element
- * @typedef {import('mdast').ThematicBreak} ThematicBreak
- * @typedef {import('../state.js').State} State
- */
-
-/**
- * Turn an mdast `thematicBreak` node into hast.
- *
- * @param {State} state
- *   Info passed around.
- * @param {ThematicBreak} node
- *   mdast node.
- * @returns {Element}
- *   hast node.
- */
-function thematicBreak(state, node) {
-  /** @type {Element} */
-  const result = {
-    type: 'element',
-    tagName: 'hr',
-    properties: {},
-    children: []
-  }
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-;// CONCATENATED MODULE: ../node_modules/mdast-util-to-hast/lib/handlers/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Default handlers for nodes.
- */
-const handlers = {
-  blockquote: blockquote,
-  break: hardBreak,
-  code: code,
-  delete: strikethrough,
-  emphasis: emphasis,
-  footnoteReference: footnoteReference,
-  footnote: footnote,
-  heading: heading,
-  html: html,
-  imageReference: imageReference,
-  image: image_image,
-  inlineCode: inlineCode,
-  linkReference: linkReference,
-  link: link_link,
-  listItem: listItem,
-  list: list,
-  paragraph: paragraph,
-  root: root,
-  strong: strong,
-  table: table,
-  tableCell: tableCell,
-  tableRow: tableRow,
-  text: text_text,
-  thematicBreak: thematicBreak,
-  toml: ignore,
-  yaml: ignore,
-  definition: ignore,
-  footnoteDefinition: ignore
-}
-
-// Return nothing for nodes that are ignored.
-function ignore() {
-  // To do: next major: return `undefined`.
-  return null
-}
-
-
-/***/ }),
-
-/***/ 3286:
-/***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Q: () => (/* binding */ toHast)
-/* harmony export */ });
-/* harmony import */ var _footer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7191);
-/* harmony import */ var _state_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5355);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_state_js__WEBPACK_IMPORTED_MODULE_0__]);
-_state_js__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
-/**
- * @typedef {import('hast').Content} HastContent
- * @typedef {import('hast').Root} HastRoot
- *
- * @typedef {import('mdast').Content} MdastContent
- * @typedef {import('mdast').Root} MdastRoot
- *
- * @typedef {import('./state.js').Options} Options
- */
-
-/**
- * @typedef {HastRoot | HastContent} HastNodes
- * @typedef {MdastRoot | MdastContent} MdastNodes
- */
-
-
-
-
-/**
- * Transform mdast to hast.
- *
- * ##### Notes
- *
- * ###### HTML
- *
- * Raw HTML is available in mdast as `html` nodes and can be embedded in hast
- * as semistandard `raw` nodes.
- * Most utilities ignore `raw` nodes but two notable ones don’t:
- *
- * *   `hast-util-to-html` also has an option `allowDangerousHtml` which will
- *     output the raw HTML.
- *     This is typically discouraged as noted by the option name but is useful
- *     if you completely trust authors
- * *   `hast-util-raw` can handle the raw embedded HTML strings by parsing them
- *     into standard hast nodes (`element`, `text`, etc).
- *     This is a heavy task as it needs a full HTML parser, but it is the only
- *     way to support untrusted content
- *
- * ###### Footnotes
- *
- * Many options supported here relate to footnotes.
- * Footnotes are not specified by CommonMark, which we follow by default.
- * They are supported by GitHub, so footnotes can be enabled in markdown with
- * `mdast-util-gfm`.
- *
- * The options `footnoteBackLabel` and `footnoteLabel` define natural language
- * that explains footnotes, which is hidden for sighted users but shown to
- * assistive technology.
- * When your page is not in English, you must define translated values.
- *
- * Back references use ARIA attributes, but the section label itself uses a
- * heading that is hidden with an `sr-only` class.
- * To show it to sighted users, define different attributes in
- * `footnoteLabelProperties`.
- *
- * ###### Clobbering
- *
- * Footnotes introduces a problem, as it links footnote calls to footnote
- * definitions on the page through `id` attributes generated from user content,
- * which results in DOM clobbering.
- *
- * DOM clobbering is this:
- *
- * ```html
- * <p id=x></p>
- * <script>alert(x) // `x` now refers to the DOM `p#x` element</script>
- * ```
- *
- * Elements by their ID are made available by browsers on the `window` object,
- * which is a security risk.
- * Using a prefix solves this problem.
- *
- * More information on how to handle clobbering and the prefix is explained in
- * Example: headings (DOM clobbering) in `rehype-sanitize`.
- *
- * ###### Unknown nodes
- *
- * Unknown nodes are nodes with a type that isn’t in `handlers` or `passThrough`.
- * The default behavior for unknown nodes is:
- *
- * *   when the node has a `value` (and doesn’t have `data.hName`,
- *     `data.hProperties`, or `data.hChildren`, see later), create a hast `text`
- *     node
- * *   otherwise, create a `<div>` element (which could be changed with
- *     `data.hName`), with its children mapped from mdast to hast as well
- *
- * This behavior can be changed by passing an `unknownHandler`.
- *
- * @param {MdastNodes} tree
- *   mdast tree.
- * @param {Options | null | undefined} [options]
- *   Configuration.
- * @returns {HastNodes | null | undefined}
- *   hast tree.
- */
-// To do: next major: always return a single `root`.
-function toHast(tree, options) {
-  const state = (0,_state_js__WEBPACK_IMPORTED_MODULE_0__/* .createState */ .eK)(tree, options)
-  const node = state.one(tree, null)
-  const foot = (0,_footer_js__WEBPACK_IMPORTED_MODULE_1__/* .footer */ .M)(state)
-
-  if (foot) {
-    // @ts-expect-error If there’s a footer, there were definitions, meaning block
-    // content.
-    // So assume `node` is a parent node.
-    node.children.push({type: 'text', value: '\n'}, foot)
-  }
-
-  // To do: next major: always return root?
-  return Array.isArray(node) ? {type: 'root', children: node} : node
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 5355:
-/***/ ((__webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   eK: () => (/* binding */ createState)
-/* harmony export */ });
-/* unused harmony exports one, all, wrap */
-/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
-/* harmony import */ var unist_util_position__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4129);
-/* harmony import */ var unist_util_generated__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5194);
-/* harmony import */ var mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9731);
-/* harmony import */ var _handlers_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4224);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__]);
-([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-/**
- * @typedef {import('hast').Content} HastContent
- * @typedef {import('hast').Element} HastElement
- * @typedef {import('hast').ElementContent} HastElementContent
- * @typedef {import('hast').Properties} HastProperties
- * @typedef {import('hast').Root} HastRoot
- * @typedef {import('hast').Text} HastText
- *
- * @typedef {import('mdast').Content} MdastContent
- * @typedef {import('mdast').Definition} MdastDefinition
- * @typedef {import('mdast').FootnoteDefinition} MdastFootnoteDefinition
- * @typedef {import('mdast').Parent} MdastParent
- * @typedef {import('mdast').Root} MdastRoot
- */
-
-/**
- * @typedef {HastRoot | HastContent} HastNodes
- * @typedef {MdastRoot | MdastContent} MdastNodes
- * @typedef {Extract<MdastNodes, MdastParent>} MdastParents
- *
- * @typedef EmbeddedHastFields
- *   hast fields.
- * @property {string | null | undefined} [hName]
- *   Generate a specific element with this tag name instead.
- * @property {HastProperties | null | undefined} [hProperties]
- *   Generate an element with these properties instead.
- * @property {Array<HastElementContent> | null | undefined} [hChildren]
- *   Generate an element with this content instead.
- *
- * @typedef {Record<string, unknown> & EmbeddedHastFields} MdastData
- *   mdast data with embedded hast fields.
- *
- * @typedef {MdastNodes & {data?: MdastData | null | undefined}} MdastNodeWithData
- *   mdast node with embedded hast data.
- *
- * @typedef PointLike
- *   Point-like value.
- * @property {number | null | undefined} [line]
- *   Line.
- * @property {number | null | undefined} [column]
- *   Column.
- * @property {number | null | undefined} [offset]
- *   Offset.
- *
- * @typedef PositionLike
- *   Position-like value.
- * @property {PointLike | null | undefined} [start]
- *   Point-like value.
- * @property {PointLike | null | undefined} [end]
- *   Point-like value.
- *
- * @callback Handler
- *   Handle a node.
- * @param {State} state
- *   Info passed around.
- * @param {any} node
- *   mdast node to handle.
- * @param {MdastParents | null | undefined} parent
- *   Parent of `node`.
- * @returns {HastElementContent | Array<HastElementContent> | null | undefined}
- *   hast node.
- *
- * @callback HFunctionProps
- *   Signature of `state` for when props are passed.
- * @param {MdastNodes | PositionLike | null | undefined} node
- *   mdast node or unist position.
- * @param {string} tagName
- *   HTML tag name.
- * @param {HastProperties} props
- *   Properties.
- * @param {Array<HastElementContent> | null | undefined} [children]
- *   hast content.
- * @returns {HastElement}
- *   Compiled element.
- *
- * @callback HFunctionNoProps
- *   Signature of `state` for when no props are passed.
- * @param {MdastNodes | PositionLike | null | undefined} node
- *   mdast node or unist position.
- * @param {string} tagName
- *   HTML tag name.
- * @param {Array<HastElementContent> | null | undefined} [children]
- *   hast content.
- * @returns {HastElement}
- *   Compiled element.
- *
- * @typedef HFields
- *   Info on `state`.
- * @property {boolean} dangerous
- *   Whether HTML is allowed.
- * @property {string} clobberPrefix
- *   Prefix to use to prevent DOM clobbering.
- * @property {string} footnoteLabel
- *   Label to use to introduce the footnote section.
- * @property {string} footnoteLabelTagName
- *   HTML used for the footnote label.
- * @property {HastProperties} footnoteLabelProperties
- *   Properties on the HTML tag used for the footnote label.
- * @property {string} footnoteBackLabel
- *   Label to use from backreferences back to their footnote call.
- * @property {(identifier: string) => MdastDefinition | null} definition
- *   Definition cache.
- * @property {Record<string, MdastFootnoteDefinition>} footnoteById
- *   Footnote definitions by their identifier.
- * @property {Array<string>} footnoteOrder
- *   Identifiers of order when footnote calls first appear in tree order.
- * @property {Record<string, number>} footnoteCounts
- *   Counts for how often the same footnote was called.
- * @property {Handlers} handlers
- *   Applied handlers.
- * @property {Handler} unknownHandler
- *   Handler for any none not in `passThrough` or otherwise handled.
- * @property {(from: MdastNodes, node: HastNodes) => void} patch
- *   Copy a node’s positional info.
- * @property {<Type extends HastNodes>(from: MdastNodes, to: Type) => Type | HastElement} applyData
- *   Honor the `data` of `from`, and generate an element instead of `node`.
- * @property {(node: MdastNodes, parent: MdastParents | null | undefined) => HastElementContent | Array<HastElementContent> | null | undefined} one
- *   Transform an mdast node to hast.
- * @property {(node: MdastNodes) => Array<HastElementContent>} all
- *   Transform the children of an mdast parent to hast.
- * @property {<Type extends HastContent>(nodes: Array<Type>, loose?: boolean | null | undefined) => Array<Type | HastText>} wrap
- *   Wrap `nodes` with line endings between each node, adds initial/final line endings when `loose`.
- * @property {(left: MdastNodeWithData | PositionLike | null | undefined, right: HastElementContent) => HastElementContent} augment
- *   Like `state` but lower-level and usable on non-elements.
- *   Deprecated: use `patch` and `applyData`.
- * @property {Array<string>} passThrough
- *   List of node types to pass through untouched (except for their children).
- *
- * @typedef Options
- *   Configuration (optional).
- * @property {boolean | null | undefined} [allowDangerousHtml=false]
- *   Whether to persist raw HTML in markdown in the hast tree.
- * @property {string | null | undefined} [clobberPrefix='user-content-']
- *   Prefix to use before the `id` attribute on footnotes to prevent it from
- *   *clobbering*.
- * @property {string | null | undefined} [footnoteBackLabel='Back to content']
- *   Label to use from backreferences back to their footnote call (affects
- *   screen readers).
- * @property {string | null | undefined} [footnoteLabel='Footnotes']
- *   Label to use for the footnotes section (affects screen readers).
- * @property {HastProperties | null | undefined} [footnoteLabelProperties={className: ['sr-only']}]
- *   Properties to use on the footnote label (note that `id: 'footnote-label'`
- *   is always added as footnote calls use it with `aria-describedby` to
- *   provide an accessible label).
- * @property {string | null | undefined} [footnoteLabelTagName='h2']
- *   Tag name to use for the footnote label.
- * @property {Handlers | null | undefined} [handlers]
- *   Extra handlers for nodes.
- * @property {Array<string> | null | undefined} [passThrough]
- *   List of custom mdast node types to pass through (keep) in hast (note that
- *   the node itself is passed, but eventual children are transformed).
- * @property {Handler | null | undefined} [unknownHandler]
- *   Handler for all unknown nodes.
- *
- * @typedef {Record<string, Handler>} Handlers
- *   Handle nodes.
- *
- * @typedef {HFunctionProps & HFunctionNoProps & HFields} State
- *   Info passed around.
- */
-
-
-
-
-
-
-
-const own = {}.hasOwnProperty
-
-/**
- * Create `state` from an mdast tree.
- *
- * @param {MdastNodes} tree
- *   mdast node to transform.
- * @param {Options | null | undefined} [options]
- *   Configuration.
- * @returns {State}
- *   `state` function.
- */
-function createState(tree, options) {
-  const settings = options || {}
-  const dangerous = settings.allowDangerousHtml || false
-  /** @type {Record<string, MdastFootnoteDefinition>} */
-  const footnoteById = {}
-
-  // To do: next major: add `options` to state, remove:
-  // `dangerous`, `clobberPrefix`, `footnoteLabel`, `footnoteLabelTagName`,
-  // `footnoteLabelProperties`, `footnoteBackLabel`, `passThrough`,
-  // `unknownHandler`.
-
-  // To do: next major: move to `state.options.allowDangerousHtml`.
-  state.dangerous = dangerous
-  // To do: next major: move to `state.options`.
-  state.clobberPrefix =
-    settings.clobberPrefix === undefined || settings.clobberPrefix === null
-      ? 'user-content-'
-      : settings.clobberPrefix
-  // To do: next major: move to `state.options`.
-  state.footnoteLabel = settings.footnoteLabel || 'Footnotes'
-  // To do: next major: move to `state.options`.
-  state.footnoteLabelTagName = settings.footnoteLabelTagName || 'h2'
-  // To do: next major: move to `state.options`.
-  state.footnoteLabelProperties = settings.footnoteLabelProperties || {
-    className: ['sr-only']
-  }
-  // To do: next major: move to `state.options`.
-  state.footnoteBackLabel = settings.footnoteBackLabel || 'Back to content'
-  // To do: next major: move to `state.options`.
-  state.unknownHandler = settings.unknownHandler
-  // To do: next major: move to `state.options`.
-  state.passThrough = settings.passThrough
-
-  state.handlers = {..._handlers_index_js__WEBPACK_IMPORTED_MODULE_1__/* .handlers */ .q, ...settings.handlers}
-
-  // To do: next major: replace utility with `definitionById` object, so we
-  // only walk once (as we need footnotes too).
-  state.definition = (0,mdast_util_definitions__WEBPACK_IMPORTED_MODULE_2__/* .definitions */ .C)(tree)
-  state.footnoteById = footnoteById
-  /** @type {Array<string>} */
-  state.footnoteOrder = []
-  /** @type {Record<string, number>} */
-  state.footnoteCounts = {}
-
-  state.patch = patch
-  state.applyData = applyData
-  state.one = oneBound
-  state.all = allBound
-  state.wrap = wrap
-  // To do: next major: remove `augment`.
-  state.augment = augment
-
-  ;(0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'footnoteDefinition', (definition) => {
-    const id = String(definition.identifier).toUpperCase()
-
-    // Mimick CM behavior of link definitions.
-    // See: <https://github.com/syntax-tree/mdast-util-definitions/blob/8290999/index.js#L26>.
-    if (!own.call(footnoteById, id)) {
-      footnoteById[id] = definition
-    }
-  })
-
-  // @ts-expect-error Hush, it’s fine!
-  return state
-
-  /**
-   * Finalise the created `right`, a hast node, from `left`, an mdast node.
-   *
-   * @param {MdastNodeWithData | PositionLike | null | undefined} left
-   * @param {HastElementContent} right
-   * @returns {HastElementContent}
-   */
-  /* c8 ignore start */
-  // To do: next major: remove.
-  function augment(left, right) {
-    // Handle `data.hName`, `data.hProperties, `data.hChildren`.
-    if (left && 'data' in left && left.data) {
-      /** @type {MdastData} */
-      const data = left.data
-
-      if (data.hName) {
-        if (right.type !== 'element') {
-          right = {
-            type: 'element',
-            tagName: '',
-            properties: {},
-            children: []
-          }
-        }
-
-        right.tagName = data.hName
-      }
-
-      if (right.type === 'element' && data.hProperties) {
-        right.properties = {...right.properties, ...data.hProperties}
-      }
-
-      if ('children' in right && right.children && data.hChildren) {
-        right.children = data.hChildren
-      }
-    }
-
-    if (left) {
-      const ctx = 'type' in left ? left : {position: left}
-
-      if (!(0,unist_util_generated__WEBPACK_IMPORTED_MODULE_3__/* .generated */ .o)(ctx)) {
-        // @ts-expect-error: fine.
-        right.position = {start: (0,unist_util_position__WEBPACK_IMPORTED_MODULE_4__/* .pointStart */ .Pk)(ctx), end: (0,unist_util_position__WEBPACK_IMPORTED_MODULE_4__/* .pointEnd */ .rb)(ctx)}
-      }
-    }
-
-    return right
-  }
-  /* c8 ignore stop */
-
-  /**
-   * Create an element for `node`.
-   *
-   * @type {HFunctionProps}
-   */
-  /* c8 ignore start */
-  // To do: next major: remove.
-  function state(node, tagName, props, children) {
-    if (Array.isArray(props)) {
-      children = props
-      props = {}
-    }
-
-    // @ts-expect-error augmenting an element yields an element.
-    return augment(node, {
-      type: 'element',
-      tagName,
-      properties: props || {},
-      children: children || []
-    })
-  }
-  /* c8 ignore stop */
-
-  /**
-   * Transform an mdast node into a hast node.
-   *
-   * @param {MdastNodes} node
-   *   mdast node.
-   * @param {MdastParents | null | undefined} [parent]
-   *   Parent of `node`.
-   * @returns {HastElementContent | Array<HastElementContent> | null | undefined}
-   *   Resulting hast node.
-   */
-  function oneBound(node, parent) {
-    // @ts-expect-error: that’s a state :)
-    return one(state, node, parent)
-  }
-
-  /**
-   * Transform the children of an mdast node into hast nodes.
-   *
-   * @param {MdastNodes} parent
-   *   mdast node to compile
-   * @returns {Array<HastElementContent>}
-   *   Resulting hast nodes.
-   */
-  function allBound(parent) {
-    // @ts-expect-error: that’s a state :)
-    return all(state, parent)
-  }
-}
-
-/**
- * Copy a node’s positional info.
- *
- * @param {MdastNodes} from
- *   mdast node to copy from.
- * @param {HastNodes} to
- *   hast node to copy into.
- * @returns {void}
- *   Nothing.
- */
-function patch(from, to) {
-  if (from.position) to.position = (0,unist_util_position__WEBPACK_IMPORTED_MODULE_4__/* .position */ .FK)(from)
-}
-
-/**
- * Honor the `data` of `from` and maybe generate an element instead of `to`.
- *
- * @template {HastNodes} Type
- *   Node type.
- * @param {MdastNodes} from
- *   mdast node to use data from.
- * @param {Type} to
- *   hast node to change.
- * @returns {Type | HastElement}
- *   Nothing.
- */
-function applyData(from, to) {
-  /** @type {Type | HastElement} */
-  let result = to
-
-  // Handle `data.hName`, `data.hProperties, `data.hChildren`.
-  if (from && from.data) {
-    const hName = from.data.hName
-    const hChildren = from.data.hChildren
-    const hProperties = from.data.hProperties
-
-    if (typeof hName === 'string') {
-      // Transforming the node resulted in an element with a different name
-      // than wanted:
-      if (result.type === 'element') {
-        result.tagName = hName
-      }
-      // Transforming the node resulted in a non-element, which happens for
-      // raw, text, and root nodes (unless custom handlers are passed).
-      // The intent is likely to keep the content around (otherwise: pass
-      // `hChildren`).
-      else {
-        result = {
-          type: 'element',
-          tagName: hName,
-          properties: {},
-          children: []
-        }
-
-        // To do: next major: take the children from the `root`, or inject the
-        // raw/text/comment or so into the element?
-        // if ('children' in node) {
-        //   // @ts-expect-error: assume `children` are allowed in elements.
-        //   result.children = node.children
-        // } else {
-        //   // @ts-expect-error: assume `node` is allowed in elements.
-        //   result.children.push(node)
-        // }
-      }
-    }
-
-    if (result.type === 'element' && hProperties) {
-      result.properties = {...result.properties, ...hProperties}
-    }
-
-    if (
-      'children' in result &&
-      result.children &&
-      hChildren !== null &&
-      hChildren !== undefined
-    ) {
-      // @ts-expect-error: assume valid children are defined.
-      result.children = hChildren
-    }
-  }
-
-  return result
-}
-
-/**
- * Transform an mdast node into a hast node.
- *
- * @param {State} state
- *   Info passed around.
- * @param {MdastNodes} node
- *   mdast node.
- * @param {MdastParents | null | undefined} [parent]
- *   Parent of `node`.
- * @returns {HastElementContent | Array<HastElementContent> | null | undefined}
- *   Resulting hast node.
- */
-// To do: next major: do not expose, keep bound.
-function one(state, node, parent) {
-  const type = node && node.type
-
-  // Fail on non-nodes.
-  if (!type) {
-    throw new Error('Expected node, got `' + node + '`')
-  }
-
-  if (own.call(state.handlers, type)) {
-    return state.handlers[type](state, node, parent)
-  }
-
-  if (state.passThrough && state.passThrough.includes(type)) {
-    // To do: next major: deep clone.
-    // @ts-expect-error: types of passed through nodes are expected to be added manually.
-    return 'children' in node ? {...node, children: all(state, node)} : node
-  }
-
-  if (state.unknownHandler) {
-    return state.unknownHandler(state, node, parent)
-  }
-
-  return defaultUnknownHandler(state, node)
-}
-
-/**
- * Transform the children of an mdast node into hast nodes.
- *
- * @param {State} state
- *   Info passed around.
- * @param {MdastNodes} parent
- *   mdast node to compile
- * @returns {Array<HastElementContent>}
- *   Resulting hast nodes.
- */
-// To do: next major: do not expose, keep bound.
-function all(state, parent) {
-  /** @type {Array<HastElementContent>} */
-  const values = []
-
-  if ('children' in parent) {
-    const nodes = parent.children
-    let index = -1
-    while (++index < nodes.length) {
-      const result = one(state, nodes[index], parent)
-
-      // To do: see if we van clean this? Can we merge texts?
-      if (result) {
-        if (index && nodes[index - 1].type === 'break') {
-          if (!Array.isArray(result) && result.type === 'text') {
-            result.value = result.value.replace(/^\s+/, '')
-          }
-
-          if (!Array.isArray(result) && result.type === 'element') {
-            const head = result.children[0]
-
-            if (head && head.type === 'text') {
-              head.value = head.value.replace(/^\s+/, '')
-            }
-          }
-        }
-
-        if (Array.isArray(result)) {
-          values.push(...result)
-        } else {
-          values.push(result)
-        }
-      }
-    }
-  }
-
-  return values
-}
-
-/**
- * Transform an unknown node.
- *
- * @param {State} state
- *   Info passed around.
- * @param {MdastNodes} node
- *   Unknown mdast node.
- * @returns {HastText | HastElement}
- *   Resulting hast node.
- */
-function defaultUnknownHandler(state, node) {
-  const data = node.data || {}
-  /** @type {HastText | HastElement} */
-  const result =
-    'value' in node &&
-    !(own.call(data, 'hProperties') || own.call(data, 'hChildren'))
-      ? {type: 'text', value: node.value}
-      : {
-          type: 'element',
-          tagName: 'div',
-          properties: {},
-          children: all(state, node)
-        }
-
-  state.patch(node, result)
-  return state.applyData(node, result)
-}
-
-/**
- * Wrap `nodes` with line endings between each node.
- *
- * @template {HastContent} Type
- *   Node type.
- * @param {Array<Type>} nodes
- *   List of nodes to wrap.
- * @param {boolean | null | undefined} [loose=false]
- *   Whether to add line endings at start and end.
- * @returns {Array<Type | HastText>}
- *   Wrapped nodes.
- */
-function wrap(nodes, loose) {
-  /** @type {Array<Type | HastText>} */
-  const result = []
-  let index = -1
-
-  if (loose) {
-    result.push({type: 'text', value: '\n'})
-  }
-
-  while (++index < nodes.length) {
-    if (index) result.push({type: 'text', value: '\n'})
-    result.push(nodes[index])
-  }
-
-  if (loose && nodes.length > 0) {
-    result.push({type: 'text', value: '\n'})
-  }
-
-  return result
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ }),
-
-/***/ 1510:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  F: () => (/* binding */ normalizeUri)
-});
-
-// UNUSED EXPORTS: sanitizeUri
-
-;// CONCATENATED MODULE: ../node_modules/micromark-util-character/lib/unicode-punctuation-regex.js
-// This module is generated by `script/`.
-//
-// CommonMark handles attention (emphasis, strong) markers based on what comes
-// before or after them.
-// One such difference is if those characters are Unicode punctuation.
-// This script is generated from the Unicode data.
-
-/**
- * Regular expression that matches a unicode punctuation character.
- */
-const unicodePunctuationRegex =
-  /[!-\/:-@\[-`\{-~\xA1\xA7\xAB\xB6\xB7\xBB\xBF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061D-\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u09FD\u0A76\u0AF0\u0C77\u0C84\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166E\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1B7D\u1B7E\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2010-\u2027\u2030-\u2043\u2045-\u2051\u2053-\u205E\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E4F\u2E52-\u2E5D\u3001-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]/
-
-;// CONCATENATED MODULE: ../node_modules/micromark-util-character/index.js
-/**
- * @typedef {import('micromark-util-types').Code} Code
- */
-
-
-
-/**
- * Check whether the character code represents an ASCII alpha (`a` through `z`,
- * case insensitive).
- *
- * An **ASCII alpha** is an ASCII upper alpha or ASCII lower alpha.
- *
- * An **ASCII upper alpha** is a character in the inclusive range U+0041 (`A`)
- * to U+005A (`Z`).
- *
- * An **ASCII lower alpha** is a character in the inclusive range U+0061 (`a`)
- * to U+007A (`z`).
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const asciiAlpha = regexCheck(/[A-Za-z]/)
-
-/**
- * Check whether the character code represents an ASCII alphanumeric (`a`
- * through `z`, case insensitive, or `0` through `9`).
- *
- * An **ASCII alphanumeric** is an ASCII digit (see `asciiDigit`) or ASCII alpha
- * (see `asciiAlpha`).
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const asciiAlphanumeric = regexCheck(/[\dA-Za-z]/)
-
-/**
- * Check whether the character code represents an ASCII atext.
- *
- * atext is an ASCII alphanumeric (see `asciiAlphanumeric`), or a character in
- * the inclusive ranges U+0023 NUMBER SIGN (`#`) to U+0027 APOSTROPHE (`'`),
- * U+002A ASTERISK (`*`), U+002B PLUS SIGN (`+`), U+002D DASH (`-`), U+002F
- * SLASH (`/`), U+003D EQUALS TO (`=`), U+003F QUESTION MARK (`?`), U+005E
- * CARET (`^`) to U+0060 GRAVE ACCENT (`` ` ``), or U+007B LEFT CURLY BRACE
- * (`{`) to U+007E TILDE (`~`).
- *
- * See:
- * **\[RFC5322]**:
- * [Internet Message Format](https://tools.ietf.org/html/rfc5322).
- * P. Resnick.
- * IETF.
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const asciiAtext = regexCheck(/[#-'*+\--9=?A-Z^-~]/)
-
-/**
- * Check whether a character code is an ASCII control character.
- *
- * An **ASCII control** is a character in the inclusive range U+0000 NULL (NUL)
- * to U+001F (US), or U+007F (DEL).
- *
- * @param {Code} code
- *   Code.
- * @returns {boolean}
- *   Whether it matches.
- */
-function asciiControl(code) {
-  return (
-    // Special whitespace codes (which have negative values), C0 and Control
-    // character DEL
-    code !== null && (code < 32 || code === 127)
-  )
-}
-
-/**
- * Check whether the character code represents an ASCII digit (`0` through `9`).
- *
- * An **ASCII digit** is a character in the inclusive range U+0030 (`0`) to
- * U+0039 (`9`).
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const asciiDigit = regexCheck(/\d/)
-
-/**
- * Check whether the character code represents an ASCII hex digit (`a` through
- * `f`, case insensitive, or `0` through `9`).
- *
- * An **ASCII hex digit** is an ASCII digit (see `asciiDigit`), ASCII upper hex
- * digit, or an ASCII lower hex digit.
- *
- * An **ASCII upper hex digit** is a character in the inclusive range U+0041
- * (`A`) to U+0046 (`F`).
- *
- * An **ASCII lower hex digit** is a character in the inclusive range U+0061
- * (`a`) to U+0066 (`f`).
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const asciiHexDigit = regexCheck(/[\dA-Fa-f]/)
-
-/**
- * Check whether the character code represents ASCII punctuation.
- *
- * An **ASCII punctuation** is a character in the inclusive ranges U+0021
- * EXCLAMATION MARK (`!`) to U+002F SLASH (`/`), U+003A COLON (`:`) to U+0040 AT
- * SIGN (`@`), U+005B LEFT SQUARE BRACKET (`[`) to U+0060 GRAVE ACCENT
- * (`` ` ``), or U+007B LEFT CURLY BRACE (`{`) to U+007E TILDE (`~`).
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const asciiPunctuation = regexCheck(/[!-/:-@[-`{-~]/)
-
-/**
- * Check whether a character code is a markdown line ending.
- *
- * A **markdown line ending** is the virtual characters M-0003 CARRIAGE RETURN
- * LINE FEED (CRLF), M-0004 LINE FEED (LF) and M-0005 CARRIAGE RETURN (CR).
- *
- * In micromark, the actual character U+000A LINE FEED (LF) and U+000D CARRIAGE
- * RETURN (CR) are replaced by these virtual characters depending on whether
- * they occurred together.
- *
- * @param {Code} code
- *   Code.
- * @returns {boolean}
- *   Whether it matches.
- */
-function markdownLineEnding(code) {
-  return code !== null && code < -2
-}
-
-/**
- * Check whether a character code is a markdown line ending (see
- * `markdownLineEnding`) or markdown space (see `markdownSpace`).
- *
- * @param {Code} code
- *   Code.
- * @returns {boolean}
- *   Whether it matches.
- */
-function markdownLineEndingOrSpace(code) {
-  return code !== null && (code < 0 || code === 32)
-}
-
-/**
- * Check whether a character code is a markdown space.
- *
- * A **markdown space** is the concrete character U+0020 SPACE (SP) and the
- * virtual characters M-0001 VIRTUAL SPACE (VS) and M-0002 HORIZONTAL TAB (HT).
- *
- * In micromark, the actual character U+0009 CHARACTER TABULATION (HT) is
- * replaced by one M-0002 HORIZONTAL TAB (HT) and between 0 and 3 M-0001 VIRTUAL
- * SPACE (VS) characters, depending on the column at which the tab occurred.
- *
- * @param {Code} code
- *   Code.
- * @returns {boolean}
- *   Whether it matches.
- */
-function markdownSpace(code) {
-  return code === -2 || code === -1 || code === 32
-}
-
-// Size note: removing ASCII from the regex and using `asciiPunctuation` here
-// In fact adds to the bundle size.
-/**
- * Check whether the character code represents Unicode punctuation.
- *
- * A **Unicode punctuation** is a character in the Unicode `Pc` (Punctuation,
- * Connector), `Pd` (Punctuation, Dash), `Pe` (Punctuation, Close), `Pf`
- * (Punctuation, Final quote), `Pi` (Punctuation, Initial quote), `Po`
- * (Punctuation, Other), or `Ps` (Punctuation, Open) categories, or an ASCII
- * punctuation (see `asciiPunctuation`).
- *
- * See:
- * **\[UNICODE]**:
- * [The Unicode Standard](https://www.unicode.org/versions/).
- * Unicode Consortium.
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const unicodePunctuation = regexCheck(unicodePunctuationRegex)
-
-/**
- * Check whether the character code represents Unicode whitespace.
- *
- * Note that this does handle micromark specific markdown whitespace characters.
- * See `markdownLineEndingOrSpace` to check that.
- *
- * A **Unicode whitespace** is a character in the Unicode `Zs` (Separator,
- * Space) category, or U+0009 CHARACTER TABULATION (HT), U+000A LINE FEED (LF),
- * U+000C (FF), or U+000D CARRIAGE RETURN (CR) (**\[UNICODE]**).
- *
- * See:
- * **\[UNICODE]**:
- * [The Unicode Standard](https://www.unicode.org/versions/).
- * Unicode Consortium.
- *
- * @param code
- *   Code.
- * @returns
- *   Whether it matches.
- */
-const unicodeWhitespace = regexCheck(/\s/)
-
-/**
- * Create a code check from a regex.
- *
- * @param {RegExp} regex
- * @returns {(code: Code) => boolean}
- */
-function regexCheck(regex) {
-  return check
-
-  /**
-   * Check whether a code matches the bound regex.
-   *
-   * @param {Code} code
-   *   Character code.
-   * @returns {boolean}
-   *   Whether the character code matches the bound regex.
-   */
-  function check(code) {
-    return code !== null && regex.test(String.fromCharCode(code))
-  }
-}
-
-;// CONCATENATED MODULE: ../node_modules/micromark-util-sanitize-uri/index.js
-
-
-/**
- * Make a value safe for injection as a URL.
- *
- * This encodes unsafe characters with percent-encoding and skips already
- * encoded sequences (see `normalizeUri`).
- * Further unsafe characters are encoded as character references (see
- * `micromark-util-encode`).
- *
- * A regex of allowed protocols can be given, in which case the URL is
- * sanitized.
- * For example, `/^(https?|ircs?|mailto|xmpp)$/i` can be used for `a[href]`, or
- * `/^https?$/i` for `img[src]` (this is what `github.com` allows).
- * If the URL includes an unknown protocol (one not matched by `protocol`, such
- * as a dangerous example, `javascript:`), the value is ignored.
- *
- * @param {string | undefined} url
- *   URI to sanitize.
- * @param {RegExp | null | undefined} [protocol]
- *   Allowed protocols.
- * @returns {string}
- *   Sanitized URI.
- */
-function sanitizeUri(url, protocol) {
-  const value = encode(normalizeUri(url || ''))
-  if (!protocol) {
-    return value
-  }
-  const colon = value.indexOf(':')
-  const questionMark = value.indexOf('?')
-  const numberSign = value.indexOf('#')
-  const slash = value.indexOf('/')
-  if (
-    // If there is no protocol, it’s relative.
-    colon < 0 ||
-    // If the first colon is after a `?`, `#`, or `/`, it’s not a protocol.
-    (slash > -1 && colon > slash) ||
-    (questionMark > -1 && colon > questionMark) ||
-    (numberSign > -1 && colon > numberSign) ||
-    // It is a protocol, it should be allowed.
-    protocol.test(value.slice(0, colon))
-  ) {
-    return value
-  }
-  return ''
-}
-
-/**
- * Normalize a URL.
- *
- * Encode unsafe characters with percent-encoding, skipping already encoded
- * sequences.
- *
- * @param {string} value
- *   URI to normalize.
- * @returns {string}
- *   Normalized URI.
- */
-function normalizeUri(value) {
-  /** @type {Array<string>} */
-  const result = []
-  let index = -1
-  let start = 0
-  let skip = 0
-  while (++index < value.length) {
-    const code = value.charCodeAt(index)
-    /** @type {string} */
-    let replace = ''
-
-    // A correct percent encoded value.
-    if (
-      code === 37 &&
-      asciiAlphanumeric(value.charCodeAt(index + 1)) &&
-      asciiAlphanumeric(value.charCodeAt(index + 2))
-    ) {
-      skip = 2
-    }
-    // ASCII.
-    else if (code < 128) {
-      if (!/[!#$&-;=?-Z_a-z~]/.test(String.fromCharCode(code))) {
-        replace = String.fromCharCode(code)
-      }
-    }
-    // Astral.
-    else if (code > 55295 && code < 57344) {
-      const next = value.charCodeAt(index + 1)
-
-      // A correct surrogate pair.
-      if (code < 56320 && next > 56319 && next < 57344) {
-        replace = String.fromCharCode(code, next)
-        skip = 1
-      }
-      // Lone surrogate.
-      else {
-        replace = '\uFFFD'
-      }
-    }
-    // Unicode.
-    else {
-      replace = String.fromCharCode(code)
-    }
-    if (replace) {
-      result.push(value.slice(start, index), encodeURIComponent(replace))
-      start = index + skip + 1
-      replace = ''
-    }
-    if (skip) {
-      index += skip
-      skip = 0
-    }
-  }
-  return result.join('') + value.slice(start)
-}
-
-
-/***/ }),
-
-/***/ 1807:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  l: () => (/* binding */ unified)
-});
-
-;// CONCATENATED MODULE: ../node_modules/bail/index.js
-/**
- * Throw a given error.
- *
- * @param {Error|null|undefined} [error]
- *   Maybe error.
- * @returns {asserts error is null|undefined}
- */
-function bail(error) {
-  if (error) {
-    throw error
-  }
-}
-
-// EXTERNAL MODULE: ../node_modules/is-buffer/index.js
-var is_buffer = __webpack_require__(8809);
-// EXTERNAL MODULE: ../node_modules/extend/index.js
-var extend = __webpack_require__(229);
-;// CONCATENATED MODULE: ../node_modules/is-plain-obj/index.js
-function isPlainObject(value) {
-	if (typeof value !== 'object' || value === null) {
-		return false;
-	}
-
-	const prototype = Object.getPrototypeOf(value);
-	return (prototype === null || prototype === Object.prototype || Object.getPrototypeOf(prototype) === null) && !(Symbol.toStringTag in value) && !(Symbol.iterator in value);
-}
-
-;// CONCATENATED MODULE: ../node_modules/trough/index.js
-/**
- * @typedef {(error?: Error|null|undefined, ...output: Array<any>) => void} Callback
- * @typedef {(...input: Array<any>) => any} Middleware
- *
- * @typedef {(...input: Array<any>) => void} Run
- *   Call all middleware.
- * @typedef {(fn: Middleware) => Pipeline} Use
- *   Add `fn` (middleware) to the list.
- * @typedef {{run: Run, use: Use}} Pipeline
- *   Middleware.
- */
-
-/**
- * Create new middleware.
- *
- * @returns {Pipeline}
- */
-function trough() {
-  /** @type {Array<Middleware>} */
-  const fns = []
-  /** @type {Pipeline} */
-  const pipeline = {run, use}
-
-  return pipeline
-
-  /** @type {Run} */
-  function run(...values) {
-    let middlewareIndex = -1
-    /** @type {Callback} */
-    const callback = values.pop()
-
-    if (typeof callback !== 'function') {
-      throw new TypeError('Expected function as last argument, not ' + callback)
-    }
-
-    next(null, ...values)
-
-    /**
-     * Run the next `fn`, or we’re done.
-     *
-     * @param {Error|null|undefined} error
-     * @param {Array<any>} output
-     */
-    function next(error, ...output) {
-      const fn = fns[++middlewareIndex]
-      let index = -1
-
-      if (error) {
-        callback(error)
-        return
-      }
-
-      // Copy non-nullish input into values.
-      while (++index < values.length) {
-        if (output[index] === null || output[index] === undefined) {
-          output[index] = values[index]
-        }
-      }
-
-      // Save the newly created `output` for the next call.
-      values = output
-
-      // Next or done.
-      if (fn) {
-        wrap(fn, next)(...output)
-      } else {
-        callback(null, ...output)
-      }
-    }
-  }
-
-  /** @type {Use} */
-  function use(middelware) {
-    if (typeof middelware !== 'function') {
-      throw new TypeError(
-        'Expected `middelware` to be a function, not ' + middelware
-      )
-    }
-
-    fns.push(middelware)
-    return pipeline
-  }
-}
-
-/**
- * Wrap `middleware`.
- * Can be sync or async; return a promise, receive a callback, or return new
- * values and errors.
- *
- * @param {Middleware} middleware
- * @param {Callback} callback
- */
-function wrap(middleware, callback) {
-  /** @type {boolean} */
-  let called
-
-  return wrapped
-
-  /**
-   * Call `middleware`.
-   * @this {any}
-   * @param {Array<any>} parameters
-   * @returns {void}
-   */
-  function wrapped(...parameters) {
-    const fnExpectsCallback = middleware.length > parameters.length
-    /** @type {any} */
-    let result
-
-    if (fnExpectsCallback) {
-      parameters.push(done)
-    }
-
-    try {
-      result = middleware.apply(this, parameters)
-    } catch (error) {
-      const exception = /** @type {Error} */ (error)
-
-      // Well, this is quite the pickle.
-      // `middleware` received a callback and called it synchronously, but that
-      // threw an error.
-      // The only thing left to do is to throw the thing instead.
-      if (fnExpectsCallback && called) {
-        throw exception
-      }
-
-      return done(exception)
-    }
-
-    if (!fnExpectsCallback) {
-      if (result instanceof Promise) {
-        result.then(then, done)
-      } else if (result instanceof Error) {
-        done(result)
-      } else {
-        then(result)
-      }
-    }
-  }
-
-  /**
-   * Call `callback`, only once.
-   * @type {Callback}
-   */
-  function done(error, ...output) {
-    if (!called) {
-      called = true
-      callback(error, ...output)
-    }
-  }
-
-  /**
-   * Call `done` with one value.
-   *
-   * @param {any} [value]
-   */
-  function then(value) {
-    done(null, value)
-  }
-}
-
-// EXTERNAL MODULE: ../node_modules/vfile/lib/index.js + 4 modules
-var lib = __webpack_require__(4372);
-;// CONCATENATED MODULE: ../node_modules/unified/lib/index.js
-/**
- * @typedef {import('unist').Node} Node
- * @typedef {import('vfile').VFileCompatible} VFileCompatible
- * @typedef {import('vfile').VFileValue} VFileValue
- * @typedef {import('..').Processor} Processor
- * @typedef {import('..').Plugin} Plugin
- * @typedef {import('..').Preset} Preset
- * @typedef {import('..').Pluggable} Pluggable
- * @typedef {import('..').PluggableList} PluggableList
- * @typedef {import('..').Transformer} Transformer
- * @typedef {import('..').Parser} Parser
- * @typedef {import('..').Compiler} Compiler
- * @typedef {import('..').RunCallback} RunCallback
- * @typedef {import('..').ProcessCallback} ProcessCallback
- *
- * @typedef Context
- * @property {Node} tree
- * @property {VFile} file
- */
-
-
-
-
-
-
-
-
-// Expose a frozen processor.
-const unified = base().freeze()
-
-const own = {}.hasOwnProperty
-
-// Function to create the first processor.
-/**
- * @returns {Processor}
- */
-function base() {
-  const transformers = trough()
-  /** @type {Processor['attachers']} */
-  const attachers = []
-  /** @type {Record<string, unknown>} */
-  let namespace = {}
-  /** @type {boolean|undefined} */
-  let frozen
-  let freezeIndex = -1
-
-  // Data management.
-  // @ts-expect-error: overloads are handled.
-  processor.data = data
-  processor.Parser = undefined
-  processor.Compiler = undefined
-
-  // Lock.
-  processor.freeze = freeze
-
-  // Plugins.
-  processor.attachers = attachers
-  // @ts-expect-error: overloads are handled.
-  processor.use = use
-
-  // API.
-  processor.parse = parse
-  processor.stringify = stringify
-  // @ts-expect-error: overloads are handled.
-  processor.run = run
-  processor.runSync = runSync
-  // @ts-expect-error: overloads are handled.
-  processor.process = process
-  processor.processSync = processSync
-
-  // Expose.
-  return processor
-
-  // Create a new processor based on the processor in the current scope.
-  /** @type {Processor} */
-  function processor() {
-    const destination = base()
-    let index = -1
-
-    while (++index < attachers.length) {
-      destination.use(...attachers[index])
-    }
-
-    destination.data(extend(true, {}, namespace))
-
-    return destination
-  }
-
-  /**
-   * @param {string|Record<string, unknown>} [key]
-   * @param {unknown} [value]
-   * @returns {unknown}
-   */
-  function data(key, value) {
-    if (typeof key === 'string') {
-      // Set `key`.
-      if (arguments.length === 2) {
-        assertUnfrozen('data', frozen)
-        namespace[key] = value
-        return processor
-      }
-
-      // Get `key`.
-      return (own.call(namespace, key) && namespace[key]) || null
-    }
-
-    // Set space.
-    if (key) {
-      assertUnfrozen('data', frozen)
-      namespace = key
-      return processor
-    }
-
-    // Get space.
-    return namespace
-  }
-
-  /** @type {Processor['freeze']} */
-  function freeze() {
-    if (frozen) {
-      return processor
-    }
-
-    while (++freezeIndex < attachers.length) {
-      const [attacher, ...options] = attachers[freezeIndex]
-
-      if (options[0] === false) {
-        continue
-      }
-
-      if (options[0] === true) {
-        options[0] = undefined
-      }
-
-      /** @type {Transformer|void} */
-      const transformer = attacher.call(processor, ...options)
-
-      if (typeof transformer === 'function') {
-        transformers.use(transformer)
-      }
-    }
-
-    frozen = true
-    freezeIndex = Number.POSITIVE_INFINITY
-
-    return processor
-  }
-
-  /**
-   * @param {Pluggable|null|undefined} [value]
-   * @param {...unknown} options
-   * @returns {Processor}
-   */
-  function use(value, ...options) {
-    /** @type {Record<string, unknown>|undefined} */
-    let settings
-
-    assertUnfrozen('use', frozen)
-
-    if (value === null || value === undefined) {
-      // Empty.
-    } else if (typeof value === 'function') {
-      addPlugin(value, ...options)
-    } else if (typeof value === 'object') {
-      if (Array.isArray(value)) {
-        addList(value)
-      } else {
-        addPreset(value)
-      }
-    } else {
-      throw new TypeError('Expected usable value, not `' + value + '`')
-    }
-
-    if (settings) {
-      namespace.settings = Object.assign(namespace.settings || {}, settings)
-    }
-
-    return processor
-
-    /**
-     * @param {import('..').Pluggable<unknown[]>} value
-     * @returns {void}
-     */
-    function add(value) {
-      if (typeof value === 'function') {
-        addPlugin(value)
-      } else if (typeof value === 'object') {
-        if (Array.isArray(value)) {
-          const [plugin, ...options] = value
-          addPlugin(plugin, ...options)
-        } else {
-          addPreset(value)
-        }
-      } else {
-        throw new TypeError('Expected usable value, not `' + value + '`')
-      }
-    }
-
-    /**
-     * @param {Preset} result
-     * @returns {void}
-     */
-    function addPreset(result) {
-      addList(result.plugins)
-
-      if (result.settings) {
-        settings = Object.assign(settings || {}, result.settings)
-      }
-    }
-
-    /**
-     * @param {PluggableList|null|undefined} [plugins]
-     * @returns {void}
-     */
-    function addList(plugins) {
-      let index = -1
-
-      if (plugins === null || plugins === undefined) {
-        // Empty.
-      } else if (Array.isArray(plugins)) {
-        while (++index < plugins.length) {
-          const thing = plugins[index]
-          add(thing)
-        }
-      } else {
-        throw new TypeError('Expected a list of plugins, not `' + plugins + '`')
-      }
-    }
-
-    /**
-     * @param {Plugin} plugin
-     * @param {...unknown} [value]
-     * @returns {void}
-     */
-    function addPlugin(plugin, value) {
-      let index = -1
-      /** @type {Processor['attachers'][number]|undefined} */
-      let entry
-
-      while (++index < attachers.length) {
-        if (attachers[index][0] === plugin) {
-          entry = attachers[index]
-          break
-        }
-      }
-
-      if (entry) {
-        if (isPlainObject(entry[1]) && isPlainObject(value)) {
-          value = extend(true, entry[1], value)
-        }
-
-        entry[1] = value
-      } else {
-        // @ts-expect-error: fine.
-        attachers.push([...arguments])
-      }
-    }
-  }
-
-  /** @type {Processor['parse']} */
-  function parse(doc) {
-    processor.freeze()
-    const file = vfile(doc)
-    const Parser = processor.Parser
-    assertParser('parse', Parser)
-
-    if (newable(Parser, 'parse')) {
-      // @ts-expect-error: `newable` checks this.
-      return new Parser(String(file), file).parse()
-    }
-
-    // @ts-expect-error: `newable` checks this.
-    return Parser(String(file), file) // eslint-disable-line new-cap
-  }
-
-  /** @type {Processor['stringify']} */
-  function stringify(node, doc) {
-    processor.freeze()
-    const file = vfile(doc)
-    const Compiler = processor.Compiler
-    assertCompiler('stringify', Compiler)
-    assertNode(node)
-
-    if (newable(Compiler, 'compile')) {
-      // @ts-expect-error: `newable` checks this.
-      return new Compiler(node, file).compile()
-    }
-
-    // @ts-expect-error: `newable` checks this.
-    return Compiler(node, file) // eslint-disable-line new-cap
-  }
-
-  /**
-   * @param {Node} node
-   * @param {VFileCompatible|RunCallback} [doc]
-   * @param {RunCallback} [callback]
-   * @returns {Promise<Node>|void}
-   */
-  function run(node, doc, callback) {
-    assertNode(node)
-    processor.freeze()
-
-    if (!callback && typeof doc === 'function') {
-      callback = doc
-      doc = undefined
-    }
-
-    if (!callback) {
-      return new Promise(executor)
-    }
-
-    executor(null, callback)
-
-    /**
-     * @param {null|((node: Node) => void)} resolve
-     * @param {(error: Error) => void} reject
-     * @returns {void}
-     */
-    function executor(resolve, reject) {
-      // @ts-expect-error: `doc` can’t be a callback anymore, we checked.
-      transformers.run(node, vfile(doc), done)
-
-      /**
-       * @param {Error|null} error
-       * @param {Node} tree
-       * @param {VFile} file
-       * @returns {void}
-       */
-      function done(error, tree, file) {
-        tree = tree || node
-        if (error) {
-          reject(error)
-        } else if (resolve) {
-          resolve(tree)
-        } else {
-          // @ts-expect-error: `callback` is defined if `resolve` is not.
-          callback(null, tree, file)
-        }
-      }
-    }
-  }
-
-  /** @type {Processor['runSync']} */
-  function runSync(node, file) {
-    /** @type {Node|undefined} */
-    let result
-    /** @type {boolean|undefined} */
-    let complete
-
-    processor.run(node, file, done)
-
-    assertDone('runSync', 'run', complete)
-
-    // @ts-expect-error: we either bailed on an error or have a tree.
-    return result
-
-    /**
-     * @param {Error|null} [error]
-     * @param {Node} [tree]
-     * @returns {void}
-     */
-    function done(error, tree) {
-      bail(error)
-      result = tree
-      complete = true
-    }
-  }
-
-  /**
-   * @param {VFileCompatible} doc
-   * @param {ProcessCallback} [callback]
-   * @returns {Promise<VFile>|undefined}
-   */
-  function process(doc, callback) {
-    processor.freeze()
-    assertParser('process', processor.Parser)
-    assertCompiler('process', processor.Compiler)
-
-    if (!callback) {
-      return new Promise(executor)
-    }
-
-    executor(null, callback)
-
-    /**
-     * @param {null|((file: VFile) => void)} resolve
-     * @param {(error?: Error|null|undefined) => void} reject
-     * @returns {void}
-     */
-    function executor(resolve, reject) {
-      const file = vfile(doc)
-
-      processor.run(processor.parse(file), file, (error, tree, file) => {
-        if (error || !tree || !file) {
-          done(error)
-        } else {
-          /** @type {unknown} */
-          const result = processor.stringify(tree, file)
-
-          if (result === undefined || result === null) {
-            // Empty.
-          } else if (looksLikeAVFileValue(result)) {
-            file.value = result
-          } else {
-            file.result = result
-          }
-
-          done(error, file)
-        }
-      })
-
-      /**
-       * @param {Error|null|undefined} [error]
-       * @param {VFile|undefined} [file]
-       * @returns {void}
-       */
-      function done(error, file) {
-        if (error || !file) {
-          reject(error)
-        } else if (resolve) {
-          resolve(file)
-        } else {
-          // @ts-expect-error: `callback` is defined if `resolve` is not.
-          callback(null, file)
-        }
-      }
-    }
-  }
-
-  /** @type {Processor['processSync']} */
-  function processSync(doc) {
-    /** @type {boolean|undefined} */
-    let complete
-
-    processor.freeze()
-    assertParser('processSync', processor.Parser)
-    assertCompiler('processSync', processor.Compiler)
-
-    const file = vfile(doc)
-
-    processor.process(file, done)
-
-    assertDone('processSync', 'process', complete)
-
-    return file
-
-    /**
-     * @param {Error|null|undefined} [error]
-     * @returns {void}
-     */
-    function done(error) {
-      complete = true
-      bail(error)
-    }
-  }
-}
-
-/**
- * Check if `value` is a constructor.
- *
- * @param {unknown} value
- * @param {string} name
- * @returns {boolean}
- */
-function newable(value, name) {
-  return (
-    typeof value === 'function' &&
-    // Prototypes do exist.
-    // type-coverage:ignore-next-line
-    value.prototype &&
-    // A function with keys in its prototype is probably a constructor.
-    // Classes’ prototype methods are not enumerable, so we check if some value
-    // exists in the prototype.
-    // type-coverage:ignore-next-line
-    (keys(value.prototype) || name in value.prototype)
-  )
-}
-
-/**
- * Check if `value` is an object with keys.
- *
- * @param {Record<string, unknown>} value
- * @returns {boolean}
- */
-function keys(value) {
-  /** @type {string} */
-  let key
-
-  for (key in value) {
-    if (own.call(value, key)) {
-      return true
-    }
-  }
-
-  return false
-}
-
-/**
- * Assert a parser is available.
- *
- * @param {string} name
- * @param {unknown} value
- * @returns {asserts value is Parser}
- */
-function assertParser(name, value) {
-  if (typeof value !== 'function') {
-    throw new TypeError('Cannot `' + name + '` without `Parser`')
-  }
-}
-
-/**
- * Assert a compiler is available.
- *
- * @param {string} name
- * @param {unknown} value
- * @returns {asserts value is Compiler}
- */
-function assertCompiler(name, value) {
-  if (typeof value !== 'function') {
-    throw new TypeError('Cannot `' + name + '` without `Compiler`')
-  }
-}
-
-/**
- * Assert the processor is not frozen.
- *
- * @param {string} name
- * @param {unknown} frozen
- * @returns {asserts frozen is false}
- */
-function assertUnfrozen(name, frozen) {
-  if (frozen) {
-    throw new Error(
-      'Cannot call `' +
-        name +
-        '` on a frozen processor.\nCreate a new processor first, by calling it: use `processor()` instead of `processor`.'
-    )
-  }
-}
-
-/**
- * Assert `node` is a unist node.
- *
- * @param {unknown} node
- * @returns {asserts node is Node}
- */
-function assertNode(node) {
-  // `isPlainObj` unfortunately uses `any` instead of `unknown`.
-  // type-coverage:ignore-next-line
-  if (!isPlainObject(node) || typeof node.type !== 'string') {
-    throw new TypeError('Expected node, got `' + node + '`')
-    // Fine.
-  }
-}
-
-/**
- * Assert that `complete` is `true`.
- *
- * @param {string} name
- * @param {string} asyncName
- * @param {unknown} complete
- * @returns {asserts complete is true}
- */
-function assertDone(name, asyncName, complete) {
-  if (!complete) {
-    throw new Error(
-      '`' + name + '` finished async. Use `' + asyncName + '` instead'
-    )
-  }
-}
-
-/**
- * @param {VFileCompatible} [value]
- * @returns {VFile}
- */
-function vfile(value) {
-  return looksLikeAVFile(value) ? value : new lib/* VFile */.k(value)
-}
-
-/**
- * @param {VFileCompatible} [value]
- * @returns {value is VFile}
- */
-function looksLikeAVFile(value) {
-  return Boolean(
-    value &&
-      typeof value === 'object' &&
-      'message' in value &&
-      'messages' in value
-  )
-}
-
-/**
- * @param {unknown} [value]
- * @returns {value is VFileValue}
- */
-function looksLikeAVFileValue(value) {
-  return typeof value === 'string' || is_buffer(value)
-}
-
-
-/***/ }),
-
-/***/ 5194:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   o: () => (/* binding */ generated)
-/* harmony export */ });
-/**
- * @typedef PointLike
- * @property {number | null | undefined} [line]
- * @property {number | null | undefined} [column]
- * @property {number | null | undefined} [offset]
- *
- * @typedef PositionLike
- * @property {PointLike | null | undefined} [start]
- * @property {PointLike | null | undefined} [end]
- *
- * @typedef NodeLike
- * @property {PositionLike | null | undefined} [position]
- */
-
-/**
- * Check if `node` is generated.
- *
- * @param {NodeLike | null | undefined} [node]
- *   Node to check.
- * @returns {boolean}
- *   Whether `node` is generated (does not have positional info).
- */
-function generated(node) {
-  return (
-    !node ||
-    !node.position ||
-    !node.position.start ||
-    !node.position.start.line ||
-    !node.position.start.column ||
-    !node.position.end ||
-    !node.position.end.line ||
-    !node.position.end.column
-  )
-}
-
-
-/***/ }),
-
-/***/ 4129:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   FK: () => (/* binding */ position),
-/* harmony export */   Pk: () => (/* binding */ pointStart),
-/* harmony export */   rb: () => (/* binding */ pointEnd)
-/* harmony export */ });
-/**
- * @typedef {import('unist').Position} Position
- * @typedef {import('unist').Node} Node
- * @typedef {import('unist').Point} Point
- */
-
-/**
- * @typedef NodeLike
- * @property {string} type
- * @property {PositionLike | null | undefined} [position]
- *
- * @typedef PositionLike
- * @property {PointLike | null | undefined} [start]
- * @property {PointLike | null | undefined} [end]
- *
- * @typedef PointLike
- * @property {number | null | undefined} [line]
- * @property {number | null | undefined} [column]
- * @property {number | null | undefined} [offset]
- */
-
-/**
- * Get the starting point of `node`.
- *
- * @param node
- *   Node.
- * @returns
- *   Point.
- */
-const pointStart = point('start')
-
-/**
- * Get the ending point of `node`.
- *
- * @param node
- *   Node.
- * @returns
- *   Point.
- */
-const pointEnd = point('end')
-
-/**
- * Get the positional info of `node`.
- *
- * @param {NodeLike | Node | null | undefined} [node]
- *   Node.
- * @returns {Position}
- *   Position.
- */
-function position(node) {
-  return {start: pointStart(node), end: pointEnd(node)}
-}
-
-/**
- * Get the positional info of `node`.
- *
- * @param {'start' | 'end'} type
- *   Side.
- * @returns
- *   Getter.
- */
-function point(type) {
-  return point
-
-  /**
-   * Get the point info of `node` at a bound side.
-   *
-   * @param {NodeLike | Node | null | undefined} [node]
-   * @returns {Point}
-   */
-  function point(node) {
-    const point = (node && node.position && node.position[type]) || {}
-
-    // To do: next major: don’t return points when invalid.
-    return {
-      // @ts-expect-error: in practice, null is allowed.
-      line: point.line || null,
-      // @ts-expect-error: in practice, null is allowed.
-      column: point.column || null,
-      // @ts-expect-error: in practice, null is allowed.
-      offset: point.offset > -1 ? point.offset : null
-    }
-  }
-}
-
-
-/***/ }),
-
-/***/ 4372:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  k: () => (/* binding */ VFile)
-});
-
-// EXTERNAL MODULE: ../node_modules/is-buffer/index.js
-var is_buffer = __webpack_require__(8809);
-;// CONCATENATED MODULE: ../node_modules/unist-util-stringify-position/lib/index.js
-/**
- * @typedef {import('unist').Node} Node
- * @typedef {import('unist').Point} Point
- * @typedef {import('unist').Position} Position
- */
-
-/**
- * @typedef NodeLike
- * @property {string} type
- * @property {PositionLike | null | undefined} [position]
- *
- * @typedef PositionLike
- * @property {PointLike | null | undefined} [start]
- * @property {PointLike | null | undefined} [end]
- *
- * @typedef PointLike
- * @property {number | null | undefined} [line]
- * @property {number | null | undefined} [column]
- * @property {number | null | undefined} [offset]
- */
-
-/**
- * Serialize the positional info of a point, position (start and end points),
- * or node.
- *
- * @param {Node | NodeLike | Position | PositionLike | Point | PointLike | null | undefined} [value]
- *   Node, position, or point.
- * @returns {string}
- *   Pretty printed positional info of a node (`string`).
- *
- *   In the format of a range `ls:cs-le:ce` (when given `node` or `position`)
- *   or a point `l:c` (when given `point`), where `l` stands for line, `c` for
- *   column, `s` for `start`, and `e` for end.
- *   An empty string (`''`) is returned if the given value is neither `node`,
- *   `position`, nor `point`.
- */
-function stringifyPosition(value) {
-  // Nothing.
-  if (!value || typeof value !== 'object') {
-    return ''
-  }
-
-  // Node.
-  if ('position' in value || 'type' in value) {
-    return position(value.position)
-  }
-
-  // Position.
-  if ('start' in value || 'end' in value) {
-    return position(value)
-  }
-
-  // Point.
-  if ('line' in value || 'column' in value) {
-    return point(value)
-  }
-
-  // ?
-  return ''
-}
-
-/**
- * @param {Point | PointLike | null | undefined} point
- * @returns {string}
- */
-function point(point) {
-  return index(point && point.line) + ':' + index(point && point.column)
-}
-
-/**
- * @param {Position | PositionLike | null | undefined} pos
- * @returns {string}
- */
-function position(pos) {
-  return point(pos && pos.start) + '-' + point(pos && pos.end)
-}
-
-/**
- * @param {number | null | undefined} value
- * @returns {number}
- */
-function index(value) {
-  return value && typeof value === 'number' ? value : 1
-}
-
-;// CONCATENATED MODULE: ../node_modules/vfile/node_modules/vfile-message/lib/index.js
-/**
- * @typedef {import('unist').Node} Node
- * @typedef {import('unist').Position} Position
- * @typedef {import('unist').Point} Point
- * @typedef {object & {type: string, position?: Position | undefined}} NodeLike
- */
-
-
-
-/**
- * Message.
- */
-class VFileMessage extends Error {
-  /**
-   * Create a message for `reason` at `place` from `origin`.
-   *
-   * When an error is passed in as `reason`, the `stack` is copied.
-   *
-   * @param {string | Error | VFileMessage} reason
-   *   Reason for message, uses the stack and message of the error if given.
-   *
-   *   > 👉 **Note**: you should use markdown.
-   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
-   *   Place in file where the message occurred.
-   * @param {string | null | undefined} [origin]
-   *   Place in code where the message originates (example:
-   *   `'my-package:my-rule'` or `'my-rule'`).
-   * @returns
-   *   Instance of `VFileMessage`.
-   */
-  // To do: next major: expose `undefined` everywhere instead of `null`.
-  constructor(reason, place, origin) {
-    /** @type {[string | null, string | null]} */
-    const parts = [null, null]
-    /** @type {Position} */
-    let position = {
-      // @ts-expect-error: we always follows the structure of `position`.
-      start: {line: null, column: null},
-      // @ts-expect-error: "
-      end: {line: null, column: null}
-    }
-
-    super()
-
-    if (typeof place === 'string') {
-      origin = place
-      place = undefined
-    }
-
-    if (typeof origin === 'string') {
-      const index = origin.indexOf(':')
-
-      if (index === -1) {
-        parts[1] = origin
-      } else {
-        parts[0] = origin.slice(0, index)
-        parts[1] = origin.slice(index + 1)
-      }
-    }
-
-    if (place) {
-      // Node.
-      if ('type' in place || 'position' in place) {
-        if (place.position) {
-          // To do: next major: deep clone.
-          // @ts-expect-error: looks like a position.
-          position = place.position
-        }
-      }
-      // Position.
-      else if ('start' in place || 'end' in place) {
-        // @ts-expect-error: looks like a position.
-        // To do: next major: deep clone.
-        position = place
-      }
-      // Point.
-      else if ('line' in place || 'column' in place) {
-        // To do: next major: deep clone.
-        position.start = place
-      }
-    }
-
-    // Fields from `Error`.
-    /**
-     * Serialized positional info of error.
-     *
-     * On normal errors, this would be something like `ParseError`, buit in
-     * `VFile` messages we use this space to show where an error happened.
-     */
-    this.name = stringifyPosition(place) || '1:1'
-
-    /**
-     * Reason for message.
-     *
-     * @type {string}
-     */
-    this.message = typeof reason === 'object' ? reason.message : reason
-
-    /**
-     * Stack of message.
-     *
-     * This is used by normal errors to show where something happened in
-     * programming code, irrelevant for `VFile` messages,
-     *
-     * @type {string}
-     */
-    this.stack = ''
-
-    if (typeof reason === 'object' && reason.stack) {
-      this.stack = reason.stack
-    }
-
-    /**
-     * Reason for message.
-     *
-     * > 👉 **Note**: you should use markdown.
-     *
-     * @type {string}
-     */
-    this.reason = this.message
-
-    /* eslint-disable no-unused-expressions */
-    /**
-     * State of problem.
-     *
-     * * `true` — marks associated file as no longer processable (error)
-     * * `false` — necessitates a (potential) change (warning)
-     * * `null | undefined` — for things that might not need changing (info)
-     *
-     * @type {boolean | null | undefined}
-     */
-    this.fatal
-
-    /**
-     * Starting line of error.
-     *
-     * @type {number | null}
-     */
-    this.line = position.start.line
-
-    /**
-     * Starting column of error.
-     *
-     * @type {number | null}
-     */
-    this.column = position.start.column
-
-    /**
-     * Full unist position.
-     *
-     * @type {Position | null}
-     */
-    this.position = position
-
-    /**
-     * Namespace of message (example: `'my-package'`).
-     *
-     * @type {string | null}
-     */
-    this.source = parts[0]
-
-    /**
-     * Category of message (example: `'my-rule'`).
-     *
-     * @type {string | null}
-     */
-    this.ruleId = parts[1]
-
-    /**
-     * Path of a file (used throughout the `VFile` ecosystem).
-     *
-     * @type {string | null}
-     */
-    this.file
-
-    // The following fields are “well known”.
-    // Not standard.
-    // Feel free to add other non-standard fields to your messages.
-
-    /**
-     * Specify the source value that’s being reported, which is deemed
-     * incorrect.
-     *
-     * @type {string | null}
-     */
-    this.actual
-
-    /**
-     * Suggest acceptable values that can be used instead of `actual`.
-     *
-     * @type {Array<string> | null}
-     */
-    this.expected
-
-    /**
-     * Link to docs for the message.
-     *
-     * > 👉 **Note**: this must be an absolute URL that can be passed as `x`
-     * > to `new URL(x)`.
-     *
-     * @type {string | null}
-     */
-    this.url
-
-    /**
-     * Long form description of the message (you should use markdown).
-     *
-     * @type {string | null}
-     */
-    this.note
-    /* eslint-enable no-unused-expressions */
-  }
-}
-
-VFileMessage.prototype.file = ''
-VFileMessage.prototype.name = ''
-VFileMessage.prototype.reason = ''
-VFileMessage.prototype.message = ''
-VFileMessage.prototype.stack = ''
-VFileMessage.prototype.fatal = null
-VFileMessage.prototype.column = null
-VFileMessage.prototype.line = null
-VFileMessage.prototype.source = null
-VFileMessage.prototype.ruleId = null
-VFileMessage.prototype.position = null
-
-// EXTERNAL MODULE: external "path"
-var external_path_ = __webpack_require__(1017);
-;// CONCATENATED MODULE: external "process"
-const external_process_namespaceObject = require("process");
-;// CONCATENATED MODULE: ../node_modules/vfile/lib/minurl.shared.js
-/**
- * @typedef URL
- * @property {string} hash
- * @property {string} host
- * @property {string} hostname
- * @property {string} href
- * @property {string} origin
- * @property {string} password
- * @property {string} pathname
- * @property {string} port
- * @property {string} protocol
- * @property {string} search
- * @property {any} searchParams
- * @property {string} username
- * @property {() => string} toString
- * @property {() => string} toJSON
- */
-
-/**
- * Check if `fileUrlOrPath` looks like a URL.
- *
- * @param {unknown} fileUrlOrPath
- *   File path or URL.
- * @returns {fileUrlOrPath is URL}
- *   Whether it’s a URL.
- */
-// From: <https://github.com/nodejs/node/blob/fcf8ba4/lib/internal/url.js#L1501>
-function isUrl(fileUrlOrPath) {
-  return (
-    fileUrlOrPath !== null &&
-    typeof fileUrlOrPath === 'object' &&
-    // @ts-expect-error: indexable.
-    fileUrlOrPath.href &&
-    // @ts-expect-error: indexable.
-    fileUrlOrPath.origin
-  )
-}
-
-// EXTERNAL MODULE: external "url"
-var external_url_ = __webpack_require__(7310);
-;// CONCATENATED MODULE: ../node_modules/vfile/lib/index.js
-/**
- * @typedef {import('unist').Node} Node
- * @typedef {import('unist').Position} Position
- * @typedef {import('unist').Point} Point
- * @typedef {import('./minurl.shared.js').URL} URL
- * @typedef {import('../index.js').Data} Data
- * @typedef {import('../index.js').Value} Value
- */
-
-/**
- * @typedef {Record<string, unknown> & {type: string, position?: Position | undefined}} NodeLike
- *
- * @typedef {'ascii' | 'utf8' | 'utf-8' | 'utf16le' | 'ucs2' | 'ucs-2' | 'base64' | 'base64url' | 'latin1' | 'binary' | 'hex'} BufferEncoding
- *   Encodings supported by the buffer class.
- *
- *   This is a copy of the types from Node, copied to prevent Node globals from
- *   being needed.
- *   Copied from: <https://github.com/DefinitelyTyped/DefinitelyTyped/blob/90a4ec8/types/node/buffer.d.ts#L170>
- *
- * @typedef {Options | URL | Value | VFile} Compatible
- *   Things that can be passed to the constructor.
- *
- * @typedef VFileCoreOptions
- *   Set multiple values.
- * @property {Value | null | undefined} [value]
- *   Set `value`.
- * @property {string | null | undefined} [cwd]
- *   Set `cwd`.
- * @property {Array<string> | null | undefined} [history]
- *   Set `history`.
- * @property {URL | string | null | undefined} [path]
- *   Set `path`.
- * @property {string | null | undefined} [basename]
- *   Set `basename`.
- * @property {string | null | undefined} [stem]
- *   Set `stem`.
- * @property {string | null | undefined} [extname]
- *   Set `extname`.
- * @property {string | null | undefined} [dirname]
- *   Set `dirname`.
- * @property {Data | null | undefined} [data]
- *   Set `data`.
- *
- * @typedef Map
- *   Raw source map.
- *
- *   See:
- *   <https://github.com/mozilla/source-map/blob/58819f0/source-map.d.ts#L15-L23>.
- * @property {number} version
- *   Which version of the source map spec this map is following.
- * @property {Array<string>} sources
- *   An array of URLs to the original source files.
- * @property {Array<string>} names
- *   An array of identifiers which can be referenced by individual mappings.
- * @property {string | undefined} [sourceRoot]
- *   The URL root from which all sources are relative.
- * @property {Array<string> | undefined} [sourcesContent]
- *   An array of contents of the original source files.
- * @property {string} mappings
- *   A string of base64 VLQs which contain the actual mappings.
- * @property {string} file
- *   The generated file this source map is associated with.
- *
- * @typedef {{[key: string]: unknown} & VFileCoreOptions} Options
- *   Configuration.
- *
- *   A bunch of keys that will be shallow copied over to the new file.
- *
- * @typedef {Record<string, unknown>} ReporterSettings
- *   Configuration for reporters.
- */
-
-/**
- * @template {ReporterSettings} Settings
- *   Options type.
- * @callback Reporter
- *   Type for a reporter.
- * @param {Array<VFile>} files
- *   Files to report.
- * @param {Settings} options
- *   Configuration.
- * @returns {string}
- *   Report.
- */
-
-
-
-
-
-
-
-/**
- * Order of setting (least specific to most), we need this because otherwise
- * `{stem: 'a', path: '~/b.js'}` would throw, as a path is needed before a
- * stem can be set.
- *
- * @type {Array<'basename' | 'dirname' | 'extname' | 'history' | 'path' | 'stem'>}
- */
-const order = ['history', 'path', 'basename', 'stem', 'extname', 'dirname']
-
-class VFile {
-  /**
-   * Create a new virtual file.
-   *
-   * `options` is treated as:
-   *
-   * *   `string` or `Buffer` — `{value: options}`
-   * *   `URL` — `{path: options}`
-   * *   `VFile` — shallow copies its data over to the new file
-   * *   `object` — all fields are shallow copied over to the new file
-   *
-   * Path related fields are set in the following order (least specific to
-   * most specific): `history`, `path`, `basename`, `stem`, `extname`,
-   * `dirname`.
-   *
-   * You cannot set `dirname` or `extname` without setting either `history`,
-   * `path`, `basename`, or `stem` too.
-   *
-   * @param {Compatible | null | undefined} [value]
-   *   File value.
-   * @returns
-   *   New instance.
-   */
-  constructor(value) {
-    /** @type {Options | VFile} */
-    let options
-
-    if (!value) {
-      options = {}
-    } else if (typeof value === 'string' || buffer(value)) {
-      options = {value}
-    } else if (isUrl(value)) {
-      options = {path: value}
-    } else {
-      options = value
-    }
-
-    /**
-     * Place to store custom information (default: `{}`).
-     *
-     * It’s OK to store custom data directly on the file but moving it to
-     * `data` is recommended.
-     *
-     * @type {Data}
-     */
-    this.data = {}
-
-    /**
-     * List of messages associated with the file.
-     *
-     * @type {Array<VFileMessage>}
-     */
-    this.messages = []
-
-    /**
-     * List of filepaths the file moved between.
-     *
-     * The first is the original path and the last is the current path.
-     *
-     * @type {Array<string>}
-     */
-    this.history = []
-
-    /**
-     * Base of `path` (default: `process.cwd()` or `'/'` in browsers).
-     *
-     * @type {string}
-     */
-    this.cwd = external_process_namespaceObject.cwd()
-
-    /* eslint-disable no-unused-expressions */
-    /**
-     * Raw value.
-     *
-     * @type {Value}
-     */
-    this.value
-
-    // The below are non-standard, they are “well-known”.
-    // As in, used in several tools.
-
-    /**
-     * Whether a file was saved to disk.
-     *
-     * This is used by vfile reporters.
-     *
-     * @type {boolean}
-     */
-    this.stored
-
-    /**
-     * Custom, non-string, compiled, representation.
-     *
-     * This is used by unified to store non-string results.
-     * One example is when turning markdown into React nodes.
-     *
-     * @type {unknown}
-     */
-    this.result
-
-    /**
-     * Source map.
-     *
-     * This type is equivalent to the `RawSourceMap` type from the `source-map`
-     * module.
-     *
-     * @type {Map | null | undefined}
-     */
-    this.map
-    /* eslint-enable no-unused-expressions */
-
-    // Set path related properties in the correct order.
-    let index = -1
-
-    while (++index < order.length) {
-      const prop = order[index]
-
-      // Note: we specifically use `in` instead of `hasOwnProperty` to accept
-      // `vfile`s too.
-      if (
-        prop in options &&
-        options[prop] !== undefined &&
-        options[prop] !== null
-      ) {
-        // @ts-expect-error: TS doesn’t understand basic reality.
-        this[prop] = prop === 'history' ? [...options[prop]] : options[prop]
-      }
-    }
-
-    /** @type {string} */
-    let prop
-
-    // Set non-path related properties.
-    for (prop in options) {
-      // @ts-expect-error: fine to set other things.
-      if (!order.includes(prop)) {
-        // @ts-expect-error: fine to set other things.
-        this[prop] = options[prop]
-      }
-    }
-  }
-
-  /**
-   * Get the full path (example: `'~/index.min.js'`).
-   *
-   * @returns {string}
-   */
-  get path() {
-    return this.history[this.history.length - 1]
-  }
-
-  /**
-   * Set the full path (example: `'~/index.min.js'`).
-   *
-   * Cannot be nullified.
-   * You can set a file URL (a `URL` object with a `file:` protocol) which will
-   * be turned into a path with `url.fileURLToPath`.
-   *
-   * @param {string | URL} path
-   */
-  set path(path) {
-    if (isUrl(path)) {
-      path = (0,external_url_.fileURLToPath)(path)
-    }
-
-    assertNonEmpty(path, 'path')
-
-    if (this.path !== path) {
-      this.history.push(path)
-    }
-  }
-
-  /**
-   * Get the parent path (example: `'~'`).
-   */
-  get dirname() {
-    return typeof this.path === 'string' ? external_path_.dirname(this.path) : undefined
-  }
-
-  /**
-   * Set the parent path (example: `'~'`).
-   *
-   * Cannot be set if there’s no `path` yet.
-   */
-  set dirname(dirname) {
-    assertPath(this.basename, 'dirname')
-    this.path = external_path_.join(dirname || '', this.basename)
-  }
-
-  /**
-   * Get the basename (including extname) (example: `'index.min.js'`).
-   */
-  get basename() {
-    return typeof this.path === 'string' ? external_path_.basename(this.path) : undefined
-  }
-
-  /**
-   * Set basename (including extname) (`'index.min.js'`).
-   *
-   * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
-   * on windows).
-   * Cannot be nullified (use `file.path = file.dirname` instead).
-   */
-  set basename(basename) {
-    assertNonEmpty(basename, 'basename')
-    assertPart(basename, 'basename')
-    this.path = external_path_.join(this.dirname || '', basename)
-  }
-
-  /**
-   * Get the extname (including dot) (example: `'.js'`).
-   */
-  get extname() {
-    return typeof this.path === 'string' ? external_path_.extname(this.path) : undefined
-  }
-
-  /**
-   * Set the extname (including dot) (example: `'.js'`).
-   *
-   * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
-   * on windows).
-   * Cannot be set if there’s no `path` yet.
-   */
-  set extname(extname) {
-    assertPart(extname, 'extname')
-    assertPath(this.dirname, 'extname')
-
-    if (extname) {
-      if (extname.charCodeAt(0) !== 46 /* `.` */) {
-        throw new Error('`extname` must start with `.`')
-      }
-
-      if (extname.includes('.', 1)) {
-        throw new Error('`extname` cannot contain multiple dots')
-      }
-    }
-
-    this.path = external_path_.join(this.dirname, this.stem + (extname || ''))
-  }
-
-  /**
-   * Get the stem (basename w/o extname) (example: `'index.min'`).
-   */
-  get stem() {
-    return typeof this.path === 'string'
-      ? external_path_.basename(this.path, this.extname)
-      : undefined
-  }
-
-  /**
-   * Set the stem (basename w/o extname) (example: `'index.min'`).
-   *
-   * Cannot contain path separators (`'/'` on unix, macOS, and browsers, `'\'`
-   * on windows).
-   * Cannot be nullified (use `file.path = file.dirname` instead).
-   */
-  set stem(stem) {
-    assertNonEmpty(stem, 'stem')
-    assertPart(stem, 'stem')
-    this.path = external_path_.join(this.dirname || '', stem + (this.extname || ''))
-  }
-
-  /**
-   * Serialize the file.
-   *
-   * @param {BufferEncoding | null | undefined} [encoding='utf8']
-   *   Character encoding to understand `value` as when it’s a `Buffer`
-   *   (default: `'utf8'`).
-   * @returns {string}
-   *   Serialized file.
-   */
-  toString(encoding) {
-    return (this.value || '').toString(encoding || undefined)
-  }
-
-  /**
-   * Create a warning message associated with the file.
-   *
-   * Its `fatal` is set to `false` and `file` is set to the current file path.
-   * Its added to `file.messages`.
-   *
-   * @param {string | Error | VFileMessage} reason
-   *   Reason for message, uses the stack and message of the error if given.
-   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
-   *   Place in file where the message occurred.
-   * @param {string | null | undefined} [origin]
-   *   Place in code where the message originates (example:
-   *   `'my-package:my-rule'` or `'my-rule'`).
-   * @returns {VFileMessage}
-   *   Message.
-   */
-  message(reason, place, origin) {
-    const message = new VFileMessage(reason, place, origin)
-
-    if (this.path) {
-      message.name = this.path + ':' + message.name
-      message.file = this.path
-    }
-
-    message.fatal = false
-
-    this.messages.push(message)
-
-    return message
-  }
-
-  /**
-   * Create an info message associated with the file.
-   *
-   * Its `fatal` is set to `null` and `file` is set to the current file path.
-   * Its added to `file.messages`.
-   *
-   * @param {string | Error | VFileMessage} reason
-   *   Reason for message, uses the stack and message of the error if given.
-   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
-   *   Place in file where the message occurred.
-   * @param {string | null | undefined} [origin]
-   *   Place in code where the message originates (example:
-   *   `'my-package:my-rule'` or `'my-rule'`).
-   * @returns {VFileMessage}
-   *   Message.
-   */
-  info(reason, place, origin) {
-    const message = this.message(reason, place, origin)
-
-    message.fatal = null
-
-    return message
-  }
-
-  /**
-   * Create a fatal error associated with the file.
-   *
-   * Its `fatal` is set to `true` and `file` is set to the current file path.
-   * Its added to `file.messages`.
-   *
-   * > 👉 **Note**: a fatal error means that a file is no longer processable.
-   *
-   * @param {string | Error | VFileMessage} reason
-   *   Reason for message, uses the stack and message of the error if given.
-   * @param {Node | NodeLike | Position | Point | null | undefined} [place]
-   *   Place in file where the message occurred.
-   * @param {string | null | undefined} [origin]
-   *   Place in code where the message originates (example:
-   *   `'my-package:my-rule'` or `'my-rule'`).
-   * @returns {never}
-   *   Message.
-   * @throws {VFileMessage}
-   *   Message.
-   */
-  fail(reason, place, origin) {
-    const message = this.message(reason, place, origin)
-
-    message.fatal = true
-
-    throw message
-  }
-}
-
-/**
- * Assert that `part` is not a path (as in, does not contain `path.sep`).
- *
- * @param {string | null | undefined} part
- *   File path part.
- * @param {string} name
- *   Part name.
- * @returns {void}
- *   Nothing.
- */
-function assertPart(part, name) {
-  if (part && part.includes(external_path_.sep)) {
-    throw new Error(
-      '`' + name + '` cannot be a path: did not expect `' + external_path_.sep + '`'
-    )
-  }
-}
-
-/**
- * Assert that `part` is not empty.
- *
- * @param {string | undefined} part
- *   Thing.
- * @param {string} name
- *   Part name.
- * @returns {asserts part is string}
- *   Nothing.
- */
-function assertNonEmpty(part, name) {
-  if (!part) {
-    throw new Error('`' + name + '` cannot be empty')
-  }
-}
-
-/**
- * Assert `path` exists.
- *
- * @param {string | undefined} path
- *   Path.
- * @param {string} name
- *   Dependency name.
- * @returns {asserts path is string}
- *   Nothing.
- */
-function assertPath(path, name) {
-  if (!path) {
-    throw new Error('Setting `' + name + '` requires `path` to be set too')
-  }
-}
-
-/**
- * Assert `value` is a buffer.
- *
- * @param {unknown} value
- *   thing.
- * @returns {value is Buffer}
- *   Whether `value` is a Node.js buffer.
- */
-function buffer(value) {
-  return is_buffer(value)
-}
-
 
 /***/ })
 

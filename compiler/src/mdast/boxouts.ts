@@ -1,9 +1,15 @@
-import { Element, Parent as HastParent, Text } from 'hast';
+import {
+  Element,
+  ElementContent,
+  Parent as HastParent,
+  Text,
+  Node,
+} from 'hast';
 import startCase from 'lodash/startCase.js';
 import { Root } from 'mdast';
 import { ContainerDirective } from 'mdast-util-directive';
 import { toHast } from 'mdast-util-to-hast';
-import { Node, Parent } from 'unist';
+import { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
@@ -28,7 +34,7 @@ export function boxouts(refStore: Context['refStore']) {
           const count = counter.increment(name);
           node.data = {
             hProperties: createAttributes(node, count, refStore),
-            hChildren: createBoxout(node, count),
+            hChildren: createBoxout(node, count) as any,
           };
         }
       }
@@ -76,6 +82,7 @@ export function createBoxout(
   const children = node.children as ContainerDirective[];
 
   const content = children
+    // @ts-expect-error
     .filter((o) => !o.data?.directiveLabel)
     .filter((o) => o.type !== 'containerDirective' && o.name !== 'answer')
     .map((o) => toHast(o, { allowDangerousHtml: true }))
@@ -161,7 +168,8 @@ function createTitle(node: ContainerDirective): Element {
   return {
     type: 'element',
     tagName: 'h3',
-    children: createTitleValue(node) as Element['children'],
+    children: createTitleValue(node) as ElementContent[],
+    properties: {},
   };
 }
 
@@ -194,6 +202,7 @@ function getTitleValue(node: ContainerDirective): Node[] {
   const children = (node.children || []) as Node[];
   const parent = (children[0] || {}) as Parent;
 
+  // @ts-expect-error
   if (!parent.data?.directiveLabel) {
     if (node.name === 'weblink') {
       const attributes = node.attributes as Record<string, string>;

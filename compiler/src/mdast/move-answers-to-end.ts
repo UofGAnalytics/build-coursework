@@ -13,11 +13,12 @@ export function moveAnswersToEnd() {
 
         // remove answer from task rehype
         if (node.name === 'task' && node.data) {
-          const children = (node.data.hChildren ||
-            []) as ContainerDirective[];
-          node.data.hChildren = children.filter(
-            (o) => o.name !== 'answer'
-          );
+          const children = node.data.hChildren || [];
+          const newChildren = children.filter((o) => {
+            // @ts-expect-error
+            return o.name !== 'answer';
+          });
+          node.data.hChildren = newChildren;
         }
 
         if (node.name === 'answer') {
@@ -41,7 +42,7 @@ export function moveAnswersToEnd() {
 
           treeChildren.push(node);
         }
-      }
+      },
     );
   };
 }

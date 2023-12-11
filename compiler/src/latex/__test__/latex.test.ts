@@ -102,10 +102,8 @@ describe('latex', () => {
       \[(\exp(-2.977),\exp(-2.245))=(0.051,0.106).\]
     `);
 
-    const expected = unindentString(`
-      <p>[(\\exp(-2.977),\\exp(-2.245))=(0.051,0.106).]</p>
-    `);
-
-    expect(html.trim()).toBe(expected.trim());
+    expect(html.trim()).toContain(
+      `left parenthesis exp left parenthesis negative 2.977`,
+    );
   });
 });

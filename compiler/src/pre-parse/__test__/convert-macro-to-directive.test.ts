@@ -79,7 +79,7 @@ describe('convertMacroToDirective', () => {
     `);
 
     const expected = unindentStringAndTrim(`
-      ::video[Introduction to GLMs]{#5u1w6eROypI duration="9m57s"}
+      ::video[Introduction to GLMs]{id="5u1w6eROypI" duration="9m57s"}
     `);
 
     expect(md.trim()).toBe(expected);
@@ -91,7 +91,7 @@ describe('convertMacroToDirective', () => {
     `);
 
     const expected = unindentStringAndTrim(`
-      ::video{#5u1w6eROypI duration="9m57s"}
+      ::video{id="5u1w6eROypI" duration="9m57s"}
     `);
 
     expect(md.trim()).toBe(expected);

@@ -1,20 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 
-import rehype from 'rehype-parse';
-import stringify from 'rehype-stringify';
+import rehypeParse from 'rehype-parse';
+import rehypeStringify from 'rehype-stringify';
 import { unified } from 'unified';
 import { Node, Parent } from 'unist';
 
 // import { visit } from 'unist-util-visit';
 
 export const rehypeParser = unified()
-  .use(rehype, { fragment: true })
-  .use(stringify);
+  .use(rehypeParse, { fragment: true })
+  .use(rehypeStringify);
 
 export function readFile(
   filePath: string,
-  encoding: BufferEncoding = 'utf-8'
+  encoding: BufferEncoding = 'utf-8',
 ) {
   return fs.promises.readFile(filePath, encoding);
 }
@@ -61,7 +61,7 @@ export function getTemplateDir() {
 
 export function combineMdastTrees(mdasts: Parent[]): Parent {
   const children = mdasts.flatMap(
-    (mdast) => mdast.children || []
+    (mdast) => mdast.children || [],
   ) as Node[];
   return { type: 'root', children };
 }

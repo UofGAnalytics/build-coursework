@@ -12,7 +12,7 @@ export async function hastPhase(
   mdast: Root,
   ctx: Context,
   file: VFile,
-  targetPdf?: boolean
+  targetPdf?: boolean,
 ) {
   const processor = unified()
     .use(remark2rehype, { allowDangerousHtml: true })
