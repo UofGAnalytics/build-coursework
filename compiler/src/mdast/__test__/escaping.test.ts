@@ -64,6 +64,7 @@ describe('escaping', () => {
 
   it('should escape sample latex', async () => {
     const { html } = await testProcessor(`
+      ~~~
       <div class="mathjax-ignore">
       \`\`\`latex
       \\documentclass{article}
@@ -128,9 +129,9 @@ describe('escaping', () => {
       @
 
       \\end{document}
-
       \`\`\`
       </div>
+      ~~~
     `);
 
     expect(html).toContain('\\begin{document}');

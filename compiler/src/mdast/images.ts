@@ -27,6 +27,7 @@ export function images(ctx: Context) {
 function templateFromImage(node: Image, count: number) {
   const alt = getAltText(node.alt || '');
   const slug = kebabCase(alt ? alt : `Figure ${count}`);
+  // @ts-expect-error
   createFigure(node, slug, node.url, alt, node.data?.width, count);
 }
 
@@ -47,7 +48,7 @@ function createFigure(
   src: string,
   alt: string,
   width: unknown,
-  count: number
+  count: number,
 ) {
   Object.assign(node, {
     type: 'custom-image',

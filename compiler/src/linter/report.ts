@@ -33,7 +33,7 @@ export function printReport(files: VFile[], ctx: Context) {
   for (const file of files) {
     // console.log(file.messages);
     const messages = reportOnlyErrors
-      ? failingMessages(file.messages)
+      ? failingMessages(file.messages as any)
       : file.messages;
 
     if (messages.length !== 0) {
@@ -41,7 +41,7 @@ export function printReport(files: VFile[], ctx: Context) {
       //   console.log(`\n${getFilePath(file.path)}`);
       // }
       messages.forEach((message) => {
-        printMessage(message);
+        printMessage(message as any);
       });
     }
   }
@@ -51,7 +51,7 @@ export function reportHasFatalErrors(files: VFile[]) {
   return files.some((file) => {
     const messages = file.messages as unknown as ReportMessage[];
     return messages.some(
-      (message) => message.status === MessageStatus.fail
+      (message) => message.status === MessageStatus.fail,
     );
   });
 }
@@ -60,7 +60,7 @@ export function reportHasWarnings(files: VFile[]) {
   return files.some((file) => {
     const messages = file.messages as unknown as ReportMessage[];
     return messages.some(
-      (message) => message.status === MessageStatus.warning
+      (message) => message.status === MessageStatus.warning,
     );
   });
 }
@@ -68,7 +68,7 @@ export function reportHasWarnings(files: VFile[]) {
 function failingMessages(_messages: VFileMessage[]) {
   const messages = _messages as unknown as ReportMessage[];
   return messages.filter(
-    (o) => o.status === MessageStatus.fail
+    (o) => o.status === MessageStatus.fail,
   ) as unknown as VFileMessage[];
 }
 

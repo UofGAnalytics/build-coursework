@@ -1,27 +1,49 @@
 import { visit } from 'unist-util-visit';
-import { Literal } from 'hast';
-import { Parent, Root } from 'mdast';
+import { LeafDirective, TextDirective } from 'mdast-util-directive';
+import { Literal, Node } from 'hast';
+import { Parent } from 'mdast';
 
 import { CodeBlock, Context } from '../context';
 
 export function aliasDirectiveToCode(ctx: Context) {
-  return (tree: Root) => {
-    visit(tree, (node) => {
-      if (node.type === 'leafDirective' && node.name === 'codeBlock') {
-        const idx = getStoreIdx(node);
+  return (tree: Node) => {
+    visit(tree, (node: Node) => {
+      if (
+        node.type === 'leafDirective' &&
+        (node as LeafDirective).name === 'codeBlock'
+      ) {
+        const idx = getStoreIdx(node as Parent);
         if (ctx.codeStore === undefined) {
           return;
         }
         const stored = ctx.codeStore[idx] as CodeBlock;
-        if (!ctx.codeStore[idx]) {
+        if (!stored) {
           return;
         }
-
         Object.assign(node, {
           type: 'code',
           name: undefined,
           lang: stored.lang,
           meta: stored.meta,
+          value: stored.value,
+          children: [],
+        });
+      }
+      if (
+        node.type === 'textDirective' &&
+        (node as TextDirective).name === 'codeBlock'
+      ) {
+        const idx = getStoreIdx(node as Parent);
+        if (ctx.codeStore === undefined) {
+          return;
+        }
+        const stored = ctx.codeStore[idx] as CodeBlock;
+        if (!stored) {
+          return;
+        }
+        Object.assign(node, {
+          type: 'inlineCode',
+          name: undefined,
           value: stored.value,
           children: [],
         });

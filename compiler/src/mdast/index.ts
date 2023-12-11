@@ -1,15 +1,14 @@
-import headings from 'remark-autolink-headings';
+import headings from 'rehype-autolink-headings';
 import directive from 'remark-directive';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
-import slug from 'remark-slug';
+import slug from 'rehype-slug';
 import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { aliasDirectiveToLatexSvg } from '../latex/directive-to-svg';
-// import { aliasDirectiveToTex } from '../latex/directive-to-tex';
 import { createSvg } from '../utils/icons';
 import { browserWindow } from './browser-window';
 import { codeBlocks } from './code-blocks';
@@ -33,22 +32,20 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(markdown)
     .use(directive)
     .use(frontmatter)
-    // .use(footnotes, { inlineNotes: true })
     .use(gfm)
-    // .use(sectionize)
     .use(slug)
     .use(headings, {
-      content: createSvg('link-icon'),
-      linkProperties: { className: 'link' },
+      content: createSvg('link-icon') as any,
+      properties: { className: 'link' },
     })
     // custom plugins:
+    .use(() => (tree) => {})
     .use(columns)
     .use(embedAssetUrl, ctx)
     .use(youtubeVideos)
     .use(aliasDirectiveToCode, ctx)
     .use(aliasDirectiveToLatexSvg, ctx)
     .use(removeEmptyParagraphs)
-    // .use(aliasDirectiveToTex, ctx)
     .use(gitGraph)
     .use(textFile)
     .use(browserWindow)
@@ -58,5 +55,6 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(pagebreaks);
 
   const parsed = processor.parse(file);
+  // @ts-expect-error
   return processor.run(parsed, file);
 }

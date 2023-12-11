@@ -19,7 +19,7 @@
     "dev": "concurrently npm:compiler npm:template -c green,cyan",
     "compiler": "babel-node --extensions .ts dev.ts",
     "template": "npm -w template run dev",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose --runInBand",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
     "check-types": "tsc",
     "build-release": "tsc && npm -w template run build && npm -w compiler run build && npm run merge-release",
     "merge-release": "mkdirp release && rimraf release/* && cpy template/build/* compiler/build/ --flat && cpy compiler/build/* release/ --flat",
@@ -95,7 +95,7 @@
     "@babel/preset-typescript": "^7.23.3",
     "@types/jest": "^29.5.11",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.10.3",
+    "@types/node": "^20.10.4",
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/parser": "^6.13.2",
     "babel-loader": "^9.1.3",
@@ -116,7 +116,7 @@
     "stylelint-config-recommended": "^13.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-no-unsupported-browser-features": "^7.0.0",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.3"
   },
   "importSort": {
     ".ts, .tsx, .js, .jsx": {

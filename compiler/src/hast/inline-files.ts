@@ -3,7 +3,7 @@ import path from 'path';
 import { encode as base46Encode } from 'base64-arraybuffer';
 import { Element, Properties } from 'hast';
 import sizeOf from 'image-size';
-import mimes from 'mime/lite.js';
+import mimes from 'mime';
 import fetch from 'node-fetch';
 import { toVFile } from 'to-vfile';
 // import { optimize } from 'svgo';
@@ -29,7 +29,7 @@ export function inlineRelativeAssets(ctx: Context) {
       }
       if (node.tagName === 'script' && node.properties?.src) {
         transformations.push(
-          embedScript(node, index, parent, loadedScripts)
+          embedScript(node, index, parent, loadedScripts),
         );
       }
     });
@@ -53,7 +53,7 @@ async function embedFile(node: Element, file: VFile, ctx: Context) {
       case '.pdf':
         // return await embedPdfSvg(node);
         throw new Error(
-          `Unhandled file extension: .pdf (convert to .svg)`
+          `Unhandled file extension: .pdf (convert to .svg)`,
         );
       case '.html':
         return await embedHtml(node);
@@ -185,9 +185,9 @@ async function embedHtml(imgNode: Element) {
 
 async function embedScript(
   node: Element,
-  index: number | null,
-  parent: Parent | null,
-  loadedScripts: string[]
+  index: number | undefined,
+  parent: Parent | undefined,
+  loadedScripts: string[],
 ) {
   if (!node.properties?.src) {
     return;

@@ -7,7 +7,7 @@ import { Options } from '../context';
 
 export async function fixtureTestProcessor(
   fixture: string,
-  options: Options = {}
+  options: Options = {},
 ) {
   const flags = dargs(
     {
@@ -21,14 +21,15 @@ export async function fixtureTestProcessor(
       verbose: true,
       ...options,
     },
-    { allowCamelCase: true }
+    { allowCamelCase: true },
   );
 
   return new Promise<string>((resolve, reject) => {
     const fixturePath = path.join('./fixtures', fixture);
     const cmd = `rmarkdown ${fixturePath} ${flags.join(' ')}`;
 
-    exec(cmd, (err, response, stdErr) => {
+    exec(cmd, { maxBuffer: 1000 * 1000 * 10 }, (err, response, stdErr) => {
+      // console.log({ err, response, stdErr });
       if (stdErr) {
         if (!options.shouldFail) {
           console.log(stdErr);

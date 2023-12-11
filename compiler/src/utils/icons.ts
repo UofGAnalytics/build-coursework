@@ -11,10 +11,12 @@ type Svg = {
   children: Node[];
 };
 
-const svgs: Svg[] = [
-  createStoredSvg('hamburger-icon', hamburgerSvg),
-  createStoredSvg('link-icon', linkSvg),
-];
+function getSvgs(): Svg[] {
+  return [
+    createStoredSvg('hamburger-icon', hamburgerSvg),
+    createStoredSvg('link-icon', linkSvg),
+  ];
+}
 
 export function createSvg(name: string): Element {
   const { id, viewBox } = getSvg(name);
@@ -49,7 +51,7 @@ export function createDefs() {
       {
         type: 'element',
         tagName: 'defs',
-        children: svgs.map(createGroup),
+        children: getSvgs().map(createGroup),
       },
     ],
   };
@@ -64,7 +66,7 @@ function createStoredSvg(id: string, svg: string) {
 }
 
 function getSvg(id: string) {
-  const stored = svgs.find((o) => o.id === id);
+  const stored = getSvgs().find((o) => o.id === id);
   if (stored === undefined) {
     throw new Error(`svg icon not found: ${id}`);
   }

@@ -1,6 +1,7 @@
 import ansiColor from 'ansicolor';
+import { ElementContent, Node } from 'hast';
 import { Code, Literal } from 'mdast';
-import { Node, Parent } from 'unist';
+import { Parent } from 'unist';
 import { visit } from 'unist-util-visit';
 
 export function styledTerminal() {
@@ -18,7 +19,7 @@ export function styledTerminal() {
 }
 
 function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
-  const codeChildren = (code.data?.hChildren || []) as Node[];
+  const codeChildren = (code.data?.hChildren || []) as ElementContent[];
   const responseChildren = [];
 
   const nextIdx = index + 1;
@@ -29,7 +30,8 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
       response.lang === '{.knitr-output}' ||
       response.lang === '{.knitr-error-output}'
     ) {
-      const children = (response.data?.hChildren || []) as Node[];
+      const children = (response.data?.hChildren ||
+        []) as ElementContent[];
       const responseWithColours = ansiToHast(children);
       responseChildren.push(...responseWithColours);
 
@@ -46,7 +48,7 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
   };
 }
 
-function ansiToHast(children: Node[]): Node[] {
+function ansiToHast(children: ElementContent[]): ElementContent[] {
   const pre = children[1] as Parent;
   const code = pre.children[0] as Parent;
   const text = code.children[0] as Literal;

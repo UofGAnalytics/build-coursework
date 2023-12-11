@@ -1,10 +1,10 @@
 import lintAltText from '@double-great/remark-lint-alt-text';
 // @ts-expect-error
 import lintLinkText from '@mapbox/remark-lint-link-text';
-import dictionary from 'dictionary-en-gb';
-import remark2retext from 'remark-retext';
-import english from 'retext-english';
-import spell from 'retext-spell';
+// import dictionary from 'dictionary-en-gb';
+// import remark2retext from 'remark-retext';
+// import english from 'retext-english';
+// import spell from 'retext-spell';
 import { unified } from 'unified';
 import { Node } from 'unist';
 import { VFile } from 'vfile';
@@ -19,6 +19,7 @@ import { assertVideoAttributes } from './assert-video-attributes';
 import { assertWeblinkTarget } from './assert-weblink-target';
 import { lintLatex } from './lint-latex';
 import { printReport, reportHasFatalErrors } from './report';
+import { Root } from 'mdast';
 
 export function reportErrors(files: VFile[], ctx: Context) {
   if (!ctx.options.noReport) {
@@ -57,15 +58,16 @@ export async function createReport(
     .use(assertWeblinkTarget)
     .use(assertNoH1)
     .use(lintLatex)
+    // @ts-expect-error
     .use(lintAltText)
     .use(lintLinkText);
 
-  if (ctx.options.spelling) {
-    const retextProcessor = unified()
-      .use(english)
-      .use(spell, { dictionary, max: 1 });
-    processor.use(remark2retext, retextProcessor);
-  }
+  // if (ctx.options.spelling) {
+  //   const retextProcessor = unified()
+  //     .use(english)
+  //     .use(spell, { dictionary, max: 1 });
+  //   processor.use(remark2retext, retextProcessor);
+  // }
 
-  await processor.run(mdast, file);
+  processor.run(mdast as Root, file);
 }

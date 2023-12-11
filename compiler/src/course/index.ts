@@ -1,7 +1,7 @@
 import path from 'path';
 
 import kebabCase from 'lodash/kebabCase.js';
-import { toVFile } from 'to-vfile';
+import { read as readVfile } from 'to-vfile';
 
 import { checkLocalFileExists } from '../utils/utils';
 import { loadCourseYaml } from './load-course';
@@ -19,7 +19,7 @@ export async function collectCoursework(dirPath: string): Promise<Course> {
   const course = await loadCourseYaml(dirPath);
   const coursePath = path.join(process.cwd(), dirPath);
   const units = await Promise.all(
-    course.units.map((unit) => collectUnit(unit, course, dirPath))
+    course.units.map((unit) => collectUnit(unit, course, dirPath)),
   );
   return { ...course, coursePath, units };
 }
@@ -27,7 +27,7 @@ export async function collectCoursework(dirPath: string): Promise<Course> {
 async function collectUnit(
   unit: FileRef,
   course: CourseYaml,
-  dirPath: string
+  dirPath: string,
 ): Promise<Unit> {
   const { content, ...yaml } = await loadUnitYaml(dirPath, unit.src);
   const unitPath = path.join(process.cwd(), dirPath, unit.src);
@@ -37,8 +37,8 @@ async function collectUnit(
       if (!(await checkLocalFileExists(filePath))) {
         throw new Error(`No Rmd file exists at ${filePath}`);
       }
-      return toVFile.read(filePath, 'utf-8');
-    })
+      return readVfile(filePath, 'utf-8');
+    }),
   );
   const titles = getUnitTitles({
     courseTitle: course.title,

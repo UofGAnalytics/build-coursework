@@ -9,7 +9,7 @@ import { mmlToSpeech, mmlToSvg } from './mathjax-tex';
 
 export function aliasDirectiveToLatexSvg(ctx: Context) {
   return (tree: Root) => {
-    visit(tree, 'textDirective', (node) => {
+    visit(tree, 'textDirective', (node: TextDirective) => {
       if (!ctx.mmlStore || ctx.options.noTexSvg) {
         return;
       }
@@ -56,7 +56,8 @@ function renderSvg(mml: string) {
 }
 
 function createAccessibleSvg(mathjaxSvg: string, label: string = '') {
-  const tree = rehypeParser.parse(mathjaxSvg);
+  const tree = rehypeParser.parse(mathjaxSvg) as Root;
+  // @ts-expect-error
   const parent = tree.children[0] as Element;
   const svg = parent.children[0] as Element;
   const properties = svg.properties as Record<string, string>;

@@ -18,7 +18,7 @@ export function assertVideoAttributes() {
           failMessage(
             file,
             'duration attribute is required',
-            node.position
+            node.position,
           );
         }
 

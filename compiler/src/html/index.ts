@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { Parent as HastParent, Root } from 'hast';
+import { Parent as HastParent } from 'hast';
 import startCase from 'lodash/startCase.js';
 import { Parent as MdastParent } from 'mdast';
 import doc, { Options } from 'rehype-document';
@@ -21,7 +21,7 @@ export async function htmlPhase(
   file: VFile,
   unit: Unit,
   ctx: Context,
-  targetPdf?: boolean
+  targetPdf?: boolean,
 ) {
   const processor = unified().use(stringify, { allowDangerousHtml: true });
 
@@ -48,9 +48,9 @@ export async function htmlPhase(
     processor.use(doc, docOptions);
   }
 
-  const transformed = await processor.run(hast as Root, file);
+  const transformed = await processor.run(hast, file);
 
-  const result = processor.stringify(transformed, file);
+  const result = processor.stringify(transformed as any, file);
 
   return postTransforms(result, ctx);
 }
