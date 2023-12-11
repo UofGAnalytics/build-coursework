@@ -337,7 +337,11 @@ async function codeToAliasDirective(file, ctx) {
   return file;
 }
 function codeBlocksToAlias(md, store) {
-  return md.replace(/```(.+?)```/gms, (_, match) => {
+  const verbatimStore = [];
+  return md.replace(/^(~~~.+?^~~~)$/gms, (_, match) => {
+    verbatimStore.push(match);
+    return `::verbatimStore[${verbatimStore.length - 1}]`;
+  }).replace(/^```(.+?)^```$/gms, (_, match) => {
     const lines = match.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
     const lang = lines[0];
     const value = lines.slice(1).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
@@ -346,10 +350,12 @@ function codeBlocksToAlias(md, store) {
       value
     });
     return `::codeBlock[${store.length - 1}]`;
+  }).replace(/::verbatimStore\[(\d+)\]/g, (_, match) => {
+    return verbatimStore[Number(match)];
   });
 }
 function inlineCodeToAlias(md, store) {
-  return md.replace(/`(.+?)`/g, (_, value) => {
+  return md.replace(/`([^\n`]+?)`/g, (_, value) => {
     store.push({
       value
     });
@@ -4564,7 +4570,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.67";
+  const currentVersion = "1.1.68";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
