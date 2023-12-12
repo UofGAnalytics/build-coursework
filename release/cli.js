@@ -183,6 +183,10 @@ const args = {
     type: 'string',
     description: 'Specify which environment program to display'
   },
+  envLanguage: {
+    type: 'string',
+    description: 'Specify which environment language to display'
+  },
   fileName: {
     type: 'string',
     description: 'Specify name of output file'
@@ -214,6 +218,7 @@ const options = {
   verbose: argv.verbose,
   envPlatform: argv.envPlatform,
   envProgram: argv.envProgram,
+  envLanguage: argv.envLanguage,
   fileName: argv.fileName,
   output: argv.output
 };
@@ -3190,14 +3195,16 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _boxouts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6112);
 /* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3069);
 /* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3324);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__]);
-([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _language_switcher__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4921);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__, _language_switcher__WEBPACK_IMPORTED_MODULE_4__]);
+([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__, _language_switcher__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
 
 async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_0__.unified)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_3__/* .programSwitcher */ .D, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_1__/* .boxouts */ .q, ctx.refStore);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_0__.unified)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_3__/* .programSwitcher */ .D, ctx).use(_language_switcher__WEBPACK_IMPORTED_MODULE_4__/* .languageSwitcher */ .v, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_1__/* .boxouts */ .q, ctx.refStore);
   if (targetPdf) {
     processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__/* .moveAnswersToEnd */ .w);
   }
@@ -3639,6 +3646,97 @@ async function mdastPhase(file, ctx) {
   const parsed = processor.parse(file);
   // @ts-expect-error
   return processor.run(parsed, file);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 4921:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   v: () => (/* binding */ languageSwitcher)
+/* harmony export */ });
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1037);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
+([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+const languages = ['r', 'python'];
+const titleCase = ['R', 'Python'];
+function languageSwitcher(ctx) {
+  const languageFlag = ctx.options.envLanguage;
+  if (languageFlag !== undefined && !languages.includes(languageFlag)) {
+    throw new Error(`[environment]: envLanguage ${languageFlag} should be one of ${languages}`);
+  }
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', node => {
+      if (node.name === 'language-switcher') {
+        const children = [];
+        if (languageFlag === undefined) {
+          children.push(processMenu(node));
+        }
+        children.push(...processChildren(node, languageFlag));
+        node.data = {
+          hProperties: {
+            className: 'language-switcher'
+          },
+          hChildren: children
+        };
+      }
+    });
+  };
+}
+function processMenu(parent) {
+  const children = parent.children;
+  return {
+    type: 'element',
+    tagName: 'ul',
+    properties: {},
+    children: children.map(node => {
+      const element = {
+        type: 'element',
+        tagName: 'li',
+        properties: {
+          'data-language': node.name
+        },
+        children: [{
+          type: 'text',
+          value: titleCase[languages.indexOf(node.name)]
+        }]
+      };
+      return element;
+    })
+  };
+}
+function processChildren(parent, languageFlag) {
+  const children = parent.children.map(node => {
+    const parent = node;
+    if (languages.includes(parent.name)) {
+      node.data = {
+        hProperties: {
+          'data-language': parent.name,
+          className: ['language', languageFlag === parent.name ? 'show' : '']
+        }
+      };
+    }
+    return node;
+  });
+  let filtered = children;
+  if (languageFlag !== undefined) {
+    filtered = filtered.filter(node => {
+      const parent = node;
+      return languageFlag === parent.name;
+    });
+  }
+  const parentHast = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__.toHast)({
+    type: 'root',
+    children: filtered
+  });
+  return parentHast.children;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4570,7 +4668,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.68";
+  const currentVersion = "1.1.69";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
