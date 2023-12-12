@@ -6,15 +6,17 @@ import { Context } from '../context';
 import { boxouts } from './boxouts';
 import { moveAnswersToEnd } from './move-answers-to-end';
 import { programSwitcher } from './program-switcher';
+import { languageSwitcher } from './language-switcher';
 
 export async function combinedMdastPhase(
   mdast: Root,
   ctx: Context,
   file: VFile,
-  targetPdf?: boolean
+  targetPdf?: boolean,
 ) {
   const processor = unified()
     .use(programSwitcher, ctx)
+    .use(languageSwitcher, ctx)
     .use(boxouts, ctx.refStore);
 
   if (targetPdf) {

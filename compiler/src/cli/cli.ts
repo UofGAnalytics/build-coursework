@@ -82,6 +82,10 @@ const args = {
     type: 'string',
     description: 'Specify which environment program to display',
   },
+  envLanguage: {
+    type: 'string',
+    description: 'Specify which environment language to display',
+  },
   fileName: {
     type: 'string',
     description: 'Specify name of output file',
@@ -116,6 +120,7 @@ const options: Options = {
   verbose: argv.verbose,
   envPlatform: argv.envPlatform,
   envProgram: argv.envProgram,
+  envLanguage: argv.envLanguage,
   fileName: argv.fileName,
   output: argv.output as 'md' | 'html',
 };

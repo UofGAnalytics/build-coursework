@@ -5,10 +5,8 @@ import {
 
 describe('program switcher', () => {
   it('should show the program switcher correctly', async () => {
-    const { html } = await testProcessor(
-      `
+    const { html } = await testProcessor(`
       ::::program-switcher
-
       :::command-line
       I am cli
       :::
@@ -16,10 +14,8 @@ describe('program switcher', () => {
       :::github-desktop
       I am github desktop
       :::
-
       ::::
-    `
-    );
+    `);
 
     const expected = unindentString(`
       <div class="program-switcher">
@@ -40,10 +36,8 @@ describe('program switcher', () => {
   });
 
   it('should only show cli', async () => {
-    const { html } = await testProcessor(
-      `
+    const md = `
       ::::program-switcher
-
       :::command-line
       I am cli
       :::
@@ -51,13 +45,11 @@ describe('program switcher', () => {
       :::github-desktop
       I am github desktop
       :::
-
       ::::
-    `,
-      {
-        envProgram: 'command-line',
-      }
-    );
+    `;
+    const { html } = await testProcessor(md, {
+      envProgram: 'command-line',
+    });
 
     const expected = unindentString(`
       <div class="program-switcher">
