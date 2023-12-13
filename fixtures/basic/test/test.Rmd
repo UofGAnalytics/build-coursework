@@ -10,3 +10,13 @@ The standardised deviance residual is
 ###[/definition]
 
 We have already used this in models of the form $g(\mu)=\beta_0+\beta1 x$ to test $H_0: \beta_1=0$.
+
+::::language-switcher
+:::r
+I am R
+:::
+
+:::python
+I am Python
+:::
+::::

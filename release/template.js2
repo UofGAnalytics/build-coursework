@@ -323,7 +323,43 @@ function setProgram(e) {
     saveState('environment', state_state);
   }
 }
+;// CONCATENATED MODULE: ./src/language-switcher/state.ts
+
+const language_switcher_state_defaultState = Object.freeze({
+  language: 'r'
+});
+const language_switcher_state_state = getSavedState('environment', language_switcher_state_defaultState);
+;// CONCATENATED MODULE: ./src/language-switcher/index.ts
+
+
+document.documentElement.classList.add(`language-${language_switcher_state_state.language}`);
+document.querySelectorAll('.language-switcher > ul > li').forEach(elem => {
+  const element = elem;
+  console.log(element.dataset.language, language_switcher_state_state.language);
+  if (element.dataset.language === language_switcher_state_state.language) {
+    element.classList.add('active');
+  }
+  element.addEventListener('click', setLanguage);
+});
+document.querySelectorAll('.language-switcher > .language').forEach(elem => {
+  const element = elem;
+  if (element.dataset.language === language_switcher_state_state.language) {
+    element.classList.add('show');
+  }
+});
+function setLanguage(e) {
+  const target = e.currentTarget;
+  const language = target.dataset.language;
+  const newClass = `language-${language}`;
+  if (!document.documentElement.classList.contains(newClass)) {
+    const oldClass = `language-${language_switcher_state_state.language}`;
+    document.documentElement.classList.replace(oldClass, newClass);
+    language_switcher_state_state.language = language;
+    saveState('environment', language_switcher_state_state);
+  }
+}
 ;// CONCATENATED MODULE: ./src/index.ts
+
 
 
 

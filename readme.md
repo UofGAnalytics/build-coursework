@@ -242,6 +242,23 @@ In these cases it makes more sense to output a PNG image. You can achieve this b
 
 I have set a default of `fig.retina=2` which means the resulting plot is just over 1000px in width, which should be a sensible default for most screens.
 
+### Language switcher
+
+You can contain and switch between programming languages R and Python in step-by-step instructions using the
+outer `language-switcher` and inner `r` and `python` [container directives](https://github.com/syntax-tree/mdast-util-directive#containerdirective), for example:
+
+```
+::::language-switcher
+:::r
+I am R
+:::
+
+:::python
+I am Python
+:::
+::::
+```
+
 ## Known Issues
 
 I've tried to keep necessary changes to a minimum, but there are few things that may pop up depending on how you have written the coursework.

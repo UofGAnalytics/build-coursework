@@ -4,5 +4,6 @@ import './view-options';
 import './toggle-answers';
 import './toggle-sidebar';
 import './program-switcher';
+import './language-switcher';
 
 document.documentElement.dispatchEvent(new Event('template-ready'));
