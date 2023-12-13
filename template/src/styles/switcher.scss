@@ -1,10 +1,14 @@
 html.program-command-line .program-switcher > .program:not([data-program="command-line"]),
-html.program-github-desktop .program-switcher > .program:not([data-program="github-desktop"]) {
+html.program-github-desktop .program-switcher > .program:not([data-program="github-desktop"]),
+html.language-r .language-switcher > .language:not([data-language="r"]),
+html.language-python .language-switcher > .language:not([data-language="python"]) {
   display: none;
 }
 
 html.program-command-line .program-switcher > ul > li[data-program="command-line"],
-html.program-github-desktop .program-switcher  > ul > li[data-program="github-desktop"] {
+html.program-github-desktop .program-switcher  > ul > li[data-program="github-desktop"],
+html.language-r .language-switcher  > ul > li[data-language="r"],
+html.language-python .language-switcher  > ul > li[data-language="python"] {
   color: var(--highlightColor);
   cursor: default;
   &:hover {
@@ -12,7 +16,8 @@ html.program-github-desktop .program-switcher  > ul > li[data-program="github-de
   }
 }
 
-.program-switcher {
+.program-switcher,
+.language-switcher {
   position: relative;
 
   & > ul {
@@ -43,7 +48,8 @@ html.program-github-desktop .program-switcher  > ul > li[data-program="github-de
 
   }
 
-  & > .program {
+  & > .program,
+  & > .language {
     padding: 1.5rem 1rem;
     border: 3px solid var(--boxoutBg);
     border-radius: 0.6rem;

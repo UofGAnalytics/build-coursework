@@ -4234,7 +4234,8 @@ puppeteer__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? 
 
 async function convertToPdf(html) {
   const browser = await puppeteer__WEBPACK_IMPORTED_MODULE_0__["default"].launch({
-    headless: true,
+    // @ts-expect-error
+    headless: 'new',
     args: [
     // attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
     '--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-first-run', '--no-sandbox', '--no-zygote']
