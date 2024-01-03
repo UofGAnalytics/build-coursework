@@ -66,16 +66,16 @@ Rscript --version
 
 If not, please follow these instructions for [Windows](https://info201.github.io/r-intro.html#windows-command-line) or these for [Mac and Linux](https://stackoverflow.com/questions/38456144/rscript-command-not-found#67086041)
 
-### Install this project from Github with npm
+### Install this project from GitHub with npm
 
 ```bash
 npm install -g UofGAnalytics/build-coursework
 ```
 
-Ensure it worked correctly:
+Ensure it works correctly:
 
 ```bash
-npm list –g --depth=0
+npm list –g
 > ...
 > build-coursework@... -> ...github:UofGAnalytics/build-coursework...
 > ...
