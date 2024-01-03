@@ -17,9 +17,9 @@
     "build": "cross-env NODE_ENV=production webpack"
   },
   "dependencies": {
-    "@double-great/remark-lint-alt-text": "^0.7.0",
-    "@mapbox/remark-lint-link-text": "^0.6.0",
-    "ansicolor": "^1.1.100",
+    "@double-great/remark-lint-alt-text": "^1.0.0",
+    "@mapbox/remark-lint-link-text": "^0.7.0",
+    "ansicolor": "^2.0.1",
     "base64-arraybuffer": "^1.0.2",
     "chalk": "^5.3.0",
     "dargs": "^8.1.0",
