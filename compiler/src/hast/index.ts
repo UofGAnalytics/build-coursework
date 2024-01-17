@@ -1,10 +1,13 @@
 import { Root } from 'mdast';
 import rehypeRaw from 'rehype-raw';
 import remark2rehype from 'remark-rehype';
+import slug from 'rehype-slug';
+import headings from 'rehype-autolink-headings';
 import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
+import { createSvg } from '../utils/icons';
 import { inlineRelativeAssets } from './inline-files';
 import { responsiveTables } from './responsive-tables';
 
@@ -17,7 +20,12 @@ export async function hastPhase(
   const processor = unified()
     .use(remark2rehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(responsiveTables);
+    .use(responsiveTables)
+    .use(slug)
+    .use(headings, {
+      content: createSvg('link-icon') as any,
+      properties: { className: 'link' },
+    });
 
   if (!ctx.options.noEmbedAssets) {
     processor.use(inlineRelativeAssets, ctx);

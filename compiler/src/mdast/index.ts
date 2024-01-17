@@ -1,15 +1,12 @@
-import headings from 'rehype-autolink-headings';
 import directive from 'remark-directive';
 import frontmatter from 'remark-frontmatter';
 import gfm from 'remark-gfm';
 import markdown from 'remark-parse';
-import slug from 'rehype-slug';
 import { unified } from 'unified';
 import { VFile } from 'vfile';
 
 import { Context } from '../context';
 import { aliasDirectiveToLatexSvg } from '../latex/directive-to-svg';
-import { createSvg } from '../utils/icons';
 import { browserWindow } from './browser-window';
 import { codeBlocks } from './code-blocks';
 import { columns } from './columns';
@@ -33,13 +30,10 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(directive)
     .use(frontmatter)
     .use(gfm)
-    .use(slug)
-    .use(headings, {
-      content: createSvg('link-icon') as any,
-      properties: { className: 'link' },
-    })
     // custom plugins:
-    .use(() => (tree) => {})
+    // .use(() => (tree) => {
+    //   console.dir(tree, { depth: null });
+    // })
     .use(columns)
     .use(embedAssetUrl, ctx)
     .use(youtubeVideos)
@@ -55,6 +49,5 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(pagebreaks);
 
   const parsed = processor.parse(file);
-  // @ts-expect-error
   return processor.run(parsed, file);
 }
