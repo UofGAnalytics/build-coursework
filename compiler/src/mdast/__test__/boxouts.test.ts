@@ -31,7 +31,9 @@ describe('example', () => {
 
     const expected = unindentString(`
       <div class="boxout example" id="example-1"><span class="type">Example 1</span>
-        <h3>My Example</h3>
+        <h3 id="my-example"><a class="link" href="#my-example"><svg class="icon link-icon">
+              <use href="#link-icon"></use>
+            </svg></a>My Example</h3>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -80,7 +82,9 @@ describe('example', () => {
 
     const expected = unindentString(`
       <div class="boxout example hello-icon" id="example-1"><span class="type">Example 1</span>
-        <h3>My Example</h3>
+        <h3 id="my-example"><a class="link" href="#my-example"><svg class="icon link-icon">
+              <use href="#link-icon"></use>
+            </svg></a>My Example</h3>
         <p>An example of <em>this</em>!</p>
       </div>
     `);
@@ -179,7 +183,9 @@ describe('weblink', () => {
 
     const expected = unindentString(`
       <div class="boxout weblink" id="weblink-1"><span class="type">Weblink 1</span>
-        <h3><a href="https://cran.r-project.org" target="_blank" class="target">https://cran.r-project.org</a></h3>
+        <h3 id="httpscranr-projectorg"><a class="link" href="#httpscranr-projectorg"><svg class="icon link-icon">
+              <use href="#link-icon"></use>
+            </svg></a><a href="https://cran.r-project.org" target="_blank" class="target">https://cran.r-project.org</a></h3>
         <p>A weblink of <em>this</em>!</p>
       </div>
     `);
@@ -196,7 +202,9 @@ describe('weblink', () => {
 
     const expected = unindentString(`
       <div class="boxout weblink" id="weblink-1"><span class="type">Weblink 1</span>
-        <h3><a href="https://cran.r-project.org" target="_blank" class="target">CRAN</a></h3>
+        <h3 id="cran"><a class="link" href="#cran"><svg class="icon link-icon">
+              <use href="#link-icon"></use>
+            </svg></a><a href="https://cran.r-project.org" target="_blank" class="target">CRAN</a></h3>
         <p>A weblink of <em>this</em>!</p>
       </div>
     `);
@@ -206,14 +214,12 @@ describe('weblink', () => {
 
   it('should render LaTeX in a title', async () => {
     const { html } = await testProcessor(`
-      ###[theorem] Sampling/asymptotic distribution of $X^2$
+      ###[theorem] Test $X^2$
       Bla bla
       ###[/theorem]
     `);
 
-    const expected = '<h3>Sampling/asymptotic distribution of <svg';
-
-    expect(ignoreWhitespace(html)).toContain(ignoreWhitespace(expected));
+    expect(html).toMatch(/Test\s+<svg/);
   });
 
   it('should render a ggplot inside', async () => {

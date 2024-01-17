@@ -35,7 +35,9 @@ describe('code regex', () => {
     expect(unindentStringAndTrim(md)).toBe(expectedMd);
 
     const expectedHtml = unindentStringAndTrim(`
-      <h2>a</h2>
+      <h2 id="a"><a class="link" href="#a"><svg class="icon link-icon">
+            <use href="#link-icon"></use>
+          </svg></a>a</h2>
       <p>bbb</p>
       <div class="code-wrapper">
         <pre><code>%macro sortid(dsn);
@@ -66,7 +68,9 @@ describe('code regex', () => {
     expect(unindentStringAndTrim(md)).toBe(expectedMd);
 
     const expectedHtml = unindentStringAndTrim(`
-      <h2>a</h2>
+      <h2 id="a"><a class="link" href="#a"><svg class="icon link-icon">
+            <use href="#link-icon"></use>
+          </svg></a>a</h2>
       <p>bbb <code>e = mc2</code> ccc</p>
     `);
 
