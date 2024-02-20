@@ -19,6 +19,9 @@ export async function hastPhase(
 ) {
   const processor = unified()
     .use(remark2rehype, { allowDangerousHtml: true })
+    // .use(() => (tree) => {
+    //   console.dir(tree.children[0], { depth: null });
+    // })
     .use(rehypeRaw)
     .use(responsiveTables)
     .use(slug)

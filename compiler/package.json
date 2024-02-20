@@ -71,6 +71,7 @@
     "retext-english": "^5.0.0",
     "retext-spell": "^6.0.0",
     "sandboxed-module": "^2.0.4",
+    "slugify": "^1.6.6",
     "speech-rule-engine": "^4.0.7",
     "svgo": "^2.4.0",
     "temp-dir": "^2.0.0",

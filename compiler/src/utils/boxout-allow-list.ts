@@ -1,0 +1,14 @@
+export const boxoutAllowList = [
+  'lemma',
+  'corollary',
+  'example',
+  'error',
+  'supplement',
+  'background',
+  'definition',
+  'weblink',
+  'theorem',
+  'proposition',
+  'task',
+  'answer',
+];

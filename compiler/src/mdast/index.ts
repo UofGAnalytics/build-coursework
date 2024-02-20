@@ -19,6 +19,7 @@ import { styledTerminal } from './styled-terminal';
 import { textFile } from './text-file';
 import { youtubeVideos } from './youtube-videos';
 import { aliasDirectiveToCode } from '../code/alias-directive-to-code';
+import { headingAttributes } from './heading-attributes';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
   // https://github.com/unifiedjs/unified
@@ -31,6 +32,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(frontmatter)
     .use(gfm)
     // custom plugins:
+    .use(headingAttributes)
     // .use(() => (tree) => {
     //   console.dir(tree, { depth: null });
     // })

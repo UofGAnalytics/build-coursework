@@ -600,7 +600,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([rehy
 async function hastPhase(mdast, ctx, file, targetPdf) {
   const processor = (0,unified__WEBPACK_IMPORTED_MODULE_4__.unified)().use(remark_rehype__WEBPACK_IMPORTED_MODULE_1__["default"], {
     allowDangerousHtml: true
-  }).use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_7__/* .responsiveTables */ .l).use(rehype_slug__WEBPACK_IMPORTED_MODULE_2__["default"]).use(rehype_autolink_headings__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  })
+  // .use(() => (tree) => {
+  //   console.dir(tree.children[0], { depth: null });
+  // })
+  .use(rehype_raw__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_responsive_tables__WEBPACK_IMPORTED_MODULE_7__/* .responsiveTables */ .l).use(rehype_slug__WEBPACK_IMPORTED_MODULE_2__["default"]).use(rehype_autolink_headings__WEBPACK_IMPORTED_MODULE_3__["default"], {
     content: (0,_utils_icons__WEBPACK_IMPORTED_MODULE_5__/* .createSvg */ .W)('link-icon'),
     properties: {
       className: 'link'
@@ -2716,7 +2720,10 @@ function boxouts(refStore) {
   const counter = (0,_utils_counter__WEBPACK_IMPORTED_MODULE_3__/* .createCounter */ .G)();
   return async tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_2__.visit)(tree, 'containerDirective', node => {
-      switch (node.name) {
+      const name = node.name.trim();
+      switch (name) {
+        case 'lemma':
+        case 'corollary':
         case 'example':
         case 'error':
         case 'supplement':
@@ -2728,7 +2735,6 @@ function boxouts(refStore) {
         case 'proposition':
         case 'answer':
           {
-            const name = node.name;
             const count = counter.increment(name);
             node.data = {
               hProperties: createAttributes(node, count, refStore),
@@ -2740,7 +2746,7 @@ function boxouts(refStore) {
   };
 }
 function createAttributes(node, count, refStore) {
-  const name = node.name;
+  const name = node.name.trim();
   const id = `${name}-${count}`;
   const attributes = node.attributes;
   const className = ['boxout', name];
@@ -2811,7 +2817,7 @@ function createAnswer(node, count) {
   };
 }
 function createBoxoutType(node, count) {
-  const name = node.name;
+  const name = node.name.trim();
   const label = (0,lodash_startCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(name);
   let value = `${label} ${count}`;
   if (node.attributes?.optional !== undefined) {
@@ -3456,6 +3462,71 @@ __webpack_async_result__();
 
 /***/ }),
 
+/***/ 4085:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   o: () => (/* binding */ headingAttributes)
+/* harmony export */ });
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
+/* harmony import */ var slugify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(163);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, slugify__WEBPACK_IMPORTED_MODULE_1__]);
+([unist_util_visit__WEBPACK_IMPORTED_MODULE_0__, slugify__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+function headingAttributes() {
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'heading', node => {
+      transformHeadings(node);
+      // console.dir(node, { depth: null });
+    });
+  };
+}
+const slugifyOptions = {
+  lower: true,
+  strict: true,
+  locale: 'en'
+};
+function transformHeadings(node) {
+  const text = node.children[0];
+  const match = text.value.match(/^(.+)\{(.+)\}$/);
+  if (match === null) {
+    return;
+  }
+  text.value = match[1].trim();
+  const attributes = parseAttributes(match[2]);
+  const properties = {};
+  if (attributes.id) {
+    properties.id = (0,slugify__WEBPACK_IMPORTED_MODULE_1__["default"])(attributes.id, slugifyOptions);
+  }
+  if (attributes.classes.length) {
+    properties.class = attributes.classes.map(str => (0,slugify__WEBPACK_IMPORTED_MODULE_1__["default"])(str, slugifyOptions)).join(' ');
+  }
+  node.data = node.data || {
+    hProperties: properties
+  };
+}
+function parseAttributes(attributes) {
+  return attributes.split(' ').reduce((acc, str) => {
+    if (str.startsWith('#')) {
+      acc.id = str.slice(1);
+    }
+    if (str.startsWith('.')) {
+      const classes = str.slice(1).split('.');
+      acc.classes.push(...classes);
+    }
+    return acc;
+  }, {
+    id: '',
+    classes: []
+  });
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
 /***/ 6365:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
@@ -3614,8 +3685,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(1863);
 /* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(7048);
 /* harmony import */ var _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(3021);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__]);
-([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _heading_attributes__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(4085);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__, _heading_attributes__WEBPACK_IMPORTED_MODULE_18__]);
+([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__, _heading_attributes__WEBPACK_IMPORTED_MODULE_18__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -3642,6 +3715,7 @@ async function mdastPhase(file, ctx) {
   // third-party plugins:
   .use(remark_parse__WEBPACK_IMPORTED_MODULE_3__["default"]).use(remark_directive__WEBPACK_IMPORTED_MODULE_0__["default"]).use(remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__["default"]).use(remark_gfm__WEBPACK_IMPORTED_MODULE_2__["default"])
   // custom plugins:
+  .use(_heading_attributes__WEBPACK_IMPORTED_MODULE_18__/* .headingAttributes */ .o)
   // .use(() => (tree) => {
   //   console.dir(tree, { depth: null });
   // })
@@ -4330,14 +4404,17 @@ function convertUrlToMd(contents) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   W: () => (/* binding */ convertMacroToDirective)
 /* harmony export */ });
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2037);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
+
 function convertMacroToDirective(contents) {
-  return contents.split('\n').map(line => {
+  return contents.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL).map(line => {
     const container = parseCustomContainer(line);
     if (container !== null) {
       return renderContainerDirective(container);
     }
     return line;
-  }).join('\n');
+  }).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
 }
 function parseCustomContainer(line) {
   const match = line.match(/^#{1,6}\s*\[(\D.+)](.*)/);
@@ -4397,13 +4474,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Z: () => (/* binding */ preParsePhase)
 /* harmony export */ });
-/* harmony import */ var _allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8275);
-/* harmony import */ var _convert_block_tex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6773);
-/* harmony import */ var _convert_inline_tex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8938);
-/* harmony import */ var _convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4120);
-/* harmony import */ var _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9543);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__]);
-_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var _allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8275);
+/* harmony import */ var _convert_block_tex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6773);
+/* harmony import */ var _convert_inline_tex__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8938);
+/* harmony import */ var _convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4120);
+/* harmony import */ var _reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9543);
+/* harmony import */ var _reformat_pandoc_directives__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9820);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_1__]);
+_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 
 
@@ -4420,13 +4499,14 @@ function preParsePhase(file) {
   let result = file.value;
   result = removeCommentedSections(result);
   // result = escapeDollarsInCodeBlocks(result);
-  result = (0,_allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_1__/* .allowNoWhitespaceBeforeHeading */ .Q)(result);
-  result = (0,_convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_2__/* .convertMacroToDirective */ .W)(result);
-  result = (0,_convert_inline_tex__WEBPACK_IMPORTED_MODULE_3__/* .convertTextBfToMd */ ._)(result);
-  result = (0,_convert_inline_tex__WEBPACK_IMPORTED_MODULE_3__/* .convertUrlToMd */ .c)(result);
-  result = (0,_convert_block_tex__WEBPACK_IMPORTED_MODULE_4__/* .convertNewPageToDirective */ .u)(result);
-  result = (0,_convert_block_tex__WEBPACK_IMPORTED_MODULE_4__/* .convertEmptyMBoxToDirective */ .c)(result);
-  result = (0,_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_0__/* .reformatPandocSimpleTables */ .C)(result);
+  result = (0,_allow_no_whitespace_before_heading__WEBPACK_IMPORTED_MODULE_3__/* .allowNoWhitespaceBeforeHeading */ .Q)(result);
+  result = (0,_convert_macro_to_directive__WEBPACK_IMPORTED_MODULE_0__/* .convertMacroToDirective */ .W)(result);
+  result = (0,_convert_inline_tex__WEBPACK_IMPORTED_MODULE_4__/* .convertTextBfToMd */ ._)(result);
+  result = (0,_convert_inline_tex__WEBPACK_IMPORTED_MODULE_4__/* .convertUrlToMd */ .c)(result);
+  result = (0,_convert_block_tex__WEBPACK_IMPORTED_MODULE_5__/* .convertNewPageToDirective */ .u)(result);
+  result = (0,_convert_block_tex__WEBPACK_IMPORTED_MODULE_5__/* .convertEmptyMBoxToDirective */ .c)(result);
+  result = (0,_reformat_pandoc_simple_tables__WEBPACK_IMPORTED_MODULE_1__/* .reformatPandocSimpleTables */ .C)(result);
+  result = (0,_reformat_pandoc_directives__WEBPACK_IMPORTED_MODULE_2__/* .reformatPandocDirectives */ ._)(result);
   file.value = result;
   return file;
 }
@@ -4441,6 +4521,29 @@ function removeCommentedSections(md) {
 // }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 9820:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ reformatPandocDirectives)
+/* harmony export */ });
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2037);
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
+
+function reformatPandocDirectives(contents) {
+  return contents.split(os__WEBPACK_IMPORTED_MODULE_0__.EOL).map(line => {
+    if (line.startsWith(':::') && line.length > 3) {
+      const match = line.match(/^:::\s(.+)$/);
+      if (match !== null) {
+        return `:::${match[1]}`;
+      }
+    }
+    return line;
+  }).join(os__WEBPACK_IMPORTED_MODULE_0__.EOL);
+}
 
 /***/ }),
 
@@ -5416,6 +5519,13 @@ module.exports = import("remark-parse");;
 /***/ ((module) => {
 
 module.exports = import("remark-rehype");;
+
+/***/ }),
+
+/***/ 163:
+/***/ ((module) => {
+
+module.exports = import("slugify");;
 
 /***/ }),
 

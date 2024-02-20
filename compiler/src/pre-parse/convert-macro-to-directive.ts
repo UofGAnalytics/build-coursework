@@ -1,6 +1,8 @@
+import { EOL } from 'os';
+
 export function convertMacroToDirective(contents: string) {
   return contents
-    .split('\n')
+    .split(EOL)
     .map((line) => {
       const container = parseCustomContainer(line);
       if (container !== null) {
@@ -8,7 +10,7 @@ export function convertMacroToDirective(contents: string) {
       }
       return line;
     })
-    .join('\n');
+    .join(EOL);
 }
 
 type Container = {
@@ -55,7 +57,7 @@ function getColons(name: string) {
 
 function transformAttributes(
   containerName: string,
-  attributesArr: string[]
+  attributesArr: string[],
 ) {
   return attributesArr
     .map((attribute) => {

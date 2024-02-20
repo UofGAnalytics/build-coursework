@@ -14,29 +14,19 @@ import { visit } from 'unist-util-visit';
 
 import { Context } from '../context';
 import { createCounter } from '../utils/counter';
+import { boxoutAllowList } from '../utils/boxout-allow-list';
 
 export function boxouts(refStore: Context['refStore']) {
   const counter = createCounter();
   return async (tree: Node) => {
     visit(tree, 'containerDirective', (node: ContainerDirective) => {
-      switch (node.name) {
-        case 'example':
-        case 'error':
-        case 'supplement':
-        case 'background':
-        case 'definition':
-        case 'weblink':
-        case 'theorem':
-        case 'task':
-        case 'proposition':
-        case 'answer': {
-          const name = node.name as string;
-          const count = counter.increment(name);
-          node.data = {
-            hProperties: createAttributes(node, count, refStore),
-            hChildren: createBoxout(node, count) as any,
-          };
-        }
+      const name = node.name.trim();
+      if (boxoutAllowList.includes(name)) {
+        const count = counter.increment(name);
+        node.data = {
+          hProperties: createAttributes(node, count, refStore),
+          hChildren: createBoxout(node, count) as any,
+        };
       }
     });
   };
@@ -47,7 +37,7 @@ function createAttributes(
   count: number,
   refStore: Context['refStore'],
 ) {
-  const name = node.name as string;
+  const name = node.name.trim();
   const id = `${name}-${count}`;
 
   const attributes = node.attributes as Record<string, string>;
@@ -141,7 +131,7 @@ function createBoxoutType(
   node: ContainerDirective,
   count: number,
 ): Element {
-  const name = node.name as string;
+  const name = node.name.trim();
   const label = startCase(name);
   let value = `${label} ${count}`;
 

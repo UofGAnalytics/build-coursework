@@ -8,6 +8,7 @@ import {
 import { convertTextBfToMd, convertUrlToMd } from './convert-inline-tex';
 import { convertMacroToDirective } from './convert-macro-to-directive';
 import { reformatPandocSimpleTables } from './reformat-pandoc-simple-tables';
+import { reformatPandocDirectives } from './reformat-pandoc-directives';
 
 // Some of the original coursework syntax can't easily be parsed by
 // existing plugins for unified.js, so in a "pre-parse" phase
@@ -26,6 +27,7 @@ export function preParsePhase(file: VFile) {
   result = convertNewPageToDirective(result);
   result = convertEmptyMBoxToDirective(result);
   result = reformatPandocSimpleTables(result);
+  result = reformatPandocDirectives(result);
   file.value = result;
   return file;
 }
