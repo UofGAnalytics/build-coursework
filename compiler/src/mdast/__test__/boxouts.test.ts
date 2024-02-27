@@ -297,3 +297,82 @@ describe('weblink', () => {
     );
   });
 });
+
+describe('pandoc counters', () => {
+  it('should render an optional task boxout', async () => {
+    const { html } = await testProcessor(`
+      ::: definition
+      Test 1
+
+      Test 2
+
+      Test 3
+      :::
+
+      ::: {#CMD1.1 .definition}
+      Test 1
+
+      Test 2
+
+      Test 3
+      :::
+
+      ::: {#CMD1.2 .definition}
+      **Definition bla bla 1**. Test 1
+
+      Test 2
+
+      Test 3
+      :::
+
+      ::: {#CMD1.3 .definition}
+      **Definition bla bla 2**. *Test 1*
+
+      *Test 2*
+
+      *Test 3*
+      :::
+
+      ::: {#CMT7.1 .theorem}
+      **Theorem 41** (Cauchy's theorem for images of rectangles). Test 1
+
+      Test 2
+
+      Test 3
+      :::
+    `);
+
+    const expected = unindentString(`
+      <div class="boxout definition" id="definition-1"><span class="type">Definition 1</span>
+        <p>Test 1</p>
+        <p>Test 2</p>
+        <p>Test 3</p>
+      </div>
+      <div class="boxout definition" id="cmd11"><span class="type">Definition 2</span>
+        <p>Test 1</p>
+        <p>Test 2</p>
+        <p>Test 3</p>
+      </div>
+      <div class="boxout definition" id="cmd12"><span class="type">Definition bla bla 1</span>
+        <p>Test 1</p>
+        <p>Test 2</p>
+        <p>Test 3</p>
+      </div>
+      <div class="boxout definition" id="cmd13"><span class="type">Definition bla bla 2</span>
+        <p><em>Test 1</em></p>
+        <p><em>Test 2</em></p>
+        <p><em>Test 3</em></p>
+      </div>
+      <div class="boxout theorem" id="cmt71"><span class="type">Theorem 41</span>
+        <h3 id="cauchys-theorem-for-images-of-rectangles"><a class="link" href="#cauchys-theorem-for-images-of-rectangles"><svg class="icon link-icon">
+              <use href="#link-icon"></use>
+            </svg></a>Cauchy's theorem for images of rectangles</h3>
+        <p>Test 1</p>
+        <p>Test 2</p>
+        <p>Test 3</p>
+      </div>
+    `);
+
+    expect(html).toBe(expected);
+  });
+});

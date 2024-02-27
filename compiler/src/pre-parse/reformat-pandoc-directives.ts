@@ -23,7 +23,7 @@ export function reformatPandocDirectives(contents: string) {
                 .join('');
               const attributes = `${newId} ${newClasses}`.trim();
               const newAttributes = attributes ? `{${attributes}}` : '';
-              return `:::${boxoutName} ${newAttributes}`.trim();
+              return `:::${boxoutName + newAttributes}`;
             }
           }
           return `:::${str}`;

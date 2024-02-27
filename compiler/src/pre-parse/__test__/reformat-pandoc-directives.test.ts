@@ -29,7 +29,7 @@ describe('reformatPandocDirectives', () => {
   });
 
   it('should reformat pandoc directives shown as class names', async () => {
-    const { md } = await testProcessor(`
+    const { md, html } = await testProcessor(`
       ::: definition
       hi 1
       :::
@@ -68,15 +68,15 @@ describe('reformatPandocDirectives', () => {
       hi 2
       :::
 
-      :::definition {#CMD1.1}
+      :::definition{#cmd11}
       hi 3
       :::
 
-      :::definition {#CMD1.1 .other}
+      :::definition{#cmd11 .other}
       hi 4
       :::
 
-      :::definition {#CMD1.1 .other}
+      :::definition{#cmd11 .other}
       hi 5
       :::
 
@@ -90,5 +90,35 @@ describe('reformatPandocDirectives', () => {
     `);
 
     expect(md.trim()).toBe(expectedMd.trim());
+
+    const expectedHtml = unindentString(`
+      <div class="boxout definition" id="definition-1"><span class="type">Definition 1</span>
+        <p>hi 1</p>
+      </div>
+      <div class="boxout definition" id="definition-2"><span class="type">Definition 2</span>
+        <p>hi 2</p>
+      </div>
+      <div class="boxout definition" id="cmd11"><span class="type">Definition 3</span>
+        <p>hi 3</p>
+      </div>
+      <div class="boxout definition" id="cmd11"><span class="type">Definition 4</span>
+        <p>hi 4</p>
+      </div>
+      <div class="boxout definition" id="cmd11"><span class="type">Definition 5</span>
+        <p>hi 5</p>
+      </div>
+      <p>
+        :::{#CMD1.1}
+        hi 6
+        :::
+      </p>
+      <p>
+        :::{#CMD1.1 .other}
+        hi 7
+        :::
+      </p>
+    `);
+
+    expect(html).toBe(expectedHtml);
   });
 });

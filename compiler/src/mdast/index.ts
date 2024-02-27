@@ -20,6 +20,7 @@ import { textFile } from './text-file';
 import { youtubeVideos } from './youtube-videos';
 import { aliasDirectiveToCode } from '../code/alias-directive-to-code';
 import { headingAttributes } from './heading-attributes';
+import { linkAttributes } from './link-attributes';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
   // https://github.com/unifiedjs/unified
@@ -33,6 +34,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     .use(gfm)
     // custom plugins:
     .use(headingAttributes)
+    .use(linkAttributes)
     // .use(() => (tree) => {
     //   console.dir(tree, { depth: null });
     // })

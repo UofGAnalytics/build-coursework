@@ -7,10 +7,7 @@ export function moveAnswersToEnd() {
     visit(
       tree,
       'containerDirective',
-      (node: ContainerDirective, _index, _parent) => {
-        const index = _index as number;
-        const parent = _parent as Parent;
-
+      (node: ContainerDirective, index: number, parent: Parent) => {
         // remove answer from task rehype
         if (node.name === 'task' && node.data) {
           const children = node.data.hChildren || [];

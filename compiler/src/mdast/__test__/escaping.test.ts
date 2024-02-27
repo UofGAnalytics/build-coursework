@@ -138,4 +138,57 @@ describe('escaping', () => {
     expect(html).toContain('boysorgirls &#x3C;- "girls"');
     expect(html).toContain('\\end{document}');
   });
+
+  it('should escape gfm autolinking', async () => {
+    const { html } = await testProcessor(`
+      Bla bla https://www.nhm.co.uk.
+
+      Bla bla ht<span>tps://</span>w<span>ww.</span>nhm.co.uk.
+    `);
+
+    const expected = unindentString(`
+      <p>Bla bla <a href="https://www.nhm.co.uk">https://www.nhm.co.uk</a>.</p>
+      <p>Bla bla ht<span>tps://</span>w<span>ww.</span>nhm.co.uk.</p>
+    `);
+
+    expect(html).toBe(expected);
+  });
+
+  it('nested lists', async () => {
+    const { html } = await testProcessor(`
+      <style>
+      ol ol {
+        list-style-type: lower-alpha;
+      }
+      </style>
+      1. one
+         1. one-one
+         2. one-two
+         3. one-three
+      2. two
+      3. three
+
+    `);
+
+    const expected = unindentString(`
+      <style>
+      ol ol {
+        list-style-type: lower-alpha;
+      }
+      </style>
+      <ol>
+        <li>one
+          <ol>
+            <li>one-one</li>
+            <li>one-two</li>
+            <li>one-three</li>
+          </ol>
+        </li>
+        <li>two</li>
+        <li>three</li>
+      </ol>
+    `);
+
+    expect(html).toBe(expected);
+  });
 });

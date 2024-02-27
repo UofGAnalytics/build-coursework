@@ -72,3 +72,17 @@ it('should sluggify attributes', async () => {
 
   expect(html).toBe(expected);
 });
+
+it('should parse id with dot', async () => {
+  const { html } = await testProcessor(`
+    ## Heading 2 {#CMD1.1}
+  `);
+
+  const expected = unindentString(`
+    <h2 id="cmd11"><a class="link" href="#cmd11"><svg class="icon link-icon">
+          <use href="#link-icon"></use>
+        </svg></a>Heading 2</h2>
+  `);
+
+  expect(html).toBe(expected);
+});
