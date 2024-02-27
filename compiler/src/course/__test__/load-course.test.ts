@@ -3,6 +3,7 @@ import path from 'path';
 import { fixtureTestProcessor } from '../../test-utils/fixture-test-processor';
 import {
   ignoreWhitespace,
+  unindentString,
   // testProcessor,
 } from '../../test-utils/test-processor';
 
@@ -62,5 +63,18 @@ describe('loadCourse', () => {
     });
 
     expect(ignoreWhitespace(html)).not.toContain('<gclass="active">');
+  });
+
+  it('should output a course with unusual folder structure', async () => {
+    const md = await fixtureTestProcessor('folder-structure', {
+      output: 'md',
+    });
+
+    const expected = unindentString(`
+      Hey 1
+      Hey 2
+    `);
+
+    expect(md.trim()).toBe(expected.trim());
   });
 });
