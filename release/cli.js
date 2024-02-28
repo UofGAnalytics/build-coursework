@@ -1550,7 +1550,7 @@ async function createParentFile(unit, ctx) {
 
     // child document
     // convert all file paths to forward slash (windows anaconda/knitr bug)
-    const formattedPath = path__WEBPACK_IMPORTED_MODULE_2___default().relative(ctx.cacheDir, filePath).replace(/\\/g, '/');
+    const formattedPath = filePath.replace(/\\/g, '/');
     const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${os__WEBPACK_IMPORTED_MODULE_1__.EOL}\`\`\``;
     return acc + directive + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL + childCodeBlock + os__WEBPACK_IMPORTED_MODULE_1__.EOL + os__WEBPACK_IMPORTED_MODULE_1__.EOL;
   }, '');
@@ -4671,7 +4671,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.72";
+  const currentVersion = "1.1.73";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
