@@ -1,0 +1,8 @@
+title: Benn
+type: course
+catalog: STATS5078
+authors: David McArthur
+academic_year: 2021-22
+units:
+  - src: dir1-2/test.yaml
+  - src: dir1/dir2/test.yaml
