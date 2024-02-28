@@ -57,9 +57,7 @@ async function createParentFile(unit: Unit, ctx: Context) {
 
     // child document
     // convert all file paths to forward slash (windows anaconda/knitr bug)
-    const formattedPath = path
-      .relative(ctx.cacheDir, filePath)
-      .replace(/\\/g, '/');
+    const formattedPath = filePath.replace(/\\/g, '/');
 
     const childCodeBlock = `\`\`\`{r, child='${formattedPath}'}${EOL}\`\`\``;
     return acc + directive + EOL + EOL + childCodeBlock + EOL + EOL;
