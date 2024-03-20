@@ -11,4 +11,7 @@ export const boxoutAllowList = [
   'proposition',
   'task',
   'answer',
+  'proof',
+  'solution',
+  'remark',
 ];

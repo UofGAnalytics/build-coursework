@@ -298,8 +298,8 @@ describe('weblink', () => {
   });
 });
 
-describe('pandoc counters', () => {
-  it('should render an optional task boxout', async () => {
+describe('pandoc', () => {
+  it('should render all the boxouts', async () => {
     const { html } = await testProcessor(`
       ::: definition
       Test 1
@@ -340,6 +340,14 @@ describe('pandoc counters', () => {
 
       Test 3
       :::
+
+      ::: proof
+      Test 1
+
+      Test 2
+
+      Test 3 ◻
+      :::
     `);
 
     const expected = unindentString(`
@@ -370,6 +378,11 @@ describe('pandoc counters', () => {
         <p>Test 1</p>
         <p>Test 2</p>
         <p>Test 3</p>
+      </div>
+      <div class="boxout proof"><span class="type">Proof</span>
+        <p>Test 1</p>
+        <p>Test 2</p>
+        <p>Test 3<span class="proof-box">◻</span></p>
       </div>
     `);
 

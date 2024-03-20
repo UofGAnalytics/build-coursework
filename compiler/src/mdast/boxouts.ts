@@ -38,7 +38,6 @@ function createAttributes(
   refStore: Context['refStore'],
 ) {
   const name = node.name.trim();
-  const id = node.attributes?.id || `${name}-${count}`;
 
   const attributes = node.attributes as Record<string, string>;
   const className = ['boxout', name];
@@ -46,6 +45,11 @@ function createAttributes(
     className.push(`${attributes.icon}-icon`);
   }
 
+  if (name === 'proof') {
+    return { className };
+  }
+
+  const id = node.attributes?.id || `${name}-${count}`;
   if (
     node.attributes?.label !== undefined &&
     node.attributes?.label !== null
@@ -87,6 +91,8 @@ export function createBoxout(
     }
   }
 
+  removePandocProofFormatting(node);
+
   content.push(
     ...children
       .filter((o) => !o.data?.directiveLabel)
@@ -97,6 +103,31 @@ export function createBoxout(
       .map((o) => toHast(o, { allowDangerousHtml: true }))
       .filter(Boolean),
   );
+
+  const lastP = content[content.length - 1] as Element;
+  const lastItem = lastP.children[lastP.children.length - 1];
+
+  if (lastItem.type === 'text') {
+    const lastText = lastItem as Literal;
+    const lastValue = lastText.value;
+    const lastChar = lastValue[lastValue.length - 1];
+    if (lastChar === '◻') {
+      lastText.value = lastValue.slice(0, -2);
+      lastP.children.push({
+        type: 'element',
+        tagName: 'span',
+        properties: {
+          class: 'proof-box',
+        },
+        children: [
+          {
+            type: 'text',
+            value: '◻',
+          },
+        ],
+      });
+    }
+  }
 
   if (node.name === 'task') {
     const answer = children.find(
@@ -119,7 +150,11 @@ function createBoxoutType(
 ): Element {
   const name = node.name.trim();
   const label = startCase(name);
-  let value = `${label} ${count}`;
+
+  let value = label;
+  if (node.name !== 'proof') {
+    value += ` ${count}`;
+  }
 
   if (node.attributes?.optional !== undefined) {
     value += ` (Optional)`;
@@ -253,6 +288,25 @@ function hasPandocCounterFormatting(node: ContainerDirective) {
     (counterValue?.value.startsWith('. ') ||
       /^\s\((.+)\)\./.test(counterValue?.value))
   );
+}
+
+function removePandocProofFormatting(node: ContainerDirective) {
+  if (node.name !== 'proof') {
+    return;
+  }
+
+  const content = node.children[0] as Paragraph;
+  const emphasis = content.children[0] as Parent;
+  if (!emphasis.children || emphasis.children.length === 0) {
+    return;
+  }
+
+  const emText = emphasis.children[0] as Literal;
+  if (emText.value !== 'Proof.') {
+    return;
+  }
+
+  content.children = content.children.slice(1);
 }
 
 function removeTitleFormattingFromPandoc(children: Paragraph[]) {
