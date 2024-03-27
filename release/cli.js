@@ -3207,15 +3207,17 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3069);
 /* harmony import */ var _program_switcher__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3324);
 /* harmony import */ var _language_switcher__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4921);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__, _language_switcher__WEBPACK_IMPORTED_MODULE_4__]);
-([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__, _language_switcher__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _plot_accessibility_switcher__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1903);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__, _language_switcher__WEBPACK_IMPORTED_MODULE_4__, _plot_accessibility_switcher__WEBPACK_IMPORTED_MODULE_5__]);
+([unified__WEBPACK_IMPORTED_MODULE_0__, _boxouts__WEBPACK_IMPORTED_MODULE_1__, _move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__, _program_switcher__WEBPACK_IMPORTED_MODULE_3__, _language_switcher__WEBPACK_IMPORTED_MODULE_4__, _plot_accessibility_switcher__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
 
 
 async function combinedMdastPhase(mdast, ctx, file, targetPdf) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_0__.unified)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_3__/* .programSwitcher */ .D, ctx).use(_language_switcher__WEBPACK_IMPORTED_MODULE_4__/* .languageSwitcher */ .v, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_1__/* .boxouts */ .q, ctx.refStore);
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_0__.unified)().use(_program_switcher__WEBPACK_IMPORTED_MODULE_3__/* .programSwitcher */ .D, ctx).use(_language_switcher__WEBPACK_IMPORTED_MODULE_4__/* .languageSwitcher */ .v, ctx).use(_plot_accessibility_switcher__WEBPACK_IMPORTED_MODULE_5__/* .plotAccessibilitySwitcher */ .r, ctx).use(_boxouts__WEBPACK_IMPORTED_MODULE_1__/* .boxouts */ .q, ctx.refStore);
   if (targetPdf) {
     processor.use(_move_answers_to_end__WEBPACK_IMPORTED_MODULE_2__/* .moveAnswersToEnd */ .w);
   }
@@ -3822,6 +3824,81 @@ function pagebreaks() {
       }
     });
   };
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 1903:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   r: () => (/* binding */ plotAccessibilitySwitcher)
+/* harmony export */ });
+/* harmony import */ var mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1037);
+/* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__]);
+([mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
+
+const tabs = ['visualisation', 'purpose', 'description'];
+const titles = ['Visualisation', 'Purpose', 'Description'];
+function plotAccessibilitySwitcher(ctx) {
+  return tree => {
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'containerDirective', node => {
+      if (node.name === 'plot-accessibility-switcher') {
+        node.data = {
+          hProperties: {
+            className: 'plot-accessibility-switcher'
+          },
+          hChildren: [processMenu(node), ...processChildren(node)]
+        };
+      }
+    });
+  };
+}
+function processMenu(parent) {
+  const children = parent.children;
+  return {
+    type: 'element',
+    tagName: 'ul',
+    properties: {},
+    children: children.map(node => {
+      const element = {
+        type: 'element',
+        tagName: 'li',
+        properties: {
+          'data-plot-accessibility': node.name
+        },
+        children: [{
+          type: 'text',
+          value: titles[tabs.indexOf(node.name)]
+        }]
+      };
+      return element;
+    })
+  };
+}
+function processChildren(parent) {
+  const children = parent.children.map(node => {
+    const parent = node;
+    if (tabs.includes(parent.name)) {
+      node.data = {
+        hProperties: {
+          'data-plot-accessibility': parent.name,
+          className: ['plot-accessibility']
+        }
+      };
+    }
+    return node;
+  });
+  const parentHast = (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_0__.toHast)({
+    type: 'root',
+    children
+  });
+  return parentHast.children;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4671,7 +4748,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.73";
+  const currentVersion = "1.1.74";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);

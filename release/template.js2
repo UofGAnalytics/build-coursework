@@ -358,7 +358,43 @@ function setLanguage(e) {
     saveState('environment', language_switcher_state_state);
   }
 }
+;// CONCATENATED MODULE: ./src/plot-accessibility-switcher/state.ts
+
+const plot_accessibility_switcher_state_defaultState = Object.freeze({
+  plotAccessibility: 'visualisation'
+});
+const plot_accessibility_switcher_state_state = getSavedState('environment', plot_accessibility_switcher_state_defaultState);
+;// CONCATENATED MODULE: ./src/plot-accessibility-switcher/index.ts
+
+
+document.documentElement.classList.add(`plot-accessibility-${plot_accessibility_switcher_state_state.plotAccessibility}`);
+document.querySelectorAll('.plot-accessibility-switcher > ul > li').forEach(elem => {
+  const element = elem;
+  console.log(element.dataset.plotAccessibility, plot_accessibility_switcher_state_state.plotAccessibility);
+  if (element.dataset.plotAccessibility === plot_accessibility_switcher_state_state.plotAccessibility) {
+    element.classList.add('active');
+  }
+  element.addEventListener('click', plot_accessibility_switcher_setProgram);
+});
+document.querySelectorAll('.plot-accessibility-switcher > .plot-accessibility').forEach(elem => {
+  const element = elem;
+  if (element.dataset.plotAccessibility === plot_accessibility_switcher_state_state.plotAccessibility) {
+    element.classList.add('show');
+  }
+});
+function plot_accessibility_switcher_setProgram(e) {
+  const target = e.currentTarget;
+  const plotAccessibility = target.dataset.plotAccessibility;
+  const newClass = `plot-accessibility-${plotAccessibility}`;
+  if (!document.documentElement.classList.contains(newClass)) {
+    const oldClass = `plot-accessibility-${plot_accessibility_switcher_state_state.plotAccessibility}`;
+    document.documentElement.classList.replace(oldClass, newClass);
+    plot_accessibility_switcher_state_state.plotAccessibility = plotAccessibility;
+    saveState('environment', plot_accessibility_switcher_state_state);
+  }
+}
 ;// CONCATENATED MODULE: ./src/index.ts
+
 
 
 
