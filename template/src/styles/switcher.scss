@@ -1,14 +1,24 @@
 html.program-command-line .program-switcher > .program:not([data-program="command-line"]),
 html.program-github-desktop .program-switcher > .program:not([data-program="github-desktop"]),
+
 html.language-r .language-switcher > .language:not([data-language="r"]),
-html.language-python .language-switcher > .language:not([data-language="python"]) {
+html.language-python .language-switcher > .language:not([data-language="python"]),
+
+html.plot-accessibility-visualisation .plot-accessibility-switcher > .plot-accessibility:not([data-plot-accessibility="visualisation"]),
+html.plot-accessibility-purpose .plot-accessibility-switcher > .plot-accessibility:not([data-plot-accessibility="purpose"]),
+html.plot-accessibility-description .plot-accessibility-switcher > .plot-accessibility:not([data-plot-accessibility="description"]) {
   display: none;
 }
 
 html.program-command-line .program-switcher > ul > li[data-program="command-line"],
 html.program-github-desktop .program-switcher  > ul > li[data-program="github-desktop"],
+
 html.language-r .language-switcher  > ul > li[data-language="r"],
-html.language-python .language-switcher  > ul > li[data-language="python"] {
+html.language-python .language-switcher  > ul > li[data-language="python"],
+
+html.plot-accessibility-visualisation .plot-accessibility-switcher  > ul > li[data-plot-accessibility="visualisation"],
+html.plot-accessibility-purpose .plot-accessibility-switcher  > ul > li[data-plot-accessibility="purpose"],
+html.plot-accessibility-description .plot-accessibility-switcher  > ul > li[data-plot-accessibility="description"] {
   color: var(--highlightColor);
   cursor: default;
   &:hover {
@@ -17,7 +27,8 @@ html.language-python .language-switcher  > ul > li[data-language="python"] {
 }
 
 .program-switcher,
-.language-switcher {
+.language-switcher,
+.plot-accessibility-switcher {
   position: relative;
 
   & > ul {
@@ -49,7 +60,8 @@ html.language-python .language-switcher  > ul > li[data-language="python"] {
   }
 
   & > .program,
-  & > .language {
+  & > .language,
+  & > .plot-accessibility {
     padding: 1.5rem 1rem;
     border: 3px solid var(--boxoutBg);
     border-radius: 0.6rem;
