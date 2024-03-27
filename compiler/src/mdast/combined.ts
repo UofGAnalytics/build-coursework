@@ -7,6 +7,7 @@ import { boxouts } from './boxouts';
 import { moveAnswersToEnd } from './move-answers-to-end';
 import { programSwitcher } from './program-switcher';
 import { languageSwitcher } from './language-switcher';
+import { plotAccessibilitySwitcher } from './plot-accessibility-switcher';
 
 export async function combinedMdastPhase(
   mdast: Root,
@@ -17,6 +18,7 @@ export async function combinedMdastPhase(
   const processor = unified()
     .use(programSwitcher, ctx)
     .use(languageSwitcher, ctx)
+    .use(plotAccessibilitySwitcher, ctx)
     .use(boxouts, ctx.refStore);
 
   if (targetPdf) {
