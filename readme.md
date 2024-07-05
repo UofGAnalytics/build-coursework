@@ -83,6 +83,15 @@ npm list –g
 rmarkdown --version
 # 1.1.47 or similar
 ```
+### R packages
+
+If you have a clean R installation you might have to install some additional packages. The required packages are :
+
+- knitr
+
+
+And if you are compiling Python notes:
+- reticulate
 
 ## Usage
 
