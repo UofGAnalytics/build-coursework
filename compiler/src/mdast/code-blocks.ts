@@ -94,26 +94,30 @@ function addConsoleHeading(klass: string) {
 }
 
 function parseLanguage(node: Code) {
-  const lang = (node.lang || '') as string;
+  const trimmed = (node.lang || '').trim();
 
-  if (lang === 'plaintext') {
+  if (trimmed === 'plaintext') {
     return '';
   }
-  if (lang.startsWith('{')) {
-    const match = lang.match(/.lang-(\w+)/);
+  if (trimmed.startsWith('{')) {
+    const match = trimmed.match(/.lang-(\w+)/);
     if (match === null) {
       return '';
     }
     return match[1].toLowerCase();
   }
-  return lang.toLowerCase();
+  return trimmed.toLowerCase();
 }
 
 function parseClass({ lang, meta }: Code) {
+  const trimmed = (lang || '').trim();
+  if (trimmed.endsWith('-output')) {
+    return trimmed;
+  }
   const m = !meta || meta === 'null' ? '' : meta;
-  const combined = `${lang || ''} ${m}`.trim();
+  const combined = `${trimmed} ${m}`.trim();
   if (!combined.startsWith('{.')) {
     return '';
   }
-  return combined.slice(1, -1).replace(/\./g, '');
+  return combined;
 }

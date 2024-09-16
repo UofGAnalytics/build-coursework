@@ -72,6 +72,9 @@ describe('loadCourse', () => {
 
     const expected = unindentString(`
       Hey 1
+
+
+
       Hey 2
     `);
 

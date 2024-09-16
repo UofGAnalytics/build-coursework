@@ -213,6 +213,7 @@ async function formatResponse(response: string) {
   md = removeHashSigns(md);
   md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
+  md = removeSpaceBeforeCodeLanguage(md);
   return md;
 }
 
@@ -234,7 +235,7 @@ function removeHashSigns(md: string) {
         insideCodeResponse = !insideCodeResponse;
         openingLine = insideCodeResponse ? line : '';
       }
-      if (insideCodeResponse && openingLine.endsWith('-output}')) {
+      if (insideCodeResponse && openingLine.endsWith('-output')) {
         acc.push(line.replace(/^##\s+/, ''));
       } else {
         acc.push(line);
@@ -254,7 +255,7 @@ function addErrorCodeBlock(md: string) {
     .reduce((acc: string[], line, idx) => {
       if (idx > 0 && acc[idx - 1].startsWith('```')) {
         if (line.startsWith('## Error') || line.startsWith('## fatal')) {
-          acc[acc.length - 1] = `\`\`\`{.error-output}`;
+          acc[acc.length - 1] = `\`\`\`error-output`;
         }
       }
       acc.push(line);
@@ -275,6 +276,10 @@ function addNewLineAfterKable(md: string) {
       return acc;
     }, [])
     .join('\n');
+}
+
+function removeSpaceBeforeCodeLanguage(md: string) {
+  return md.replace(/^```\s(.+)$/g, '```$1');
 }
 
 // experimental streaming output

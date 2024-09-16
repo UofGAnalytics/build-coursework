@@ -1518,10 +1518,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 
 async function knitr(unit, ctx) {
   const parentFile = await createParentFile(unit, ctx);
-  // console.log(parentFile.value);
-
   const result = await execKnitr(parentFile, ctx, unit.unitPath);
-  // console.log(result);
   parentFile.value = result;
   return parentFile;
 }
@@ -1532,6 +1529,8 @@ async function knitr(unit, ctx) {
 async function createParentFile(unit, ctx) {
   const file = new vfile__WEBPACK_IMPORTED_MODULE_6__.VFile();
   let value = '';
+
+  // console.log(unit.files);
 
   // pass path to custom python binary to reticulate
   // https://rstudio.github.io/reticulate/articles/r_markdown.html
@@ -1683,6 +1682,7 @@ async function formatResponse(response) {
   md = removeHashSigns(md);
   md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
+  md = removeSpaceBeforeCodeLanguage(md);
   return md;
 }
 function removeCustomPythonBinNotice(md) {
@@ -1699,7 +1699,7 @@ function removeHashSigns(md) {
       insideCodeResponse = !insideCodeResponse;
       openingLine = insideCodeResponse ? line : '';
     }
-    if (insideCodeResponse && openingLine.endsWith('-output}')) {
+    if (insideCodeResponse && openingLine.endsWith('-output')) {
       acc.push(line.replace(/^##\s+/, ''));
     } else {
       acc.push(line);
@@ -1730,6 +1730,9 @@ function addNewLineAfterKable(md) {
     }
     return acc;
   }, []).join('\n');
+}
+function removeSpaceBeforeCodeLanguage(md) {
+  return md.replace(/```\s(.+)$/gm, '```$1');
 }
 
 // experimental streaming output
@@ -3044,7 +3047,7 @@ function customCode(node, ctx, file) {
   const codeProps = {};
   const children = [];
   const trimmed = node.value.trim();
-  if (ctx.options.noSyntaxHighlight || language === '') {
+  if (ctx.options.noSyntaxHighlight || language === '' || language === 'knitr-output') {
     children.push({
       type: 'text',
       value: trimmed

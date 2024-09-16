@@ -10,7 +10,7 @@ export function styledTerminal() {
       tree,
       'custom-code',
       (node: Code, index: number, parent: Parent) => {
-        if (node.lang === 'bash') {
+        if (node.lang?.trim() === 'bash') {
           wrapInStyledTerminal(node, index, parent);
         }
       },
@@ -26,10 +26,8 @@ function wrapInStyledTerminal(code: Code, index: number, parent: Parent) {
   const nextNode = parent.children[nextIdx];
   if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode as Code;
-    if (
-      response.lang === '{.knitr-output}' ||
-      response.lang === '{.knitr-error-output}'
-    ) {
+    const trimmed = response.lang?.trim();
+    if (trimmed === 'knitr-output' || trimmed === 'knitr-error-output') {
       const children = (response.data?.hChildren ||
         []) as ElementContent[];
       const responseWithColours = ansiToHast(children);
