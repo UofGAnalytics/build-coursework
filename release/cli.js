@@ -1518,7 +1518,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 
 async function knitr(unit, ctx) {
   const parentFile = await createParentFile(unit, ctx);
+  // console.log(parentFile.value);
+
   const result = await execKnitr(parentFile, ctx, unit.unitPath);
+  // console.log(result);
   parentFile.value = result;
   return parentFile;
 }
@@ -1529,8 +1532,6 @@ async function knitr(unit, ctx) {
 async function createParentFile(unit, ctx) {
   const file = new vfile__WEBPACK_IMPORTED_MODULE_6__.VFile();
   let value = '';
-
-  // console.log(unit.files);
 
   // pass path to custom python binary to reticulate
   // https://rstudio.github.io/reticulate/articles/r_markdown.html
@@ -1714,7 +1715,7 @@ function addErrorCodeBlock(md) {
   return md.split('\n').reduce((acc, line, idx) => {
     if (idx > 0 && acc[idx - 1].startsWith('```')) {
       if (line.startsWith('## Error') || line.startsWith('## fatal')) {
-        acc[acc.length - 1] = `\`\`\`{.error-output}`;
+        acc[acc.length - 1] = `\`\`\`error-output`;
       }
     }
     acc.push(line);
@@ -1732,7 +1733,7 @@ function addNewLineAfterKable(md) {
   }, []).join('\n');
 }
 function removeSpaceBeforeCodeLanguage(md) {
-  return md.replace(/```\s(.+)$/gm, '```$1');
+  return md.replace(/^```\s(.+)$/g, '```$1');
 }
 
 // experimental streaming output
@@ -3047,7 +3048,7 @@ function customCode(node, ctx, file) {
   const codeProps = {};
   const children = [];
   const trimmed = node.value.trim();
-  if (ctx.options.noSyntaxHighlight || language === '' || language === 'knitr-output') {
+  if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
       type: 'text',
       value: trimmed
@@ -3106,29 +3107,33 @@ function addConsoleHeading(klass) {
   return null;
 }
 function parseLanguage(node) {
-  const lang = node.lang || '';
-  if (lang === 'plaintext') {
+  const trimmed = (node.lang || '').trim();
+  if (trimmed === 'plaintext') {
     return '';
   }
-  if (lang.startsWith('{')) {
-    const match = lang.match(/.lang-(\w+)/);
+  if (trimmed.startsWith('{')) {
+    const match = trimmed.match(/.lang-(\w+)/);
     if (match === null) {
       return '';
     }
     return match[1].toLowerCase();
   }
-  return lang.toLowerCase();
+  return trimmed.toLowerCase();
 }
 function parseClass({
   lang,
   meta
 }) {
+  const trimmed = (lang || '').trim();
+  if (trimmed.endsWith('-output')) {
+    return trimmed;
+  }
   const m = !meta || meta === 'null' ? '' : meta;
-  const combined = `${lang || ''} ${m}`.trim();
+  const combined = `${trimmed} ${m}`.trim();
   if (!combined.startsWith('{.')) {
     return '';
   }
-  return combined.slice(1, -1).replace(/\./g, '');
+  return combined;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4043,7 +4048,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([ansi
 function styledTerminal() {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'custom-code', (node, index, parent) => {
-      if (node.lang === 'bash') {
+      if (node.lang?.trim() === 'bash') {
         wrapInStyledTerminal(node, index, parent);
       }
     });
@@ -4056,7 +4061,8 @@ function wrapInStyledTerminal(code, index, parent) {
   const nextNode = parent.children[nextIdx];
   if (nextNode && nextNode.type === 'custom-code') {
     const response = nextNode;
-    if (response.lang === '{.knitr-output}' || response.lang === '{.knitr-error-output}') {
+    const trimmed = response.lang?.trim();
+    if (trimmed === 'knitr-output' || trimmed === 'knitr-error-output') {
       const children = response.data?.hChildren || [];
       const responseWithColours = ansiToHast(children);
       responseChildren.push(...responseWithColours);
@@ -4751,7 +4757,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.74";
+  const currentVersion = "1.1.75";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
