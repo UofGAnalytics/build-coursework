@@ -1,0 +1,7 @@
+name: 'Test'
+title: 'Testy test 1'
+content:
+  - type: text
+    src: dir2/test.Rmd
+  - type: text
+    src: dir3/dir4/test.Rmd
