@@ -23,7 +23,10 @@ import { mkdir, rmFile, writeFile } from '../utils/utils';
 
 export async function knitr(unit: Unit, ctx: Context) {
   const parentFile = await createParentFile(unit, ctx);
+  // console.log(parentFile.value);
+
   const result = await execKnitr(parentFile, ctx, unit.unitPath);
+  // console.log(result);
   parentFile.value = result;
   return parentFile;
 }
@@ -35,8 +38,6 @@ async function createParentFile(unit: Unit, ctx: Context) {
   const file = new VFile();
 
   let value = '';
-
-  // console.log(unit.files);
 
   // pass path to custom python binary to reticulate
   // https://rstudio.github.io/reticulate/articles/r_markdown.html
@@ -205,10 +206,6 @@ function reportErrors(response: string, file: VFile, ctx: Context) {
 }
 
 async function formatResponse(response: string) {
-  // console.log('-----------');
-  // console.log(response);
-  // console.log('-----------');
-
   let md = response;
   md = removeCustomPythonBinNotice(md);
   md = removePythonWarningMessage(md);
@@ -217,11 +214,6 @@ async function formatResponse(response: string) {
   md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
   md = removeSpaceBeforeCodeLanguage(md);
-
-  // console.log('-----------');
-  // console.log(md);
-  // console.log('-----------');
-
   return md;
 }
 

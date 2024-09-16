@@ -4,9 +4,7 @@ describe('embedAssetUrl', () => {
   it('should embed asset URL for knitr graphics', async () => {
     const html = await fixtureTestProcessor('relative-assets', {
       output: 'html',
-      // noDoc: false,
     });
-    // console.log(html);
     const imgCount = (html.match(/img-wrapper/g) || []).length;
     expect(imgCount).toBe(3);
 

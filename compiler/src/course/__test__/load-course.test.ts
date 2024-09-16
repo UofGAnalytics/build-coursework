@@ -70,8 +70,6 @@ describe('loadCourse', () => {
       output: 'md',
     });
 
-    console.log(md);
-
     const expected = unindentString(`
       Hey 1
 
