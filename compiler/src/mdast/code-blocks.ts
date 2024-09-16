@@ -96,7 +96,7 @@ function addConsoleHeading(klass: string) {
 function parseLanguage(node: Code) {
   const trimmed = (node.lang || '').trim();
 
-  if (trimmed === 'plaintext') {
+  if (trimmed === 'plaintext' || trimmed.endsWith('-output')) {
     return '';
   }
   if (trimmed.startsWith('{')) {

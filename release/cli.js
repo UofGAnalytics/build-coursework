@@ -3108,7 +3108,7 @@ function addConsoleHeading(klass) {
 }
 function parseLanguage(node) {
   const trimmed = (node.lang || '').trim();
-  if (trimmed === 'plaintext') {
+  if (trimmed === 'plaintext' || trimmed.endsWith('-output')) {
     return '';
   }
   if (trimmed.startsWith('{')) {
@@ -4757,7 +4757,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.75";
+  const currentVersion = "1.1.76";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
