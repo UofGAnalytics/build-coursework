@@ -79,8 +79,9 @@ async function execKnitr(file: VFile, ctx: Context, unitPath: string) {
 
   return new Promise<string>((resolve, reject) => {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
+    const maxBuffer = 1024 * 1024 * 10;
 
-    exec(cmd, async (err, response, stdErr) => {
+    exec(cmd, { maxBuffer }, async (err, response, stdErr) => {
       if (stdErr) {
         if (!ctx.options.output) {
           console.log(chalk.grey(`[knitr] ${stdErr.trim()}`));

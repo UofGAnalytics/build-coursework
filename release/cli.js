@@ -1569,7 +1569,10 @@ async function execKnitr(file, ctx, unitPath) {
   await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_8__/* .writeFile */ .NC)(cachedFile, md);
   return new Promise((resolve, reject) => {
     const cmd = createKnitrCommand(ctx, uniqueId, unitPath);
-    (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, async (err, response, stdErr) => {
+    const maxBuffer = 1024 * 1024 * 10;
+    (0,child_process__WEBPACK_IMPORTED_MODULE_0__.exec)(cmd, {
+      maxBuffer
+    }, async (err, response, stdErr) => {
       if (stdErr) {
         if (!ctx.options.output) {
           console.log(chalk__WEBPACK_IMPORTED_MODULE_4__["default"].grey(`[knitr] ${stdErr.trim()}`));
@@ -4757,7 +4760,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.76";
+  const currentVersion = "1.1.78";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
