@@ -2770,14 +2770,13 @@ function createBoxout(node, count) {
     const title = createTitle(node);
     titles.push(title);
   }
-  const children = node.children;
-  const content = children
+  const content = node.children
   // @ts-expect-error
-  .filter(o => !o.data?.directiveLabel).filter(o => o.type !== 'containerDirective' && o.name !== 'answer').map(o => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__.toHast)(o, {
+  .filter(o => !o.data?.directiveLabel).filter(o => o.name !== 'answer').map(o => (0,mdast_util_to_hast__WEBPACK_IMPORTED_MODULE_1__.toHast)(o, {
     allowDangerousHtml: true
   })).filter(Boolean);
   if (node.name === 'task') {
-    const answer = children.find(o => o.type === 'containerDirective' && o.name === 'answer');
+    const answer = node.children.find(o => o.type === 'containerDirective' && o.name === 'answer');
     if (answer) {
       const answerHast = createAnswer(answer, count);
       content.push(answerHast);
@@ -4760,7 +4759,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.78";
+  const currentVersion = "1.1.79";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
