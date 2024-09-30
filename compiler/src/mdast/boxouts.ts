@@ -79,21 +79,20 @@ export function createBoxout(
     titles.push(title);
   }
 
-  const children = node.children as ContainerDirective[];
-
-  const content = children
+  const content = node.children
     // @ts-expect-error
     .filter((o) => !o.data?.directiveLabel)
-    .filter((o) => o.type !== 'containerDirective' && o.name !== 'answer')
+    .filter((o) => (o as ContainerDirective).name !== 'answer')
+
     .map((o) => toHast(o, { allowDangerousHtml: true }))
     .filter(Boolean) as HastParent[];
 
   if (node.name === 'task') {
-    const answer = children.find(
+    const answer = node.children.find(
       (o) => o.type === 'containerDirective' && o.name === 'answer',
     );
     if (answer) {
-      const answerHast = createAnswer(answer, count);
+      const answerHast = createAnswer(answer as ContainerDirective, count);
       content.push(answerHast as HastParent);
     }
   }

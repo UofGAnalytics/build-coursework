@@ -67,4 +67,15 @@ html.plot-accessibility-description .plot-accessibility-switcher  > ul > li[data
     border-radius: 0.6rem;
     margin: 1.5rem 0;
   }
+
+  .boxout > & {
+    & > ul {
+      background: var(--boxoutHighlightColor);
+    }
+    & > .program,
+    & > .language,
+    & > .plot-accessibility {
+      border-color: var(--boxoutHighlightColor);
+    }
+  }
 }
