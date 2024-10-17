@@ -68,7 +68,7 @@ html.plot-accessibility-description .plot-accessibility-switcher  > ul > li[data
     margin: 1.5rem 0;
   }
 
-  .boxout > & {
+  .boxout & {
     & > ul {
       background: var(--boxoutHighlightColor);
     }
@@ -76,6 +76,16 @@ html.plot-accessibility-description .plot-accessibility-switcher  > ul > li[data
     & > .language,
     & > .plot-accessibility {
       border-color: var(--boxoutHighlightColor);
+    }
+  }
+  .boxout.task > & {
+    & > ul {
+      background: var(--bg);
+    }
+    & > .program,
+    & > .language,
+    & > .plot-accessibility {
+      border-color: var(--bg);
     }
   }
 }
