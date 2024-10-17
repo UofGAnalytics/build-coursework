@@ -4315,13 +4315,11 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([puppeteer__WEBPACK_IMPORTED_MODULE_0__]);
 puppeteer__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
-
-// const footerTemplate = `
-//   <div style="font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
-//     Page <span class="pageNumber"></span> of <span class="totalPages"></span>
-//   </div>
-// `;
-
+const footerTemplate = `
+  <div style="font-family: 'Helvetica'; font-size: 14px; padding-top: 20px; text-align: center; width: 100%;">
+    Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+  </div>
+`;
 async function convertToPdf(html) {
   const browser = await puppeteer__WEBPACK_IMPORTED_MODULE_0__["default"].launch({
     // @ts-expect-error
@@ -4337,8 +4335,8 @@ async function convertToPdf(html) {
   const pdf = await page.pdf({
     format: 'a4',
     printBackground: true,
-    // displayHeaderFooter: true,
-    // footerTemplate,
+    displayHeaderFooter: true,
+    footerTemplate,
     margin: {
       top: '20px',
       left: '40px',
@@ -4759,7 +4757,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.79";
+  const currentVersion = "1.1.80";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
