@@ -88,7 +88,7 @@ While Anaconda comes with a base environment, it's often recommended to create s
 
   ![](2.png)
 
-### Install pacakges
+### Install packages
 
 - Select the environment from the list of environments available
 
