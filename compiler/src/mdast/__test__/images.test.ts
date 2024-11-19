@@ -47,13 +47,13 @@ describe('images', () => {
     expect(ignoreWhitespace(html)).toBe(expected);
   });
 
-  it('should render an html figure with custom attributes', async () => {
+  it('should warn on render of an html figure with custom attributes', async () => {
     const { hasWarningMessage } = await testProcessor(`
       ![My alt text](){width=50%}
     `);
 
     expect(
-      hasWarningMessage('image attributes are not supported: {width=50%}')
+      hasWarningMessage('image attributes are not supported: {width=50%}'),
     ).toBe(true);
   });
 });
