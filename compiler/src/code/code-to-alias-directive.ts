@@ -27,7 +27,8 @@ function codeBlocksToAlias(md: string, store: CodeBlock[]) {
       return `::verbatimStore[${verbatimStore.length - 1}]`;
     })
     .replace(/^```(.+?)^```$/gms, (_, match) => {
-      const lines = match.split(EOL);
+      // note: leave as \n instead of EOL then trim potential \r whitespace
+      const lines = match.split('\n').map((s: string) => s.trimEnd());
       const lang = lines[0];
       const value = lines.slice(1).join(EOL);
       store.push({ lang, value });

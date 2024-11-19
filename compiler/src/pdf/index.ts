@@ -7,18 +7,13 @@ const footerTemplate = `
 `;
 
 export async function convertToPdf(html: string) {
+  // console.log('hey!');
+  // console.log(html);
   const browser = await puppeteer.launch({
     // @ts-expect-error
     headless: 'new',
-    args: [
-      // attempted fix for windows https://stackoverflow.com/questions/59979188#66549119
-      '--disable-gpu',
-      '--disable-dev-shm-usage',
-      '--disable-setuid-sandbox',
-      '--no-first-run',
-      '--no-sandbox',
-      '--no-zygote',
-    ],
+    args: ['--no-sandbox', '--disable-gpu'],
+    dumbio: true,
   });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(0);

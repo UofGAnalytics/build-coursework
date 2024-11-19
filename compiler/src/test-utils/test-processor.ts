@@ -129,3 +129,7 @@ export function unindentStringAndTrim(str: string) {
 export function ignoreWhitespace(str: string) {
   return str.replace(/\s+/g, '');
 }
+
+export function normalizeLineEndings(str: string, normalized = '\n') {
+  return str.replace(/\r?\n/g, normalized);
+}

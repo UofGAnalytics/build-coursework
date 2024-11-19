@@ -1,4 +1,5 @@
 import {
+  normalizeLineEndings,
   testProcessor,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
@@ -60,13 +61,15 @@ describe('python', () => {
       \`\`\`
     `);
 
-    expect(html).toContain(
-      unindentStringAndTrim(`
+    expect(normalizeLineEndings(html)).toContain(
+      normalizeLineEndings(
+        unindentStringAndTrim(`
             calories  duration
         0       420        50
         1       380        40
         2       390        45
       `),
+      ),
     );
   }, 60000);
 });

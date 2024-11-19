@@ -2,9 +2,11 @@ import { Element, Literal } from 'hast';
 
 import {
   ignoreWhitespace,
+  normalizeLineEndings,
   testProcessor,
   unindentString,
 } from '../../test-utils/test-processor';
+import { EOL } from 'os';
 
 describe('knitr', () => {
   it('should share state with other codeblocks', async () => {
@@ -54,9 +56,9 @@ describe('knitr', () => {
         const code = pre.children[0] as Element;
         const { value } = code.children[0] as Literal;
         return value
-          .split('\n')
+          .split(EOL)
           .map((s) => s.trim())
-          .join('\n');
+          .join(EOL);
       });
 
     const expected = unindentString(`
@@ -73,7 +75,9 @@ describe('knitr', () => {
       10
     `);
 
-    expect(withOutput.join('\n')).toBe(expected.trim());
+    expect(normalizeLineEndings(withOutput.join(EOL))).toBe(
+      normalizeLineEndings(expected.trim()),
+    );
   });
 
   it('should output a graph as svg', async () => {
@@ -156,7 +160,9 @@ describe('knitr', () => {
       ::codeBlock[2]
     `);
 
-    expect(md.trim()).toBe(expectedMd.trim());
+    expect(normalizeLineEndings(md.trim())).toBe(
+      normalizeLineEndings(expectedMd.trim()),
+    );
 
     const expectedHtml = unindentString(`
       <div class="code-wrapper">
@@ -171,7 +177,9 @@ describe('knitr', () => {
       </div>
     `);
 
-    expect(html.trim()).toBe(expectedHtml.trim());
+    expect(normalizeLineEndings(html.trim())).toBe(
+      normalizeLineEndings(expectedHtml.trim()),
+    );
   });
 
   it('should format table correctly', async () => {

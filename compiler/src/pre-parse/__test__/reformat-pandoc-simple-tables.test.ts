@@ -1,7 +1,9 @@
 import {
   ignoreWhitespace,
+  normalizeLineEndings,
   testProcessor,
   unindentString,
+  unindentStringAndTrim,
 } from '../../test-utils/test-processor';
 
 describe('reformatPandocSimpleTables', () => {
@@ -13,12 +15,12 @@ describe('reformatPandocSimpleTables', () => {
     const { html } = await testProcessor(`
       Movie                            Gross       Budget
       -------------------------------- ----------- -----------
-        Ek Villain                       95.64       36.0
-        Humshakals                       55.65       77.0
-        Holiday                         110.01      90.0
-        Fugly                            11.16       16.0
-        City Lights                       5.19        9.5
-        Kuku Mathur Ki Jhand Ho Gayi      2.23        4.5
+        Ek Villain                        95.64       36.0
+        Humshakals                        55.65       77.0
+        Holiday                          110.01       90.0
+        Fugly                             11.16       16.0
+        City Lights                        5.19        9.5
+        Kuku Mathur Ki Jhand Ho Gayi       2.23        4.5
     `);
 
     const expected = unindentString(`
@@ -67,7 +69,9 @@ describe('reformatPandocSimpleTables', () => {
       </div>
     `);
 
-    expect(ignoreWhitespace(html)).toBe(ignoreWhitespace(expected));
+    expect(normalizeLineEndings(html)).toBe(
+      normalizeLineEndings(expected),
+    );
   });
 
   it('should reformat pandoc simple tables to markdown tables with LaTeX', async () => {
@@ -87,14 +91,16 @@ describe('reformatPandocSimpleTables', () => {
     //   | Logistic regression model  | $y_i\overset{\text{indep}}\sim Bin(1,p_i),$ $E(Y_i)=p_i$          | $\boldsymbol{x}_{i}^T\boldsymbol{\beta} =\beta_0+\beta_1x_i$ | Logit link: $g(\mu_i)=\log \left(\frac{\mu_i}{1-\mu_i}\right)= \log \left(\frac{p_i}{1-p_i}\right)$ |
     // `);
 
-    const expected = unindentString(String.raw`
+    const expected = unindentStringAndTrim(`
       | **Model**                 | **Random component**                                              | **Systematic component**                                     | **Link function**                                                                                   |
       | :------------------------ | :---------------------------------------------------------------- | :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
       | Normal model              | :inlineMath[0] :inlineMath[1] | :inlineMath[2]    | Identity link :inlineMath[3]                                                                      |
       | Logistic regression model | :inlineMath[4] :inlineMath[5]          | :inlineMath[6] | Logit link: :inlineMath[7] |
     `);
 
-    expect(ignoreWhitespace(md)).toBe(ignoreWhitespace(expected));
+    expect(normalizeLineEndings(md.trim())).toBe(
+      normalizeLineEndings(expected),
+    );
   });
 
   it('should reformat pandoc simple tables to markdown tables with macro syntax after', async () => {

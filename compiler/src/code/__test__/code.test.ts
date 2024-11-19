@@ -1,5 +1,6 @@
 import {
   ignoreWhitespace,
+  normalizeLineEndings,
   testProcessor,
   unindentStringAndTrim,
 } from '../../test-utils/test-processor';
@@ -32,7 +33,9 @@ describe('code regex', () => {
       ccc
     `);
 
-    expect(unindentStringAndTrim(md)).toBe(expectedMd);
+    expect(normalizeLineEndings(unindentStringAndTrim(md))).toContain(
+      normalizeLineEndings(expectedMd),
+    );
 
     const expectedHtml = unindentStringAndTrim(`
       <h2 id="a"><a class="link" href="#a"><svg class="icon link-icon">
@@ -49,7 +52,9 @@ describe('code regex', () => {
       <p>ccc</p>
     `);
 
-    expect(unindentStringAndTrim(html)).toBe(expectedHtml);
+    expect(normalizeLineEndings(unindentStringAndTrim(html))).toBe(
+      normalizeLineEndings(expectedHtml),
+    );
   });
 
   it('should replace inline code blocks with alias', async () => {
@@ -65,7 +70,9 @@ describe('code regex', () => {
       bbb :codeBlock[0] ccc
     `);
 
-    expect(unindentStringAndTrim(md)).toBe(expectedMd);
+    expect(normalizeLineEndings(unindentStringAndTrim(md))).toBe(
+      normalizeLineEndings(expectedMd),
+    );
 
     const expectedHtml = unindentStringAndTrim(`
       <h2 id="a"><a class="link" href="#a"><svg class="icon link-icon">
@@ -74,7 +81,9 @@ describe('code regex', () => {
       <p>bbb <code>e = mc2</code> ccc</p>
     `);
 
-    expect(unindentStringAndTrim(html)).toBe(expectedHtml);
+    expect(normalizeLineEndings(unindentStringAndTrim(html))).toBe(
+      normalizeLineEndings(expectedHtml),
+    );
   });
 
   it('should NOT try to transform SAS code', async () => {

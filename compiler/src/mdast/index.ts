@@ -21,6 +21,7 @@ import { youtubeVideos } from './youtube-videos';
 import { aliasDirectiveToCode } from '../code/alias-directive-to-code';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
+  // console.log(file.value);
   // https://github.com/unifiedjs/unified
   // convert markdown to syntax tree: complex transforms
   // should be more robust and straightforward

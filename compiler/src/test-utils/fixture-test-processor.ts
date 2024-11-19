@@ -26,10 +26,11 @@ export async function fixtureTestProcessor(
 
   return new Promise<string>((resolve, reject) => {
     const fixturePath = path.join('./fixtures', fixture);
-    const cmd = `rmarkdown ${fixturePath} ${flags.join(' ')}`;
+    const cmd = `node release/cli.js ${fixturePath} ${flags.join(' ')}`;
 
     exec(cmd, { maxBuffer: 1000 * 1000 * 10 }, (err, response, stdErr) => {
       // console.log({ err, response, stdErr });
+
       if (stdErr) {
         if (!options.shouldFail) {
           console.log(stdErr);

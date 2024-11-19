@@ -230,20 +230,21 @@ function removeHashSigns(md: string) {
   let insideCodeResponse = false;
   let openingLine = '';
   return md
-    .split('\n')
+    .split('\n') // note: leave as \n instead of EOL
     .reduce((acc: string[], line) => {
-      if (line.startsWith('```')) {
+      const trimmed = line.trimEnd();
+      if (trimmed.startsWith('```')) {
         insideCodeResponse = !insideCodeResponse;
-        openingLine = insideCodeResponse ? line : '';
+        openingLine = insideCodeResponse ? trimmed : '';
       }
       if (insideCodeResponse && openingLine.endsWith('-output')) {
-        acc.push(line.replace(/^##\s+/, ''));
+        acc.push(trimmed.replace(/^##\s+/, ''));
       } else {
-        acc.push(line);
+        acc.push(trimmed);
       }
       return acc;
     }, [])
-    .join('\n');
+    .join(EOL);
 }
 
 function removeEmptyLog(md: string) {
@@ -252,8 +253,9 @@ function removeEmptyLog(md: string) {
 
 function addErrorCodeBlock(md: string) {
   return md
-    .split('\n')
+    .split(EOL)
     .reduce((acc: string[], line, idx) => {
+      // console.log(line);
       if (idx > 0 && acc[idx - 1].startsWith('```')) {
         if (line.startsWith('## Error') || line.startsWith('## fatal')) {
           acc[acc.length - 1] = `\`\`\`error-output`;
@@ -262,12 +264,12 @@ function addErrorCodeBlock(md: string) {
       acc.push(line);
       return acc;
     }, [])
-    .join('\n');
+    .join(EOL);
 }
 
 function addNewLineAfterKable(md: string) {
   return md
-    .split('\n')
+    .split(EOL)
     .reduce((acc: string[], line, idx) => {
       if (acc[idx - 1]?.startsWith('|') && !line.startsWith('|')) {
         acc.push('', line);
@@ -276,7 +278,7 @@ function addNewLineAfterKable(md: string) {
       }
       return acc;
     }, [])
-    .join('\n');
+    .join(EOL);
 }
 
 function removeSpaceBeforeCodeLanguage(md: string) {

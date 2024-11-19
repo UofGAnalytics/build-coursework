@@ -23,6 +23,8 @@ function customCode(node: Code, ctx: Context, file: VFile) {
   const children: (RefractorElement | Text)[] = [];
   const trimmed = node.value.trim();
 
+  // console.dir(node, { depth: null });
+
   if (ctx.options.noSyntaxHighlight || language === '') {
     children.push({
       type: 'text',
