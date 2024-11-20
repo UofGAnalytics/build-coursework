@@ -4329,8 +4329,6 @@ const footerTemplate = `
   </div>
 `;
 async function convertToPdf(html) {
-  // console.log('hey!');
-  // console.log(html);
   const browser = await puppeteer__WEBPACK_IMPORTED_MODULE_0__["default"].launch({
     // @ts-expect-error
     headless: 'new',
@@ -4766,7 +4764,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.82";
+  const currentVersion = "1.1.83";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
