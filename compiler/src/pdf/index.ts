@@ -7,8 +7,6 @@ const footerTemplate = `
 `;
 
 export async function convertToPdf(html: string) {
-  // console.log('hey!');
-  // console.log(html);
   const browser = await puppeteer.launch({
     // @ts-expect-error
     headless: 'new',

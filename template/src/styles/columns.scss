@@ -4,7 +4,7 @@
   .column {
     flex: 1;
 
-    &:nth-child(2n+1) {
+    &:nth-child(2n + 1) {
       padding-right: 0.5rem;
     }
     &:nth-child(2n) {
@@ -14,7 +14,7 @@
 }
 
 @media (max-width: 800px) {
-  .columns {
+  #root:not(.pdf) .columns {
     flex-direction: column;
   }
 }
