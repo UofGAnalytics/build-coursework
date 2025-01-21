@@ -9,16 +9,16 @@ import { getAssetHast } from '../utils/get-asset-hast';
 
 export function images(ctx: Context) {
   return (tree: Node) => {
-    visit(tree, 'image', (node) => {
-      templateFromImage(node, ++ctx.figureCounter);
-    });
-
-    // knitr can output HTML for plots instead of Markdown now
-    visit(tree, 'html', (node: Literal) => {
-      const value = String(node.value);
-      if (value.startsWith('<div class="figure">')) {
-        const hast = getAssetHast(value);
-        templateFromHTML(node, hast, ++ctx.figureCounter);
+    visit(tree, (node) => {
+      if (node.type === 'image') {
+        templateFromImage(node as Image, ++ctx.figureCounter);
+      }
+      if (node.type === 'html') {
+        const value = String((node as Literal).value);
+        if (value.startsWith('<div class="figure">')) {
+          const hast = getAssetHast(value);
+          templateFromHTML(node as Literal, hast, ++ctx.figureCounter);
+        }
       }
     });
   };

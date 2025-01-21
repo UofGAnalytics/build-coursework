@@ -16,7 +16,7 @@ describe('embedAssetUrl', () => {
       .match(/<span class="caption-count">Figure (\d+)/g)
       ?.map((s) => Number(s.slice(-1)));
 
-    expect(figureNum).toEqual([1, 3, 2]);
+    expect(figureNum).toEqual([1, 2, 3]);
   });
 
   it('should embed asset URL for browser window', async () => {
