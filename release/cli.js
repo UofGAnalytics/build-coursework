@@ -2392,8 +2392,8 @@ function assertVideoAttributes() {
   return async (tree, file) => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'leafDirective', node => {
       if (node.name === 'video') {
-        if (!node.attributes?.id) {
-          (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'id attribute is required', node.position);
+        if (!node.attributes?.id && !node.attributes?.url) {
+          (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'id or url attribute is required', node.position);
         }
         if (!node.attributes?.duration) {
           (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, 'duration attribute is required', node.position);
@@ -3492,16 +3492,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([loda
 
 function images(ctx) {
   return tree => {
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'image', node => {
-      templateFromImage(node, ++ctx.figureCounter);
-    });
-
-    // knitr can output HTML for plots instead of Markdown now
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, 'html', node => {
-      const value = String(node.value);
-      if (value.startsWith('<div class="figure">')) {
-        const hast = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(value);
-        templateFromHTML(node, hast, ++ctx.figureCounter);
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, node => {
+      if (node.type === 'image') {
+        templateFromImage(node, ++ctx.figureCounter);
+      }
+      if (node.type === 'html') {
+        const value = String(node.value);
+        if (value.startsWith('<div class="figure">')) {
+          const hast = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(value);
+          templateFromHTML(node, hast, ++ctx.figureCounter);
+        }
       }
     });
   };
@@ -3631,10 +3631,10 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(6254);
 /* harmony import */ var _styled_terminal__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(7156);
 /* harmony import */ var _text_file__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(1863);
-/* harmony import */ var _youtube_videos__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(7048);
+/* harmony import */ var _videos__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(1116);
 /* harmony import */ var _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(3021);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__]);
-([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _youtube_videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__]);
+([remark_directive__WEBPACK_IMPORTED_MODULE_0__, remark_frontmatter__WEBPACK_IMPORTED_MODULE_1__, remark_gfm__WEBPACK_IMPORTED_MODULE_2__, remark_parse__WEBPACK_IMPORTED_MODULE_3__, unified__WEBPACK_IMPORTED_MODULE_4__, _latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__, _browser_window__WEBPACK_IMPORTED_MODULE_6__, _code_blocks__WEBPACK_IMPORTED_MODULE_7__, _columns__WEBPACK_IMPORTED_MODULE_8__, _embed_asset_url__WEBPACK_IMPORTED_MODULE_9__, _gitgraph__WEBPACK_IMPORTED_MODULE_10__, _images__WEBPACK_IMPORTED_MODULE_11__, _pagebreaks__WEBPACK_IMPORTED_MODULE_12__, _remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__, _styled_terminal__WEBPACK_IMPORTED_MODULE_14__, _text_file__WEBPACK_IMPORTED_MODULE_15__, _videos__WEBPACK_IMPORTED_MODULE_16__, _code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -3665,7 +3665,7 @@ async function mdastPhase(file, ctx) {
   // .use(() => (tree) => {
   //   console.dir(tree, { depth: null });
   // })
-  .use(_columns__WEBPACK_IMPORTED_MODULE_8__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_9__/* .embedAssetUrl */ .Z, ctx).use(_youtube_videos__WEBPACK_IMPORTED_MODULE_16__/* .youtubeVideos */ .b).use(_code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__/* .aliasDirectiveToCode */ .f, ctx).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__/* .aliasDirectiveToLatexSvg */ .a, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__/* .removeEmptyParagraphs */ .j).use(_gitgraph__WEBPACK_IMPORTED_MODULE_10__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_15__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_6__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_7__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_14__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_11__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_12__/* .pagebreaks */ .m);
+  .use(_columns__WEBPACK_IMPORTED_MODULE_8__/* .columns */ .z).use(_embed_asset_url__WEBPACK_IMPORTED_MODULE_9__/* .embedAssetUrl */ .Z, ctx).use(_videos__WEBPACK_IMPORTED_MODULE_16__/* .videos */ .L).use(_code_alias_directive_to_code__WEBPACK_IMPORTED_MODULE_17__/* .aliasDirectiveToCode */ .f, ctx).use(_latex_directive_to_svg__WEBPACK_IMPORTED_MODULE_5__/* .aliasDirectiveToLatexSvg */ .a, ctx).use(_remove_empty_paragraphs__WEBPACK_IMPORTED_MODULE_13__/* .removeEmptyParagraphs */ .j).use(_gitgraph__WEBPACK_IMPORTED_MODULE_10__/* .gitGraph */ .D).use(_text_file__WEBPACK_IMPORTED_MODULE_15__/* .textFile */ .K).use(_browser_window__WEBPACK_IMPORTED_MODULE_6__/* .browserWindow */ .T).use(_code_blocks__WEBPACK_IMPORTED_MODULE_7__/* .codeBlocks */ .r, ctx).use(_styled_terminal__WEBPACK_IMPORTED_MODULE_14__/* .styledTerminal */ .h).use(_images__WEBPACK_IMPORTED_MODULE_11__/* .images */ .W, ctx).use(_pagebreaks__WEBPACK_IMPORTED_MODULE_12__/* .pagebreaks */ .m);
   const parsed = processor.parse(file);
   return processor.run(parsed, file);
 }
@@ -4192,12 +4192,12 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 7048:
+/***/ 1116:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   b: () => (/* binding */ youtubeVideos)
+/* harmony export */   L: () => (/* binding */ videos)
 /* harmony export */ });
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6016);
 /* harmony import */ var _utils_message__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(343);
@@ -4205,84 +4205,82 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
 
-function youtubeVideos() {
+function videos() {
   return async (tree, file) => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'leafDirective', node => {
       if (node.name === 'video') {
-        const attributes = node.attributes;
         const title = getTitle(node, file);
-        node.data = {
+        const href = getHref(node);
+        const data = {
           hName: 'a',
           hProperties: {
             className: ['boxout', 'video'],
-            href: getYoutubeUrl(attributes?.id || ''),
-            title: attributes?.title || null,
+            href,
+            title: node.attributes?.title || null,
             target: '_blank'
           },
-          hChildren: [{
-            type: 'element',
-            tagName: 'span',
-            properties: {
-              className: 'content'
-            },
-            children: [{
-              type: 'element',
-              tagName: 'span',
-              properties: {
-                className: 'type'
-              },
-              children: [{
-                type: 'text',
-                value: 'Video'
-              }]
-            }, {
-              type: 'element',
-              tagName: 'span',
-              properties: {
-                className: 'title'
-              },
-              children: [{
-                type: 'text',
-                value: title
-              }]
-            }, {
-              type: 'element',
-              tagName: 'span',
-              properties: {
-                className: 'duration'
-              },
-              children: [{
-                type: 'element',
-                tagName: 'strong',
-                properties: {},
-                children: [{
-                  type: 'text',
-                  value: 'Duration'
-                }]
-              }, {
-                type: 'text',
-                value: formatDuration(attributes?.duration || '')
-              }]
-            }]
-          }, {
-            type: 'element',
-            tagName: 'span',
-            properties: {
-              className: 'thumbnail'
-            },
-            children: [{
-              type: 'element',
-              tagName: 'img',
-              properties: {
-                src: getYoutubeThumbnailUrl(attributes?.id || ''),
-                alt: ''
-              },
-              children: []
-            }]
-          }]
+          hChildren: [createLabel(node, title)]
         };
+        if (node.attributes?.url === undefined) {
+          data.hChildren = [...(data?.hChildren || []), createThumbnail(node)];
+        }
+        node.data = data;
       }
     });
+  };
+}
+function getHref(node) {
+  if (node.attributes?.url) {
+    return node.attributes.url;
+  }
+  return getYoutubeUrl(node.attributes?.id || '');
+}
+function createLabel(node, title) {
+  return {
+    type: 'element',
+    tagName: 'span',
+    properties: {
+      className: 'content'
+    },
+    children: [{
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: 'type'
+      },
+      children: [{
+        type: 'text',
+        value: 'Video'
+      }]
+    }, {
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: 'title'
+      },
+      children: [{
+        type: 'text',
+        value: title
+      }]
+    }, {
+      type: 'element',
+      tagName: 'span',
+      properties: {
+        className: 'duration'
+      },
+      children: [{
+        type: 'element',
+        tagName: 'strong',
+        properties: {},
+        children: [{
+          type: 'text',
+          value: 'Duration'
+        }]
+      }, {
+        type: 'text',
+        value: formatDuration(node.attributes?.duration || '')
+      }]
+    }]
   };
 }
 function getTitle(node, file) {
@@ -4297,15 +4295,34 @@ function getTitle(node, file) {
 function getYoutubeUrl(id) {
   return `https://youtu.be/${id}`;
 }
-function getYoutubeThumbnailUrl(id) {
-  return `http://img.youtube.com/vi/${id}/mqdefault.jpg`;
-}
 function formatDuration(duration = '') {
   const match = duration.match(/^(\d+)m(\d+)s$/);
   if (match === null) {
     return '';
   }
   return `${match[1]}:${match[2].padStart(2, '0')}`;
+}
+function createThumbnail(node) {
+  const id = node.attributes?.id || '';
+  return {
+    type: 'element',
+    tagName: 'span',
+    properties: {
+      className: 'thumbnail'
+    },
+    children: [{
+      type: 'element',
+      tagName: 'img',
+      properties: {
+        src: getYoutubeThumbnailUrl(id),
+        alt: ''
+      },
+      children: []
+    }]
+  };
+}
+function getYoutubeThumbnailUrl(id) {
+  return `http://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4764,7 +4781,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.83";
+  const currentVersion = "1.1.84";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
