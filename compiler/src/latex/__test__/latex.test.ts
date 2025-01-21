@@ -106,4 +106,26 @@ describe('latex', () => {
       `left parenthesis exp left parenthesis negative 2.977`,
     );
   });
+
+  it('should work with backticks', async () => {
+    const { html } = await testProcessor(`
+      ## Hello
+
+      \`\`\`{r eval=TRUE}
+      tml1 <- 1
+      tml2 <- 2
+      tml3 <-3
+      \`\`\`
+
+      \\begin{eqnarray}
+      p(\\mathcal{M}_1|D) &\\approx \\frac{\`r tml1\`\\times 1/3}{\`r tml1/3+tml2/3+tml3/3\`} = \`r tml1/(tml1+tml2+tml3)\` \\\\
+      p(\\mathcal{M}_2|D) &\\approx \\frac{\`r tml2\`\\times 1/3}{\`r tml1/3+tml2/3+tml3/3\`} = \`r tml2/(tml1+tml2+tml3)\` \\\\
+      p(\\mathcal{M}_3|D) &\\approx \\frac{\`r tml3\`\\times 1/3}{\`r tml1/3+tml2/3+tml3/3\`} = \`r tml3/(tml1+tml2+tml3)\`
+      \\end{eqnarray}
+    `);
+
+    expect(html.trim()).toContain(
+      'StartLayout 1st Row with Label left parenthesis',
+    );
+  });
 });

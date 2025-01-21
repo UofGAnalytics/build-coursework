@@ -11,8 +11,12 @@ export function assertVideoAttributes() {
   return async (tree: Root, file: VFile) => {
     visit(tree, 'leafDirective', (node: LeafDirective) => {
       if (node.name === 'video') {
-        if (!node.attributes?.id) {
-          failMessage(file, 'id attribute is required', node.position);
+        if (!node.attributes?.id && !node.attributes?.url) {
+          failMessage(
+            file,
+            'id or url attribute is required',
+            node.position,
+          );
         }
         if (!node.attributes?.duration) {
           failMessage(

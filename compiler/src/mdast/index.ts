@@ -17,7 +17,7 @@ import { pagebreaks } from './pagebreaks';
 import { removeEmptyParagraphs } from './remove-empty-paragraphs';
 import { styledTerminal } from './styled-terminal';
 import { textFile } from './text-file';
-import { youtubeVideos } from './youtube-videos';
+import { videos } from './videos';
 import { aliasDirectiveToCode } from '../code/alias-directive-to-code';
 
 export async function mdastPhase(file: VFile, ctx: Context) {
@@ -37,7 +37,7 @@ export async function mdastPhase(file: VFile, ctx: Context) {
     // })
     .use(columns)
     .use(embedAssetUrl, ctx)
-    .use(youtubeVideos)
+    .use(videos)
     .use(aliasDirectiveToCode, ctx)
     .use(aliasDirectiveToLatexSvg, ctx)
     .use(removeEmptyParagraphs)
