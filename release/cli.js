@@ -4781,7 +4781,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.84";
+  const currentVersion = "1.1.85";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
