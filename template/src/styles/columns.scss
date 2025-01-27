@@ -3,12 +3,13 @@
 
   .column {
     flex: 1;
+    padding: 0 0.5rem;
 
-    &:nth-child(2n + 1) {
-      padding-right: 0.5rem;
+    &:first-child {
+      padding-left: 0;
     }
-    &:nth-child(2n) {
-      padding-left: 0.5rem;
+    &:last-child {
+      padding-right: 0;
     }
   }
 }
@@ -16,5 +17,10 @@
 @media (max-width: 800px) {
   #root:not(.pdf) .columns {
     flex-direction: column;
+
+    .column {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 }
