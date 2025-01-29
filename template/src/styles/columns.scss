@@ -3,13 +3,14 @@
 
   .column {
     flex: 1;
-    padding: 0 0.5rem;
+    margin: 0 0.5rem;
+    overflow: auto;
 
     &:first-child {
-      padding-left: 0;
+      margin-left: 0;
     }
     &:last-child {
-      padding-right: 0;
+      margin-right: 0;
     }
   }
 }
@@ -19,8 +20,8 @@
     flex-direction: column;
 
     .column {
-      padding-left: 0;
-      padding-right: 0;
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 }
