@@ -215,6 +215,7 @@ async function formatResponse(response: string) {
   md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
   md = removeSpaceBeforeCodeLanguage(md);
+  md = replaceSupHtmlWithLatex(md);
   return md;
 }
 
@@ -283,6 +284,10 @@ function addNewLineAfterKable(md: string) {
 
 function removeSpaceBeforeCodeLanguage(md: string) {
   return md.replace(/^```\s(.+)$/g, '```$1');
+}
+
+function replaceSupHtmlWithLatex(md: string) {
+  return md.replace(/<sup>(.+?)<\/sup>/g, '^{$1}');
 }
 
 // experimental streaming output

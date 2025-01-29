@@ -435,4 +435,28 @@ describe('knitr', () => {
       `),
     );
   });
+
+  it('should NOT use <sup>*</sup> in variable output', async () => {
+    const { html } = await testProcessor(`
+      \`\`\`{r}
+      tml1 <- 2.999779e-10
+      tml2 <- 1
+      tml3 <- 1.472602e-29
+      \`\`\`
+
+      We find that the marginal likelihood for Model 1 was estimated as \`r tml1\`, the marginal
+      likelihood for Model 2 as \`r tml2\`, and the marginal likelihood for Model 3 as \`r tml3\`.
+      Using these estimates of the marginal likelihoods, we obtain the following posterior probabilities
+      for our models:
+    `);
+
+    expect(ignoreWhitespace(html)).toContain(
+      ignoreWhitespace(`
+        We find that the marginal likelihood for Model 1 was estimated as 2.999779 × 10^{-10}, the marginal
+        likelihood for Model 2 as 1, and the marginal likelihood for Model 3 as 1.472602 × 10^{-29}.
+        Using these estimates of the marginal likelihoods, we obtain the following posterior probabilities
+        for our models:
+      `),
+    );
+  });
 });
