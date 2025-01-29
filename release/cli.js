@@ -1688,6 +1688,7 @@ async function formatResponse(response) {
   md = removeEmptyLog(md);
   md = addNewLineAfterKable(md);
   md = removeSpaceBeforeCodeLanguage(md);
+  md = replaceSupHtmlWithLatex(md);
   return md;
 }
 function removeCustomPythonBinNotice(md) {
@@ -1741,6 +1742,9 @@ function addNewLineAfterKable(md) {
 }
 function removeSpaceBeforeCodeLanguage(md) {
   return md.replace(/^```\s(.+)$/g, '```$1');
+}
+function replaceSupHtmlWithLatex(md) {
+  return md.replace(/<sup>(.+?)<\/sup>/g, '^{$1}');
 }
 
 // experimental streaming output
@@ -4781,7 +4785,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.85";
+  const currentVersion = "1.1.86";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
