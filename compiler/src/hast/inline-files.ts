@@ -143,7 +143,14 @@ async function getImage(src: string, ctx: Context) {
       execFn: getImageDataFromWeb,
     });
   }
-  return readFile(src, 'base64');
+  try {
+    return await readFile(src, 'base64');
+  } catch (err: any) {
+    if ((err?.message || '').startsWith('Error: ENOENT')) {
+      return '';
+    }
+    throw err;
+  }
 }
 
 async function getImageDataFromWeb(src: string) {

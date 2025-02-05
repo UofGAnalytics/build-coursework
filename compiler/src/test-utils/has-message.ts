@@ -14,6 +14,7 @@ export function createHasFailingMessage(ctx: Context, files: VFile[]) {
     const fileMessages = files.reduce((acc: VFileMessage[], o) => {
       return [...acc, ...o.messages];
     }, []);
+
     const errors = fileMessages.filter((o) =>
       o.reason.includes(reason),
     ) as unknown as ReportMessage[];

@@ -48,11 +48,15 @@ export async function cacheJsonToFile(options: Options) {
 
 async function execAndCache(
   { ctx, key, execFn, json }: Options,
-  cachedFilePath: string
+  cachedFilePath: string,
 ) {
-  const out = (await execFn(key)) as string;
-  const str = json ? JSON.stringify(out, null, 2) : out;
-  await mkdir(ctx.cacheDir);
-  await writeFile(cachedFilePath, str);
-  return out;
+  try {
+    const out = (await execFn(key)) as string;
+    const str = json ? JSON.stringify(out, null, 2) : out;
+    await mkdir(ctx.cacheDir);
+    await writeFile(cachedFilePath, str);
+    return out;
+  } catch (err) {
+    return '';
+  }
 }

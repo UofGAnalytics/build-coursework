@@ -50,6 +50,9 @@ export async function createReport(
   ctx: Context,
 ) {
   const processor = unified()
+    // .use(() => (tree) => {
+    //   console.dir(tree, { depth: null });
+    // })
     .use(assertAssetExists)
     .use(assertVideoAttributes)
     .use(assertTaskAnswerStructure)
@@ -69,5 +72,5 @@ export async function createReport(
   //   processor.use(remark2retext, retextProcessor);
   // }
 
-  processor.run(mdast as Root, file);
+  await processor.run(mdast as Root, file);
 }

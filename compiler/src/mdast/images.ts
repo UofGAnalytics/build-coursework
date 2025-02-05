@@ -1,8 +1,10 @@
 import { Element, ElementContent, Parent } from 'hast';
 import kebabCase from 'lodash/kebabCase.js';
 import { Image } from 'mdast';
+import { Properties } from 'hast';
 import { Literal, Node } from 'unist';
 import { visit } from 'unist-util-visit';
+import querystring from 'querystring';
 
 import { Context } from '../context';
 import { getAssetHast } from '../utils/get-asset-hast';
@@ -11,35 +13,60 @@ export function images(ctx: Context) {
   return (tree: Node) => {
     visit(tree, (node) => {
       if (node.type === 'image') {
-        templateFromImage(node as Image, ++ctx.figureCounter);
+        const image = node as Image;
+        const { src, attributes } = parseQueryString(image.url);
+        const noFigure = Boolean(attributes.noFigure);
+        const count = attributes.figCount || ++ctx.figureCounter;
+        templateFromImage(image, src, noFigure, String(count));
       }
+
       if (node.type === 'html') {
-        const value = String((node as Literal).value);
+        const literal = node as Literal;
+        const value = String(literal.value);
+
         if (value.startsWith('<div class="figure">')) {
           const hast = getAssetHast(value);
-          templateFromHTML(node as Literal, hast, ++ctx.figureCounter);
+          const children = hast.children as Element[];
+          const img = children.find((o) => o.tagName === 'img');
+          const props = img?.properties || {};
+          const { src, attributes } = parseQueryString(String(props.src));
+          const noFigure = Boolean(attributes.noFigure);
+          const count = attributes.figCount || ++ctx.figureCounter;
+          templateFromHTML(literal, src, props, noFigure, String(count));
         }
       }
     });
   };
 }
 
-function templateFromImage(node: Image, count: number) {
+function templateFromImage(
+  node: Image,
+  src: string,
+  noFigure: boolean,
+  count: string,
+) {
   const alt = getAltText(node.alt || '');
-  const slug = kebabCase(alt ? alt : `Figure ${count}`);
-  // @ts-expect-error
-  createFigure(node, slug, node.url, alt, node.data?.width, count);
+  const title = getAltText(node.title || '');
+  const data = (node.data || {}) as Record<string, string>;
+  const width = data.width;
+  const slug = kebabCase(title || alt || `Figure ${count}`);
+  createFigure(node, slug, src, alt, title, width, noFigure, count);
 }
 
-function templateFromHTML(node: Literal, hast: Element, count: number) {
-  const children = hast.children as Element[];
-  const img = children.find((o) => o.tagName === 'img');
-  const properties = img?.properties || {};
-  const src = String(properties.src);
-  const alt = getAltText(String(properties.alt));
+function templateFromHTML(
+  node: Literal,
+  src: string,
+  properties: Properties,
+  noFigure: boolean,
+  count: string,
+) {
+  // @ts-expect-error
+  const alt = getAltText(properties.alt || '');
+  // @ts-expect-error
+  const title = getAltText(properties.title || '');
   const width = properties.width;
-  const slug = kebabCase(alt ? alt : `Figure ${count}`);
-  createFigure(node, slug, src, alt, width, count);
+  const slug = kebabCase(title || alt || `Figure ${count}`);
+  createFigure(node, slug, src, alt, title, width, noFigure, count);
 }
 
 function createFigure(
@@ -47,10 +74,12 @@ function createFigure(
   slug: string,
   src: string,
   alt: string,
+  title: string,
   width: unknown,
-  count: number,
+  noFigure: boolean,
+  count: string,
 ) {
-  Object.assign(node, {
+  const figure = {
     type: 'custom-image',
     data: {
       hName: 'figure',
@@ -58,15 +87,18 @@ function createFigure(
         className: ['img-wrapper'],
         id: slug,
       },
-      hChildren: [
-        createImage(src, alt, width),
-        createCaption(alt, slug, count),
-      ],
+      hChildren: [createImage(src, alt, width)],
     },
-  });
+  };
+
+  if (!noFigure) {
+    figure.data.hChildren.push(createCaption(title || alt, slug, count));
+  }
+
+  Object.assign(node, figure);
 }
 
-function createImage(src: string, alt: string, width: unknown) {
+function createImage(src: string, alt: string, width: unknown): Element {
   const image: Element = {
     type: 'element',
     tagName: 'div',
@@ -93,10 +125,11 @@ function createImage(src: string, alt: string, width: unknown) {
   return image;
 }
 
-function createCaption(alt: string, slug: string, count: number) {
+function createCaption(alt: string, slug: string, count: string): Element {
   return {
     type: 'element',
     tagName: 'figcaption',
+    properties: {},
     children: [
       {
         type: 'element',
@@ -110,7 +143,7 @@ function createCaption(alt: string, slug: string, count: number) {
   };
 }
 
-function createLabel(alt: string, count: number) {
+function createLabel(alt: string, count: string) {
   const label: ElementContent[] = [
     {
       type: 'element',
@@ -139,6 +172,19 @@ function createLabel(alt: string, count: number) {
   }
 
   return label;
+}
+
+function parseQueryString(src: string) {
+  const idx = src.indexOf('?');
+
+  if (idx === -1) {
+    return { src, attributes: {} };
+  }
+
+  return {
+    src: src.slice(0, idx),
+    attributes: { ...querystring.parse(src.slice(idx + 1)) },
+  };
 }
 
 function getAltText(altText: string) {

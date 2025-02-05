@@ -25,9 +25,12 @@ export function writeFile(filePath: string, value: string | Buffer) {
 
 export async function checkLocalFileExists(filePath: string) {
   try {
-    await fs.promises.access(filePath, fs.constants.F_OK);
+    await fs.promises.access(
+      filePath,
+      fs.promises.constants.R_OK | fs.promises.constants.W_OK,
+    );
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
