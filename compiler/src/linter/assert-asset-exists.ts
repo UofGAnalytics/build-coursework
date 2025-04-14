@@ -9,9 +9,9 @@ import { checkLocalFileExists } from '../utils/utils';
 export function assertAssetExists() {
   async function getAssetUrl(node: Image, file: VFile) {
     const url = (node.url || '') as string;
-    if (process.env.NODE_ENV !== 'test' && !file.dirname) {
-      throw new Error('VFile dirname undefined');
-    }
+    // if (process.env.NODE_ENV !== 'test' && !file.dirname) {
+    //   throw new Error('VFile dirname undefined');
+    // }
     if (!url.startsWith('http')) {
       // console.log('hey!', url);
       const exists = await checkLocalFileExists(url);
