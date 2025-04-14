@@ -5,7 +5,7 @@ import { visit } from 'unist-util-visit';
 export function textFile() {
   return (tree: Node) => {
     visit(tree, 'code', (node: Code) => {
-      if (node.lang === 'textfile') {
+      if (node.lang?.startsWith('textfile')) {
         createTextFile(node);
       }
     });

@@ -25,7 +25,11 @@ function customCode(node: Code, ctx: Context, file: VFile) {
 
   // console.dir(node, { depth: null });
 
-  if (ctx.options.noSyntaxHighlight || language === '') {
+  if (
+    ctx.options.noSyntaxHighlight ||
+    language === '' ||
+    language.startsWith('textfile')
+  ) {
     children.push({
       type: 'text',
       value: trimmed,
