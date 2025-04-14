@@ -762,7 +762,14 @@ async function getImage(src, ctx) {
       execFn: getImageDataFromWeb
     });
   }
-  return (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src, 'base64');
+  try {
+    return await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_10__/* .readFile */ .pJ)(src, 'base64');
+  } catch (err) {
+    if ((err?.message || '').startsWith('Error: ENOENT')) {
+      return '';
+    }
+    throw err;
+  }
 }
 async function getImageDataFromWeb(src) {
   const response = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_4__["default"])(src);
@@ -2146,10 +2153,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 function assertAssetExists() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
-    if (!file.dirname) {
+    if ( true && !file.dirname) {
       throw new Error('VFile dirname undefined');
     }
     if (!url.startsWith('http')) {
+      // console.log('hey!', url);
       const exists = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(url);
       if (!exists) {
         (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `No asset found at ${url}`, node.position);
@@ -2158,8 +2166,11 @@ function assertAssetExists() {
   }
   return async (tree, file) => {
     const transformations = [];
-    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'image', node => {
-      transformations.push(getAssetUrl(node, file));
+    (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, node => {
+      if (node.type === 'image' || node.type === 'custom-image') {
+        const image = node;
+        transformations.push(getAssetUrl(image, file));
+      }
     });
     await Promise.all(transformations);
   };
@@ -2511,7 +2522,11 @@ function reportErrors(files, ctx) {
   }
 }
 async function createReport(file, mdast, ctx) {
-  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_2__.unified)().use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_3__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_8__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_7__/* .assertTaskAnswerStructure */ .A).use(_assert_program_switcher__WEBPACK_IMPORTED_MODULE_6__/* .assertProgramSwitcherStructure */ .F).use(_assert_columns__WEBPACK_IMPORTED_MODULE_4__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_9__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_5__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_10__/* .lintLatex */ .I)
+  const processor = (0,unified__WEBPACK_IMPORTED_MODULE_2__.unified)()
+  // .use(() => (tree) => {
+  //   console.dir(tree, { depth: null });
+  // })
+  .use(_assert_asset_exists__WEBPACK_IMPORTED_MODULE_3__/* .assertAssetExists */ .c).use(_assert_video_attributes__WEBPACK_IMPORTED_MODULE_8__/* .assertVideoAttributes */ .c).use(_assert_task_answer__WEBPACK_IMPORTED_MODULE_7__/* .assertTaskAnswerStructure */ .A).use(_assert_program_switcher__WEBPACK_IMPORTED_MODULE_6__/* .assertProgramSwitcherStructure */ .F).use(_assert_columns__WEBPACK_IMPORTED_MODULE_4__/* .assertColumnStructure */ .C).use(_assert_weblink_target__WEBPACK_IMPORTED_MODULE_9__/* .assertWeblinkTarget */ .F).use(_assert_no_h1__WEBPACK_IMPORTED_MODULE_5__/* .assertNoH1 */ .N).use(_lint_latex__WEBPACK_IMPORTED_MODULE_10__/* .lintLatex */ .I)
   // @ts-expect-error
   .use(_double_great_remark_lint_alt_text__WEBPACK_IMPORTED_MODULE_0__["default"]).use(_mapbox_remark_lint_link_text__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
@@ -2522,7 +2537,7 @@ async function createReport(file, mdast, ctx) {
   //   processor.use(remark2retext, retextProcessor);
   // }
 
-  processor.run(mdast, file);
+  await processor.run(mdast, file);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3061,7 +3076,7 @@ function customCode(node, ctx, file) {
 
   // console.dir(node, { depth: null });
 
-  if (ctx.options.noSyntaxHighlight || language === '') {
+  if (ctx.options.noSyntaxHighlight || language === '' || language.startsWith('textfile')) {
     children.push({
       type: 'text',
       value: trimmed
@@ -3488,9 +3503,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3908);
 /* harmony import */ var unist_util_visit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6016);
-/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3609);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__]);
-([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3477);
+/* harmony import */ var querystring__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(querystring__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3609);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_3__]);
+([lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__, unist_util_visit__WEBPACK_IMPORTED_MODULE_1__, _utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -3498,36 +3516,54 @@ function images(ctx) {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_1__.visit)(tree, node => {
       if (node.type === 'image') {
-        templateFromImage(node, ++ctx.figureCounter);
+        const image = node;
+        const {
+          src,
+          attributes
+        } = parseQueryString(image.url);
+        const noFigure = Boolean(attributes.noFigure);
+        const count = attributes.figCount || ++ctx.figureCounter;
+        templateFromImage(image, src, noFigure, String(count));
       }
       if (node.type === 'html') {
-        const value = String(node.value);
+        const literal = node;
+        const value = String(literal.value);
         if (value.startsWith('<div class="figure">')) {
-          const hast = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_2__/* .getAssetHast */ .j)(value);
-          templateFromHTML(node, hast, ++ctx.figureCounter);
+          const hast = (0,_utils_get_asset_hast__WEBPACK_IMPORTED_MODULE_3__/* .getAssetHast */ .j)(value);
+          const children = hast.children;
+          const img = children.find(o => o.tagName === 'img');
+          const props = img?.properties || {};
+          const {
+            src,
+            attributes
+          } = parseQueryString(String(props.src));
+          const noFigure = Boolean(attributes.noFigure);
+          const count = attributes.figCount || ++ctx.figureCounter;
+          templateFromHTML(literal, src, props, noFigure, String(count));
         }
       }
     });
   };
 }
-function templateFromImage(node, count) {
+function templateFromImage(node, src, noFigure, count) {
   const alt = getAltText(node.alt || '');
-  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
+  const title = getAltText(node.title || '');
+  const data = node.data || {};
+  const width = data.width;
+  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(title || alt || `Figure ${count}`);
+  createFigure(node, slug, src, alt, title, width, noFigure, count);
+}
+function templateFromHTML(node, src, properties, noFigure, count) {
   // @ts-expect-error
-  createFigure(node, slug, node.url, alt, node.data?.width, count);
-}
-function templateFromHTML(node, hast, count) {
-  const children = hast.children;
-  const img = children.find(o => o.tagName === 'img');
-  const properties = img?.properties || {};
-  const src = String(properties.src);
-  const alt = getAltText(String(properties.alt));
+  const alt = getAltText(properties.alt || '');
+  // @ts-expect-error
+  const title = getAltText(properties.title || '');
   const width = properties.width;
-  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(alt ? alt : `Figure ${count}`);
-  createFigure(node, slug, src, alt, width, count);
+  const slug = (0,lodash_kebabCase_js__WEBPACK_IMPORTED_MODULE_0__["default"])(title || alt || `Figure ${count}`);
+  createFigure(node, slug, src, alt, title, width, noFigure, count);
 }
-function createFigure(node, slug, src, alt, width, count) {
-  Object.assign(node, {
+function createFigure(node, slug, src, alt, title, width, noFigure, count) {
+  const figure = {
     type: 'custom-image',
     data: {
       hName: 'figure',
@@ -3535,9 +3571,13 @@ function createFigure(node, slug, src, alt, width, count) {
         className: ['img-wrapper'],
         id: slug
       },
-      hChildren: [createImage(src, alt, width), createCaption(alt, slug, count)]
+      hChildren: [createImage(src, alt, width)]
     }
-  });
+  };
+  if (!noFigure) {
+    figure.data.hChildren.push(createCaption(title || alt, slug, count));
+  }
+  Object.assign(node, figure);
 }
 function createImage(src, alt, width) {
   const image = {
@@ -3568,6 +3608,7 @@ function createCaption(alt, slug, count) {
   return {
     type: 'element',
     tagName: 'figcaption',
+    properties: {},
     children: [{
       type: 'element',
       tagName: 'a',
@@ -3600,6 +3641,21 @@ function createLabel(alt, count) {
     });
   }
   return label;
+}
+function parseQueryString(src) {
+  const idx = src.indexOf('?');
+  if (idx === -1) {
+    return {
+      src,
+      attributes: {}
+    };
+  }
+  return {
+    src: src.slice(0, idx),
+    attributes: {
+      ...querystring__WEBPACK_IMPORTED_MODULE_2___default().parse(src.slice(idx + 1))
+    }
+  };
 }
 function getAltText(altText) {
   if (altText.includes('unnamed-chunk')) {
@@ -4137,7 +4193,7 @@ unist_util_visit__WEBPACK_IMPORTED_MODULE_0__ = (__webpack_async_dependencies__.
 function textFile() {
   return tree => {
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, 'code', node => {
-      if (node.lang === 'textfile') {
+      if (node.lang?.startsWith('textfile')) {
         createTextFile(node);
       }
     });
@@ -4755,11 +4811,15 @@ async function execAndCache({
   execFn,
   json
 }, cachedFilePath) {
-  const out = await execFn(key);
-  const str = json ? JSON.stringify(out, null, 2) : out;
-  await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .mkdir */ .i$)(ctx.cacheDir);
-  await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .writeFile */ .NC)(cachedFilePath, str);
-  return out;
+  try {
+    const out = await execFn(key);
+    const str = json ? JSON.stringify(out, null, 2) : out;
+    await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .mkdir */ .i$)(ctx.cacheDir);
+    await (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .writeFile */ .NC)(cachedFilePath, str);
+    return out;
+  } catch (err) {
+    return '';
+  }
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4785,7 +4845,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.87";
+  const currentVersion = "1.1.88";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
@@ -5132,9 +5192,9 @@ function writeFile(filePath, value) {
 }
 async function checkLocalFileExists(filePath) {
   try {
-    await fs__WEBPACK_IMPORTED_MODULE_0___default().promises.access(filePath, (fs__WEBPACK_IMPORTED_MODULE_0___default().constants).F_OK);
+    await fs__WEBPACK_IMPORTED_MODULE_0___default().promises.access(filePath, (fs__WEBPACK_IMPORTED_MODULE_0___default().promises).constants.R_OK | (fs__WEBPACK_IMPORTED_MODULE_0___default().promises).constants.W_OK);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
@@ -5621,6 +5681,13 @@ module.exports = require("os");
 /***/ ((module) => {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ 3477:
+/***/ ((module) => {
+
+module.exports = require("querystring");
 
 /***/ }),
 
