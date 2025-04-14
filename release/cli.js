@@ -2153,9 +2153,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 function assertAssetExists() {
   async function getAssetUrl(node, file) {
     const url = node.url || '';
-    if ( true && !file.dirname) {
-      throw new Error('VFile dirname undefined');
-    }
+    // if (process.env.NODE_ENV !== 'test' && !file.dirname) {
+    //   throw new Error('VFile dirname undefined');
+    // }
     if (!url.startsWith('http')) {
       // console.log('hey!', url);
       const exists = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(url);
@@ -4845,7 +4845,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.88";
+  const currentVersion = "1.1.89";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
