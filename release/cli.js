@@ -2151,19 +2151,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([unis
 
 
 function assertAssetExists() {
-  async function getAssetUrl(node, file) {
-    const url = node.url || '';
-    // if (process.env.NODE_ENV !== 'test' && !file.dirname) {
-    //   throw new Error('VFile dirname undefined');
-    // }
-    if (!url.startsWith('http')) {
-      // console.log('hey!', url);
-      const exists = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(url);
-      if (!exists) {
-        (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `No asset found at ${url}`, node.position);
-      }
-    }
-  }
   return async (tree, file) => {
     const transformations = [];
     (0,unist_util_visit__WEBPACK_IMPORTED_MODULE_0__.visit)(tree, node => {
@@ -2174,6 +2161,21 @@ function assertAssetExists() {
     });
     await Promise.all(transformations);
   };
+}
+async function getAssetUrl(node, file) {
+  const url = node.url || '';
+  if (url) {
+    if ( true && !file.dirname) {
+      throw new Error('VFile dirname undefined');
+    }
+    if (!url.startsWith('http')) {
+      // console.log('hey!', url);
+      const exists = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(url);
+      if (!exists) {
+        (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `No asset found at ${url}`, node.position);
+      }
+    }
+  }
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4845,7 +4847,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.89";
+  const currentVersion = "1.1.90";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
