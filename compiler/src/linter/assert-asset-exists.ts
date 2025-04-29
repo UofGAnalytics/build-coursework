@@ -7,20 +7,6 @@ import { failMessage } from '../utils/message';
 import { checkLocalFileExists } from '../utils/utils';
 
 export function assertAssetExists() {
-  async function getAssetUrl(node: Image, file: VFile) {
-    const url = (node.url || '') as string;
-    // if (process.env.NODE_ENV !== 'test' && !file.dirname) {
-    //   throw new Error('VFile dirname undefined');
-    // }
-    if (!url.startsWith('http')) {
-      // console.log('hey!', url);
-      const exists = await checkLocalFileExists(url);
-      if (!exists) {
-        failMessage(file, `No asset found at ${url}`, node.position);
-      }
-    }
-  }
-
   return async (tree: Node, file: VFile) => {
     const transformations: Promise<void>[] = [];
     visit(tree, (node) => {
@@ -31,4 +17,20 @@ export function assertAssetExists() {
     });
     await Promise.all(transformations);
   };
+}
+
+async function getAssetUrl(node: Image, file: VFile) {
+  const url = (node.url || '') as string;
+  if (url) {
+    if (process.env.NODE_ENV !== 'test' && !file.dirname) {
+      throw new Error('VFile dirname undefined');
+    }
+    if (!url.startsWith('http')) {
+      // console.log('hey!', url);
+      const exists = await checkLocalFileExists(url);
+      if (!exists) {
+        failMessage(file, `No asset found at ${url}`, node.position);
+      }
+    }
+  }
 }
