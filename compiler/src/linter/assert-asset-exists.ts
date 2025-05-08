@@ -22,11 +22,11 @@ export function assertAssetExists() {
 async function getAssetUrl(node: Image, file: VFile) {
   const url = (node.url || '') as string;
   if (url) {
-    if (process.env.NODE_ENV !== 'test' && !file.dirname) {
-      throw new Error('VFile dirname undefined');
-    }
+    // TODO: This keeps causing problems
+    // if (process.env.NODE_ENV !== 'test' && !file.dirname) {
+    //   throw new Error('VFile dirname undefined');
+    // }
     if (!url.startsWith('http')) {
-      // console.log('hey!', url);
       const exists = await checkLocalFileExists(url);
       if (!exists) {
         failMessage(file, `No asset found at ${url}`, node.position);

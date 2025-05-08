@@ -50,15 +50,17 @@ async function embedFile(node: Element, file: VFile, ctx: Context) {
         return await embedImage(node, ctx, file);
       case '.svg':
         return await embedSvg(node, ctx);
+      case '.html':
+        return await embedHtml(node);
       case '.pdf':
         // return await embedPdfSvg(node);
         throw new Error(
           `Unhandled file extension: .pdf (convert to .svg)`,
         );
-      case '.html':
-        return await embedHtml(node);
       default:
-        throw new Error(`Unhandled file extension: ${parsed.ext}`);
+        throw new Error(
+          `"${src}" has unhandled file extension. Should be one of: .png, .jpg, .jpeg, .gif, .svg, .html`,
+        );
     }
   } catch (_err) {
     console.log(_err);
