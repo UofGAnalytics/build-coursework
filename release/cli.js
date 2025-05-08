@@ -679,13 +679,13 @@ async function embedFile(node, file, ctx) {
         return await embedImage(node, ctx, file);
       case '.svg':
         return await embedSvg(node, ctx);
+      case '.html':
+        return await embedHtml(node);
       case '.pdf':
         // return await embedPdfSvg(node);
         throw new Error(`Unhandled file extension: .pdf (convert to .svg)`);
-      case '.html':
-        return await embedHtml(node);
       default:
-        throw new Error(`Unhandled file extension: ${parsed.ext}`);
+        throw new Error(`"${src}" has unhandled file extension. Should be one of: .png, .jpg, .jpeg, .gif, .svg, .html`);
     }
   } catch (_err) {
     console.log(_err);
@@ -2165,11 +2165,11 @@ function assertAssetExists() {
 async function getAssetUrl(node, file) {
   const url = node.url || '';
   if (url) {
-    if ( true && !file.dirname) {
-      throw new Error('VFile dirname undefined');
-    }
+    // TODO: This keeps causing problems
+    // if (process.env.NODE_ENV !== 'test' && !file.dirname) {
+    //   throw new Error('VFile dirname undefined');
+    // }
     if (!url.startsWith('http')) {
-      // console.log('hey!', url);
       const exists = await (0,_utils_utils__WEBPACK_IMPORTED_MODULE_2__/* .checkLocalFileExists */ .qd)(url);
       if (!exists) {
         (0,_utils_message__WEBPACK_IMPORTED_MODULE_1__/* .failMessage */ .Ob)(file, `No asset found at ${url}`, node.position);
@@ -4847,7 +4847,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([chal
 const repo = 'UofGAnalytics/build-coursework';
 async function checkForLatestVersion() {
   if (false) {}
-  const currentVersion = "1.1.90";
+  const currentVersion = "1.1.91";
   try {
     const tags = await listRemoteGitTags();
     const latestTag = parseLatestTag(tags);
