@@ -21,8 +21,8 @@ Next, you need to run a few terminal commands. If you are unfamiliar with this, 
 Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.15.0):
 
 ```bash
-nvm install 16.15.0
-nvm use 16.15.0
+nvm install 22.17.1
+nvm use 22.17.1
 ```
 
 To check everything installed correctly, run the following:
