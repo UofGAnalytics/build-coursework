@@ -18,18 +18,18 @@ Next, you need to run a few terminal commands. If you are unfamiliar with this, 
 
 ### Install Node.js
 
-Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 16.15.0):
+Run the following commands to install the [latest LTS version of Node.js](https://nodejs.org) (currently 24.18.0):
 
 ```bash
-nvm install 22.17.1
-nvm use 22.17.1
+nvm install 24.18.0
+nvm use 24.18.0
 ```
 
 To check everything installed correctly, run the following:
 
 ```bash
 node –v
-# v16.15.0 or similar
+# v24.18.0 or similar
 ```
 
 Node Package Manager (npm) should automatically be installed:
